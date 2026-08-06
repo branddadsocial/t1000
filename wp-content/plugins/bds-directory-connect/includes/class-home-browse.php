@@ -64,20 +64,26 @@ class BDS_DC_Home_Browse {
 						<a class="bds-hbrowse__loc bds-hbrowse__loc--link"
 							href="<?php echo esc_url( $loc['url'] ); ?>"
 							data-loc="<?php echo esc_attr( $loc['slug'] ); ?>"
-							data-label="<?php echo esc_attr( $loc['label'] ); ?>">
+							data-label="<?php echo esc_attr( $loc['label'] ); ?>"
+							data-archive="<?php echo esc_url( ! empty( $loc['archive'] ) ? $loc['archive'] : $loc['url'] ); ?>">
 							<span><?php echo esc_html( $loc['label'] ); ?></span>
 							<span class="bds-hbrowse__loc-count"><?php echo esc_html( (string) (int) $loc['count'] ); ?></span>
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<p class="bds-hbrowse__loc-hint" data-loc-hint>Prefer near-me or a zip? Use Ask BrandDad in the search bar above.</p>
+				<p class="bds-hbrowse__loc-hint" data-loc-hint>Tap a category to see local listings. Prefer near-me or a zip? Use Ask BrandDad in the search bar above.</p>
 			</div>
+			<?php if ( empty( $data['local'] ) ) : ?>
+				<p class="bds-hbrowse__empty">No local categories with listings yet.</p>
+			<?php endif; ?>
 			<ul class="bds-hbrowse__chips" data-kind="local">
 				<?php foreach ( (array) $data['local'] as $chip ) : ?>
 					<li>
 						<a class="bds-hbrowse__chip"
 							href="<?php echo esc_url( $chip['url'] ); ?>"
 							data-slug="<?php echo esc_attr( $chip['slug'] ); ?>"
+							data-cat-id="<?php echo esc_attr( (string) (int) $chip['id'] ); ?>"
+							data-directory-type="<?php echo esc_attr( $chip['directory_type'] ); ?>"
 							data-base-url="<?php echo esc_url( $chip['url'] ); ?>"
 							data-combo="<?php echo esc_attr( wp_json_encode( isset( $chip['combo'] ) ? $chip['combo'] : array() ) ); ?>">
 							<span class="bds-hbrowse__chip-label"><?php echo esc_html( $chip['label'] ); ?></span>
@@ -86,6 +92,9 @@ class BDS_DC_Home_Browse {
 					</li>
 				<?php endforeach; ?>
 			</ul>
+			<p class="bds-hbrowse__local-all">
+				<a class="bds-hbrowse__foot-link" href="<?php echo esc_url( add_query_arg( 'directory_type', 'food-beverage', home_url( '/search-result/' ) ) ); ?>">Browse local food &amp; drink listings</a>
+			</p>
 		</div>
 
 		<div class="bds-hbrowse__block bds-hbrowse__block--digital" data-block="digital">
@@ -101,7 +110,10 @@ class BDS_DC_Home_Browse {
 					<li>
 						<a class="bds-hbrowse__chip"
 							href="<?php echo esc_url( $chip['url'] ); ?>"
-							data-slug="<?php echo esc_attr( $chip['slug'] ); ?>">
+							data-slug="<?php echo esc_attr( $chip['slug'] ); ?>"
+							data-cat-id="<?php echo esc_attr( (string) (int) $chip['id'] ); ?>"
+							data-directory-type="<?php echo esc_attr( $chip['directory_type'] ? $chip['directory_type'] : 'digital-services' ); ?>"
+							data-base-url="<?php echo esc_url( $chip['url'] ); ?>">
 							<span class="bds-hbrowse__chip-label"><?php echo esc_html( $chip['label'] ); ?></span>
 							<span class="bds-hbrowse__chip-count"><?php echo esc_html( (string) (int) $chip['count'] ); ?></span>
 						</a>

@@ -187,6 +187,95 @@
     });
   }
 
+  function searchResultUrl(params) {
+    try {
+      var u = new URL(cfg.searchUrl || '/search-result/', window.location.origin);
+      Object.keys(params || {}).forEach(function (k) {
+        if (params[k] !== undefined && params[k] !== null && params[k] !== '') {
+          u.searchParams.set(k, params[k]);
+        }
+      });
+      return u.toString();
+    } catch (e) {
+      return (cfg.home || '/') + 'search-result/';
+    }
+  }
+
+  /**
+   * /single-category/* archives show "0 Items Found".
+   * Rewrite Local/Digital chips to working /search-result/?in_cat=… links.
+   */
+  function patchLocalChips(sec) {
+    if (!sec) return;
+    var bySlug = {};
+    var lists = [];
+    if (cfg.browse && cfg.browse.local) lists = lists.concat(cfg.browse.local);
+    if (cfg.browse && cfg.browse.digital) lists = lists.concat(cfg.browse.digital);
+    lists.forEach(function (c) {
+      if (c && c.slug) bySlug[c.slug] = c;
+    });
+
+    qsa('.bds-hbrowse__chip', sec).forEach(function (a) {
+      var slug = a.getAttribute('data-slug') || '';
+      var href = a.getAttribute('href') || '';
+      var live = bySlug[slug];
+      var brokenArchive = /\/single-category\//i.test(href);
+
+      if (live && live.url) {
+        a.setAttribute('href', live.url);
+        a.setAttribute('data-base-url', live.url);
+        if (live.id) a.setAttribute('data-cat-id', String(live.id));
+        if (live.directory_type) a.setAttribute('data-directory-type', live.directory_type);
+        if (live.combo) {
+          try {
+            a.setAttribute('data-combo', JSON.stringify(live.combo));
+          } catch (e) {}
+        }
+        return;
+      }
+
+      // Fallback without REST payload: derive from data-combo or cat id.
+      if (brokenArchive || !href) {
+        var catId = a.getAttribute('data-cat-id');
+        var dirType = a.getAttribute('data-directory-type') || '';
+        var comboRaw = a.getAttribute('data-combo');
+        if (!catId && comboRaw) {
+          try {
+            var map = JSON.parse(comboRaw);
+            var first = map && map[Object.keys(map)[0]];
+            if (first) {
+              var tmp = new URL(first, window.location.origin);
+              catId = tmp.searchParams.get('in_cat') || '';
+              dirType = dirType || tmp.searchParams.get('directory_type') || '';
+            }
+          } catch (e) {}
+        }
+        if (catId) {
+          var fixed = searchResultUrl({ in_cat: catId, directory_type: dirType });
+          a.setAttribute('href', fixed);
+          a.setAttribute('data-base-url', fixed);
+        }
+      }
+    });
+
+    // Patch Popular-in place links that still point at empty-feeling archives only.
+    if (cfg.browse && cfg.browse.locations) {
+      var locBySlug = {};
+      cfg.browse.locations.forEach(function (l) {
+        if (l && l.slug) locBySlug[l.slug] = l;
+      });
+      qsa('.bds-hbrowse__loc--link', sec).forEach(function (a) {
+        var slug = a.getAttribute('data-loc') || '';
+        var live = locBySlug[slug];
+        if (!live) return;
+        if (live.url) a.setAttribute('href', live.url);
+        if (live.archive) a.setAttribute('data-archive', live.archive);
+        var countEl = a.querySelector('.bds-hbrowse__loc-count');
+        if (countEl && typeof live.count === 'number') countEl.textContent = String(live.count);
+      });
+    }
+  }
+
   /** Prefer our live section over the old hardcoded #bds-home-browse. */
   function ensureBrowseSection() {
     var ours = qsa('#bds-home-browse[data-bds-dc="1"]');
@@ -215,6 +304,8 @@
         sec.setAttribute('data-placed', 'after-hero');
       }
     }
+
+    patchLocalChips(sec);
     return sec;
   }
 
@@ -247,13 +338,19 @@
             }
           } catch (e) {}
         }
+        // Never leave chips on broken /single-category/ archives.
+        if (base && /\/single-category\//i.test(base)) {
+          var catId = a.getAttribute('data-cat-id');
+          var dirType = a.getAttribute('data-directory-type') || '';
+          if (catId) base = searchResultUrl({ in_cat: catId, directory_type: dirType });
+        }
         if (base) a.setAttribute('href', base);
       });
       if (hint) {
         hint.textContent =
           active && label
-            ? 'Showing local categories for ' + label + ' — tap a category, or open the place above.'
-            : 'Prefer near-me or a zip? Use Ask BrandDad in the search bar above.';
+            ? 'Showing local listings for ' + label + ' — tap a category to open them.'
+            : 'Tap a category to see local listings. Prefer near-me or a zip? Use Ask BrandDad above.';
       }
     }
 
@@ -264,8 +361,10 @@
         e.preventDefault();
         var label = el.getAttribute('data-label') || el.textContent.trim();
         if (el.classList.contains('is-active') && slug) {
-          if (el.tagName === 'A' && el.href) {
-            window.location.href = el.href;
+          // Second click → open place listings (search-result?in_loc=…).
+          var dest = el.getAttribute('href') || el.getAttribute('data-archive');
+          if (dest) {
+            window.location.href = dest;
             return;
           }
         }
@@ -279,6 +378,9 @@
         openAskBrandDad('');
       });
     }
+
+    // Default: All places — ensure chips already point at search-result URLs.
+    setActive('', '');
   }
 
   function boot() {

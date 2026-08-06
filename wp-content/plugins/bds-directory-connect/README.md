@@ -5,7 +5,7 @@ Fixes on **directory.branddad.social**:
 1. **Category tabs** (Automotive, Beauty & Personal Care, …) — no longer dead `href="#"`. Each tab goes to `/search-result/?directory_type={slug}`.
 2. **Search bar under those tabs** — typing a need and hitting Search opens **Ask BrandDad**. The extra “Find what’s near you — Ask BrandDad” hero chip is hidden so there is one search path.
 3. **Popular in** — built from live `at_biz_dir-location` term counts (all cities with listings, not just Chicago / Playa). Counts refresh when listings are added/updated (transient cache, 1 hour, flushed on save).
-4. **Local / digital chips** — counts come from live `at_biz_dir-category` terms.
+4. **Local / digital chips** — counts come from live `at_biz_dir-category` terms. Links use `/search-result/?in_cat=…` (not broken `/single-category/` archives that show “0 Items Found”).
 
 ## Install
 

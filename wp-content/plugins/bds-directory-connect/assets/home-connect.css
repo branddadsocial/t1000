@@ -31,3 +31,12 @@ a.directorist-listing-type-selection__link[data-bds-dc-type] {
   opacity: 0.75;
   font-variant-numeric: tabular-nums;
 }
+
+.bds-hbrowse__local-all {
+  margin: 0.75rem 0 0;
+}
+
+.bds-hbrowse__empty {
+  margin: 0.5rem 0;
+  opacity: 0.8;
+}

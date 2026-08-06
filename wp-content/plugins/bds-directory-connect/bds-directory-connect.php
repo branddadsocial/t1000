@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BDS Directory Connect
  * Description: Fixes Directory home category tabs, wires hero search to Ask BrandDad, and auto-updates Popular In / category chips from live listing counts.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: BrandDad Social
  * Text Domain: bds-directory-connect
  *
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_DC_VERSION', '1.0.0' );
+define( 'BDS_DC_VERSION', '1.0.1' );
 define( 'BDS_DC_FILE', __FILE__ );
 define( 'BDS_DC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BDS_DC_URL', plugin_dir_url( __FILE__ ) );

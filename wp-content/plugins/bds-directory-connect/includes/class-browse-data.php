@@ -177,12 +177,27 @@ class BDS_DC_Browse_Data {
 				continue;
 			}
 
+			// Prefer search-result?in_loc= so Local → place always shows listings
+			// (single-location templates are inconsistent / often look empty).
+			$loc_link = add_query_arg(
+				array( 'in_loc' => (int) $term->term_id ),
+				home_url( '/search-result/' )
+			);
+			$term_link = get_term_link( $term );
+			if ( ! is_wp_error( $term_link ) ) {
+				// Keep archive as secondary target (open on second click).
+				$archive = $term_link;
+			} else {
+				$archive = $loc_link;
+			}
+
 			$out[] = array(
-				'id'    => (int) $term->term_id,
-				'slug'  => $term->slug,
-				'label' => $term->name,
-				'count' => $count,
-				'url'   => get_term_link( $term ),
+				'id'      => (int) $term->term_id,
+				'slug'    => $term->slug,
+				'label'   => $term->name,
+				'count'   => $count,
+				'url'     => $loc_link,
+				'archive' => $archive,
 			);
 		}
 
@@ -251,15 +266,22 @@ class BDS_DC_Browse_Data {
 	/**
 	 * Format a category term for the front end.
 	 *
+	 * IMPORTANT: Directorist /single-category/{slug}/ archives currently render
+	 * "0 Items Found" even when listings exist. Always link Local/Digital chips
+	 * through /search-result/?in_cat=… which returns real listings.
+	 *
 	 * @param WP_Term $term Term.
 	 * @return array
 	 */
 	private static function format_category( $term ) {
 		$dir_type = self::term_directory_type( $term );
-		$link     = get_term_link( $term );
-		if ( is_wp_error( $link ) ) {
-			$link = home_url( '/single-category/' . $term->slug . '/' );
+		$args     = array(
+			'in_cat' => (int) $term->term_id,
+		);
+		if ( $dir_type ) {
+			$args['directory_type'] = $dir_type;
 		}
+		$link = add_query_arg( $args, home_url( '/search-result/' ) );
 
 		return array(
 			'id'             => (int) $term->term_id,
