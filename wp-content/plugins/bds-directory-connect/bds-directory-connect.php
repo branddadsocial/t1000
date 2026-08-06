@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BDS Directory Connect
  * Description: Fixes Directory home category tabs, wires hero search to Ask BrandDad, and auto-updates Popular In / category chips from live listing counts.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: BrandDad Social
  * Text Domain: bds-directory-connect
  *
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_DC_VERSION', '1.0.1' );
+define( 'BDS_DC_VERSION', '1.0.2' );
 define( 'BDS_DC_FILE', __FILE__ );
 define( 'BDS_DC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'BDS_DC_URL', plugin_dir_url( __FILE__ ) );
@@ -23,9 +23,25 @@ require_once BDS_DC_DIR . 'includes/class-rest.php';
 require_once BDS_DC_DIR . 'includes/class-home-browse.php';
 
 /**
+ * Directory host only — never touch branddad.social chrome / footer / dark toggle.
+ *
+ * @return bool
+ */
+function bds_dc_is_directory_host() {
+	$host = wp_parse_url( home_url(), PHP_URL_HOST );
+	$host = is_string( $host ) ? strtolower( $host ) : '';
+	$host = preg_replace( '/^www\./', '', $host );
+	return in_array( $host, array( 'directory.branddad.social' ), true );
+}
+
+/**
  * Boot the plugin.
  */
 function bds_dc_boot() {
+	if ( ! bds_dc_is_directory_host() ) {
+		return;
+	}
+
 	BDS_DC_Rest::init();
 	BDS_DC_Home_Browse::init();
 
