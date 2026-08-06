@@ -2,8 +2,13 @@
 
 BrandDad network fixes and deployables.
 
-## Restore branddad.social footer
+## Important
 
-Plugin: [`wp-content/plugins/bds-restore-elementor-footer`](wp-content/plugins/bds-restore-elementor-footer)
+Do **not** restore the old Elementor footer on branddad.social.
 
-Install on **branddad.social** to bring back the original Elementor footer (undoes the custom `bds-site-footer` chrome replacement).
+Keep the modern `bds-chrome` look:
+- custom `bds-site-footer`
+- Dark / Light header toggle
+- current header/nav chrome
+
+Functional fixes (Directory categories, Local listings, Popular in) belong on **directory.branddad.social** and must not revert Social’s chrome.
