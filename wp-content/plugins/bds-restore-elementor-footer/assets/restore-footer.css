@@ -1,0 +1,42 @@
+/**
+ * Restore original Elementor footer on branddad.social.
+ * Overrides bds-chrome rules that hide .elementor-location-footer.
+ */
+
+body.bds-chrome .elementor-location-footer,
+body.branddad-unified .elementor-location-footer,
+footer.elementor-location-footer,
+footer[data-elementor-type="footer"] {
+	display: block !important;
+	visibility: visible !important;
+	height: auto !important;
+	max-height: none !important;
+	overflow: visible !important;
+	opacity: 1 !important;
+}
+
+/* Custom chrome footer replacement — hide */
+footer.bds-site-footer,
+.bds-site-footer {
+	display: none !important;
+}
+
+/* Original Elementor footer includes Spotify / Apple — show them again */
+footer.elementor-location-footer .elementor-social-icon-spotify,
+footer.elementor-location-footer .elementor-social-icon-apple,
+footer.elementor-location-footer .elementor-social-icon[href*="spotify.com"],
+footer.elementor-location-footer .elementor-social-icon[href*="music.apple.com"],
+.elementor-location-footer .elementor-social-icon-spotify,
+.elementor-location-footer .elementor-social-icon-apple {
+	display: inline-flex !important;
+}
+
+/* Directory / cross-site injects that do not belong on Social */
+#bd-home-blog,
+.bd-home-blog,
+#bds-ai-local-pack,
+.bds-ai-local-pack,
+#bds-home-browse,
+.bds-hbrowse {
+	display: none !important;
+}
