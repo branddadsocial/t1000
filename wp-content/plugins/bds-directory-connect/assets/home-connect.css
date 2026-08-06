@@ -1,0 +1,33 @@
+/* BDS Directory Connect — light UI cues (keeps existing hbrowse look). */
+
+.bds-dc-search-hint {
+  margin: 0.35rem 0 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  opacity: 0.78;
+}
+
+#bds-ai-hero-entry[hidden],
+#bds-ai-hero-entry.bds-dc-hidden {
+  display: none !important;
+}
+
+/* Ensure type tabs look clickable once they have real destinations */
+a.search_listing_types[data-bds-dc-type],
+a.directorist-listing-type-selection__link[data-bds-dc-type] {
+  cursor: pointer;
+}
+
+/* Popular In row: allow wrapping when more cities are present */
+.bds-hbrowse__loc-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.bds-hbrowse__loc-count {
+  margin-left: 0.35rem;
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
