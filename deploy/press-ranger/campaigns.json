@@ -1,0 +1,141 @@
+{
+  "policy": {
+    "companies_only": [
+      "BrandDad Social",
+      "BrandDad Social Directory",
+      "BrandDad.co",
+      "HostTech"
+    ],
+    "never_include": [
+      "Save Money Cards",
+      "gift cards",
+      "SMC",
+      "wholesaler / supplier names"
+    ],
+    "do_not_send": true,
+    "official_method": "Press Ranger web app + optional MCP (https://pressranger.com/mcp). MCP can draft companies/releases; publishing and journalist email stay in the Press Ranger UI. No private UI scrape. Press Ranger does not offer a public bulk-send journalist API.",
+    "docs": [
+      "https://pressranger.com/docs",
+      "https://pressranger.com/docs/getting-started/managing-companies",
+      "https://pressranger.com/docs/getting-started/campaigns",
+      "https://pressranger.com/docs/getting-started/email",
+      "https://pressranger.com/docs/integrations/codex"
+    ]
+  },
+  "companies": [
+    {
+      "press_ranger_company_name": "BrandDad Social",
+      "website": "https://branddad.social/",
+      "media_kit": "https://branddad.social/media-kit/",
+      "categories_hint": ["digital marketing", "SEO services", "small business"],
+      "do_not_paste_into_pr": "gift cards, SMC, supplier names, fake stats"
+    },
+    {
+      "press_ranger_company_name": "BrandDad Social Directory",
+      "website": "https://directory.branddad.social/",
+      "media_kit": "https://directory.branddad.social/media-kit/",
+      "categories_hint": ["local search", "business directory", "SMB"],
+      "do_not_paste_into_pr": "gift cards, invented listing counts"
+    },
+    {
+      "press_ranger_company_name": "BrandDad.co",
+      "website": "https://branddad.co/",
+      "media_kit": "https://branddad.co/media-kit/",
+      "categories_hint": ["logo design", "web design", "branding"],
+      "do_not_paste_into_pr": "hosting as if it were this SKU, gift cards"
+    },
+    {
+      "press_ranger_company_name": "HostTech",
+      "website": "https://hosttech.net/",
+      "media_kit": "https://hosttech.net/media-kit/",
+      "categories_hint": ["web hosting", "domains"],
+      "do_not_paste_into_pr": "invented SLA, datacenter tours, Social marketing SKUs"
+    }
+  ],
+  "campaigns_ranked": [
+    {
+      "rank": 1,
+      "id": "dir-whatsapp-local",
+      "company": "BrandDad Social Directory",
+      "type": "Media Outreach (draft only)",
+      "headline_draft": "BrandDad Directory puts WhatsApp next to the local listing — claim and message without a fake featured award",
+      "why_first": "Clearest product difference journalists can verify on the live homepage (WhatsApp-first, Select vs Featured).",
+      "utm": "utm_source=pressranger&utm_medium=pr&utm_campaign=dir_whatsapp_local&utm_content=media_kit",
+      "landing": "https://directory.branddad.social/media-kit/",
+      "proof_urls": [
+        "https://directory.branddad.social/",
+        "https://directory.branddad.social/newsroom/",
+        "https://directory.branddad.social/select/"
+      ],
+      "pitch_notes": "Do not claim listing volume. Do not mention gift cards. Point to /select/methodology/ if they ask how Select works.",
+      "send": false
+    },
+    {
+      "rank": 2,
+      "id": "social-honest-visibility",
+      "company": "BrandDad Social",
+      "type": "Media Outreach (draft only)",
+      "headline_draft": "BrandDad Social sells LinkedIn visibility and site checks — built around professional visibility and not invented traffic",
+      "why_first": "Service SKUs are public with prices; Check your website is a free door.",
+      "utm": "utm_source=pressranger&utm_medium=pr&utm_campaign=social_visibility&utm_content=media_kit",
+      "landing": "https://branddad.social/media-kit/",
+      "proof_urls": [
+        "https://branddad.social/services/",
+        "https://branddad.social/check-your-website/",
+        "https://branddad.social/learning-center/"
+      ],
+      "pitch_notes": "Do not quote subscriber counts. LinkedIn product is visibility, not outreach.",
+      "send": false
+    },
+    {
+      "rank": 3,
+      "id": "co-get-started",
+      "company": "BrandDad.co",
+      "type": "Media Outreach (draft only)",
+      "headline_draft": "BrandDad.co is a logo-and-website shop with Get started — not a walk-in storefront",
+      "why_first": "Simple commerce story; schema already Organization-only.",
+      "utm": "utm_source=pressranger&utm_medium=pr&utm_campaign=bdco_get_started&utm_content=media_kit",
+      "landing": "https://branddad.co/media-kit/",
+      "proof_urls": [
+        "https://branddad.co/",
+        "https://branddad.co/get-started/"
+      ],
+      "pitch_notes": "No invented customer counts. Footer holds sister sites; header stays logos/websites/get-started.",
+      "send": false
+    },
+    {
+      "rank": 4,
+      "id": "hosttech-listed-plans",
+      "company": "HostTech",
+      "type": "Media Outreach (draft only)",
+      "headline_draft": "HostTech lists four monthly hosting plans in a public shop — no invented unlimited SLA",
+      "why_first": "Prices are on /shopping/ and product pages; Contact has real support doors.",
+      "utm": "utm_source=pressranger&utm_medium=pr&utm_campaign=ht_listed_plans&utm_content=media_kit",
+      "landing": "https://hosttech.net/media-kit/",
+      "proof_urls": [
+        "https://hosttech.net/shopping/",
+        "https://hosttech.net/contact/"
+      ],
+      "pitch_notes": "Quote only prices visible on live product pages. No datacenter address unless it appears on Contact.",
+      "send": false
+    },
+    {
+      "rank": 5,
+      "id": "four-doors-not-one-blob",
+      "company": "BrandDad Social",
+      "type": "AI Search Visibility + Media Outreach (draft only)",
+      "headline_draft": "Four BrandDad sites, four jobs — Social, Directory, .co, HostTech — so AI answers stop mashing the brands",
+      "why_first": "Helps ChatGPT/Perplexity/Google cite the right domain; still not a fifth gift-card company.",
+      "utm": "utm_source=pressranger&utm_medium=pr&utm_campaign=four_doors&utm_content=media_kit",
+      "landing": "https://branddad.social/media-kit/",
+      "proof_urls": [
+        "https://branddad.social/media-kit/",
+        "https://directory.branddad.social/media-kit/",
+        "https://branddad.co/media-kit/",
+        "https://hosttech.net/media-kit/"
+      ],
+      "pitch_notes": "Target query ideas: 'BrandDad Social vs BrandDad.co'; 'HostTech hosting'. Never 'Save Money Cards'.",
+      "send": false
+    }
+  ]
+}

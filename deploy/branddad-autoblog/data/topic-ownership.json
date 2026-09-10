@@ -1,0 +1,96 @@
+{
+  "version": "1.0.0",
+  "sites": {
+    "directory": {
+      "host": "directory.branddad.social",
+      "owns": [
+        "local discovery",
+        "business directory listings",
+        "claim / join / membership",
+        "WhatsApp business discovery",
+        "AI Finder local search",
+        "member 10% network benefit",
+        "Verified / Listed / Featured badges (education)"
+      ],
+      "never": [
+        "LinkedIn service product pitches",
+        "hosting plan comparisons as primary",
+        "logo package deep-dives as primary",
+        "supplier / wholesaler names"
+      ],
+      "cta_primary": "https://directory.branddad.social/registration/",
+      "cta_secondary": "https://directory.branddad.social/all-listings/"
+    },
+    "social": {
+      "host": "branddad.social",
+      "owns": [
+        "marketing / visibility services",
+        "LinkedIn visibility and outreach services",
+        "SEO packages",
+        "reputation / PR / social growth",
+        "GBP / local SEO management",
+        "AI Ads education"
+      ],
+      "never": [
+        "public flight booking as Directory feature",
+        "LinkedIn service product",
+        "hosting SKUs as primary",
+        "supplier names on storefront"
+      ],
+      "cta_primary": "https://branddad.social/services/",
+      "cta_secondary": "https://wa.me/18729105115"
+    },
+    "co": {
+      "host": "branddad.co",
+      "owns": [
+        "AI logos",
+        "premium websites",
+        "logo+site bundles",
+        "branding / apps creative",
+        "design briefs"
+      ],
+      "never": [
+        "directory membership as primary pitch",
+        "hosting plan sales as primary",
+        "professional outreach"
+      ],
+      "cta_primary": "https://branddad.co/get-started/",
+      "cta_secondary": "https://branddad.co/product-category/web-design/"
+    },
+    "hosttech": {
+      "host": "hosttech.net",
+      "owns": [
+        "hosting",
+        "domains",
+        "SSL",
+        "migrations",
+        "uptime / infra education",
+        "AI plan guide"
+      ],
+      "never": [
+        "logo design deep-dives as primary",
+        "LinkedIn growth as primary",
+        "directory Best-X-in-Y spam"
+      ],
+      "cta_primary": "https://hosttech.net/shopping/",
+      "cta_secondary": "https://hosttech.net/domains/"
+    }
+  },
+  "content_styles": {
+    "search_traffic": "SEO/AEO helpful guides that earn discovery traffic",
+    "branddad_conversion": "Education that converts into join/claim/buy — honest, not thin"
+  },
+  "cross_link_rules": {
+    "max_cross_site_links": 2,
+    "preserve_partnero_ref": true,
+    "canonical_strips_ref": true,
+    "noindex_ref_urls": true
+  },
+  "best_x_in_y": {
+    "enabled": true,
+    "min_listings": 5,
+    "require_real_inventory": true,
+    "forbid_thin_city_category_spam": true,
+    "note": "Only publish Best X in Y when Directory inventory analysis passes threshold"
+  }
+}

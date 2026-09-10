@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/iamtd/AppData/Roaming/npm/rafter.cmd hook pretool"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/iamtd/AppData/Roaming/npm/rafter.cmd hook posttool"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "C:/Users/iamtd/Documents/Codex/branddad-seoestore/.codex/vexp-hint.cmd",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

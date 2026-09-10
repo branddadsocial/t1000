@@ -1,0 +1,74 @@
+{
+  "debug": {
+    "/public_html/branddad.social/wp-content/debug.log": {
+      "err": "[object Object]"
+    },
+    "/public_html/branddad.social/error_log": {
+      "len": 0,
+      "tail": "",
+      "has1113": false,
+      "stub": false
+    },
+    "/public_html/branddad.social/wp-content/mu-plugins/00-bds-unified-brand.php": {
+      "len": 110966,
+      "tail": "reputation'||challenge==='reviews'){title='Review Growth Setup';desc='Build an ethical ask-flow for real Google reviews, or choose reputation assistance if you have harmful reviews.';url='https://branddad.social/product/google-review-growth-setup/'}\n\t\t\telse if(platform==='linkedin'){title='LinkedIn Visibility';desc='Build professional authority and a repeatable path to conversations — built around professional visibility.';url='https://branddad.social/product/linkedin-visibility-amplification-system-for-professionals/'}\n\t\t\telse if(platform==='instagram'||challenge==='following'||challenge==='engagement'){title='Instagram Growth';desc='Improve discovery and engagement with a focused Instagram growth system.';url='https://branddad.social/product/instagram-viral-growth-discovery-system/'}\n\t\t\telse if(platform==='facebook'){title='Facebook Visibility';desc='Reach more relevant people and turn Facebook into a stronger awareness channel.';url='https://branddad.social/product/facebook-growth-visibility-campaigns/'}\n\t\t\telse if(goal==='launch'){title=budget==='scale'?'Times Square Billboard':'Press Release Distribution';desc='Turn your launch into a credible announcement that earns attention beyond your existing audience.';url=budget==='scale'?'https://branddad.social/product/nyc-times-square-billboard-video-ads/':'https://branddad.social/product/press-release-services/'}\n\t\t\telse if(goal==='consistency'||challenge==='time'){title='Social Media Management';desc='Get a repeatable content and engagement system without managing every task yourself.';url='https://branddad.social/product/social-media-management/'}\n\t\t\turl=bdsuPo(url);\n\t\t\tvar result=document.querySelector('.bdsu-quiz-result');result.innerHTML='<span>Your recommended starting point</span><h3>'+title+'</h3><p>'+desc+'</p><div class=\"bdsu-result-actions\"><a href=\"'+url+'\">View Recommended Service</a><a href=\"https://wa.me/18729105115?text=I%20completed%20the%20BrandDad%20quiz%20and%20want%20help%20with%20'+encodeURIComponent(title)+'\">Confirm on WhatsApp</a></div>';result.hidden=false;result.scrollIntoView({behavior:'smooth',block:'nearest'});\n\t\t});\n\t});\n\t</script>\n\t<?php\n}\nadd_action( 'wp_footer', 'bdsu_growth_advisor_assets', 90 );\n",
+      "has1113": true,
+      "stub": false
+    }
+  },
+  "put00": {
+    "ok": true,
+    "bytes": 110966,
+    "file": "/public_html/branddad.social/wp-content/mu-plugins/00-bds-unified-brand.php"
+  },
+  "home": {
+    "status": 200,
+    "fatal": false,
+    "homeHero": true,
+    "visPdp": true,
+    "getStarted": true,
+    "related": false,
+    "hubVer": "static-1.1.0",
+    "text": " BrandDad Social &#124; Growth Systems, PR, SEO &#038; WhatsApp Business Directory window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-S4W6BZ1TWG'); {\"@context\":\"https:\\/\\/schema.org\",\"@graph\":[{\"@type\":\"WebSite\",\"@id\":\"https:\\/\\/branddad.social#WebSite\",\"url\":\"https:\\/\\/bran"
+  },
+  "svc": {
+    "status": 200,
+    "fatal": false,
+    "homeHero": false,
+    "visPdp": true,
+    "getStarted": true,
+    "related": false,
+    "hubVer": "",
+    "text": " BrandDad Social Services – Growth Systems, Reputation Management, PR &#038; SEO window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-S4W6BZ1TWG'); {\"@context\":\"https:\\/\\/schema.org\",\"@graph\":[{\"@type\":\"WebSite\",\"@id\":\"https:\\/\\/branddad.social\\/services\\/#WebSite\",\"url\":\"http"
+  },
+  "check": {
+    "status": 200,
+    "fatal": false,
+    "homeHero": false,
+    "visPdp": true,
+    "getStarted": true,
+    "related": false,
+    "hubVer": "",
+    "text": " Check your website | BrandDad Social #bds-menu-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;border:1px solid #e2e8f0;background:#fff;color:#0372ff;cursor:pointer;z-index:100050;margin-left:8px;padding:0}#bds-menu-toggle span{display:block;width:18px;height:2px;background:currentColor;borde"
+  },
+  "lc": {
+    "status": 200,
+    "fatal": false,
+    "homeHero": false,
+    "visPdp": true,
+    "getStarted": true,
+    "related": false,
+    "hubVer": "",
+    "text": " Learning Center &#124; BrandDad Social window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-S4W6BZ1TWG'); {\"@context\":\"https:\\/\\/schema.org\",\"@graph\":[{\"@type\":\"WebSite\",\"@id\":\"https:\\/\\/branddad.social\\/learning-center\\/#WebSite\",\"url\":\"https:\\/\\/branddad.social\\/learning-ce"
+  },
+  "pdp": {
+    "status": 200,
+    "fatal": false,
+    "homeHero": false,
+    "visPdp": true,
+    "getStarted": true,
+    "related": true,
+    "hubVer": "",
+    "text": " LinkedIn Visibility Amplification System&#x2122; &#124; BrandDad Social window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-S4W6BZ1TWG'); {\"@context\":\"https:\\/\\/schema.org\",\"@graph\":[{\"@type\":\"Product\",\"@id\":\"https:\\/\\/branddad.social\\/product\\/linkedin-visibility-amplificat"
+  }
+}

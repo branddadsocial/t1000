@@ -1,0 +1,29 @@
+---
+description: Use Vexp MCP for BrandDad repo orientation
+alwaysApply: true
+---
+
+# Vexp context engine
+
+This workspace is indexed by **Vexp** (local graph, PHP-aware). Owner preference: use Vexp first for repo orientation on non-trivial work, especially before multi-file edits, deploys, or cleanup. Prefer MCP `run_pipeline` once per task before broad Grep/Glob sweeps. Call `verify_done` before declaring multi-file work complete. Do not write supplier names onto customer surfaces. Do not let Vexp setup replace the `.cursor/rules/` directory.
+
+## How to call (server `user-vexp`)
+
+1. `GetMcpTools` on `user-vexp` — if `serverStatus` is `error` / `needsAuth`, see fallbacks below (do **not** burn the task waiting on auth).
+2. Optional: `index_status` — expect `status: healthy`, `stale_files: 0`.
+3. Once per unfamiliar task: `run_pipeline` with required arg **`task`** (string). Optional: `preset` (`explore`|`modify`|`debug`|`refactor`|`auto`), `max_tokens`.
+4. Before multi-file “done”: `verify_done` with **no arguments**. Advice only — fix parse/import/dependent findings; it does not replace tests.
+
+Wrong: `{ "query": "…" }`. Right: `{ "task": "…" }`.
+
+## Failure fallbacks (do not stall)
+
+| Symptom | Likely cause | Agent action |
+| --- | --- | --- |
+| `serverStatus: error` / discovery failed | Stale `.cursor/mcp.json` path (extension version moved) | Fall back to Grep/Glob/Read; tell owner to run `vexp doctor` + fix MCP path (see `deploy/VEXP_CONNECT.md`) |
+| `needsAuth` / `mcp_auth` timeout | Cursor auth card stuck | Skip Vexp for this turn; continue with normal tools |
+| `missing field task` | Called `query` instead of `task` | Retry once with `task` |
+| `verify_done` → not a git repository | No usable git change set | Still finish the task; verify by reading/lints/tests instead |
+| Index stale after large MU drops | Daemon behind | Owner/agent shell: `cmd /c "vexp.cmd index"` from repo root (PowerShell may block `vexp.ps1`) |
+
+Never run `vexp setup` without `--personal` here — default setup rewrites `.cursor/rules/`. Keep BrandDad standing rules intact.

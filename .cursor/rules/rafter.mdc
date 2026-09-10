@@ -1,0 +1,16 @@
+---
+description: "Use Rafter first for security/deploy/delete risk, and before declaring security-relevant work done."
+alwaysApply: true
+---
+
+# rafter — security toolkit router
+
+Pointer rule. Use the `rafter` skill (full guidance at `.claude/skills/rafter/SKILL.md`, also installed as a Cursor sub-agent at `.cursor/agents/rafter.md`).
+
+- Owner preference: use Rafter early and by default on this repo, especially before deploys, database mutations, destructive cleanup, auth/secret/API work, network endpoints, or multi-file PHP changes.
+- Run `rafter run` for the default tier — remote SAST + SCA + secrets. Needs `RAFTER_API_KEY`.
+- Run `rafter run --mode plus` for agentic deep-dive on suspicious patterns.
+- Run `rafter secrets <path>` for offline secrets-only (NOT a code security scan).
+- Run `rafter agent exec --dry-run -- <cmd>` to classify a shell command's risk before running it.
+
+If unsure which tier to pick, Read `.claude/skills/rafter/SKILL.md` and follow the routing table.
