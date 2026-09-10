@@ -1584,12 +1584,12 @@ add_action( 'wp_ajax_nopriv_bds_edu_track', 'bds_edu_track_ajax' );
  * Privacy-conscious funnel counters (no emails, no IPs stored).
  */
 function bds_edu_track_ajax() {
+	if ( ! check_ajax_referer( 'bds_edu_track', 'nonce', false ) ) {
+		wp_send_json_error( array( 'e' => 'nonce' ), 403 );
+	}
 	$s = bds_edu_settings();
 	if ( empty( $s['analytics'] ) ) {
 		wp_send_json_success( array( 'ok' => 1, 'off' => 1 ) );
-	}
-	if ( ! check_ajax_referer( 'bds_edu_track', 'nonce', false ) ) {
-		wp_send_json_error( array( 'e' => 'nonce' ), 403 );
 	}
 	$event = sanitize_key( (string) ( $_POST['event'] ?? '' ) );
 	$allowed = array( 'edu_view', 'cta_click', 'quiz_complete', 'service_view', 'add_to_cart', 'purchase' );
