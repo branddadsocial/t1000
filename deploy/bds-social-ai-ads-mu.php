@@ -1481,7 +1481,7 @@ function bds_aam_register_routes() {
 		'/status',
 		array(
 			'methods'             => 'GET',
-			'permission_callback' => '__return_true',
+			'permission_callback' => 'bds_aam_rest_public_status_can',
 			'callback'            => 'bds_aam_rest_status',
 		)
 	);
@@ -1490,7 +1490,7 @@ function bds_aam_register_routes() {
 		'/oauth/start',
 		array(
 			'methods'             => 'GET',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_oauth_start',
 		)
 	);
@@ -1499,7 +1499,7 @@ function bds_aam_register_routes() {
 		'/oauth/callback',
 		array(
 			'methods'             => 'GET',
-			'permission_callback' => '__return_true',
+			'permission_callback' => 'bds_aam_rest_oauth_callback_can',
 			'callback'            => 'bds_aam_rest_oauth_callback',
 		)
 	);
@@ -1508,7 +1508,7 @@ function bds_aam_register_routes() {
 		'/disconnect',
 		array(
 			'methods'             => 'POST',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_disconnect',
 		)
 	);
@@ -1517,7 +1517,7 @@ function bds_aam_register_routes() {
 		'/assets',
 		array(
 			'methods'             => 'POST',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_assets',
 		)
 	);
@@ -1526,7 +1526,7 @@ function bds_aam_register_routes() {
 		'/select',
 		array(
 			'methods'             => 'POST',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_select',
 		)
 	);
@@ -1535,7 +1535,7 @@ function bds_aam_register_routes() {
 		'/draft',
 		array(
 			'methods'             => 'POST',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_draft',
 		)
 	);
@@ -1544,7 +1544,7 @@ function bds_aam_register_routes() {
 		'/push',
 		array(
 			'methods'             => 'POST',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_push',
 		)
 	);
@@ -1553,7 +1553,7 @@ function bds_aam_register_routes() {
 		'/campaign-status',
 		array(
 			'methods'             => 'POST',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_campaign_status',
 		)
 	);
@@ -1562,7 +1562,7 @@ function bds_aam_register_routes() {
 		'/dashboard',
 		array(
 			'methods'             => 'GET',
-			'permission_callback' => 'is_user_logged_in',
+			'permission_callback' => 'bds_aam_rest_customer_can',
 			'callback'            => 'bds_aam_rest_dashboard',
 		)
 	);
@@ -1580,6 +1580,35 @@ function bds_aam_register_routes() {
 			},
 		)
 	);
+}
+
+/**
+ * Public status exposes only feature availability and product URLs.
+ *
+ * @return bool
+ */
+function bds_aam_rest_public_status_can() {
+	return true;
+}
+
+/**
+ * Customer endpoints need a real WordPress capability check; subscribers keep read.
+ *
+ * @return bool
+ */
+function bds_aam_rest_customer_can() {
+	return current_user_can( 'read' );
+}
+
+/**
+ * OAuth providers redirect without a WP nonce, so gate callbacks on server-issued state.
+ *
+ * @param WP_REST_Request $req Request.
+ * @return bool
+ */
+function bds_aam_rest_oauth_callback_can( $req ) {
+	$state = (string) $req->get_param( 'state' );
+	return '' !== $state && is_array( get_transient( 'bds_aam_state_' . $state ) );
 }
 
 /**

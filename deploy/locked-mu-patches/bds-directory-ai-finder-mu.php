@@ -371,7 +371,7 @@ function bds_ai_finder_register_routes() {
 		array(
 			'methods'             => 'POST',
 			'callback'            => 'bds_ai_finder_rest_find',
-			'permission_callback' => '__return_true',
+			'permission_callback' => 'bds_ai_finder_rest_public_nonce_can',
 			'args'                => array(
 				'message'    => array(
 					'required'          => true,
@@ -412,7 +412,7 @@ function bds_ai_finder_register_routes() {
 		array(
 			'methods'             => 'GET',
 			'callback'            => 'bds_ai_finder_rest_geocode',
-			'permission_callback' => '__return_true',
+			'permission_callback' => 'bds_ai_finder_rest_public_read_can',
 			'args'                => array(
 				'lat' => array(
 					'required' => true,
@@ -431,7 +431,7 @@ function bds_ai_finder_register_routes() {
 		array(
 			'methods'             => 'GET',
 			'callback'            => 'bds_ai_finder_rest_local_pack',
-			'permission_callback' => '__return_true',
+			'permission_callback' => 'bds_ai_finder_rest_public_read_can',
 			'args'                => array(
 				'lat' => array( 'required' => false, 'type' => 'number' ),
 				'lng' => array( 'required' => false, 'type' => 'number' ),
@@ -444,7 +444,7 @@ function bds_ai_finder_register_routes() {
 		array(
 			'methods'             => 'GET',
 			'callback'            => 'bds_ai_finder_rest_status',
-			'permission_callback' => '__return_true',
+			'permission_callback' => 'bds_ai_finder_rest_public_read_can',
 		)
 	);
 	register_rest_route(
@@ -468,6 +468,29 @@ function bds_ai_finder_register_routes() {
 			),
 		)
 	);
+}
+
+/**
+ * Public read-only endpoints expose directory metadata/cards and no gated contacts.
+ *
+ * @return bool
+ */
+function bds_ai_finder_rest_public_read_can() {
+	return true;
+}
+
+/**
+ * Public AI search is available to the rendered site, but must carry the REST nonce.
+ *
+ * @param WP_REST_Request $request Request.
+ * @return bool
+ */
+function bds_ai_finder_rest_public_nonce_can( $request ) {
+	if ( current_user_can( 'read' ) ) {
+		return true;
+	}
+	$nonce = (string) $request->get_header( 'X-WP-Nonce' );
+	return '' !== $nonce && (bool) wp_verify_nonce( $nonce, 'wp_rest' );
 }
 
 /**

@@ -320,7 +320,7 @@ function bds_pmk_rest() {
 		'/ping',
 		array(
 			'methods'             => 'GET',
-			'permission_callback' => '__return_true',
+			'permission_callback' => 'bds_pmk_rest_ping_can',
 			'callback'            => static function () {
 				return array(
 					'ver'  => BDS_PRESS_MEDIA_KIT_VER,
@@ -332,3 +332,12 @@ function bds_pmk_rest() {
 	);
 }
 add_action( 'rest_api_init', 'bds_pmk_rest' );
+
+/**
+ * The ping endpoint is public and read-only; it exposes only version/site metadata.
+ *
+ * @return bool
+ */
+function bds_pmk_rest_ping_can() {
+	return true;
+}
