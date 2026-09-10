@@ -783,7 +783,7 @@ function bds_ai_finder_reverse_geocode( $lat, $lng ) {
 			$state = ! empty( $addr['state'] ) ? (string) $addr['state'] : '';
 			$state_code = ! empty( $addr['ISO3166-2-lvl4'] ) ? (string) $addr['ISO3166-2-lvl4'] : '';
 			// Prefer short US state (IL) when available.
-			if ( preg_match( '/^US-([A-Z]{2})$/', $state_code, $sm ) ) {
+			if ( 1 === preg_match( '/^US-([A-Z]{2})$/', $state_code, $sm ) ) {
 				$state = $sm[1];
 			} elseif ( 'Illinois' === $state ) {
 				$state = 'IL';
@@ -1115,8 +1115,8 @@ function bds_ai_finder_rest_find( $request ) {
 
 	// Inventory / "how many listings" - answer from live stats (no LLM, never hardcoded).
 	$msg_lc = strtolower( trim( (string) $message ) );
-	if ( preg_match( '/\b(how many|how big|total|count|number of)\b/i', $msg_lc )
-		&& preg_match( '/\b(listing|listings|business|businesses|director(?:y|ies)|inventory)\b/i', $msg_lc ) ) {
+	if ( 1 === preg_match( '/\b(how many|how big|total|count|number of)\b/i', $msg_lc )
+		&& 1 === preg_match( '/\b(listing|listings|business|businesses|director(?:y|ies)|inventory)\b/i', $msg_lc ) ) {
 		$reply = bds_ai_finder_template_reply( $message, array(), array(), $guest, $parsed, array(), array() );
 		return rest_ensure_response(
 			array(
@@ -1402,7 +1402,7 @@ function bds_ai_finder_resolve_postal( $postal ) {
 		return $map[ $postal ];
 	}
 	// Chicago IL 606xx / 607xx.
-	if ( preg_match( '/^606\d{2}$/', $postal ) || preg_match( '/^607\d{2}$/', $postal ) ) {
+	if ( 1 === preg_match( '/^606\d{2}$/', $postal ) || 1 === preg_match( '/^607\d{2}$/', $postal ) ) {
 		return array(
 			'city'    => 'chicago',
 			'lat'     => 41.8781,
@@ -1412,7 +1412,7 @@ function bds_ai_finder_resolve_postal( $postal ) {
 		);
 	}
 	// Playa / Riviera Maya 7771x.
-	if ( preg_match( '/^7771\d$/', $postal ) ) {
+	if ( 1 === preg_match( '/^7771\d$/', $postal ) ) {
 		return array(
 			'city'    => 'playa del carmen',
 			'lat'     => 20.6296,
@@ -1421,7 +1421,7 @@ function bds_ai_finder_resolve_postal( $postal ) {
 			'country' => 'MX',
 		);
 	}
-	if ( preg_match( '/^7772\d$/', $postal ) ) {
+	if ( 1 === preg_match( '/^7772\d$/', $postal ) ) {
 		return array(
 			'city'    => 'playa del carmen',
 			'lat'     => 20.7000,
@@ -1444,7 +1444,7 @@ function bds_ai_finder_extract_postal( $message ) {
 		return '';
 	}
 	// Prefer ZIP+4 then plain 5-digit; skip years like 2020-2039 when alone as filler is rare in our queries.
-	if ( preg_match( '/\b(\d{5})(?:-\d{4})?\b/', $message, $m ) ) {
+	if ( 1 === preg_match( '/\b(\d{5})(?:-\d{4})?\b/', $message, $m ) ) {
 		$code = $m[1];
 		// Ignore obvious non-postal years mid-sentence if unmapped and looks like a year.
 		if ( (int) $code >= 1900 && (int) $code <= 2099 && ! bds_ai_finder_resolve_postal( $code ) ) {
@@ -1559,7 +1559,7 @@ function bds_ai_finder_merge_history_context( $context, $history, $message ) {
 	if ( ! is_array( $context ) ) {
 		$context = array();
 	}
-	$fu = (bool) preg_match( '/\b(cheaper|cheapest|closer|nearest|similar|more like|only open|open now|under\s*\$?\d+)\b/i', $message );
+	$fu = 1 === preg_match( '/\b(cheaper|cheapest|closer|nearest|similar|more like|only open|open now|under\s*\$?\d+)\b/i', $message );
 	if ( function_exists( 'bds_ai_univ_is_constraint_followup' ) ) {
 		$fu = $fu || bds_ai_univ_is_constraint_followup( $message );
 	}
@@ -1583,7 +1583,7 @@ function bds_ai_finder_merge_history_context( $context, $history, $message ) {
 		if ( $c === '' ) {
 			continue;
 		}
-		$short_fu = (bool) preg_match( '/\b(cheaper|cheapest|closer|nearest|similar|more like|only open|open now)\b/i', $c );
+		$short_fu = 1 === preg_match( '/\b(cheaper|cheapest|closer|nearest|similar|more like|only open|open now)\b/i', $c );
 		if ( function_exists( 'bds_ai_univ_is_constraint_followup' ) ) {
 			$short_fu = $short_fu || bds_ai_univ_is_constraint_followup( $c );
 		}
@@ -1620,21 +1620,21 @@ function bds_ai_finder_parse_intent( $message, $geo = null, $context = array(), 
 	$geo_in  = bds_ai_finder_normalize_geo( $geo );
 	$postal   = bds_ai_finder_extract_postal( $message );
 	$postal_info = $postal !== '' ? bds_ai_finder_resolve_postal( $postal ) : null;
-	$near_me = (bool) preg_match( '/\bnear\s+me\b|\bnearby\b|\baround\s+me\b|\bclose\s+to\s+me\b/i', $message );
-	$wants_near = $near_me || (bool) preg_match( '/\bnear\b|\bnearby\b|\bwithin\b|\baround\b/i', $message );
+	$near_me = 1 === preg_match( '/\bnear\s+me\b|\bnearby\b|\baround\s+me\b|\bclose\s+to\s+me\b/i', $message );
+	$wants_near = $near_me || 1 === preg_match( '/\bnear\b|\bnearby\b|\bwithin\b|\baround\b/i', $message );
 	$follow_up  = '';
-	if ( preg_match( '/\bcloser\b|\bnearest\b|\bmore close|\btighter\b|\bwalkable\b/i', $message ) ) {
+	if ( 1 === preg_match( '/\bcloser\b|\bnearest\b|\bmore close|\btighter\b|\bwalkable\b/i', $message ) ) {
 		$follow_up = 'closer';
 		$wants_near = true;
-	} elseif ( preg_match( '/\bmore like (that|those|this)\b|\bsimilar\b|\bmore of (those|that|them)\b/i', $message ) ) {
+	} elseif ( 1 === preg_match( '/\bmore like (that|those|this)\b|\bsimilar\b|\bmore of (those|that|them)\b/i', $message ) ) {
 		$follow_up = 'more_like';
-	} elseif ( preg_match( '/\bcheaper\b|\bcheapest\b|\bless expensive\b|\bbudget\b|\baffordable\b/i', $message ) ) {
+	} elseif ( 1 === preg_match( '/\bcheaper\b|\bcheapest\b|\bless expensive\b|\bbudget\b|\baffordable\b/i', $message ) ) {
 		$follow_up = 'cheaper';
 	} elseif ( function_exists( 'bds_ai_univ_is_constraint_followup' ) && bds_ai_univ_is_constraint_followup( $message ) ) {
 		$follow_up = 'constrain';
 	} elseif ( is_array( $context ) && ( ! empty( $context['category'] ) || ! empty( $context['location'] ) || ! empty( $context['dish_tokens'] ) )
 		&& str_word_count( trim( (string) $message ) ) <= 8
-		&& preg_match( '/^(with|without|actually|instead|only|just|and|under)\b/i', trim( (string) $message ) ) ) {
+		&& 1 === preg_match( '/^(with|without|actually|instead|only|just|and|under)\b/i', trim( (string) $message ) ) ) {
 		$follow_up = 'constrain';
 	}
 	if ( ! is_array( $context ) ) {
@@ -1660,7 +1660,7 @@ function bds_ai_finder_parse_intent( $message, $geo = null, $context = array(), 
 			}
 		}
 	}
-	$quality_intent = (bool) preg_match( '/\b(good|best|great|top|recommend(?:ed)?|highly\s+rated|must[\s-]?try|favorite|favourite)\b/i', $message );
+	$quality_intent = 1 === preg_match( '/\b(good|best|great|top|recommend(?:ed)?|highly\s+rated|must[\s-]?try|favorite|favourite)\b/i', $message );
 
 	$location = '';
 	// Longest location needle first (playa del carmen before playa).
@@ -1676,7 +1676,7 @@ function bds_ai_finder_parse_intent( $message, $geo = null, $context = array(), 
 		if ( $n === '' ) {
 			continue;
 		}
-		if ( preg_match( '/\b' . preg_quote( $n, '/' ) . '\b/u', $m ) ) {
+		if ( 1 === preg_match( '/\b' . preg_quote( $n, '/' ) . '\b/u', $m ) ) {
 			$location = (string) $location_hints[ $needle ];
 			break;
 		}
@@ -1700,7 +1700,7 @@ function bds_ai_finder_parse_intent( $message, $geo = null, $context = array(), 
 			continue;
 		}
 		// Word-boundary so "eat" does not match "great" / "meat".
-		if ( preg_match( '/\b' . preg_quote( $n, '/' ) . '\b/u', $m ) ) {
+		if ( 1 === preg_match( '/\b' . preg_quote( $n, '/' ) . '\b/u', $m ) ) {
 			$category = (string) $category_hints[ $needle ];
 			break;
 		}
@@ -1744,7 +1744,7 @@ function bds_ai_finder_parse_intent( $message, $geo = null, $context = array(), 
 		$word_count = count( preg_split( '/\s+/', trim( $m ) ) );
 		if ( bds_ai_finder_is_negative_reply( $m )
 			|| $word_count <= 8
-			|| preg_match( '/\b(clothes|clothing|shoes|beauty|skincare|home|decor|food|wine|dining|coffee|outdoor|outdoors|kids|pets|fitness|golf|jewelry|games|wellness|budget|under|face value)\b/', $m ) ) {
+			|| 1 === preg_match( '/\b(clothes|clothing|shoes|beauty|skincare|home|decor|food|wine|dining|coffee|outdoor|outdoors|kids|pets|fitness|golf|jewelry|games|wellness|budget|under|face value)\b/', $m ) ) {
 			$is_gift = true;
 		}
 	}
@@ -1921,7 +1921,7 @@ function bds_ai_finder_parse_intent( $message, $geo = null, $context = array(), 
 		if ( $b === '' || in_array( $b, $stop, true ) ) {
 			continue;
 		}
-		if ( preg_match( '/^\d{5}(?:-\d{4})?$/', $b ) ) {
+		if ( 1 === preg_match( '/^\d{5}(?:-\d{4})?$/', $b ) ) {
 			continue;
 		}
 		if ( strlen( $b ) < 2 ) {
@@ -2011,26 +2011,26 @@ function bds_ai_finder_is_gift_intent( $message ) {
 	if ( $m === '' ) {
 		return false;
 	}
-	if ( preg_match( '/\bsave\s+money\s+cards?\b/', $m ) ) {
+	if ( 1 === preg_match( '/\bsave\s+money\s+cards?\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\bgift\s*cards?\b/', $m ) ) {
+	if ( 1 === preg_match( '/\bgift\s*cards?\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\bdiscount(?:ed)?\s+gift\b/', $m ) ) {
+	if ( 1 === preg_match( '/\bdiscount(?:ed)?\s+gift\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(buy|purchase|get|shop|find)\b.{0,40}\bgift\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(buy|purchase|get|shop|find)\b.{0,40}\bgift\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\be-?gift\b/', $m ) ) {
+	if ( 1 === preg_match( '/\be-?gift\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(gift|present)\s+(for|idea|ideas)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(gift|present)\s+(for|idea|ideas)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(birthday|anniversary|christmas|holiday|graduation|wedding|baby shower|mother\'?s day|father\'?s day|valentine)\b/', $m )
-		&& preg_match( '/\b(gift|present|card|buy|shop|get|gifting)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(birthday|anniversary|christmas|holiday|graduation|wedding|baby shower|mother\'?s day|father\'?s day|valentine)\b/', $m )
+		&& 1 === preg_match( '/\b(gift|present|card|buy|shop|get|gifting)\b/', $m ) ) {
 		return true;
 	}
 	// Brand shopping: "looking for Amazon", "do you have Starbucks", "Nike card".
@@ -2141,7 +2141,7 @@ function bds_ai_finder_detect_brand( $message ) {
 	if ( $m === '' ) {
 		return null;
 	}
-	$shop_ctx = (bool) preg_match(
+	$shop_ctx = 1 === preg_match(
 		'/\b(look(?:ing)?|need|want|buy|purchase|shop|shopping|get|find|have|carry|got|any|do you|gift|card|cards|credit|voucher)\b/',
 		$m
 	);
@@ -2149,7 +2149,7 @@ function bds_ai_finder_detect_brand( $message ) {
 	$uses = array();
 	foreach ( bds_ai_finder_brand_usecase_map() as $needle => $cases ) {
 		$q = preg_quote( (string) $needle, '/' );
-		if ( preg_match( '/(?:^|[^a-z0-9])' . $q . '(?:[^a-z0-9]|$)/', $m ) ) {
+		if ( 1 === preg_match( '/(?:^|[^a-z0-9])' . $q . '(?:[^a-z0-9]|$)/', $m ) ) {
 			$hit  = (string) $needle;
 			$uses = (array) $cases;
 			break;
@@ -2157,7 +2157,7 @@ function bds_ai_finder_detect_brand( $message ) {
 	}
 	if ( $hit === '' ) {
 		// Unknown brand named next to a card/gift word: "XYZ gift card".
-		if ( preg_match( '/\b([a-z][a-z0-9.\'&-]{2,24})\s+(?:e-?)?gift\s*cards?\b/', $m, $mm ) ) {
+		if ( 1 === preg_match( '/\b([a-z][a-z0-9.\'&-]{2,24})\s+(?:e-?)?gift\s*cards?\b/', $m, $mm ) ) {
 			$candidate = trim( (string) $mm[1] );
 			// Qualifiers are not brands: "best gift card", "cheap gift cards".
 			$generic = array(
@@ -2213,7 +2213,7 @@ function bds_ai_finder_classify_usecase( $blob ) {
 			// Short tokens must match as words. Substring matching turned "ski"
 			// into a hit on "skinpharm" and "pet" into a hit on "carpet".
 			if ( strlen( $n ) < 6 ) {
-				if ( preg_match( '/(?:^|[^a-z0-9])' . preg_quote( $n, '/' ) . '(?:[^a-z0-9]|$)/', $blob ) ) {
+				if ( 1 === preg_match( '/(?:^|[^a-z0-9])' . preg_quote( $n, '/' ) . '(?:[^a-z0-9]|$)/', $blob ) ) {
 					$out[] = $slug;
 					break;
 				}
@@ -2275,7 +2275,7 @@ function bds_ai_finder_gift_index() {
 		}
 		$price = (float) get_post_meta( $p->ID, '_price', true );
 		$face  = 0.0;
-		if ( preg_match( '/\$\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/', $title, $mm ) ) {
+		if ( 1 === preg_match( '/\$\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/', $title, $mm ) ) {
 			$face = (float) str_replace( ',', '', $mm[1] );
 		}
 		$brand = trim( (string) preg_replace( '/\s*\$[0-9].*$/', '', $title ) );
@@ -2348,9 +2348,9 @@ function bds_ai_finder_query_gift_products( &$parsed, $message, $limit = 6 ) {
 
 	// Budget hint: "$50 card", "under 100".
 	$budget = 0.0;
-	if ( preg_match( '/\$\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/', $m, $bm ) ) {
+	if ( 1 === preg_match( '/\$\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/', $m, $bm ) ) {
 		$budget = (float) str_replace( ',', '', $bm[1] );
-	} elseif ( preg_match( '/\bunder\s+([0-9]{2,4})\b/', $m, $bm ) ) {
+	} elseif ( 1 === preg_match( '/\bunder\s+([0-9]{2,4})\b/', $m, $bm ) ) {
 		$budget = (float) $bm[1];
 	}
 	$parsed['gift_budget'] = $budget;
@@ -2400,7 +2400,7 @@ function bds_ai_finder_query_gift_products( &$parsed, $message, $limit = 6 ) {
 	// The exception is an explicit "show me what you have" - then lead with the
 	// deepest live discounts.
 	if ( ! $cases ) {
-		if ( ! preg_match( '/\b(browse|show me|see all|what do you have|best deals?|biggest discounts?|cheapest|list them|everything)\b/', $m ) ) {
+		if ( 1 !== preg_match( '/\b(browse|show me|see all|what do you have|best deals?|biggest discounts?|cheapest|list them|everything)\b/', $m ) ) {
 			return array();
 		}
 		$best = $index;
@@ -2536,7 +2536,7 @@ function bds_ai_finder_wanted_usecases( $m, $brand, $parsed ) {
 			'friend'      => array( 'food', 'apparel' ),
 		);
 		foreach ( $who as $needle => $buckets ) {
-			if ( preg_match( '/\b' . preg_quote( $needle, '/' ) . '\b/', $m ) ) {
+			if ( 1 === preg_match( '/\b' . preg_quote( $needle, '/' ) . '\b/', $m ) ) {
 				$cases = $buckets;
 				break;
 			}
@@ -2556,13 +2556,13 @@ function bds_ai_finder_is_negative_reply( $message ) {
 	if ( $m === '' ) {
 		return false;
 	}
-	if ( preg_match( '/^(no|nope|nah|neither|none|no thanks|not really|nothing)\b/', $m ) ) {
+	if ( 1 === preg_match( '/^(no|nope|nah|neither|none|no thanks|not really|nothing)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(do ?n\'?t|dont|do not)\s+(want|like|need)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(do ?n\'?t|dont|do not)\s+(want|like|need)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(not (?:what|it|quite|the one)|something else|anything else|other options|different|else\?)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(not (?:what|it|quite|the one)|something else|anything else|other options|different|else\?)\b/', $m ) ) {
 		return true;
 	}
 	return false;
@@ -2619,7 +2619,7 @@ function bds_ai_finder_need_profile( $message, $parsed, $context = array() ) {
 	);
 	// "I need more local customers" / "get more clients" - phrased too many ways
 	// for a flat needle list, so match the shape of the sentence.
-	if ( preg_match( '/\b(more|new|get|find|attract|need)\b[^.?!]{0,24}\b(customers?|clients?|patients?|bookings?|leads?)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(more|new|get|find|attract|need)\b[^.?!]{0,24}\b(customers?|clients?|patients?|bookings?|leads?)\b/', $m ) ) {
 		$domains['local_seo'][] = '__owner_growth';
 		$m .= ' __owner_growth __owner_growth';
 	}
@@ -2642,7 +2642,7 @@ function bds_ai_finder_need_profile( $message, $parsed, $context = array() ) {
 		$need['domain']     = $best;
 		$need['confidence'] = min( 0.9, 0.35 + ( $score * 0.12 ) );
 		if ( in_array( $best, array( 'web_speed', 'web_broken', 'web_build', 'local_seo', 'reviews', 'social', 'health' ), true )
-			&& ! preg_match( '/\.(com|net|org|co|io|social|shop|store|mx|us)\b/', $m ) ) {
+			&& 1 !== preg_match( '/\.(com|net|org|co|io|social|shop|store|mx|us)\b/', $m ) ) {
 			$need['missing'][] = 'site_url';
 		}
 		if ( in_array( $best, array( 'local_seo', 'reviews' ), true ) && empty( $parsed['location'] ) ) {
@@ -3121,38 +3121,38 @@ function bds_ai_finder_is_travel_intent( $message ) {
 		return false;
 	}
 	// Local food / retail / wellness without travel words stay Directory businesses.
-	$local_biz = (bool) preg_match( '/\b(restaurant|restaurants|mexican|italian|american|brazilian|coffee|cafe|café|dining|supermarket|grocery|walmart|spa|massage|muay|gym|nightlife|night\s*club|tattoo|salon)\b/u', $m );
-	$travel_kw = (bool) preg_match( '/\b(flights?|airfare|airfares|airlines?|hotels?|resorts?|vacation|vacations|getaway|getaways|round[\s-]?trips?|book\s+travel|travel\s+deals?|trip\s+deals?)\b/', $m );
+	$local_biz = 1 === preg_match( '/\b(restaurant|restaurants|mexican|italian|american|brazilian|coffee|cafe|café|dining|supermarket|grocery|walmart|spa|massage|muay|gym|nightlife|night\s*club|tattoo|salon)\b/u', $m );
+	$travel_kw = 1 === preg_match( '/\b(flights?|airfare|airfares|airlines?|hotels?|resorts?|vacation|vacations|getaway|getaways|round[\s-]?trips?|book\s+travel|travel\s+deals?|trip\s+deals?)\b/', $m );
 	if ( $local_biz && ! $travel_kw ) {
 		return false;
 	}
-	if ( preg_match( '/\b(flights?|airfare|airfares|airlines?|round[\s-]?trips?|one[\s-]?ways?)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(flights?|airfare|airfares|airlines?|round[\s-]?trips?|one[\s-]?ways?)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(fly|flying)\b.{0,48}\b(to|from|into)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(fly|flying)\b.{0,48}\b(to|from|into)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(cheap|book|find|search|compare|best)\b.{0,32}\b(flights?|hotels?|travel|vacations?|resorts?)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(cheap|book|find|search|compare|best)\b.{0,32}\b(flights?|hotels?|travel|vacations?|resorts?)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(hotels?|resorts?|stays?|lodging|accommodation)\b.{0,48}\b(in|near|at|to)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(hotels?|resorts?|stays?|lodging|accommodation)\b.{0,48}\b(in|near|at|to)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(vacation|vacations|getaway|getaways|travel\s+deals?|book\s+travel)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(vacation|vacations|getaway|getaways|travel\s+deals?|book\s+travel)\b/', $m ) ) {
 		return true;
 	}
 	// Bare "trip/trips" alone is too broad (day trips) - require route or booking context.
-	if ( preg_match( '/\b(trip|trips)\b.{0,32}\b(to|from|into)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(trip|trips)\b.{0,32}\b(to|from|into)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(trip|trips)\b/', $m ) && preg_match( '/\b(flight|flights|hotel|hotels|vacation|airfare|airline|fly|book)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(trip|trips)\b/', $m ) && 1 === preg_match( '/\b(flight|flights|hotel|hotels|vacation|airfare|airline|fly|book)\b/', $m ) ) {
 		return true;
 	}
-	if ( preg_match( '/\b(hotels?|resorts?|airfare|flights?)\b/', $m ) && ! $local_biz ) {
+	if ( 1 === preg_match( '/\b(hotels?|resorts?|airfare|flights?)\b/', $m ) && ! $local_biz ) {
 		return true;
 	}
 	// Generic "travel" without local-activity words -> deals.
-	if ( preg_match( '/\btravel\b/', $m ) && ! $local_biz ) {
+	if ( 1 === preg_match( '/\btravel\b/', $m ) && ! $local_biz ) {
 		return true;
 	}
 	return false;
@@ -3170,10 +3170,10 @@ function bds_ai_finder_is_local_activity_intent( $message ) {
 		return false;
 	}
 	// Explicit flight/hotel booking wins over "adventure travel" style phrasing.
-	if ( preg_match( '/\b(flights?|airfare|airlines?|hotels?|resorts?|book\s+travel|travel\s+deals?)\b/', $m ) ) {
+	if ( 1 === preg_match( '/\b(flights?|airfare|airlines?|hotels?|resorts?|book\s+travel|travel\s+deals?)\b/', $m ) ) {
 		return false;
 	}
-	return (bool) preg_match(
+	return 1 === preg_match(
 		'/\b(tours?|tour\s*operators?|excursion|excursions|day\s*trips?|cenotes?|ruins?|atvs?|jeep\s*tours?|snorkel(?:ing)?|scuba|diving|dive\s*shops?|boat\s*tours?|catamaran|parasail|activities|activity|adventure\s*tours?)\b/u',
 		$m
 	);
@@ -3187,8 +3187,8 @@ function bds_ai_finder_is_local_activity_intent( $message ) {
  */
 function bds_ai_finder_travel_kind( $message ) {
 	$m      = strtolower( (string) $message );
-	$hotel  = (bool) preg_match( '/\b(hotels?|resorts?|stays?|lodging|accommodation|vacation\s*rentals?|airbnb|boutique\s*hotel|hostels?|where\s+to\s+stay|place\s+to\s+stay)\b/', $m );
-	$flight = (bool) preg_match( '/\b(flights?|airfare|airfares|airlines?|fly|flying|round[\s-]?trips?|one[\s-]?ways?|plane|airport)\b/', $m );
+	$hotel  = 1 === preg_match( '/\b(hotels?|resorts?|stays?|lodging|accommodation|vacation\s*rentals?|airbnb|boutique\s*hotel|hostels?|where\s+to\s+stay|place\s+to\s+stay)\b/', $m );
+	$flight = 1 === preg_match( '/\b(flights?|airfare|airfares|airlines?|fly|flying|round[\s-]?trips?|one[\s-]?ways?|plane|airport)\b/', $m );
 	if ( $hotel && ! $flight ) {
 		return 'hotel';
 	}
@@ -3252,15 +3252,15 @@ function bds_ai_finder_travel_route_hints( $message, $location_hints ) {
 	$m      = strtolower( (string) $message );
 	$origin = '';
 	$dest   = '';
-	if ( preg_match( '/\bfrom\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+to\b|\s+into\b|[?.,!]|$)/u', $m, $mm ) ) {
+	if ( 1 === preg_match( '/\bfrom\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+to\b|\s+into\b|[?.,!]|$)/u', $m, $mm ) ) {
 		$origin = trim( (string) $mm[1] );
 	}
-	if ( preg_match( '/\b(?:flights?|fly|flying|trip|trips|vacation|hotels?|resorts?|travel)\b.{0,20}\b(?:to|into)\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+from\b|[?.,!]|$)/u', $m, $mm ) ) {
+	if ( 1 === preg_match( '/\b(?:flights?|fly|flying|trip|trips|vacation|hotels?|resorts?|travel)\b.{0,20}\b(?:to|into)\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+from\b|[?.,!]|$)/u', $m, $mm ) ) {
 		$dest = trim( (string) $mm[1] );
-	} elseif ( preg_match( '/\b(?:to|into)\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+from\b|[?.,!]|$)/u', $m, $mm ) ) {
+	} elseif ( 1 === preg_match( '/\b(?:to|into)\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+from\b|[?.,!]|$)/u', $m, $mm ) ) {
 		$dest = trim( (string) $mm[1] );
 	}
-	if ( $dest === '' && preg_match( '/\b(?:hotels?|resorts?|stays?)\b.{0,12}\b(?:in|near|at)\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+from\b|[?.,!]|$)/u', $m, $mm ) ) {
+	if ( $dest === '' && 1 === preg_match( '/\b(?:hotels?|resorts?|stays?)\b.{0,12}\b(?:in|near|at)\s+([a-z0-9à-ú\s\.\-]{2,40}?)(?:\s+from\b|[?.,!]|$)/u', $m, $mm ) ) {
 		$dest = trim( (string) $mm[1] );
 	}
 	$canon = static function ( $raw ) use ( $location_hints ) {
@@ -3809,38 +3809,38 @@ function bds_ai_finder_intent_vertical( $category, $message = '' ) {
 		return 'travel';
 	}
 	if ( in_array( $c, array( 'branding', 'web', 'hosting', 'seo' ), true )
-		|| preg_match( '/\b(logo|branding|website|hosting|seo|digital marketing)\b/', $m ) ) {
+		|| 1 === preg_match( '/\b(logo|branding|website|hosting|seo|digital marketing)\b/', $m ) ) {
 		return 'digital';
 	}
-	if ( preg_match( '/car-rental|car rental|rent a car|scooter|taxi|uber|transfer/', $blob ) ) {
+	if ( 1 === preg_match( '/car-rental|car rental|rent a car|scooter|taxi|uber|transfer/', $blob ) ) {
 		return 'auto';
 	}
-	if ( preg_match( '/vet|veterinary|pet clinic/', $blob ) ) {
+	if ( 1 === preg_match( '/vet|veterinary|pet clinic/', $blob ) ) {
 		return 'pets';
 	}
 	// Beauty before generic health so tattoo/salon don't share food leakage paths.
-	if ( preg_match( '/photograph|photo studio|lawyer|attorney|plumb|notary|accountant/', $blob ) ) {
+	if ( 1 === preg_match( '/photograph|photo studio|lawyer|attorney|plumb|notary|accountant/', $blob ) ) {
 		return 'service';
 	}
-	if ( preg_match( '/tattoo|piercing|beauty|salon|nail|haircut|barber|manicure|pedicure/', $blob ) ) {
+	if ( 1 === preg_match( '/tattoo|piercing|beauty|salon|nail|haircut|barber|manicure|pedicure/', $blob ) ) {
 		return 'beauty';
 	}
-	if ( preg_match( '/restaurant|mexican|italian|american|brazilian|coffee|cafe|bakery|bakeries|food|dining|\beat\b|pizza|pizzeria|sushi|taco|burger|seafood|steak|vegan|vegetarian|brunch|ramen|\bpho\b|pasta|ceviche|\bhungry\b/', $blob ) ) {
+	if ( 1 === preg_match( '/restaurant|mexican|italian|american|brazilian|coffee|cafe|bakery|bakeries|food|dining|\beat\b|pizza|pizzeria|sushi|taco|burger|seafood|steak|vegan|vegetarian|brunch|ramen|\bpho\b|pasta|ceviche|\bhungry\b/', $blob ) ) {
 		return 'food';
 	}
-	if ( preg_match( '/\bbar\b|bars|club|nightlife|brewery|pub|cocktail|happy hour/', $blob ) ) {
+	if ( 1 === preg_match( '/\bbar\b|bars|club|nightlife|brewery|pub|cocktail|happy hour/', $blob ) ) {
 		return 'nightlife';
 	}
-	if ( preg_match( '/hotel|stay|resort|hostel|lodging|airbnb|accommodation/', $blob ) ) {
+	if ( 1 === preg_match( '/hotel|stay|resort|hostel|lodging|airbnb|accommodation/', $blob ) ) {
 		return 'stay';
 	}
-	if ( preg_match( '/spa|massage|medical|clinic|gym|muay|fitness|yoga|dentist|dental|pharmacy|hospital|wellness/', $blob ) ) {
+	if ( 1 === preg_match( '/spa|massage|medical|clinic|gym|muay|fitness|yoga|dentist|dental|pharmacy|hospital|wellness/', $blob ) ) {
 		return 'health';
 	}
-	if ( preg_match( '/supermarket|grocery|retail|shopping|walmart|mall|souvenir/', $blob ) ) {
+	if ( 1 === preg_match( '/supermarket|grocery|retail|shopping|walmart|mall|souvenir/', $blob ) ) {
 		return 'retail';
 	}
-	if ( preg_match( '/tour|excursion|dive|scuba|snorkel|cenote|atv|catamaran|adventure|activity|activities|ruins/', $blob ) ) {
+	if ( 1 === preg_match( '/tour|excursion|dive|scuba|snorkel|cenote|atv|catamaran|adventure|activity|activities|ruins/', $blob ) ) {
 		return 'tours';
 	}
 	return 'other';
@@ -4021,40 +4021,40 @@ function bds_ai_finder_related_category_ids( $term ) {
  */
 function bds_ai_finder_listing_vertical( $cat_names, $cat_slugs = array() ) {
 	$blob = strtolower( implode( ' ', array_merge( (array) $cat_names, (array) $cat_slugs ) ) );
-	if ( preg_match( '/gift-card|gift card/', $blob ) ) {
+	if ( 1 === preg_match( '/gift-card|gift card/', $blob ) ) {
 		return 'gift';
 	}
-	if ( preg_match( '/car-rental|car rental|automotive|taxi|scooter/', $blob ) ) {
+	if ( 1 === preg_match( '/car-rental|car rental|automotive|taxi|scooter/', $blob ) ) {
 		return 'auto';
 	}
-	if ( preg_match( '/veterinar|pet clinic|\bvet\b/', $blob ) ) {
+	if ( 1 === preg_match( '/veterinar|pet clinic|\bvet\b/', $blob ) ) {
 		return 'pets';
 	}
-	if ( preg_match( '/supermarket|grocery|retail|shopping|convenience|department|souvenir/', $blob ) ) {
+	if ( 1 === preg_match( '/supermarket|grocery|retail|shopping|convenience|department|souvenir/', $blob ) ) {
 		return 'retail';
 	}
-	if ( preg_match( '/tattoo|piercing|beauty|salon|nail|barber|hair/', $blob ) ) {
+	if ( 1 === preg_match( '/tattoo|piercing|beauty|salon|nail|barber|hair/', $blob ) ) {
 		return 'beauty';
 	}
-	if ( preg_match( '/restaurant|mexican|italian|american|brazilian|coffee|cafe|food|dining|bakery|bakeries|chocolate|pizza|sushi|taco|burger|seafood|steak|vegan|beverage/', $blob ) ) {
+	if ( 1 === preg_match( '/restaurant|mexican|italian|american|brazilian|coffee|cafe|food|dining|bakery|bakeries|chocolate|pizza|sushi|taco|burger|seafood|steak|vegan|beverage/', $blob ) ) {
 		return 'food';
 	}
-	if ( preg_match( '/bar|club|nightlife|pub|brewery/', $blob ) ) {
+	if ( 1 === preg_match( '/bar|club|nightlife|pub|brewery/', $blob ) ) {
 		return 'nightlife';
 	}
-	if ( preg_match( '/hotel|resort|stay|hostel|lodging/', $blob ) ) {
+	if ( 1 === preg_match( '/hotel|resort|stay|hostel|lodging/', $blob ) ) {
 		return 'stay';
 	}
-	if ( preg_match( '/spa|massage|medical|clinic|gym|muay|fitness|health|yoga|wellness|dental|pharmacy/', $blob ) ) {
+	if ( 1 === preg_match( '/spa|massage|medical|clinic|gym|muay|fitness|health|yoga|wellness|dental|pharmacy/', $blob ) ) {
 		return 'health';
 	}
-	if ( preg_match( '/tour|atv|excursion|dive|scuba|snorkel|cenote|operator|adventure/', $blob ) ) {
+	if ( 1 === preg_match( '/tour|atv|excursion|dive|scuba|snorkel|cenote|operator|adventure/', $blob ) ) {
 		return 'tours';
 	}
-	if ( preg_match( '/digital|design|seo|hosting|marketing|branding|web-design|graphic/', $blob ) ) {
+	if ( 1 === preg_match( '/digital|design|seo|hosting|marketing|branding|web-design|graphic/', $blob ) ) {
 		return 'digital';
 	}
-	if ( preg_match( '/photo|photograph|lawyer|attorney|plumb|notary|accountant/', $blob ) ) {
+	if ( 1 === preg_match( '/photo|photograph|lawyer|attorney|plumb|notary|accountant/', $blob ) ) {
 		return 'service';
 	}
 	return 'other';
@@ -4504,7 +4504,7 @@ function bds_ai_finder_query_travel_deals( &$parsed, $limit = 8 ) {
 		if ( $deal_kind !== 'hotel' && $deal_kind !== 'flight' ) {
 			// Infer from title when meta missing.
 			$title_probe = strtolower( bds_text_plain( get_the_title( $id ) ) );
-			if ( preg_match( '/\bhotel|\bresort|\bstay|\bnight\b/', $title_probe ) ) {
+			if ( 1 === preg_match( '/\bhotel|\bresort|\bstay|\bnight\b/', $title_probe ) ) {
 				$deal_kind = 'hotel';
 			} else {
 				$deal_kind = 'flight';
@@ -5620,7 +5620,7 @@ function bds_ai_finder_match_services( $message, $parsed ) {
 			$out,
 			static function ( $svc ) {
 				$blob = strtolower( (string) ( $svc['id'] ?? '' ) . ' ' . (string) ( $svc['url'] ?? '' ) . ' ' . (string) ( $svc['label'] ?? '' ) );
-				return ! preg_match( '/outreach|linkedin-outreach/', $blob );
+				return 1 !== preg_match( '/outreach|linkedin-outreach/', $blob );
 			}
 		)
 	);
@@ -5655,8 +5655,8 @@ function bds_ai_finder_template_reply( $message, $listings, $services, $guest, $
 		return implode( ' ', $qs );
 	}
 	// Live inventory questions - never hardcode.
-	if ( preg_match( '/\b(how many|how big|total|count|number of)\b/i', $msg_lc )
-		&& preg_match( '/\b(listing|listings|business|businesses|director(?:y|ies)|inventory)\b/i', $msg_lc ) ) {
+	if ( 1 === preg_match( '/\b(how many|how big|total|count|number of)\b/i', $msg_lc )
+		&& 1 === preg_match( '/\b(listing|listings|business|businesses|director(?:y|ies)|inventory)\b/i', $msg_lc ) ) {
 		$stats = bds_ai_finder_directory_stats();
 		$n     = (int) $stats['published_listings'];
 		$bits  = array(
@@ -5677,7 +5677,7 @@ function bds_ai_finder_template_reply( $message, $listings, $services, $guest, $
 			if ( ! empty( $gate['escalate'] ) && ! empty( $gate['reply'] ) ) {
 				return (string) $gate['reply'];
 			}
-		} elseif ( preg_match( '/\b(code|pin|cvv|when will|how long|deliver|eta|tracking|refund|still waiting|where.*(from|source)|supplier|wholesale)\b/i', $msg_lc ) ) {
+		} elseif ( 1 === preg_match( '/\b(code|pin|cvv|when will|how long|deliver|eta|tracking|refund|still waiting|where.*(from|source)|supplier|wholesale)\b/i', $msg_lc ) ) {
 			return 'I don’t have enough verified details to answer that accurately. I’ve flagged this for a human on our team — they’ll follow up. I won’t guess about codes, stock, delivery times, or pricing.';
 		}
 		$brand = isset( $parsed['gift_brand'] ) ? (string) $parsed['gift_brand'] : '';
@@ -5967,7 +5967,7 @@ function bds_ai_finder_openai_reply( $key, $message, $history, $listings, $servi
 			$last_error = new WP_Error( 'bds_ai_openai', $err, array( 'status' => 502 ) );
 			// Model/access problems are worth retrying on the next model; other
 			// failures (rate limit, auth, outage) are not.
-			if ( preg_match( '/model|does not exist|not found|unsupported|access/i', $err ) && 404 !== $code && 429 !== $code ) {
+			if ( 1 === preg_match( '/model|does not exist|not found|unsupported|access/i', $err ) && 404 !== $code && 429 !== $code ) {
 				continue;
 			}
 			if ( 404 === $code || 400 === $code ) {
@@ -6070,7 +6070,7 @@ function bds_ai_finder_humanize_product_query( $raw ) {
 	);
 
 	$face = '';
-	if ( preg_match( '/(?:^|-)(\d{2,5})(?:-\d+)?$/', $raw, $m ) ) {
+	if ( 1 === preg_match( '/(?:^|-)(\d{2,5})(?:-\d+)?$/', $raw, $m ) ) {
 		$face = $m[1];
 	}
 
@@ -6156,10 +6156,10 @@ function bds_ai_finder_page_context() {
 		}
 	}
 
-	if ( preg_match( '#/(single-category|single-location|all-listings|search-result|search-results)(/|$)#i', $path ) ) {
+	if ( 1 === preg_match( '#/(single-category|single-location|all-listings|search-result|search-results)(/|$)#i', $path ) ) {
 		$out['isBrowse'] = true;
 	}
-	if ( preg_match( '#/single-category/([^/]+)#i', $path, $m ) && $out['category'] === '' ) {
+	if ( 1 === preg_match( '#/single-category/([^/]+)#i', $path, $m ) && $out['category'] === '' ) {
 		$out['category'] = sanitize_title( $m[1] );
 		$term            = get_term_by( 'slug', $out['category'], 'at_biz_dir-category' );
 		if ( $term && ! is_wp_error( $term ) ) {
@@ -6168,7 +6168,7 @@ function bds_ai_finder_page_context() {
 			$out['categoryName'] = ucwords( str_replace( array( '-', '_' ), ' ', $out['category'] ) );
 		}
 	}
-	if ( preg_match( '#/single-location/([^/]+)#i', $path, $m ) && $out['location'] === '' ) {
+	if ( 1 === preg_match( '#/single-location/([^/]+)#i', $path, $m ) && $out['location'] === '' ) {
 		$out['location'] = sanitize_title( $m[1] );
 		$term            = get_term_by( 'slug', $out['location'], 'at_biz_dir-location' );
 		if ( $term && ! is_wp_error( $term ) ) {
@@ -6228,7 +6228,7 @@ function bds_ai_finder_empty_assist() {
 	if ( is_404() ) {
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
 		$path = (string) ( wp_parse_url( $uri, PHP_URL_PATH ) ?: '' );
-		if ( preg_match( '#/product/([^/]+)/?#i', $path, $m ) ) {
+		if ( 1 === preg_match( '#/product/([^/]+)/?#i', $path, $m ) ) {
 			$q = bds_ai_finder_humanize_product_query( $m[1] );
 			if ( $q !== '' ) {
 				$out['mode']    = 'missing_product';
@@ -6251,7 +6251,7 @@ function bds_ai_finder_empty_assist() {
 			|| ( function_exists( 'is_woocommerce' ) && is_woocommerce() )
 			|| ( function_exists( 'is_shop' ) && is_shop() )
 			|| (bool) get_query_var( 'product_cat' );
-		if ( $no_posts && $q !== '' && ( $looking_products || preg_match( '/gift|smc-|card/i', $q ) || true ) ) {
+		if ( $no_posts && $q !== '' && ( $looking_products || 1 === preg_match( '/gift|smc-|card/i', $q ) || true ) ) {
 			$out['mode']    = 'empty_search';
 			$out['query']   = bds_ai_finder_humanize_product_query( $q );
 			if ( $out['query'] === '' || $out['query'] === 'gift card' || $out['query'] === 'discount gift cards' ) {
@@ -7855,8 +7855,8 @@ function bds_ai_finder_visitor_geo() {
 	if ( empty( $_COOKIE['bds_ai_geo'] ) ) {
 		return $out;
 	}
-	$raw  = wp_unslash( (string) $_COOKIE['bds_ai_geo'] );
-	$data = json_decode( urldecode( $raw ), true );
+	$raw  = substr( wp_unslash( (string) $_COOKIE['bds_ai_geo'] ), 0, 1000 );
+	$data = json_decode( rawurldecode( $raw ), true );
 	if ( ! is_array( $data ) ) {
 		return $out;
 	}

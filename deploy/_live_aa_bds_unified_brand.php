@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Plugin Name: BrandDad Social Unified Brand
  * Description: Unifies BrandDad Social navigation and visual branding with the BrandDad Directory.
@@ -363,7 +363,7 @@ function bdsu_clean_output( $html ) {
 		'#<a\b[^>]*\bclass="[^"]*\baal(?:manual)?\b[^"]*"[^>]*>([\s\S]*?)</a>#i',
 		static function ( $m ) {
 			$text = trim( wp_strip_all_tags( $m[1] ) );
-			if ( preg_match( '/^(LinkedIn|Google|Facebook|Instagram|Telegram|SEO|WhatsApp)$/i', $text ) ) {
+			if ( 1 === preg_match( '/^(LinkedIn|Google|Facebook|Instagram|Telegram|SEO|WhatsApp)$/i', $text ) ) {
 				return $m[1];
 			}
 			return $m[0];
@@ -377,7 +377,7 @@ function bdsu_clean_output( $html ) {
 		'/<a\b([^>]*\bhref=(["\'])([^"\']*\/(?:registration|login-registration)\/?[^"\']*)\2[^>]*)>([\s\S]*?)<\/a>/i',
 		static function ( $m ) use ( $wa ) {
 			$text = wp_strip_all_tags( $m[4] );
-			if ( ! preg_match( '/whatsapp|ask branddad|chat on whatsapp/i', $text ) ) {
+			if ( 1 !== preg_match( '/whatsapp|ask branddad|chat on whatsapp/i', $text ) ) {
 				return $m[0];
 			}
 			$attrs = preg_replace( '/\bhref=(["\'])[^"\']*\1/i', 'href="' . esc_url( $wa ) . '" target="_blank" rel="noopener"', $m[1], 1 );
@@ -473,7 +473,7 @@ function bdsu_is_ai_service_photo( $thumb_id ) {
 		return false;
 	}
 	$url = (string) wp_get_attachment_url( $thumb_id );
-	if ( $url === '' || preg_match( '/woocommerce-placeholder|wc-placeholder|bds-svc-cover/i', $url ) ) {
+	if ( $url === '' || 1 === preg_match( '/woocommerce-placeholder|wc-placeholder|bds-svc-cover/i', $url ) ) {
 		return false;
 	}
 	return false;

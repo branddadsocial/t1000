@@ -65,7 +65,7 @@ function bds_soft_path_redirects_mu() {
 	}
 
 	// AI Ads pagination stubs that Squirrly/WF301 would send to homepage.
-	if ( preg_match( '#^/ai-ads/page/\d+$#', $path ) ) {
+	if ( 1 === preg_match( '#^/ai-ads/page/\d+$#', $path ) ) {
 		$to = home_url( '/ai-ads/' );
 		if ( function_exists( 'bds_po_url' ) ) {
 			$to = bds_po_url( $to );

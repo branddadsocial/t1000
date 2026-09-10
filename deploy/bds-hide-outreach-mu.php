@@ -123,7 +123,7 @@ function bds_hide_outreach_is_outreach_product( $product_id ) {
 		return true;
 	}
 	$title = (string) get_the_title( $product_id );
-	if ( preg_match( '/linkedin\s+outreach|done[- ]for[- ]you\s+linkedin\s+outreach/i', $title ) ) {
+	if ( 1 === preg_match( '/linkedin\s+outreach|done[- ]for[- ]you\s+linkedin\s+outreach/i', $title ) ) {
 		return true;
 	}
 	if ( get_post_meta( $product_id, '_bds_hide_outreach', true ) === '1' ) {
@@ -181,7 +181,7 @@ add_action(
 			return;
 		}
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
-		if ( ! preg_match( '/linkedin-outreach|done-for-you-linkedin-outreach/i', $uri ) ) {
+		if ( 1 !== preg_match( '/linkedin-outreach|done-for-you-linkedin-outreach/i', $uri ) ) {
 			return;
 		}
 		$path = (string) wp_parse_url( $uri, PHP_URL_PATH );
@@ -281,7 +281,7 @@ function bds_hide_outreach_filter_nav( $items ) {
 			$out[] = $item;
 			continue;
 		}
-		if ( preg_match( '/linkedin-outreach|done-for-you-linkedin-outreach/i', $url ) ) {
+		if ( 1 === preg_match( '/linkedin-outreach|done-for-you-linkedin-outreach/i', $url ) ) {
 			continue;
 		}
 		$out[] = $item;

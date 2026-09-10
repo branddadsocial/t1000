@@ -75,14 +75,14 @@ function bds_dir_outreach_filter_ai_services( $services, $message = '', $parsed 
 			continue;
 		}
 		$blob = strtolower( (string) ( $svc['id'] ?? '' ) . ' ' . (string) ( $svc['label'] ?? '' ) . ' ' . (string) ( $svc['url'] ?? '' ) );
-		if ( preg_match( '/outreach|linkedin-outreach/', $blob ) ) {
+		if ( 1 === preg_match( '/outreach|linkedin-outreach/', $blob ) ) {
 			continue;
 		}
 		$out[] = $svc;
 	}
 
 	$m = strtolower( (string) $message . ' ' . ( isset( $parsed['category'] ) ? $parsed['category'] : '' ) );
-	if ( preg_match( '/health\s*check|audit\s*my\s*(site|website)|website\s*score|seo\s*audit|google\s*business|gbp|fix\s*my\s*(site|website)|site\s*speed|local\s*seo/', $m ) ) {
+	if ( 1 === preg_match( '/health\s*check|audit\s*my\s*(site|website)|website\s*score|seo\s*audit|google\s*business|gbp|fix\s*my\s*(site|website)|site\s*speed|local\s*seo/', $m ) ) {
 		array_unshift(
 			$out,
 			array(
@@ -93,7 +93,7 @@ function bds_dir_outreach_filter_ai_services( $services, $message = '', $parsed 
 			)
 		);
 	}
-	if ( function_exists( 'bds_svc_catalog' ) && preg_match( '/seo|google\s*business|gbp|speed|conversion|review|directory\s*list|website\s*care|fix\s*my/', $m ) ) {
+	if ( function_exists( 'bds_svc_catalog' ) && 1 === preg_match( '/seo|google\s*business|gbp|speed|conversion|review|directory\s*list|website\s*care|fix\s*my/', $m ) ) {
 		$recs = function_exists( 'bds_svc_recommend_for_issues' )
 			? bds_svc_recommend_for_issues(
 				preg_match( '/speed/', $m ) ? array( 'perf_poor' )
@@ -150,7 +150,7 @@ function bds_dir_outreach_nav( $items ) {
 	foreach ( $items as $item ) {
 		$url   = isset( $item->url ) ? (string) $item->url : '';
 		$title = isset( $item->title ) ? (string) $item->title : '';
-		if ( preg_match( '/linkedin-outreach|linkedin\s+outreach/i', $url . ' ' . $title ) ) {
+		if ( 1 === preg_match( '/linkedin-outreach|linkedin\s+outreach/i', $url . ' ' . $title ) ) {
 			continue;
 		}
 		$out[] = $item;
