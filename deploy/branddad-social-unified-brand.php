@@ -2,9 +2,11 @@
 /**
  * Plugin Name: BrandDad Social Unified Brand
  * Description: Unifies BrandDad Social navigation and visual branding with the BrandDad Directory.
- * Version: 1.11.9
+ * Version: 1.12.1
  * Author: BrandDad
  *
+ * 1.12.1 — Repair duplicate hub H1s, retired product routing, and Playbooks link.
+ * 1.12.0 — Keep the canonical LinkedIn Outreach Launch / Managed offers visible.
  * 1.11.9 — Positive Social recovery copy scrub; restore LinkedIn Outreach Launch / Managed catalog rows.
  * 1.11.8 — Soft redirects: dead vanity paths (/local-seo/, /health-check/, GBP, etc.)
  *          → live product / tool URLs instead of bare homepage.
@@ -65,7 +67,7 @@ if ( defined( 'BDSU_LOADED' ) || function_exists( 'bdsu_site_check_url' ) || fun
 	return;
 }
 define( 'BDSU_LOADED', true );
-define( 'BDSU_VER', '1.11.9' );
+define( 'BDSU_VER', '1.12.1' );
 
 /** BrandDad support WhatsApp — restore if a privacy buffer rewrote it to registration. */
 define( 'BDSU_BRANDDAD_WA', 'https://wa.me/18729105115' );
@@ -154,7 +156,7 @@ function bdsu_shared_menu( $items, $args ) {
 	$learn_sub .= $li( 'Explained', bdsu_po_keep( 'https://branddad.social/explained/' ) );
 	$learn_sub .= $li( 'Guides', bdsu_po_keep( 'https://branddad.social/guides/' ) );
 	$learn_sub .= $li( 'Courses', bdsu_po_keep( 'https://branddad.social/courses/' ) );
-	$learn_sub .= $li( 'Playbooks', bdsu_po_keep( 'https://branddad.social/books/' ) );
+	$learn_sub .= $li( 'Playbooks', bdsu_po_keep( 'https://branddad.social/guides/' ) );
 	$out  = $li( 'Home', bdsu_po_keep( 'https://branddad.social/' ) );
 	$out .= $li( 'Services', bdsu_po_keep( 'https://branddad.social/services/' ) );
 	$out .= '<li class="menu-item menu-item-has-children menu-item-type-custom menu-item-object-custom bdsu-menu-item bdsu-learn"><a href="' . esc_url( bdsu_po_keep( 'https://branddad.social/learning-center/' ) ) . '">Learn</a><ul class="sub-menu">' . $learn_sub . '</ul></li>';
@@ -341,19 +343,16 @@ function bdsu_clean_output( $html ) {
 	);
 	$html = strtr( $html, $replace );
 
-	// Scrub leftover outreach CTAs / copy from cached Elementor or old embeds.
-	$html = preg_replace(
-		'#<article\b[^>]*class="[^"]*bdsu-service-card[^"]*"[^>]*>[\s\S]*?(?:LinkedIn\s+Outreach|linkedin-outreach-networking)[\s\S]*?</article>#i',
-		'',
-		$html
-	);
-	$html = preg_replace(
-		'#<a\b[^>]*href=(["\'])[^"\']*linkedin-outreach[^"\']*\1[^>]*>[\s\S]*?</a>#i',
-		'',
-		$html
-	);
-	$html = preg_replace( '/\bDone[- ]for[- ]You LinkedIn Outreach\b/i', 'LinkedIn Visibility', $html );
-	$html = preg_replace( '/\bLinkedIn Outreach\b/i', 'LinkedIn Visibility', $html );
+	// Custom hubs print their own descriptive H1. Remove the theme's generic
+	// entry-title H1 so these pages expose one useful primary heading, not two.
+	if ( is_front_page() || is_home() || is_page( array( 'services', 'learning-center', 'contact-us', 'about-us' ) ) ) {
+		$html = preg_replace(
+			'#<h1\b[^>]*class="[^"]*\bentry-title\b[^"]*"[^>]*>[\s\S]*?</h1>#i',
+			'',
+			$html,
+			1
+		);
+	}
 
 	// Prefer static MU (01-bds-home-hub-static.php). Calling bdsu_home_hub() on the front has 500'd Social.
 	if ( false !== strpos( $html, '[branddad_home_hub]' ) && function_exists( 'bds_home_static_html' ) ) {
@@ -435,6 +434,9 @@ function bdsu_soft_path_redirects() {
 		'/local-seo-monthly'               => home_url( '/product/local-seo-management-starter/' ),
 		'/social-media-management'         => home_url( '/product/social-media-management/' ),
 		'/linkedin-ghostwriting'           => home_url( '/product/linkedin-viral-posts-for-professionals/' ),
+		// Retired product still appears in older cards/caches. Keep visitors in
+		// the relevant catalog lane instead of silently dumping them at home.
+		'/product/real-influencers-engagements-ig-fb-tiktok-youtube-more' => home_url( '/services/' ) . '#lane-more',
 	);
 	// /ai-ads/ is owned by bds-social-ai-ads-mu.php. Only alias to #lane-ai if that MU is absent.
 	if ( ! function_exists( 'bds_aam_render_route' ) ) {
@@ -705,7 +707,8 @@ function bdsu_group_fit( $group ) {
  */
 function bdsu_services_catalog_rows() {
 	return array(
-		// —— Local & Web (13) ——
+		// —— Canonical agency + Local & Web ——
+		array( 'complete-business-fix', 'Complete Business Fix', 'Starting at $499 for an agreed package of the highest-priority website, local visibility, profile, and conversion repairs.', 'Local & Web' ),
 		array( 'gbp-setup-optimization', 'GBP Setup & Optimization', 'Claim-ready Google Business Profile fields, categories, and consistency checks — no ranking promises.', 'Local & Web' ),
 		array( 'website-speed-optimization', 'Website Speed Optimization', 'Practical performance fixes for measurable speed signals. Hosting upgrades are quoted separately.', 'Local & Web' ),
 		array( 'fix-my-website', 'Fix My Website', 'Scoped website repairs starting at $49. Secure intake for access — never paste passwords into normal forms.', 'Local & Web' ),
@@ -719,12 +722,11 @@ function bdsu_services_catalog_rows() {
 		array( 'website-conversion-makeover', 'Conversion Makeover', 'Clarity, CTA, trust, and form-path improvements — not a full redesign (see BrandDad.co for builds).', 'Local & Web' ),
 		array( 'social-profile-optimization-bundle', 'Social Profile Bundle', 'Multi-platform profile polish: bio, links, visuals, and consistency across networks.', 'Local & Web' ),
 		array( 'monthly-website-care', 'Monthly Website Care', '$69/mo updates, uptime peek, and minor fixes (≤30 min). Larger work is quoted or Fix My Website.', 'Local & Web' ),
-		// —— AI Ads (5) ——
+		// —— AI Ads (customer plans; Extra Spend is an add-on on those PDPs) ——
 		array( 'bd-ai-ads-setup', 'AI Ads Setup', 'One-time onboarding: connect ad accounts, verify tracking, and get your first AI campaign drafts.', 'AI Ads' ),
 		array( 'bd-ai-ads-starter', 'AI Ads Starter', 'Meta (Facebook + Instagram) AI creative and management for up to $500/mo of your ad spend.', 'AI Ads' ),
 		array( 'bd-ai-ads-growth', 'AI Ads Growth', 'Meta plus one more network, creative testing, up to $2,000/mo managed spend.', 'AI Ads' ),
 		array( 'bd-ai-ads-scale', 'AI Ads Scale', 'Every supported network, priority automation, up to $5,000/mo managed spend.', 'AI Ads' ),
-		array( 'bd-ai-ads-spend-tier', 'AI Ads Extra Spend', 'Add $1,000/mo managed spend capacity to any AI Ads plan. Stackable; custom quote above $5k.', 'AI Ads' ),
 		// —— Growth / social / PR ——
 		array( 'linkedin-visibility-amplification-system-for-professionals', 'LinkedIn Visibility', 'Build authority and consistent professional visibility with a clear LinkedIn growth system.', 'LinkedIn' ),
 		array( 'linkedin-viral-posts-for-professionals', 'LinkedIn Content', 'Expert-written posts designed to earn attention, credibility and engagement.', 'LinkedIn' ),
@@ -733,8 +735,7 @@ function bdsu_services_catalog_rows() {
 		array( 'instagram-viral-growth-discovery-system', 'Instagram Growth', 'Increase discovery and build a more active audience around your brand.', 'Social Growth' ),
 		array( 'facebook-growth-visibility-campaigns', 'Facebook Visibility', 'Reach more real people with campaigns built for awareness and engagement.', 'Social Growth' ),
 		array( 'telegram-growth-engagement-system', 'Telegram Growth', 'Grow and activate a Telegram community with a repeatable engagement system.', 'Social Growth' ),
-		array( 'social-media-management', 'Social Media Management', '$175/mo content, engagement and account support without managing it all yourself.', 'Management' ),
-		array( 'social-media-management-video', 'Social Media Management + Video', '$355/mo same monthly plan plus weekly Reel-style videos.', 'Management' ),
+		array( 'social-media-management', 'Social Media Management', '$175/mo content, engagement and account support without managing it all yourself. Video is an option on this product.', 'Management' ),
 		array( 'real-influencers-engagements-ig-fb-tiktok-youtube-more', 'Influencer Engagement', 'Earn targeted attention through real creator and influencer engagement.', 'Management' ),
 		array( 'comprehensive-seo-packages-rank-1-on-google', 'SEO Growth Packages', 'Ongoing SEO foundations and improvements. We do not promise Google rankings.', 'SEO' ),
 		array( 'press-release-services', 'Press Release Distribution', 'Turn announcements into credible media assets and wider online visibility.', 'Authority & PR' ),
