@@ -27,7 +27,7 @@ Inject these at runtime from the deployment secret/configuration system; never c
 
 ## Local verification
 
-Use a supported Node 20 or 22 runtime:
+Use a supported Node 20, 22, or 24 runtime:
 
 ```text
 npm run check
