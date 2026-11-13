@@ -7,6 +7,7 @@ const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
 const MAX_RESPONSE_BYTES = 32 * 1024;
 const MAX_POST_BODY_BYTES = 100 * 1024;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const DRAFT_JOB_FIELDS = new Set(["jobId", "mediaPath", "caption", "platformCaptions"]);
 const PLATFORMS = new Set(["facebook", "instagram", "instagramStory", "linkedIn", "tiktok", "youtube"]);
 const CAPTION_LIMITS = { facebook: 63_206, instagram: 2_200, instagramStory: 2_200, linkedIn: 3_000, tiktok: 2_200, youtube: 5_000 };
 
@@ -110,7 +111,9 @@ async function readCappedJson(response) {
 }
 
 function validateDraftJob(job, targets) {
-  if (!isPlainObject(job) || !UUID_PATTERN.test(String(job.jobId || "")) || typeof job.mediaPath !== "string"
+  if (!isPlainObject(job) || Object.keys(job).length !== DRAFT_JOB_FIELDS.size
+      || !Object.keys(job).every((field) => DRAFT_JOB_FIELDS.has(field))
+      || !UUID_PATTERN.test(String(job.jobId || "")) || typeof job.mediaPath !== "string"
       || typeof job.caption !== "string" || job.caption.length < 1 || job.caption.length > 2_200
       || !isPlainObject(job.platformCaptions || {})) {
     fail("invalid_draft_job");

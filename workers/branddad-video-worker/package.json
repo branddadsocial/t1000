@@ -7,7 +7,8 @@
     "node": ">=20 <24"
   },
   "scripts": {
-    "check": "node --check src/worker-core.mjs && node --check src/server.mjs && node --check src/marky-draft-adapter.mjs",
+    "check": "node --check src/worker-core.mjs && node --check src/server.mjs && node --check src/marky-draft-adapter.mjs && node --check src/create-draft-cli.mjs",
+    "draft:approved": "node src/create-draft-cli.mjs",
     "test": "node --test test/*.test.mjs"
   }
 }

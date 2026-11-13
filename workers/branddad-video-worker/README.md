@@ -35,3 +35,9 @@ npm test
 ```
 
 Do not bind the staged server publicly. A separate isolated renderer/queue consumer and signed callback sender are the next implementation layer.
+
+## Local BrandDad approval tool
+
+For BrandDad's own videos, `npm run draft:approved -- C:\absolute\output\approved-manifest.json` creates a private Marky review draft. The manifest and MP4 must both be regular, non-symlink files beneath `BDS_VIDEO_OUTPUT_ROOT`. The tool reads the scoped `MARKY_API_KEY`, workspace UUID, and exact integration targets from runtime configuration, prints only the resulting post ID/status, and never schedules or publishes.
+
+The manifest has exactly four fields: `jobId`, `mediaPath`, `caption`, and `platformCaptions`. Runtime configuration also requires `BDS_MARKY_WORKSPACE_ID` and `BDS_MARKY_TARGETS_JSON`; the latter is an array of `{ "integrationId": "uuid", "platform": "instagram|facebook|..." }` objects. Keep all secrets out of the manifest.

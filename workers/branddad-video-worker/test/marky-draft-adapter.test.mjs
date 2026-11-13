@@ -89,3 +89,15 @@ test("rejects invalid targets before reading or sending media", async () => {
     rmSync(data.root, { recursive: true, force: true });
   }
 });
+
+test("rejects unknown manifest fields before reading or sending media", async () => {
+  const data = fixture();
+  try {
+    await assert.rejects(
+      () => createMarkyReviewDraft({ config: data.config, job: { ...data.job, publishNow: true } }),
+      (error) => error instanceof MarkyDraftError && error.code === "invalid_draft_job",
+    );
+  } finally {
+    rmSync(data.root, { recursive: true, force: true });
+  }
+});
