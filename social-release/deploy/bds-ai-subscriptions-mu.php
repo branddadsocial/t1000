@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.4.0' );
+define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.4.1' );
 
 /**
  * Approved offer configuration. Product ids are resolved by slug to preserve existing products.
@@ -107,6 +107,7 @@ function bds_ai_formwise_remove_tier( $user_id, $plan_id ) {
 		array(
 			'method'              => 'DELETE',
 			'timeout'             => 15,
+			'redirection'         => 0,
 			'limit_response_size' => 16384,
 			'headers'             => array( 'Authorization' => 'Bearer ' . trim( (string) BDS_FORMWISE_PROVISIONING_KEY ) ),
 		)
@@ -218,6 +219,32 @@ function bds_ai_sfw_meta( $object_id, $key ) {
 	return function_exists( 'wps_sfw_get_meta_data' ) ? wps_sfw_get_meta_data( absint( $object_id ), $key, true ) : '';
 }
 
+/**
+ * Confirm that the paid order is the parent order or an authoritative renewal
+ * order for the subscription being provisioned. This keeps an internal hook
+ * mix-up from granting one customer's plan to another order's email address.
+ *
+ * @param int $order_id        Paid parent/renewal order id.
+ * @param int $subscription_id WP Swings subscription id.
+ * @return bool
+ */
+function bds_ai_order_matches_subscription( $order_id, $subscription_id ) {
+	$order_id        = absint( $order_id );
+	$subscription_id = absint( $subscription_id );
+	if ( ! $order_id || ! $subscription_id ) {
+		return false;
+	}
+
+	$parent_order_id = absint( bds_ai_sfw_meta( $subscription_id, 'wps_parent_order' ) );
+	if ( $parent_order_id && $order_id === $parent_order_id ) {
+		return true;
+	}
+
+	$is_renewal              = 'yes' === (string) bds_ai_sfw_meta( $order_id, 'wps_sfw_renewal_order' );
+	$renewal_subscription_id = absint( bds_ai_sfw_meta( $order_id, 'wps_sfw_subscription' ) );
+	return $is_renewal && $subscription_id === $renewal_subscription_id;
+}
+
 /** Schedule a bounded provisioning retry for transient network/API failures. */
 function bds_ai_schedule_provision_retry( $order_id, $subscription_id ) {
 	$attempts = absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_provision_attempts' ) );
@@ -249,7 +276,7 @@ function bds_ai_provision_active_subscription( $order_id, $subscription_id ) {
 
 	$status = sanitize_key( (string) bds_ai_sfw_meta( $subscription_id, 'wps_subscription_status' ) );
 	$order  = wc_get_order( $order_id );
-	if ( 'active' !== $status || ! $order || ! $order->is_paid() ) {
+	if ( 'active' !== $status || ! $order || ! $order->is_paid() || ! bds_ai_order_matches_subscription( $order_id, $subscription_id ) ) {
 		return false;
 	}
 
@@ -274,6 +301,7 @@ function bds_ai_provision_active_subscription( $order_id, $subscription_id ) {
 			'https://builder.formwise.ai/api/v1/end-users',
 			array(
 				'timeout'             => 15,
+				'redirection'         => 0,
 				'limit_response_size' => 65536,
 				'headers' => array(
 					'Authorization'   => 'Bearer ' . trim( (string) BDS_FORMWISE_PROVISIONING_KEY ),
