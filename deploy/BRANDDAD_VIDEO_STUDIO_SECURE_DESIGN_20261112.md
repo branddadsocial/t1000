@@ -70,3 +70,23 @@ Boundaries are browser/edge, edge/domain, application/database, application/prov
 Abuse twins: mass project creation is limited by user/IP quotas; upload bombs are rejected before durable storage; URL ingestion cannot reach internal services; replayed render callbacks are rejected; duplicate publish retries use destination/version idempotency; an AI-generated unsupported claim is blocked by approval and factual-quality gates; voice cloning is unavailable without recorded consent.
 
 Residual risks accepted for the staged foundation: WordPress row-level isolation depends on reviewed query helpers rather than database-native RLS; shared-hosting secrets may initially be constants rather than workload identity; third-party providers receive only the media required for a job. These risks block broad customer rollout until deployment hardening and provider agreements are reviewed.
+
+## BrandDad-owned render worker contract
+
+The staged worker adds one service-to-service endpoint, `POST /v1/render`. It is not a customer API and is not enabled on the public internet by the repository alone.
+
+- Identity: WordPress is the sole caller. It signs `timestamp.rawBody` with HMAC-SHA256 using a dedicated dispatch secret. The worker rejects missing credentials, malformed signatures, timestamps outside five minutes, and replayed delivery UUIDs with constant-time comparison.
+- Authorization: an authenticated dispatch may request only the fixed `branddad_motion_v1` template. It cannot choose a command, executable, filesystem path, provider endpoint, callback path, tenant, or credential.
+- Request contract: JSON only; 100 KB maximum before parsing; unknown top-level and scene fields rejected; UUIDs, enums, text lengths, array counts, duration, cost, and credit values bounded. The standard JSON parser is used and parsed data is never evaluated or merged into prototypes.
+- Callback defense: `callbackUrl` must be HTTPS, have no user info/query/fragment, match one operator-configured hostname exactly, and use `/wp-json/bds-video/v1/webhooks/render`. Redirects are not part of the callback contract.
+- Replay/idempotency: delivery UUIDs are atomically claimed. The job UUID is the idempotency key; a safe repeat returns the existing opaque provider job ID without adding work. Production uses a durable atomic replay/job store; a process-local store is test-only.
+- Resource controls: the edge and worker both cap request size; the worker has a per-source request limit, one bounded queue item per job UUID, generic errors, short server timeouts, and no renderer execution in the HTTP process.
+- Secrets/logging: the dispatch secret comes from the deployment secret manager, never source or a request. Logs contain request/job IDs and stable result codes, never the HMAC, raw body, scene text, or secret.
+- Deployment: bind to loopback behind an authenticated TLS reverse proxy by default. Production runs non-root, read-only except an explicit state/queue mount, with CPU/memory limits, default-deny ingress, allowlisted WordPress callback egress, and metadata/private-network blocks. The worker has no arbitrary outbound fetch capability.
+- Dependency posture: the staged verifier uses only pinned Node runtime primitives (`http`, `crypto`, `fs`, `url`). No install-time dependency scripts or third-party packages are introduced.
+
+Worker DFD: `WordPress job ledger -> TLS/reverse proxy -> HMAC verifier -> strict schema validator -> atomic replay/idempotency store -> bounded render queue`. A later isolated renderer consumes that queue and sends a separately signed callback to WordPress.
+
+Worker STRIDE: service spoofing is blocked by HMAC; body tampering invalidates the signature; atomic delivery/job records provide audit and replay evidence; generic errors and minimal logs limit disclosure; byte/rate/queue bounds constrain denial; fixed template and data-only queue records prevent command or privilege escalation. The abuse twin is a stolen or replayed dispatch flooding expensive renders; timestamp/replay checks, per-source limits, job idempotency, WordPress credit reservations, and a provider kill switch contain it.
+
+Worker residual risks: a shared HMAC secret has broader blast radius than workload identity, filesystem-backed queue durability is single-node, and application rate limiting is not a substitute for an edge/WAF limit. These remain rollout blockers until production infrastructure is selected and configured.
