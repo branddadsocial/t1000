@@ -2,6 +2,8 @@
 
 This package is the private receiving side of the signed WordPress render adapter. It verifies and queues data-only render requests; it does not execute FFmpeg, call a paid provider, publish videos, or expose a public service by itself.
 
+The package also contains a staged Marky adapter that uploads an already-approved MP4 and creates a private `NEW` review draft for server-configured BrandDad Social accounts. It never schedules or publishes a post.
+
 ## Security contract
 
 - One endpoint: `POST /v1/render`.
@@ -9,6 +11,7 @@ This package is the private receiving side of the signed WordPress render adapte
 - JSON-only request with a 100 KB cap, exact field allowlists, bounded values, one fixed template, and an exact HTTPS WordPress callback host/path.
 - Local replay and queue filenames are created only from validated UUIDs. Each job record is the single canonical queue item, created atomically with mode `0600`.
 - No arbitrary URL fetching, command execution, file uploads, provider credentials, or renderer process runs in the HTTP server.
+- The Marky adapter uses one fixed API origin/version, exact server-configured workspace/integration IDs, a 50 MB MP4 cap, strict response bounds, and `NEW` review status only. The API key is injected by the worker secret manager and is never returned or logged.
 - Default bind is `127.0.0.1`. Production requires a TLS reverse proxy/WAF, edge rate limits, network policy, a secret manager, non-root runtime, a read-only root filesystem, explicit state mount, and allowlisted egress.
 
 ## Required runtime configuration
