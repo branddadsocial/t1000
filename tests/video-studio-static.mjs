@@ -11,6 +11,7 @@ const required = [
   "idempotency_hash",
   "hash_hmac( 'sha256'",
   "hash_equals( $expected, $signature )",
+  "'permission_callback' => 'bds_video_webhook_permission'",
   "abs( time() - (int) $timestamp ) > 300",
   "adapter_unavailable",
   "approval_mode",
@@ -43,6 +44,7 @@ assert.ok(!source.includes("BDS_VIDEO_PROVIDER_ENABLED', true"), "provider execu
 assert.ok(!source.includes("BDS_VIDEO_PUBLISHING_ENABLED', true"), "publishing must default off");
 assert.ok(!source.includes(".innerHTML"), "project data must not be rendered through innerHTML");
 assert.ok(!source.includes("document.write"), "document.write must not be used");
+assert.ok(!source.includes("'permission_callback' => '__return_true'"), "write routes must not declare a public permission callback");
 assert.ok(source.includes("'scenes'          => $scenes"), "project responses must include the stored scene plan");
 
 const opens = (source.match(/{/g) || []).length;

@@ -651,9 +651,6 @@ function bds_video_rest_webhook( WP_REST_Request $request ) {
 	if ( ! bds_video_rate_limit( 'render-webhook', 120, HOUR_IN_SECONDS ) ) {
 		return bds_video_error( 'rate_limited', 'Webhook rate limit reached.', 429 );
 	}
-	if ( ! bds_video_verify_webhook( $request ) ) {
-		return bds_video_error( 'invalid_webhook', 'Webhook verification failed.', 401 );
-	}
 	$body = $request->get_json_params();
 	if ( ! is_array( $body ) || array_diff( array_keys( $body ), array( 'jobId', 'status', 'providerJobId', 'actualCost', 'errorCode' ) ) ) {
 		return bds_video_error( 'invalid_payload', 'Webhook payload is invalid.', 400 );
@@ -696,6 +693,12 @@ function bds_video_rest_webhook( WP_REST_Request $request ) {
 	return array( 'accepted' => true );
 }
 
+function bds_video_webhook_permission( WP_REST_Request $request ) {
+	return bds_video_verify_webhook( $request )
+		? true
+		: bds_video_error( 'invalid_webhook', 'Webhook verification failed.', 401 );
+}
+
 function bds_video_register_rest() {
 	register_rest_route( 'bds-video/v1', '/usage', array( 'methods' => WP_REST_Server::READABLE, 'callback' => 'bds_video_rest_usage', 'permission_callback' => 'bds_video_rest_permission' ) );
 	register_rest_route( 'bds-video/v1', '/projects', array(
@@ -711,7 +714,7 @@ function bds_video_register_rest() {
 	register_rest_route( 'bds-video/v1', '/projects/(?P<id>[a-f0-9-]{36})/versions', array( 'methods' => WP_REST_Server::CREATABLE, 'callback' => 'bds_video_rest_create_version', 'permission_callback' => 'bds_video_rest_permission' ) );
 	register_rest_route( 'bds-video/v1', '/projects/(?P<id>[a-f0-9-]{36})/renders', array( 'methods' => WP_REST_Server::CREATABLE, 'callback' => 'bds_video_rest_create_render', 'permission_callback' => 'bds_video_rest_permission' ) );
 	register_rest_route( 'bds-video/v1', '/projects/(?P<id>[a-f0-9-]{36})/approve', array( 'methods' => WP_REST_Server::CREATABLE, 'callback' => 'bds_video_rest_approve_project', 'permission_callback' => 'bds_video_rest_permission' ) );
-	register_rest_route( 'bds-video/v1', '/webhooks/render', array( 'methods' => WP_REST_Server::CREATABLE, 'callback' => 'bds_video_rest_webhook', 'permission_callback' => '__return_true' ) );
+	register_rest_route( 'bds-video/v1', '/webhooks/render', array( 'methods' => WP_REST_Server::CREATABLE, 'callback' => 'bds_video_rest_webhook', 'permission_callback' => 'bds_video_webhook_permission' ) );
 }
 add_action( 'rest_api_init', 'bds_video_register_rest' );
 
