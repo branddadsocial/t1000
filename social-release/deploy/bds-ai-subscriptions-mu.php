@@ -51,7 +51,7 @@ function bds_ai_subscription_catalog() {
  * @return array<string,bool>
  */
 function bds_ai_subscription_readiness() {
-	$recurring = defined( 'WPS_SFW_VERSION' ) && function_exists( 'wps_sfw_get_meta_data' );
+	$recurring = ( defined( 'SUBSCRIPTIONS_FOR_WOOCOMMERCE_VERSION' ) || defined( 'WPS_SFW_VERSION' ) ) && function_exists( 'wps_sfw_get_meta_data' );
 	$api_key   = defined( 'BDS_FORMWISE_PROVISIONING_KEY' ) && '' !== trim( (string) BDS_FORMWISE_PROVISIONING_KEY );
 	$enabled   = defined( 'BDS_AI_ENTITLEMENTS_ENABLED' ) && true === BDS_AI_ENTITLEMENTS_ENABLED;
 	return array(
