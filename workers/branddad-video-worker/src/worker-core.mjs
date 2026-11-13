@@ -27,7 +27,6 @@ const SIGNATURE_PATTERN = /^[0-9a-f]{64}$/;
 const LANGUAGE_PATTERN = /^[a-z]{2,3}(?:-[a-z0-9]{2,8})?$/;
 const PROVIDER_JOB_PATTERN = /^bds_[0-9a-f]{32}$/;
 const SHA256_PATTERN = /^[0-9a-f]{64}$/;
-const DNS_HOST_PATTERN = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i;
 
 export class WorkerError extends Error {
   constructor(status, code) {
@@ -65,10 +64,31 @@ function boundedInteger(value, min, max) {
   return Number.isInteger(value) && value >= min && value <= max;
 }
 
+function isAsciiLetterOrDigit(character) {
+  const code = character.charCodeAt(0);
+  return (code >= 48 && code <= 57) || (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
+}
+
+function isDnsHostname(value) {
+  if (typeof value !== "string" || value.length < 4 || value.length > 253 || isIP(value) !== 0) return false;
+  const labels = value.split(".");
+  if (labels.length < 2) return false;
+  for (const label of labels) {
+    if (label.length < 1 || label.length > 63 || !isAsciiLetterOrDigit(label[0]) || !isAsciiLetterOrDigit(label.at(-1))) return false;
+    for (const character of label) {
+      if (character !== "-" && !isAsciiLetterOrDigit(character)) return false;
+    }
+  }
+  const topLevelDomain = labels.at(-1);
+  return topLevelDomain.length >= 2 && [...topLevelDomain].every((character) => {
+    const code = character.charCodeAt(0);
+    return (code >= 65 && code <= 90) || (code >= 97 && code <= 122);
+  });
+}
+
 function validateCallbackUrl(rawUrl, allowedHost) {
   if (!boundedString(rawUrl, 2048, { allowEmpty: false })
-      || !boundedString(allowedHost, 253, { pattern: DNS_HOST_PATTERN, allowEmpty: false })
-      || isIP(allowedHost) !== 0) {
+      || !isDnsHostname(allowedHost)) {
     return false;
   }
   try {

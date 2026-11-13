@@ -88,6 +88,12 @@ test("rejects unknown fields, prototype keys, and callback host changes", async 
   await expectWorkerError(() => verifyDispatch({ ...prototypeRequest, replayStore: new MemoryReplayStore() }), 400, "invalid_payload");
   const callback = signedRequest(payload({ callbackUrl: "https://attacker.example/wp-json/bds-video/v1/webhooks/render" }));
   await expectWorkerError(() => verifyDispatch({ ...callback, replayStore: new MemoryReplayStore() }), 400, "invalid_payload");
+  const ipCallback = signedRequest(payload({ callbackUrl: "https://127.0.0.1/wp-json/bds-video/v1/webhooks/render" }));
+  await expectWorkerError(
+    () => verifyDispatch({ ...ipCallback, callbackAllowedHost: "127.0.0.1", replayStore: new MemoryReplayStore() }),
+    400,
+    "invalid_payload",
+  );
   assert.equal({}.polluted, undefined);
 });
 
