@@ -79,6 +79,10 @@ expect( 'Get featured' === $empty['cta'], 'empty lane sells featured' );
 expect( '' === bds_feat_empty_copy( 'nope' )['price'], 'unknown level has no price' );
 expect( 'bds-feat-global' === bds_feat_product_sku( 'global' ), 'sku is allowlisted from the level key' );
 expect( '' === bds_feat_product_sku( 'nope' ), 'unknown level has no sku' );
+expect( 17596 === bds_feat_parse_listing_id( '17596' ), 'digit listing ids are accepted' );
+expect( 0 === bds_feat_parse_listing_id( 'https://directory.branddad.social/listing/x/' ), 'listing URLs are not fetched or parsed as ids' );
+expect( 0 === bds_feat_parse_listing_id( '<script>1</script>' ), 'markup is not a listing id' );
+expect( 0 === bds_feat_parse_listing_id( '-12' ), 'negative listing ids are rejected' );
 
 if ( $failed > 0 ) {
 	fwrite( STDERR, "{$failed} failed\n" );

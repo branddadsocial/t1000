@@ -2,10 +2,10 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: BrandDad
  *
- * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists.
+ * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -159,6 +159,37 @@ function bds_rev_markup() {
 	return (string) ob_get_clean();
 }
 
+function bds_rev_home_strip() {
+	$html  = '<section class="bds-rev" id="bds-rev-home-strip">';
+	$html .= '<h2>' . esc_html__( 'Buy a live plan or get featured', 'branddad' ) . '</h2>';
+	$html .= '<p>' . esc_html__( 'Subscribe opens only for products already for sale. Featured is a Directory request until that Woo product exists. Music stays a brief, not a sale.', 'branddad' ) . '</p><p>';
+	foreach ( bds_rev_offers() as $offer ) {
+		$url = bds_rev_offer_url( $offer['slug'] );
+		if ( '' === $url ) {
+			continue;
+		}
+		$label = sprintf(
+			/* translators: %s: live plan name */
+			__( 'Subscribe to %s', 'branddad' ),
+			$offer['name']
+		);
+		$html .= '<a class="bds-rev-button" href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a>';
+	}
+	$html .= '<a class="bds-rev-button" href="' . esc_url( bds_rev_dir_url( '/featured-advertising/' ) ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-rev-button bds-rev-button--quiet" href="' . esc_url( bds_rev_dir_url( '/add-listing/' ) ) . '">' . esc_html__( 'List a business', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-rev-button bds-rev-button--quiet" href="' . esc_url( home_url( '/services/' ) ) . '">' . esc_html__( 'See all services', 'branddad' ) . '</a>';
+	$html .= '</p></section>';
+	return $html;
+}
+
+function bds_rev_inject_before_final( $content, $block ) {
+	$pos = strpos( $content, '<section class="bdai-final"' );
+	if ( false !== $pos ) {
+		return substr( $content, 0, $pos ) . $block . substr( $content, $pos );
+	}
+	return $content . $block;
+}
+
 function bds_rev_music_options_html( $packages = null ) {
 	if ( ! is_array( $packages ) ) {
 		$packages = bds_rev_music_packages();
@@ -221,26 +252,26 @@ function bds_rev_append_content( $content ) {
 	if ( ! bds_rev_is_social() || is_admin() || ! in_the_loop() || ! is_main_query() ) {
 		return $content;
 	}
-	if ( ! is_front_page() && ! is_page( 'services' ) ) {
-		return $content;
-	}
-	if ( false !== strpos( $content, 'id="bds-revenue-sections"' ) ) {
-		return $content;
-	}
-	if ( false !== strpos( $content, 'id="branddad-music"' ) ) {
-		$block = '<section class="bds-rev" id="bds-music-brief"><h2>' . esc_html__( 'Send a music brief', 'branddad' ) . '</h2><p>' . esc_html__( 'This saves a private request. It does not take payment or start production.', 'branddad' ) . '</p>' . bds_rev_music_form() . '</section>';
-		$pos   = strpos( $content, '<section class="bdai-final"' );
-		if ( false !== $pos ) {
-			return substr( $content, 0, $pos ) . $block . substr( $content, $pos );
+	if ( is_page( 'services' ) ) {
+		if ( false !== strpos( $content, 'id="bds-revenue-sections"' ) ) {
+			return $content;
 		}
-		return $content . $block;
+		return bds_rev_inject_before_final( $content, bds_rev_markup() );
 	}
-	$block = bds_rev_markup();
-	$pos   = strpos( $content, '<section class="bdai-final"' );
-	if ( false !== $pos ) {
-		return substr( $content, 0, $pos ) . $block . substr( $content, $pos );
+	if ( ! is_front_page() ) {
+		return $content;
 	}
-	return $content . $block;
+	$block = '';
+	if ( false === strpos( $content, 'id="bds-rev-home-strip"' ) ) {
+		$block .= bds_rev_home_strip();
+	}
+	if ( false !== strpos( $content, 'id="branddad-music"' ) && false === strpos( $content, 'id="bds-music-brief"' ) ) {
+		$block .= '<section class="bds-rev" id="bds-music-brief"><h2>' . esc_html__( 'Send a music brief', 'branddad' ) . '</h2><p>' . esc_html__( 'This saves a private request. It does not take payment or start production.', 'branddad' ) . '</p>' . bds_rev_music_form() . '</section>';
+	}
+	if ( '' === $block ) {
+		return $content;
+	}
+	return bds_rev_inject_before_final( $content, $block );
 }
 add_filter( 'the_content', 'bds_rev_append_content', 1000 );
 

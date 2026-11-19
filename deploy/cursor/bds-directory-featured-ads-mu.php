@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -11,6 +11,7 @@
  * - Public featured inquiry: nonce, honeypot, 5/hour hashed IP, allowlisted level, length-capped text. No URL fetch, no file upload, no card data. Price is never taken from POST.
  * - Paid activation still requires Woo is_paid() plus an allowlisted SKU. listing_id is an int on a published at_biz_dir. Client-supplied totals are ignored.
  * - Empty-lane CTA and /featured-advertising/ do not charge. Virtual path is an exact allowlist.
+ * - GET listing is digits-only then a published at_biz_dir check. Fail closed to empty. Value is escaped into the form. No outbound fetch.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -444,7 +445,7 @@ function bds_feat_styles() {
 	if ( ! bds_feat_is_directory() ) {
 		return;
 	}
-	echo '<style id="bds-feat-css">.bds-feat-home,.bds-feat-buy-page{max-width:1100px;margin:0 auto;padding:16px 20px 32px;color:#0b172a}.bds-feat-lane{margin:20px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-feat-buy,.bds-feat-buy-page a.bds-feat-buy{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-feat-buy--quiet{background:#071a33}.bds-feat-buy-page form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-feat-buy-page input,.bds-feat-buy-page select,.bds-feat-buy-page textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-feat-hp{position:absolute;left:-9999px}#bds-feat-claim-ctas{margin:24px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}</style>';
+	echo '<style id="bds-feat-css">.bds-feat-home,.bds-feat-buy-page{max-width:1100px;margin:0 auto;padding:16px 20px 32px;color:#0b172a}.bds-feat-lane{margin:20px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-feat-buy,.bds-feat-buy-page a.bds-feat-buy{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-feat-buy--quiet{background:#071a33}.bds-feat-buy-page form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-feat-buy-page input,.bds-feat-buy-page select,.bds-feat-buy-page textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-feat-hp{position:absolute;left:-9999px}#bds-feat-claim-ctas,#bds-feat-listing-ctas,#bds-feat-plans-ctas{margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;max-width:1100px;color:#0b172a}</style>';
 }
 add_action( 'wp_head', 'bds_feat_styles', 40 );
 
@@ -511,7 +512,9 @@ function bds_feat_buy_markup() {
 		$html .= '<option value="' . esc_attr( $slug ) . '">' . esc_html( $row['label'] . ' — $' . $row['price'] . '/month' ) . '</option>';
 	}
 	$html .= '</select></label></p>';
-	$html .= '<p><label>' . esc_html__( 'Listing ID or Directory URL', 'branddad' ) . '<input name="listing_ref" maxlength="160" required /></label></p>';
+	$listing_id  = bds_feat_requested_listing_id();
+	$listing_val = $listing_id > 0 ? (string) $listing_id : '';
+	$html .= '<p><label>' . esc_html__( 'Listing ID or Directory URL', 'branddad' ) . '<input name="listing_ref" maxlength="160" required value="' . esc_attr( $listing_val ) . '" /></label></p>';
 	$html .= '<p><label>' . esc_html__( 'Your name', 'branddad' ) . '<input name="customer_name" maxlength="80" required /></label></p>';
 	$html .= '<p><label>' . esc_html__( 'Email', 'branddad' ) . '<input name="email" type="email" maxlength="120" required /></label></p>';
 	$html .= '<p><label>' . esc_html__( 'What should customers see?', 'branddad' ) . '<textarea name="note" maxlength="400"></textarea></label></p>';
@@ -582,6 +585,77 @@ function bds_feat_claim_guide_ctas( $content ) {
 	return $content . $band;
 }
 add_filter( 'the_content', 'bds_feat_claim_guide_ctas', 30 );
+
+function bds_feat_requested_listing_id() {
+	$raw = isset( $_GET['listing'] ) ? wp_unslash( $_GET['listing'] ) : '';
+	$id  = bds_feat_parse_listing_id( $raw );
+	if ( $id < 1 ) {
+		return 0;
+	}
+	$post = get_post( $id );
+	if ( ! $post instanceof WP_Post || 'at_biz_dir' !== $post->post_type || 'publish' !== $post->post_status ) {
+		return 0;
+	}
+	return $id;
+}
+
+function bds_feat_listing_cta_html() {
+	static $printed = false;
+	if ( $printed || ! bds_feat_is_directory() || is_admin() || ! is_singular( 'at_biz_dir' ) ) {
+		return '';
+	}
+	$id = (int) get_queried_object_id();
+	if ( $id < 1 ) {
+		return '';
+	}
+	$printed = true;
+	$feat    = add_query_arg( 'listing', $id, home_url( '/featured-advertising/' ) );
+	$claim   = home_url( '/claim-your-business-listing-branddad-directory/' );
+	$html    = '<div class="bds-feat-claim" id="bds-feat-listing-ctas">';
+	$html   .= '<h2>' . esc_html__( 'Claim or get featured', 'branddad' ) . '</h2>';
+	$html   .= '<p>' . esc_html__( 'If this is your business, claim the listing. Featured placement is a paid lane after that. This does not transfer ownership by itself.', 'branddad' ) . '</p>';
+	$html   .= '<p><a class="bds-feat-buy" href="' . esc_url( $feat ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
+	$html   .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( $claim ) . '">' . esc_html__( 'How to claim', 'branddad' ) . '</a></p></div>';
+	return $html;
+}
+
+function bds_feat_listing_cta_content( $content ) {
+	if ( ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	$html = bds_feat_listing_cta_html();
+	if ( '' === $html ) {
+		return $content;
+	}
+	return $content . $html;
+}
+add_filter( 'the_content', 'bds_feat_listing_cta_content', 32 );
+
+function bds_feat_listing_cta_footer() {
+	$html = bds_feat_listing_cta_html();
+	if ( '' !== $html ) {
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+}
+add_action( 'wp_footer', 'bds_feat_listing_cta_footer', 25 );
+
+function bds_feat_plans_page_ctas( $content ) {
+	if ( ! bds_feat_is_directory() || is_admin() || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	if ( ! is_page( 'select-your-plan' ) ) {
+		return $content;
+	}
+	if ( false !== strpos( $content, 'id="bds-feat-plans-ctas"' ) ) {
+		return $content;
+	}
+	$band  = '<div id="bds-feat-plans-ctas"><h2>' . esc_html__( 'Also list or get featured', 'branddad' ) . '</h2>';
+	$band .= '<p>' . esc_html__( 'Activation stays $6.99 lifetime. Featured placement is a separate monthly lane and does not replace membership.', 'branddad' ) . '</p>';
+	$band .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a></p></div>';
+	return $content . $band;
+}
+add_filter( 'the_content', 'bds_feat_plans_page_ctas', 30 );
 
 function bds_feat_client_key() {
 	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';

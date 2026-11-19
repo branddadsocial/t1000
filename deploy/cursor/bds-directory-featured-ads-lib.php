@@ -241,3 +241,22 @@ if ( ! function_exists( 'bds_feat_product_sku' ) ) {
 		return isset( bds_feat_levels()[ $level ] ) ? 'bds-feat-' . $level : '';
 	}
 }
+
+if ( ! function_exists( 'bds_feat_parse_listing_id' ) ) {
+	/**
+	 * GET listing prefill is digits only. URLs, SQL, and scripts become 0.
+	 *
+	 * @param mixed $raw Untrusted request value.
+	 * @return int
+	 */
+	function bds_feat_parse_listing_id( $raw ) {
+		if ( is_int( $raw ) ) {
+			return $raw > 0 ? $raw : 0;
+		}
+		if ( is_string( $raw ) && ctype_digit( $raw ) ) {
+			$id = (int) $raw;
+			return $id > 0 ? $id : 0;
+		}
+		return 0;
+	}
+}

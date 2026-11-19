@@ -49,12 +49,12 @@ Featured-ad files were not uploaded to Social (Directory-gated).
 
 | Area | Status |
 |---|---|
-| Social homepage launch copy | Uploaded. `branddad-complete-packages` is on the homepage. |
+| Social homepage launch copy | Uploaded. `branddad-complete-packages` is on the homepage. Cursor 0.2.1 adds `#bds-rev-home-strip` with live Subscribe links plus Get featured / List a business. Codex launch chrome was not rewritten. |
 | Services catalog | Live 0.2.0. `/services/` leads with **Plans you can buy now** and **Subscribe now** for published products, then Directory/Get featured, then inquiry-only cards. Staged/quote-only stay closed. |
 | Complete AI packages | Uploaded. Entitlements stay proposed. Checkout stays closed for quote-only rows. |
-| Directory registration and claims | `/add-listing/` still gates guests through `/select-your-plan/` with $6.99 Activation unchanged. The claim explainer post now ends with **Claim, list, or get featured** CTAs. The listing claim form itself was not completed (Codex). |
-| Featured advertising rules | Live 0.2.0 on Directory. `/featured-advertising/` is a 200 buy/inquiry page. Empty homepage lanes say “No featured businesses are showing here yet” plus **Get featured**. Checkout stays closed until Woo SKUs `bds-feat-*` exist and `is_paid()`. |
-| Membership $6.99 lifetime / Pro / Elite | Existing catalog preserved. Not changed. Select-your-plan still shows $6.99 Activation, Pro from $9.99/month, Elite $49/month. |
+| Directory registration and claims | `/add-listing/` still gates guests through `/select-your-plan/` with $6.99 Activation unchanged. The claim explainer post now ends with **Claim, list, or get featured** CTAs. Listing singles now get a **Claim or get featured** band that prefills `/featured-advertising/?listing={id}`. The listing claim form itself was not completed (Codex). |
+| Featured advertising rules | Live 0.2.1 on Directory. `/featured-advertising/` is a 200 buy/inquiry page. GET `listing` prefills only a published `at_biz_dir` id. Empty homepage lanes say “No featured businesses are showing here yet” plus **Get featured**. Checkout stays closed until Woo SKUs `bds-feat-*` exist and `is_paid()`. |
+| Membership $6.99 lifetime / Pro / Elite | Existing catalog preserved. Not changed. Select-your-plan still shows $6.99 Activation, Pro from $9.99/month, Elite $49/month, plus a **List / Get featured** band that does not change those prices. |
 | Free Directory AI | Uploaded to Directory. Account hub shows guest copy (“Sign in with the account that claimed the business”). Codex still owns tool execution. |
 | Music briefs | Uploaded. Homepage `#bds-music-brief` package select now lists the six catalog options (was echoing `Array`). Briefs save only. No payment or production. |
 | Account hub, membership display, free-AI display, studio boards, affiliate door | Live on both sites. Account hubs now lead with **Do this next** (Social: Subscribe to AI Social Growth; Directory: list / plans / Get featured / claim). |

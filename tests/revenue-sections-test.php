@@ -65,6 +65,13 @@ $pos_ask  = strpos( bds_rev_markup(), 'Upcoming plans' );
 rev_expect( false !== $pos_live && false !== $pos_ask && $pos_live < $pos_ask, 'buyable plans render before inquiry' );
 rev_expect( false !== strpos( bds_rev_markup(), '/featured-advertising/' ), 'Directory featured door is present' );
 
+$strip = bds_rev_home_strip();
+rev_expect( false !== strpos( $strip, 'id="bds-rev-home-strip"' ), 'homepage strip has a stable id' );
+rev_expect( false !== strpos( $strip, 'Subscribe to' ), 'homepage strip sells live checkout' );
+rev_expect( false !== strpos( $strip, '/product/ai-social-growth/' ), 'homepage strip uses the published Social Growth URL' );
+rev_expect( false !== strpos( $strip, '/featured-advertising/' ), 'homepage strip sells featured' );
+rev_expect( false === strpos( $strip, 'Ask about this plan' ), 'homepage strip does not mix inquiry CTAs' );
+
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );
 	exit( 1 );
