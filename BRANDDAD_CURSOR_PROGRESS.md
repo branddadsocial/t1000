@@ -50,14 +50,14 @@ Featured-ad files were not uploaded to Social (Directory-gated).
 | Area | Status |
 |---|---|
 | Social homepage launch copy | Uploaded. `branddad-complete-packages` is on the homepage. |
-| Services catalog | Uploaded. `bds-revenue-sections` is on `/services/`. Proposed prices stay inquiry until checkout is verified. |
+| Services catalog | Live 0.2.0. `/services/` leads with **Plans you can buy now** and **Subscribe now** for published products, then Directory/Get featured, then inquiry-only cards. Staged/quote-only stay closed. |
 | Complete AI packages | Uploaded. Entitlements stay proposed. Checkout stays closed for quote-only rows. |
-| Directory registration and claims | Existing plugins remain. `/add-listing/` still gates guests through `/select-your-plan/` with $6.99 Activation unchanged. Nav “Claim Your Business” still opens the locked claim explainer, not a logged-in claim form. Claim form on a listing was not completed. |
-| Featured advertising rules | Uploaded to Directory. Homepage prints `bds-featured-lanes` (Worldwide + Near You) with empty copy until a Woo `is_paid()` grant exists. Impression/click beacons are in the MU (`sendBeacon` + HMAC token). No paid placement was activated. |
+| Directory registration and claims | `/add-listing/` still gates guests through `/select-your-plan/` with $6.99 Activation unchanged. The claim explainer post now ends with **Claim, list, or get featured** CTAs. The listing claim form itself was not completed (Codex). |
+| Featured advertising rules | Live 0.2.0 on Directory. `/featured-advertising/` is a 200 buy/inquiry page. Empty homepage lanes say “No featured businesses are showing here yet” plus **Get featured**. Checkout stays closed until Woo SKUs `bds-feat-*` exist and `is_paid()`. |
 | Membership $6.99 lifetime / Pro / Elite | Existing catalog preserved. Not changed. Select-your-plan still shows $6.99 Activation, Pro from $9.99/month, Elite $49/month. |
 | Free Directory AI | Uploaded to Directory. Account hub shows guest copy (“Sign in with the account that claimed the business”). Codex still owns tool execution. |
 | Music briefs | Uploaded. Homepage `#bds-music-brief` package select now lists the six catalog options (was echoing `Array`). Briefs save only. No payment or production. |
-| Account hub, membership display, free-AI display, studio boards, affiliate door | Live on both sites. Tier comparison, saved-business guest copy, studio “Not connected” boards, portal-root affiliate CTA, and music-brief empty state all render. |
+| Account hub, membership display, free-AI display, studio boards, affiliate door | Live on both sites. Account hubs now lead with **Do this next** (Social: Subscribe to AI Social Growth; Directory: list / plans / Get featured / claim). |
 | Video studio | Deferred. No licensed provider is connected. |
 
 ## Verification

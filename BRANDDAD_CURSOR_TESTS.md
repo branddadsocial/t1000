@@ -17,9 +17,10 @@
 
 ## Observed on the live sites
 
-- Social homepage and services page returned the current AI launch content. `/services/` fail-closed: staged/quote_only rows go to `/contact-us/?offer=`, launch-candidate rows with published products go to `/product/…`. AI Social Growth product page shows Subscribe monthly at $29.99. No purchase was made.
-- Directory homepage returned location search, city counts, and empty Featured Worldwide / Featured Near You lanes. Add-listing still redirects guests to `/select-your-plan/` with $6.99 Activation intact.
-- `/account-hub/` on both sites renders membership comparison, guest free-AI copy, disabled studio boards, and “Open the portal”.
+- Social `/services/` 0.2.0: heading **Plans you can buy now**, four **Subscribe now** buttons, **Get featured**, then **Upcoming plans — inquiry only**. No purchase was made.
+- Directory `/featured-advertising/` returns 200 with title “Get featured on BrandDad Directory”, lane prices, and the inquiry form. Homepage empty lanes print “No featured businesses are showing here yet” plus the $9.99/$99.99 request copy.
+- `/account-hub/` **Do this next** is live: Social leads with Subscribe to AI Social Growth; Directory leads with list / plans / Get featured / claim.
+- Claim explainer post now ends with **Claim, list, or get featured**. Listing claim form on a card was not completed.
 - `/affiliate-program/` on both sites links the portal root. Clicking it opened Partnero (`affiliates.branddad.social/program` after Partnero’s own redirect).
 - Directory recovered from HTTP 500 after the featured-MU syntax patch. Rechecked home, account, studio, and affiliate-program: 200, no parse fatal.
 

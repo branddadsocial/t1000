@@ -29,6 +29,7 @@
 - The file manager footer reports 6 infections, last scan 14-11-2026. Five are cached Directory HTML false positives under `wp-content/cache/bd-eco-html/`. The sixth is the BoxCoin oneshot already inside `malware_quarantine_oneshot_sweep_20260822T005229Z`. No cleanup was purchased. No file was renamed or deleted. Harden and the uploads noexec lock stay.
 - SSH from this machine is still closed. Later deploys need a working key exchange or the same file manager.
 - Directory returned 500 after a corrupted featured-MU save. Three syntax errors were patched in place on 2026-11-19. SHA now matches local `88dbf2f3…`. Directory public URLs return 200 again.
+- File-manager `savefile` requires a leading `/public_html/...` path. Paths without the slash return `success:false`. GitHub raw fetch from `ecc6116`/`34f389d` is the reliable deploy path while SSH stays dead.
 
 ## Owner decisions still required
 
