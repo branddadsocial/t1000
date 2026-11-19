@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.5
+ * Version: 0.2.6
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -128,15 +128,7 @@ function bds_rev_menu_featured_url( $title, $url ) {
  * @param string $url   Current href.
  * @return string
  */
-function bds_rev_menu_packages_url( $title, $url ) {
-	if ( 0 !== strcasecmp( trim( wp_strip_all_tags( (string) $title ) ), 'AI Packages' ) ) {
-		return (string) $url;
-	}
-	$host = strtolower( (string) wp_parse_url( (string) $url, PHP_URL_HOST ) );
-	$path = trim( (string) wp_parse_url( (string) $url, PHP_URL_PATH ), '/' );
-	if ( '' !== $path || ! in_array( $host, array( 'branddad.social', 'www.branddad.social', '' ), true ) ) {
-		return (string) $url;
-	}
+function bds_rev_services_url() {
 	$dest = home_url( '/services/' );
 	if ( function_exists( 'bds_po_url' ) ) {
 		$out = bds_po_url( $dest );
@@ -145,6 +137,37 @@ function bds_rev_menu_packages_url( $title, $url ) {
 		}
 	}
 	return $dest;
+}
+
+/**
+ * Homepage and the homepage AI-plans hash are not the catalog.
+ *
+ * @param string $href Current href.
+ * @return string
+ */
+function bds_rev_packages_href( $href ) {
+	$href = (string) $href;
+	$host = strtolower( (string) wp_parse_url( $href, PHP_URL_HOST ) );
+	$path = trim( (string) wp_parse_url( $href, PHP_URL_PATH ), '/' );
+	$frag = (string) wp_parse_url( $href, PHP_URL_FRAGMENT );
+	if ( ! in_array( $host, array( 'branddad.social', 'www.branddad.social', '' ), true ) ) {
+		return $href;
+	}
+	if ( '' !== $path ) {
+		return $href;
+	}
+	if ( '' !== $frag && 'branddad-ai-solutions' !== $frag ) {
+		return $href;
+	}
+	return bds_rev_services_url();
+}
+
+function bds_rev_menu_packages_url( $title, $url ) {
+	$label = trim( str_replace( array( '→', '&rarr;' ), '', wp_strip_all_tags( (string) $title ) ) );
+	if ( 0 !== strcasecmp( $label, 'AI Packages' ) ) {
+		return (string) $url;
+	}
+	return bds_rev_packages_href( $url );
 }
 
 function bds_rev_fix_featured_menu( $items ) {
@@ -326,6 +349,7 @@ function bds_rev_markup() {
 }
 
 function bds_rev_home_strip() {
+	$GLOBALS['bds_rev_strip_on'] = true;
 	$html  = '<section class="bds-rev" id="bds-rev-home-strip">';
 	$html .= '<h2>' . esc_html__( 'Buy a live plan or get featured', 'branddad' ) . '</h2>';
 	$html .= '<p>' . esc_html__( 'Subscribe opens only for products already for sale. Featured is a Directory request until that Woo product exists. Music stays a brief, not a sale.', 'branddad' ) . '</p><p>';
@@ -447,6 +471,11 @@ function bds_rev_append_content( $content ) {
 }
 add_filter( 'the_content', 'bds_rev_append_content', 1000 );
 
+function bds_rev_request_path() {
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+	return trim( $path, '/' );
+}
+
 function bds_rev_404_cta() {
 	if ( ! bds_rev_is_social() || is_admin() || ! is_404() ) {
 		return;
@@ -454,6 +483,26 @@ function bds_rev_404_cta() {
 	echo bds_rev_home_strip(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'wp_footer', 'bds_rev_404_cta', 24 );
+
+function bds_rev_audit_footer() {
+	if ( ! bds_rev_is_social() || is_admin() || ! empty( $GLOBALS['bds_rev_strip_on'] ) ) {
+		return;
+	}
+	if ( 'check-your-website' !== bds_rev_request_path() ) {
+		return;
+	}
+	echo bds_rev_home_strip(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_footer', 'bds_rev_audit_footer', 26 );
+
+function bds_rev_package_link_script() {
+	if ( ! bds_rev_is_social() || is_admin() ) {
+		return;
+	}
+	$dest = wp_json_encode( bds_rev_services_url() );
+	echo '<script id="bds-rev-package-link">(function(){var dest=' . $dest . ';if(!dest)return;var nodes=document.querySelectorAll("a[data-bds-package-link],#menu-item-53631 > a");for(var i=0;i<nodes.length;i++){var href=nodes[i].getAttribute("href")||"";if(href==="https://branddad.social/"||href==="https://www.branddad.social/"||href==="https://branddad.social/#branddad-ai-solutions"||href==="https://www.branddad.social/#branddad-ai-solutions"){nodes[i].setAttribute("href",dest);}}})();</script>';
+}
+add_action( 'wp_footer', 'bds_rev_package_link_script', 40 );
 
 /**
  * Secure design (untrusted GET): `offer` is sanitize_title, then matched to the

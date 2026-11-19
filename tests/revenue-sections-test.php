@@ -27,6 +27,7 @@ function sanitize_title( $s ) { return strtolower( preg_replace( '/[^a-z0-9\-]+/
 function wp_unslash( $s ) { return $s; }
 function add_query_arg( $key, $val, $url ) { return $url . '?' . $key . '=' . rawurlencode( (string) $val ); }
 function wp_strip_all_tags( $s ) { return trim( strip_tags( (string) $s ) ); }
+function wp_json_encode( $s ) { return json_encode( $s ); }
 function bds_ai_commercial_checkout_url( $slug ) {
 	return 'ai-social-growth' === $slug ? 'https://branddad.social/product/ai-social-growth/' : '';
 }
@@ -113,6 +114,14 @@ rev_expect(
 rev_expect(
 	'https://branddad.social/services/' === bds_rev_menu_packages_url( 'AI Packages', 'https://branddad.social/services/' ),
 	'AI Packages that already open services stay there'
+);
+rev_expect(
+	'https://branddad.social/services/' === bds_rev_packages_href( 'https://branddad.social/#branddad-ai-solutions' ),
+	'AI Packages homepage hash opens the services catalog'
+);
+rev_expect(
+	'https://branddad.social/blog/' === bds_rev_packages_href( 'https://branddad.social/blog/' ),
+	'other Social paths stay put'
 );
 $choose = '<a class="bdai-button" href="https://branddad.social/product/ai-social-growth/">Choose this plan</a>';
 rev_expect( false !== strpos( bds_rev_rewrite_choose_plan( $choose ), '>Subscribe</a>' ), 'live plan cards say Subscribe' );
