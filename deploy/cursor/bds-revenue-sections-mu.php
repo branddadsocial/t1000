@@ -1,0 +1,326 @@
+<?php
+/**
+ * Plugin Name: BrandDad Revenue Sections
+ * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
+ * Version: 0.1.0
+ * Author: BrandDad
+ *
+ * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser.
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function bds_rev_is_social() {
+	$host = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+	return in_array( $host, array( 'branddad.social', 'www.branddad.social' ), true );
+}
+
+/**
+ * Proposed offers. launch_state staged or quote_only cannot check out from this plugin.
+ *
+ * @return array<int,array<string,string>>
+ */
+function bds_rev_offers() {
+	return array(
+		array( 'slug' => 'ai-business-monitoring', 'name' => 'AI Business Monitoring', 'price' => '$9.99/month', 'state' => 'staged', 'who' => 'A business that wants a simple website check.' ),
+		array( 'slug' => 'ai-review-assistant', 'name' => 'AI Review Assistant', 'price' => '$9.99/month', 'state' => 'staged', 'who' => 'A business that replies to reviews itself.' ),
+		array( 'slug' => 'ai-social-starter', 'name' => 'AI Social Starter', 'price' => '$14.99/month', 'state' => 'staged', 'who' => 'A business posting a small monthly set of drafts.' ),
+		array( 'slug' => 'ai-lead-assistant', 'name' => 'AI Lead Assistant', 'price' => '$19.99/month', 'state' => 'catalog', 'who' => 'A business capturing inquiries from one form.' ),
+		array( 'slug' => 'ai-local-seo', 'name' => 'AI Local SEO Starter', 'price' => '$19.99/month', 'state' => 'catalog', 'who' => 'One website and one primary location.' ),
+		array( 'slug' => 'ai-social-growth', 'name' => 'AI Social Growth', 'price' => '$29.99/month', 'state' => 'catalog', 'who' => 'A business that wants a monthly content calendar.' ),
+		array( 'slug' => 'ai-linkedin-growth', 'name' => 'AI LinkedIn Growth', 'price' => '$29.99/month', 'state' => 'staged', 'who' => 'One LinkedIn presence. Automated posting is not included.' ),
+		array( 'slug' => 'ai-website-chatbot', 'name' => 'AI Website Chatbot', 'price' => '$29.99/month', 'state' => 'staged', 'who' => 'A site that needs an approved-knowledge assistant.' ),
+		array( 'slug' => 'ai-business-essentials', 'name' => 'AI Business Essentials', 'price' => '$29.99/month', 'state' => 'catalog', 'who' => 'The flagship everyday plan.' ),
+		array( 'slug' => 'ai-local-seo-autopilot', 'name' => 'AI Local SEO Autopilot', 'price' => '$39.99/month', 'state' => 'staged', 'who' => 'Local SEO execution after Codex confirms the engine.' ),
+		array( 'slug' => 'ai-business-essentials-pro', 'name' => 'Business Essentials Pro', 'price' => '$49.99/month', 'state' => 'staged', 'who' => 'A busier business that needs higher draft limits.' ),
+		array( 'slug' => 'ai-seo-growth-autopilot', 'name' => 'AI SEO Growth Autopilot', 'price' => '$59.99/month', 'state' => 'staged', 'who' => 'SEO workflows after fulfillment is verified.' ),
+		array( 'slug' => 'ai-seo-pro', 'name' => 'AI SEO Pro', 'price' => '$99.99/month', 'state' => 'staged', 'who' => 'The highest proposed SEO allowance.' ),
+		array( 'slug' => 'complete-ai-starter', 'name' => 'Complete AI Starter', 'price' => '$79.99/month', 'state' => 'staged', 'who' => '12 social drafts, 2 channels, 1 autoblog, 100 chatbot conversations. Entitlements are proposed.' ),
+		array( 'slug' => 'complete-ai-growth', 'name' => 'Complete AI Growth', 'price' => '$149.99/month', 'state' => 'staged', 'who' => '30 social drafts, 4 channels, 2 autoblogs, 500 chatbot conversations. Entitlements are proposed.' ),
+		array( 'slug' => 'complete-ai-pro', 'name' => 'Complete AI Pro', 'price' => '$249.99/month', 'state' => 'staged', 'who' => '60 social drafts, 6 channels, 4 autoblogs, 1,500 chatbot conversations. Entitlements are proposed.' ),
+		array( 'slug' => 'done-for-you-ai', 'name' => 'Done-for-You AI Management', 'price' => 'From $399/month', 'state' => 'quote_only', 'who' => 'A scoped management agreement. Not a self-serve checkout.' ),
+	);
+}
+
+function bds_rev_music_packages() {
+	return array(
+		'original-single' => array( 'Original Single', '$79' ),
+		'premium-single'  => array( 'Premium Single + Artwork', '$129' ),
+		'ep-3'            => array( '3-Song EP', '$249' ),
+		'album-6'         => array( '6-Song Album', '$449' ),
+		'album-12'        => array( '12-Song Album', '$799' ),
+		'partnership'     => array( 'Monthly Music Partnership', 'From $199' ),
+	);
+}
+
+function bds_rev_offer_url( $slug ) {
+	if ( function_exists( 'bds_ai_commercial_checkout_url' ) ) {
+		$url = bds_ai_commercial_checkout_url( $slug );
+		if ( is_string( $url ) && '' !== $url ) {
+			return $url;
+		}
+	}
+	return '';
+}
+
+function bds_rev_card( array $offer ) {
+	$url   = bds_rev_offer_url( $offer['slug'] );
+	$ask   = add_query_arg( 'offer', rawurlencode( $offer['slug'] ), home_url( '/contact-us/' ) );
+	$html  = '<article class="bds-rev-card"><h3>' . esc_html( $offer['name'] ) . '</h3>';
+	$html .= '<p class="bds-rev-price">' . esc_html( $offer['price'] ) . '</p>';
+	$html .= '<p>' . esc_html( $offer['who'] ) . '</p>';
+	if ( '' !== $url ) {
+		$html .= '<a class="bds-rev-button" href="' . esc_url( $url ) . '">' . esc_html__( 'Continue to checkout', 'branddad' ) . '</a>';
+	} else {
+		$html .= '<a class="bds-rev-button bds-rev-button--quiet" href="' . esc_url( $ask ) . '">' . esc_html__( 'Ask about this plan', 'branddad' ) . '</a>';
+		$html .= '<p class="bds-rev-note">' . esc_html__( 'Purchase stays closed until fulfillment and billing are verified.', 'branddad' ) . '</p>';
+	}
+	return $html . '</article>';
+}
+
+function bds_rev_markup() {
+	$audit     = esc_url( home_url( '/check-your-website/' ) );
+	$directory = esc_url( 'https://directory.branddad.social/add-listing/' );
+	$featured  = esc_url( 'https://directory.branddad.social/' );
+	$cards     = '';
+	foreach ( bds_rev_offers() as $offer ) {
+		$cards .= bds_rev_card( $offer );
+	}
+	$music = bds_rev_music_options_html();
+	ob_start();
+	?>
+	<div class="bds-rev" id="bds-revenue-sections">
+		<section aria-labelledby="bds-rev-audit">
+			<h2 id="bds-rev-audit"><?php esc_html_e( 'Start with a free AI business audit.', 'branddad' ); ?></h2>
+			<p><?php esc_html_e( 'The website check explains what to fix first. It does not invent rankings or promise revenue.', 'branddad' ); ?></p>
+			<a class="bds-rev-button" href="<?php echo $audit; ?>"><?php esc_html_e( 'Run the free audit', 'branddad' ); ?></a>
+		</section>
+		<section aria-labelledby="bds-rev-catalog">
+			<h2 id="bds-rev-catalog"><?php esc_html_e( 'AI services and complete business packages', 'branddad' ); ?></h2>
+			<p><?php esc_html_e( 'Prices below are the current proposed catalog. A button opens checkout only when that product is already approved for sale.', 'branddad' ); ?></p>
+			<div class="bds-rev-grid"><?php echo $cards; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+		</section>
+		<section aria-labelledby="bds-rev-directory">
+			<h2 id="bds-rev-directory"><?php esc_html_e( 'Free Directory listing and featured placement', 'branddad' ); ?></h2>
+			<p><?php esc_html_e( 'Create or claim a listing for free. Featured placement is Local $9.99, Regional $19.99, National $39.99, or Global Homepage $99.99 per month. Those ads are not charged from this page.', 'branddad' ); ?></p>
+			<a class="bds-rev-button" href="<?php echo $directory; ?>"><?php esc_html_e( 'List a business', 'branddad' ); ?></a>
+			<a class="bds-rev-button bds-rev-button--quiet" href="<?php echo $featured; ?>"><?php esc_html_e( 'See the Directory', 'branddad' ); ?></a>
+		</section>
+		<section aria-labelledby="bds-rev-music">
+			<h2 id="bds-rev-music"><?php esc_html_e( 'BrandDad Music for Business', 'branddad' ); ?></h2>
+			<p><?php esc_html_e( 'Original music commissioned for a business. Artist T Dash. Songwriter Thaddeus McCollum. Production by BrandDad Music. Sold by BrandDad Social. This form requests a brief. It does not take payment or start production.', 'branddad' ); ?></p>
+			<?php echo bds_rev_music_form( $music ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</section>
+	</div>
+	<?php
+	return (string) ob_get_clean();
+}
+
+function bds_rev_music_options_html( $packages = null ) {
+	if ( ! is_array( $packages ) ) {
+		$packages = bds_rev_music_packages();
+	}
+	$html = '';
+	foreach ( $packages as $slug => $pack ) {
+		if ( ! is_array( $pack ) || ! isset( $pack[0], $pack[1] ) ) {
+			continue;
+		}
+		$html .= '<option value="' . esc_attr( (string) $slug ) . '">' . esc_html( $pack[0] . ' — ' . $pack[1] ) . '</option>';
+	}
+	return $html;
+}
+
+function bds_rev_offer_by_slug( $slug ) {
+	$slug = sanitize_title( (string) $slug );
+	if ( '' === $slug ) {
+		return null;
+	}
+	foreach ( bds_rev_offers() as $offer ) {
+		if ( $offer['slug'] === $slug ) {
+			return $offer;
+		}
+	}
+	return null;
+}
+
+function bds_rev_music_form( $options = '' ) {
+	if ( is_array( $options ) || '' === $options ) {
+		$options = bds_rev_music_options_html( is_array( $options ) ? $options : null );
+	}
+	$status = isset( $_GET['bds_music'] ) ? sanitize_key( wp_unslash( $_GET['bds_music'] ) ) : '';
+	$note   = 'saved' === $status
+		? __( 'Your brief was received. BrandDad will confirm scope and licensing before any payment or production.', 'branddad' )
+		: '';
+	ob_start();
+	if ( '' !== $note ) {
+		echo '<p role="status">' . esc_html( $note ) . '</p>';
+	}
+	?>
+	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+		<?php wp_nonce_field( 'bds_music_brief', 'bds_music_nonce' ); ?>
+		<input type="hidden" name="action" value="bds_music_brief" />
+		<p class="bds-rev-hp" aria-hidden="true"><label>Company website <input type="text" name="bds_company_url" tabindex="-1" autocomplete="off" /></label></p>
+		<p><label><?php esc_html_e( 'Package', 'branddad' ); ?><select name="package" required><?php echo $options; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></select></label></p>
+		<p><label><?php esc_html_e( 'Your name', 'branddad' ); ?><input name="customer_name" maxlength="80" required /></label></p>
+		<p><label><?php esc_html_e( 'Email', 'branddad' ); ?><input name="email" type="email" maxlength="120" required /></label></p>
+		<p><label><?php esc_html_e( 'Genre', 'branddad' ); ?><input name="genre" maxlength="80" /></label></p>
+		<p><label><?php esc_html_e( 'Mood', 'branddad' ); ?><input name="mood" maxlength="80" /></label></p>
+		<p><label><?php esc_html_e( 'Business description', 'branddad' ); ?><textarea name="business" maxlength="800" required></textarea></label></p>
+		<p><label><?php esc_html_e( 'Customer story', 'branddad' ); ?><textarea name="story" maxlength="800"></textarea></label></p>
+		<p><label><?php esc_html_e( 'Usage rights you need', 'branddad' ); ?><textarea name="usage" maxlength="400"></textarea></label></p>
+		<button class="bds-rev-button" type="submit"><?php esc_html_e( 'Send the creative brief', 'branddad' ); ?></button>
+	</form>
+	<?php
+	return (string) ob_get_clean();
+}
+
+function bds_rev_append_content( $content ) {
+	if ( ! bds_rev_is_social() || is_admin() || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	if ( ! is_front_page() && ! is_page( 'services' ) ) {
+		return $content;
+	}
+	if ( false !== strpos( $content, 'id="bds-revenue-sections"' ) ) {
+		return $content;
+	}
+	if ( false !== strpos( $content, 'id="branddad-music"' ) ) {
+		$block = '<section class="bds-rev" id="bds-music-brief"><h2>' . esc_html__( 'Send a music brief', 'branddad' ) . '</h2><p>' . esc_html__( 'This saves a private request. It does not take payment or start production.', 'branddad' ) . '</p>' . bds_rev_music_form() . '</section>';
+		$pos   = strpos( $content, '<section class="bdai-final"' );
+		if ( false !== $pos ) {
+			return substr( $content, 0, $pos ) . $block . substr( $content, $pos );
+		}
+		return $content . $block;
+	}
+	$block = bds_rev_markup();
+	$pos   = strpos( $content, '<section class="bdai-final"' );
+	if ( false !== $pos ) {
+		return substr( $content, 0, $pos ) . $block . substr( $content, $pos );
+	}
+	return $content . $block;
+}
+add_filter( 'the_content', 'bds_rev_append_content', 1000 );
+
+/**
+ * Secure design (untrusted GET): `offer` is sanitize_title, then matched to the
+ * hard-coded catalog slug list. Unknown values print nothing. Name/price are
+ * esc_html. No checkout, no storage, no raw query echo.
+ */
+function bds_rev_contact_offer_note( $content ) {
+	if ( ! bds_rev_is_social() || is_admin() || ! in_the_loop() || ! is_main_query() || ! is_page( 'contact-us' ) ) {
+		return $content;
+	}
+	$slug  = isset( $_GET['offer'] ) ? sanitize_title( wp_unslash( $_GET['offer'] ) ) : '';
+	$offer = bds_rev_offer_by_slug( $slug );
+	if ( ! $offer ) {
+		return $content;
+	}
+	$note  = '<p class="bds-rev-note" id="bds-rev-offer-note">';
+	$note .= esc_html(
+		sprintf(
+			/* translators: 1: plan name, 2: listed price */
+			__( 'You asked about %1$s (%2$s). This page is an inquiry. It does not start checkout.', 'branddad' ),
+			$offer['name'],
+			$offer['price']
+		)
+	);
+	$note .= '</p>';
+	if ( false !== strpos( $content, 'id="bds-rev-offer-note"' ) ) {
+		return $content;
+	}
+	return $note . $content;
+}
+add_filter( 'the_content', 'bds_rev_contact_offer_note', 20 );
+
+function bds_rev_styles() {
+	if ( ! bds_rev_is_social() ) {
+		return;
+	}
+	echo '<style id="bds-rev-css">.bds-rev{max-width:1180px;margin:0 auto;padding:12px 20px 28px;color:#0b172a}.bds-rev h2{font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.03em}.bds-rev-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.bds-rev-card{display:flex;flex-direction:column;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-rev-price{font-size:22px;font-weight:800}.bds-rev-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-rev-button--quiet{background:#071a33}.bds-rev-note{color:#526070;font-size:13px}.bds-rev form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-rev input,.bds-rev select,.bds-rev textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-rev textarea{min-height:96px}.bds-rev-hp{position:absolute;left:-9999px}.bds-rev-card .bds-rev-button{margin-top:auto}@media(max-width:800px){.bds-rev-grid{grid-template-columns:1fr}.bds-rev{padding:8px 12px 24px}}</style>';
+}
+add_action( 'wp_head', 'bds_rev_styles', 40 );
+
+function bds_rev_client_key() {
+	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';
+	return 'bds_music_' . md5( $ip . '|' . wp_salt( 'auth' ) );
+}
+
+function bds_rev_handle_music() {
+	if ( ! bds_rev_is_social() ) {
+		wp_die( esc_html__( 'This form is not available here.', 'branddad' ), 404 );
+	}
+	if ( ! isset( $_POST['bds_music_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bds_music_nonce'] ) ), 'bds_music_brief' ) ) {
+		wp_die( esc_html__( 'The form expired. Reload the page and try again.', 'branddad' ), 403 );
+	}
+	if ( ! empty( $_POST['bds_company_url'] ) ) {
+		wp_safe_redirect( home_url( '/?bds_music=saved' ) );
+		exit;
+	}
+	$key = bds_rev_client_key();
+	if ( (int) get_transient( $key ) >= 5 ) {
+		wp_die( esc_html__( 'Too many briefs were sent. Try again later.', 'branddad' ), 429 );
+	}
+	$packages = bds_rev_music_packages();
+	$package  = isset( $_POST['package'] ) ? sanitize_key( wp_unslash( $_POST['package'] ) ) : '';
+	$email    = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+	$name     = isset( $_POST['customer_name'] ) ? sanitize_text_field( wp_unslash( $_POST['customer_name'] ) ) : '';
+	$business = isset( $_POST['business'] ) ? sanitize_textarea_field( wp_unslash( $_POST['business'] ) ) : '';
+	if ( ! isset( $packages[ $package ] ) || ! is_email( $email ) || '' === $name || '' === $business ) {
+		wp_die( esc_html__( 'Check the package, name, email, and business description.', 'branddad' ), 400 );
+	}
+	$body = implode(
+		"\n\n",
+		array(
+			'Package: ' . $packages[ $package ][0] . ' (' . $packages[ $package ][1] . ')',
+			'Name: ' . $name,
+			'Email: ' . $email,
+			'Genre: ' . sanitize_text_field( wp_unslash( $_POST['genre'] ?? '' ) ),
+			'Mood: ' . sanitize_text_field( wp_unslash( $_POST['mood'] ?? '' ) ),
+			'Business: ' . $business,
+			'Story: ' . sanitize_textarea_field( wp_unslash( $_POST['story'] ?? '' ) ),
+			'Usage: ' . sanitize_textarea_field( wp_unslash( $_POST['usage'] ?? '' ) ),
+			'Payment: not collected. Production: not started.',
+		)
+	);
+	$post_id = wp_insert_post(
+		array(
+			'post_type'    => 'bds_music_brief',
+			'post_status'  => 'private',
+			'post_title'   => 'Music brief ' . $package,
+			'post_content' => $body,
+			'post_author'  => get_current_user_id(),
+		),
+		true
+	);
+	if ( is_wp_error( $post_id ) ) {
+		wp_die( esc_html__( 'The brief could not be saved. Try again later.', 'branddad' ), 500 );
+	}
+	update_post_meta( (int) $post_id, '_bds_music_email', $email );
+	update_post_meta( (int) $post_id, '_bds_music_package', $package );
+	set_transient( $key, (int) get_transient( $key ) + 1, HOUR_IN_SECONDS );
+	wp_safe_redirect( wp_get_referer() ? add_query_arg( 'bds_music', 'saved', wp_get_referer() ) : home_url( '/?bds_music=saved' ) );
+	exit;
+}
+add_action( 'admin_post_bds_music_brief', 'bds_rev_handle_music' );
+add_action( 'admin_post_nopriv_bds_music_brief', 'bds_rev_handle_music' );
+
+function bds_rev_register_brief_type() {
+	if ( ! bds_rev_is_social() ) {
+		return;
+	}
+	register_post_type(
+		'bds_music_brief',
+		array(
+			'label'           => 'Music briefs',
+			'public'          => false,
+			'show_ui'         => true,
+			'show_in_menu'    => true,
+			'capability_type' => 'post',
+			'map_meta_cap'    => true,
+			'supports'        => array( 'title', 'editor' ),
+		)
+	);
+}
+add_action( 'init', 'bds_rev_register_brief_type' );
