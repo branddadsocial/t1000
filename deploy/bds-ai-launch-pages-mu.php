@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Launch Pages (Staged)
  * Description: Consolidated, accessible homepage and services-page experience for the approved BrandDad AI launch plans.
- * Version: 0.5.2
+ * Version: 0.5.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.5.2' );
+define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.5.3' );
 
 /** Public replacement remains fail-closed until the final launch gate. */
 function bds_ai_launch_pages_enabled() {
@@ -54,7 +54,7 @@ function bds_ai_launch_product_url( $slug ) {
 		$commercial_offer = function_exists( 'bds_ai_commercial_offer' ) ? bds_ai_commercial_offer( $slug ) : null;
 		$commercial_url = bds_ai_commercial_checkout_url( $slug );
 		if ( $commercial_url ) {
-			return $commercial_url;
+			return bds_ai_launch_keep_ref( $commercial_url );
 		}
 		// A cataloged offer that is still staged must remain gated.
 		if ( is_array( $commercial_offer ) ) {
@@ -62,7 +62,18 @@ function bds_ai_launch_product_url( $slug ) {
 		}
 	}
 	$post = get_page_by_path( sanitize_title( $slug ), OBJECT, 'product' );
-	return $post instanceof WP_Post && 'publish' === $post->post_status ? get_permalink( $post ) : '';
+	$url  = $post instanceof WP_Post && 'publish' === $post->post_status ? get_permalink( $post ) : '';
+	return bds_ai_launch_keep_ref( $url );
+}
+
+/** Keep an inbound Partnero ref on a buy link. Existing ref is left as-is. */
+function bds_ai_launch_keep_ref( $url ) {
+	$url = (string) $url;
+	if ( '' === $url || ! function_exists( 'bds_po_url' ) ) {
+		return $url;
+	}
+	$out = bds_po_url( $url );
+	return is_string( $out ) && '' !== $out ? $out : $url;
 }
 
 /** Render the flagship and three specialist offers without inventing readiness. */
@@ -82,7 +93,7 @@ function bds_ai_launch_featured_offer_card( $slug, $primary = false ) {
 		<p><?php echo esc_html( $offer['summary'] ); ?></p>
 		<ul><?php foreach ( (array) $offer['limits'] as $limit ) : ?><li><?php echo esc_html( $limit ); ?></li><?php endforeach; ?></ul>
 		<?php if ( $url ) : ?>
-			<a class="bdai-button" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $primary ? __( 'Start 7-day free trial', 'branddad' ) : __( 'Choose this plan', 'branddad' ) ); ?></a>
+			<a class="bdai-button" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $primary ? __( 'Start 7-day free trial', 'branddad' ) : __( 'Subscribe', 'branddad' ) ); ?></a>
 		<?php elseif ( $primary ) : ?>
 			<a class="bdai-button" href="<?php echo $audit; ?>"><?php esc_html_e( 'Start free AI business audit', 'branddad' ); ?></a>
 			<p class="bdai-readiness"><?php esc_html_e( 'Paid checkout opens only after the final delivery and billing tests pass.', 'branddad' ); ?></p>
@@ -218,7 +229,7 @@ function bds_ai_launch_price_label( $offer ) {
 function bds_ai_launch_offer_action( $slug, $offer ) {
 	$url = bds_ai_launch_product_url( $slug );
 	if ( $url ) {
-		return array( $url, __( 'Choose this plan', 'branddad' ), true );
+		return array( $url, __( 'Subscribe', 'branddad' ), true );
 	}
 		$contact = add_query_arg(
 		array(

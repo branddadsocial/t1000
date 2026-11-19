@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Commercial Catalog (Staged)
  * Description: One fail-closed source of truth for BrandDad AI pricing, limits, delivery readiness, and checkout eligibility.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_COMMERCIAL_CATALOG_VERSION', '0.3.0' );
+define( 'BDS_AI_COMMERCIAL_CATALOG_VERSION', '0.3.1' );
 
 /**
  * Authoritative BrandDad AI commercial catalog.
@@ -270,10 +270,15 @@ function bds_ai_commercial_checkout_url( $slug ) {
 /** Keep the approved recurring Social Growth CTA explicit after legacy payment filters run. */
 function bds_ai_commercial_monthly_button_text( $text, $product = null ) {
 	$pid = is_object( $product ) && method_exists( $product, 'get_id' ) ? (int) $product->get_id() : 0;
-	if ( 53757 === $pid && 'ai-social-growth' === (string) get_post_field( 'post_name', $pid ) && 'yes' === (string) get_post_meta( $pid, '_wps_sfw_product', true ) ) {
-		return __( 'Subscribe monthly', 'branddad' );
+	if ( $pid < 1 || 'yes' !== (string) get_post_meta( $pid, '_wps_sfw_product', true ) ) {
+		return $text;
 	}
-	return $text;
+	$slug  = (string) get_post_field( 'post_name', $pid );
+	$offer = bds_ai_commercial_offer( $slug );
+	if ( ! is_array( $offer ) || ! in_array( $offer['launch_state'], array( 'launch_candidate', 'live_legacy' ), true ) ) {
+		return $text;
+	}
+	return __( 'Subscribe monthly', 'branddad' );
 }
 add_filter( 'woocommerce_product_single_add_to_cart_text', 'bds_ai_commercial_monthly_button_text', PHP_INT_MAX, 2 );
 add_filter( 'woocommerce_product_add_to_cart_text', 'bds_ai_commercial_monthly_button_text', PHP_INT_MAX, 2 );

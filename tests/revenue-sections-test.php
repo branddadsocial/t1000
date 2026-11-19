@@ -30,6 +30,13 @@ function wp_strip_all_tags( $s ) { return trim( strip_tags( (string) $s ) ); }
 function bds_ai_commercial_checkout_url( $slug ) {
 	return 'ai-social-growth' === $slug ? 'https://branddad.social/product/ai-social-growth/' : '';
 }
+function bds_po_url( $url ) {
+	$url = (string) $url;
+	if ( false === strpos( $url, '/product/' ) ) {
+		return $url;
+	}
+	return $url . '?ref=house';
+}
 
 require dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php';
 
@@ -59,6 +66,7 @@ rev_expect( is_array( bds_rev_offer_by_slug( 'featured-local' ) ), 'featured inq
 list( $live, $ask ) = bds_rev_split_offer_cards();
 rev_expect( false !== strpos( $live, 'Subscribe now' ), 'live cards use Subscribe now' );
 rev_expect( false !== strpos( $live, '/product/ai-social-growth/' ), 'live Social Growth goes to the published product' );
+rev_expect( false !== strpos( $live, 'ref=house' ), 'live Subscribe link keeps the affiliate ref' );
 rev_expect( false === strpos( $live, 'Ask about this plan' ), 'live grid does not mix inquiry buttons' );
 rev_expect( false !== strpos( $ask, 'Ask about this plan' ), 'closed plans stay in the inquiry grid' );
 rev_expect( false !== strpos( $ask, 'ai-business-monitoring' ), 'monitoring stays inquiry' );
