@@ -641,23 +641,12 @@ add_action( 'wp_footer', 'bds_feat_listing_cta_footer', 25 );
 add_action( 'atbdp_after_single_listing', 'bds_feat_listing_cta_footer', 25 );
 add_action( 'directorist_single_listing_after_content', 'bds_feat_listing_cta_footer', 25 );
 
-function bds_feat_plans_page_ctas( $content ) {
-	if ( ! bds_feat_is_directory() || is_admin() || ! in_the_loop() || ! is_main_query() ) {
-		return $content;
-	}
-	if ( ! is_page( 'select-your-plan' ) ) {
-		return $content;
-	}
-	if ( false !== strpos( $content, 'id="bds-feat-plans-ctas"' ) ) {
-		return $content;
-	}
-	$band  = '<div id="bds-feat-plans-ctas"><h2>' . esc_html__( 'Also list or get featured', 'branddad' ) . '</h2>';
-	$band .= '<p>' . esc_html__( 'Activation stays $6.99 lifetime. Featured placement is a separate monthly lane and does not replace membership.', 'branddad' ) . '</p>';
-	$band .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
-	$band .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a></p></div>';
-	return $content . $band;
+function bds_feat_plans_page_ctas() {
+	return bds_feat_door_band(
+		__( 'Also list or get featured', 'branddad' ),
+		__( 'Activation stays $6.99 lifetime. Featured placement is a separate monthly lane and does not replace membership.', 'branddad' )
+	);
 }
-add_filter( 'the_content', 'bds_feat_plans_page_ctas', 30 );
 
 function bds_feat_request_path() {
 	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
@@ -685,10 +674,21 @@ function bds_feat_path_ctas() {
 		);
 		return;
 	}
+	if ( 'select-your-plan' === $path ) {
+		echo bds_feat_plans_page_ctas(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		return;
+	}
 	if ( 'add-listing' === $path ) {
 		echo bds_feat_door_band(
 			__( 'Get found, then get featured', 'branddad' ),
 			__( 'A basic listing is free after the existing $6.99 lifetime activation. Featured placement is a separate monthly request.', 'branddad' )
+		);
+		return;
+	}
+	if ( is_post_type_archive( 'at_biz_dir' ) || ( is_search() && ! is_singular() ) ) {
+		echo bds_feat_door_band(
+			__( 'Own a business on this list?', 'branddad' ),
+			__( 'Claim or create your listing, then request Featured. This does not invent rankings.', 'branddad' )
 		);
 	}
 }
