@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.1
+ * Version: 0.2.2
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -108,6 +108,9 @@ function bds_rev_menu_featured_url( $title, $url ) {
 	if ( 'directory.branddad.social' === $host && '' === trim( $path, '/' ) ) {
 		return bds_rev_dir_url( '/featured-advertising/' );
 	}
+	if ( false !== strpos( (string) $path, 'contact-us' ) ) {
+		return bds_rev_dir_url( '/featured-advertising/' );
+	}
 	return (string) $url;
 }
 
@@ -126,6 +129,37 @@ function bds_rev_fix_featured_menu( $items ) {
 	return $items;
 }
 add_filter( 'wp_nav_menu_objects', 'bds_rev_fix_featured_menu', 20 );
+
+/**
+ * Live launch copy still sends Featured to Contact. Point that one button at the buy page.
+ *
+ * @param string $html Untrusted page HTML already rendered by WordPress.
+ * @return string
+ */
+function bds_rev_rewrite_featured_ask( $html ) {
+	$html = (string) $html;
+	if ( false === strpos( $html, 'Ask about Featured placement' ) ) {
+		return $html;
+	}
+	$dest = esc_url( bds_rev_dir_url( '/featured-advertising/' ) );
+	$out  = preg_replace_callback(
+		'#<a([^>]*?)href="(?:https://(?:www\.)?branddad\.social)?/contact-us/[^"]*"([^>]*)>Ask about Featured placement</a>#',
+		static function ( $m ) use ( $dest ) {
+			return '<a' . $m[1] . 'href="' . $dest . '"' . $m[2] . '>Get featured</a>';
+		},
+		$html,
+		1
+	);
+	return is_string( $out ) ? $out : $html;
+}
+
+function bds_rev_rewrite_featured_ask_content( $content ) {
+	if ( ! bds_rev_is_social() || is_admin() ) {
+		return $content;
+	}
+	return bds_rev_rewrite_featured_ask( $content );
+}
+add_filter( 'the_content', 'bds_rev_rewrite_featured_ask_content', 1100 );
 
 function bds_rev_featured_inquiry_offers() {
 	return array(

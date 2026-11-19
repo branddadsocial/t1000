@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Launch Pages (Staged)
  * Description: Consolidated, accessible homepage and services-page experience for the approved BrandDad AI launch plans.
- * Version: 0.5.1
+ * Version: 0.5.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.5.1' );
+define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.5.2' );
 
 /** Public replacement remains fail-closed until the final launch gate. */
 function bds_ai_launch_pages_enabled() {
@@ -275,6 +275,12 @@ function bds_ai_launch_revenue_sections() {
 	$featured  = esc_url( 'https://directory.branddad.social/featured-advertising/' );
 	$packages  = bds_ai_launch_catalog_cards( 'complete_package' );
 	$music     = bds_ai_launch_catalog_cards( 'music' );
+	$seo_url      = bds_ai_launch_product_url( 'ai-local-seo' );
+	$social_url   = bds_ai_launch_product_url( 'ai-social-growth' );
+	$linkedin_url = bds_ai_launch_product_url( 'ai-linkedin-growth' );
+	$seo_href     = esc_url( $seo_url ? $seo_url : home_url( '/services/#ai-local-seo' ) );
+	$social_href  = esc_url( $social_url ? $social_url : home_url( '/services/#ai-social-growth' ) );
+	$li_href      = esc_url( $linkedin_url ? $linkedin_url : home_url( '/services/#ai-linkedin-growth' ) );
 	ob_start();
 	?>
 	<section class="bdai-section" id="branddad-free-audit" aria-labelledby="bdai-audit-title">
@@ -296,9 +302,9 @@ function bds_ai_launch_revenue_sections() {
 		<h2 id="bdai-studios-title"><?php esc_html_e( 'SEO, social, LinkedIn, and website chat — priced separately.', 'branddad' ); ?></h2>
 		<p><?php esc_html_e( 'Each studio is sold only when its delivery path is verified. Drafts stay in your review until you approve them.', 'branddad' ); ?></p>
 		<div class="bdai-use-grid">
-			<article><h3><?php esc_html_e( 'AI SEO Autopilot', 'branddad' ); ?></h3><p><?php esc_html_e( 'Local SEO Starter is the live-candidate check at $19.99. Autopilot at $39.99, Growth at $59.99, and Pro at $99.99 are staged until execution is verified.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo esc_url( home_url( '/services/#ai-local-seo' ) ); ?>"><?php esc_html_e( 'See SEO options', 'branddad' ); ?></a></article>
-			<article><h3><?php esc_html_e( 'AI Social Studio', 'branddad' ); ?></h3><p><?php esc_html_e( 'Social Starter is $14.99 for 12 drafts. Social Growth is $29.99 for 30 drafts. Publishing waits for your approval.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo esc_url( home_url( '/services/#ai-social-growth' ) ); ?>"><?php esc_html_e( 'See social plans', 'branddad' ); ?></a></article>
-			<article><h3><?php esc_html_e( 'LinkedIn Studio', 'branddad' ); ?></h3><p><?php esc_html_e( 'AI LinkedIn Growth is $29.99 for profile and post drafts. Automated comments run only inside authorized platform limits.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo esc_url( home_url( '/services/#ai-linkedin-growth' ) ); ?>"><?php esc_html_e( 'See LinkedIn Growth', 'branddad' ); ?></a></article>
+			<article><h3><?php esc_html_e( 'AI SEO Autopilot', 'branddad' ); ?></h3><p><?php esc_html_e( 'Local SEO Starter is the live-candidate check at $19.99. Autopilot at $39.99, Growth at $59.99, and Pro at $99.99 are staged until execution is verified.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo $seo_href; ?>"><?php echo esc_html( $seo_url ? __( 'Subscribe to Local SEO', 'branddad' ) : __( 'See SEO options', 'branddad' ) ); ?></a></article>
+			<article><h3><?php esc_html_e( 'AI Social Studio', 'branddad' ); ?></h3><p><?php esc_html_e( 'Social Starter is $14.99 for 12 drafts. Social Growth is $29.99 for 30 drafts. Publishing waits for your approval.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo $social_href; ?>"><?php echo esc_html( $social_url ? __( 'Subscribe to Social Growth', 'branddad' ) : __( 'See social plans', 'branddad' ) ); ?></a></article>
+			<article><h3><?php esc_html_e( 'LinkedIn Studio', 'branddad' ); ?></h3><p><?php esc_html_e( 'AI LinkedIn Growth is $29.99 for profile and post drafts. Automated comments run only inside authorized platform limits.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo $li_href; ?>"><?php echo esc_html( $linkedin_url ? __( 'Subscribe to LinkedIn Growth', 'branddad' ) : __( 'See LinkedIn Growth', 'branddad' ) ); ?></a></article>
 			<article><h3><?php esc_html_e( 'Website chatbot', 'branddad' ); ?></h3><p><?php esc_html_e( 'The $29.99 chatbot is not open for checkout. Current assistant cost is too high for that public allowance.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo $contact; ?>"><?php esc_html_e( 'Ask about a scoped assistant', 'branddad' ); ?></a></article>
 		</div>
 	</section>
@@ -357,6 +363,8 @@ function bds_ai_launch_markup( $context = 'home' ) {
 	$contact  = esc_url( home_url( '/contact-us/' ) );
 	$audit    = esc_url( home_url( '/check-your-website/' ) );
 	$directory = esc_url( 'https://directory.branddad.social/add-listing/' );
+	$essentials_url  = bds_ai_launch_product_url( 'ai-business-essentials' );
+	$essentials_href = $essentials_url ? esc_url( $essentials_url ) : '';
 	ob_start();
 	?>
 	<div class="bdai-launch" data-version="<?php echo esc_attr( BDS_AI_LAUNCH_PAGES_VERSION ); ?>">
@@ -365,7 +373,7 @@ function bds_ai_launch_markup( $context = 'home' ) {
 			<h1 id="bdai-title"><?php echo esc_html( $is_services ? __( 'Choose the help your business needs—without agency confusion.', 'branddad' ) : __( 'Your AI-powered business team—without agency prices.', 'branddad' ) ); ?></h1>
 			<p><?php echo esc_html( $is_services ? __( 'Use affordable AI yourself, hire BrandDad for a specific job, or build a larger campaign. Every option explains what you receive before you pay.', 'branddad' ) : __( 'Turn rough ideas into social posts, review replies, marketing plans, and clearer business writing. Tell BrandDad AI what you need, review the result, and move your business forward.', 'branddad' ) ); ?></p>
 			<p class="bdai-starting"><?php echo esc_html( $is_services ? __( 'Start small, approve the scope, and add more only when it helps.', 'branddad' ) : __( 'Simple monthly plans starting at $14.99.', 'branddad' ) ); ?></p>
-			<div class="bdai-actions"><?php if ( $is_services ) : ?><a class="bdai-button" href="#branddad-service-paths"><?php esc_html_e( 'Compare service types', 'branddad' ); ?></a><a class="bdai-button bdai-button--light" href="<?php echo $contact; ?>"><?php esc_html_e( 'Ask BrandDad', 'branddad' ); ?></a><?php else : ?><a class="bdai-button" href="<?php echo $audit; ?>"><?php esc_html_e( 'Start free AI business audit', 'branddad' ); ?></a><a class="bdai-button bdai-button--light" href="#branddad-ai-solutions"><?php esc_html_e( 'Explore AI plans', 'branddad' ); ?></a><?php endif; ?></div>
+			<div class="bdai-actions"><?php if ( $is_services ) : ?><a class="bdai-button" href="#branddad-service-paths"><?php esc_html_e( 'Compare service types', 'branddad' ); ?></a><a class="bdai-button bdai-button--light" href="<?php echo $contact; ?>"><?php esc_html_e( 'Ask BrandDad', 'branddad' ); ?></a><?php else : ?><a class="bdai-button" href="<?php echo $audit; ?>"><?php esc_html_e( 'Start free AI business audit', 'branddad' ); ?></a><?php if ( $essentials_href ) : ?><a class="bdai-button" href="<?php echo $essentials_href; ?>"><?php esc_html_e( 'Subscribe to Business Essentials', 'branddad' ); ?></a><?php endif; ?><a class="bdai-button bdai-button--light" href="#branddad-ai-solutions"><?php esc_html_e( 'Explore AI plans', 'branddad' ); ?></a><?php endif; ?></div>
 			<ul class="bdai-trust"><li><?php echo esc_html( $is_services ? __( 'Clear scope before work begins', 'branddad' ) : __( 'No technical skills needed', 'branddad' ) ); ?></li><li><?php echo esc_html( $is_services ? __( 'You approve important actions', 'branddad' ) : __( 'You stay in control', 'branddad' ) ); ?></li><li><?php echo esc_html( $is_services ? __( 'No hidden promises', 'branddad' ) : __( 'Clear monthly limits', 'branddad' ) ); ?></li></ul>
 		</section>
 		<?php if ( $is_services ) { echo bds_ai_launch_service_paths_markup(); } // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
@@ -414,7 +422,7 @@ function bds_ai_launch_markup( $context = 'home' ) {
 			<div><p class="bdai-kicker"><?php esc_html_e( 'Need us to do more?', 'branddad' ); ?></p><h2><?php esc_html_e( 'Hands-on help is available separately.', 'branddad' ); ?></h2><p><?php esc_html_e( 'Custom chatbots, sales assistants, managed marketing, and business automation are scoped based on what your business actually needs.', 'branddad' ); ?></p><a class="bdai-text-link" href="<?php echo $contact; ?>"><?php esc_html_e( 'Talk to BrandDad about done-for-you help', 'branddad' ); ?></a></div>
 		</section>
 		<section class="bdai-section bdai-faq" aria-labelledby="bdai-faq-title"><p class="bdai-kicker"><?php esc_html_e( 'Straight answers', 'branddad' ); ?></p><h2 id="bdai-faq-title"><?php esc_html_e( 'Questions before you choose', 'branddad' ); ?></h2><details><summary><?php esc_html_e( 'What is a BrandDad AI credit?', 'branddad' ); ?></summary><p><?php esc_html_e( 'A credit is a usage unit inside the BrandDad workspace. Different tools and requests can use different amounts. Your plan shows the monthly allowance clearly.', 'branddad' ); ?></p></details><details><summary><?php esc_html_e( 'Will BrandDad AI post or send things automatically?', 'branddad' ); ?></summary><p><?php esc_html_e( 'Not in these self-service plans. You review and approve the work before using it. Connected automation is a separate service with its own setup and permissions.', 'branddad' ); ?></p></details><details><summary><?php esc_html_e( 'Can I cancel?', 'branddad' ); ?></summary><p><?php esc_html_e( 'Yes. Cancellation stops future renewals under the checkout terms. Your access follows the status of your subscription.', 'branddad' ); ?></p></details><details><summary><?php esc_html_e( 'Does this guarantee sales or followers?', 'branddad' ); ?></summary><p><?php esc_html_e( 'No. BrandDad AI helps you complete useful work more efficiently, but it cannot guarantee sales, rankings, followers, or revenue.', 'branddad' ); ?></p></details></section>
-		<section class="bdai-final" aria-labelledby="bdai-final-title"><p class="bdai-kicker"><?php esc_html_e( 'Start small. Get more done.', 'branddad' ); ?></p><h2 id="bdai-final-title"><?php esc_html_e( 'Give your business the help it keeps putting off.', 'branddad' ); ?></h2><p><?php esc_html_e( 'Choose an affordable BrandDad AI plan or ask us which option fits your business.', 'branddad' ); ?></p><div class="bdai-actions"><a class="bdai-button" href="#branddad-ai-plans"><?php esc_html_e( 'Compare plans', 'branddad' ); ?></a><a class="bdai-button bdai-button--light" href="<?php echo $contact; ?>"><?php esc_html_e( 'Ask BrandDad', 'branddad' ); ?></a></div></section>
+		<section class="bdai-final" aria-labelledby="bdai-final-title"><p class="bdai-kicker"><?php esc_html_e( 'Start small. Get more done.', 'branddad' ); ?></p><h2 id="bdai-final-title"><?php esc_html_e( 'Give your business the help it keeps putting off.', 'branddad' ); ?></h2><p><?php esc_html_e( 'Choose an affordable BrandDad AI plan or ask us which option fits your business.', 'branddad' ); ?></p><div class="bdai-actions"><?php if ( $essentials_href ) : ?><a class="bdai-button" href="<?php echo $essentials_href; ?>"><?php esc_html_e( 'Subscribe to Business Essentials', 'branddad' ); ?></a><?php endif; ?><a class="bdai-button<?php echo $essentials_href ? ' bdai-button--light' : ''; ?>" href="#branddad-ai-plans"><?php esc_html_e( 'Compare plans', 'branddad' ); ?></a><?php if ( ! $essentials_href ) : ?><a class="bdai-button bdai-button--light" href="<?php echo $contact; ?>"><?php esc_html_e( 'Ask BrandDad', 'branddad' ); ?></a><?php endif; ?></div></section>
 		<?php if ( ! $is_services ) : ?><section class="bdai-directory-cta" aria-labelledby="bdai-directory-title"><div><p class="bdai-kicker"><?php esc_html_e( 'Already running a business?', 'branddad' ); ?></p><h2 id="bdai-directory-title"><?php esc_html_e( 'Claim your free business listing and unlock limited free AI tools.', 'branddad' ); ?></h2><p><?php esc_html_e( 'A verified BrandDad Directory business will receive a small, ongoing AI allowance after the free-access cost and identity checks are complete. Paid enrollment is never automatic.', 'branddad' ); ?></p></div><a class="bdai-button" href="<?php echo $directory; ?>"><?php esc_html_e( 'Claim your free business listing', 'branddad' ); ?></a></section><?php endif; ?>
 		<?php if ( 'services' === $context ) { echo bds_ai_launch_services_catalog_markup(); echo bds_ai_launch_specialty_services_markup(); } // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		<?php if ( 'services' !== $context ) : ?><p class="bdai-center"><a class="bdai-button bdai-button--light" href="<?php echo $services; ?>"><?php esc_html_e( 'Browse all BrandDad services', 'branddad' ); ?></a></p><?php endif; ?>

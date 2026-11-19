@@ -93,6 +93,19 @@ rev_expect(
 	'https://directory.branddad.social/' === bds_rev_menu_featured_url( 'Directory', 'https://directory.branddad.social/' ),
 	'Directory browse label is not rewritten'
 );
+rev_expect(
+	'https://directory.branddad.social/featured-advertising/' === bds_rev_menu_featured_url( 'Get Featured', 'https://branddad.social/contact-us/' ),
+	'header Get Featured contact link is sent to Featured'
+);
+$ask_html = '<p><a class="bdai-button bdai-button--light" href="https://branddad.social/contact-us/">Ask about Featured placement</a></p>';
+$fixed    = bds_rev_rewrite_featured_ask( $ask_html );
+rev_expect( false !== strpos( $fixed, '/featured-advertising/' ), 'Featured ask is sent to the buy page' );
+rev_expect( false !== strpos( $fixed, '>Get featured</a>' ), 'Featured ask label becomes Get featured' );
+rev_expect( false === strpos( $fixed, 'Ask about Featured placement' ), 'old Featured contact CTA is removed' );
+$plain = '<p>Contact us</p>';
+rev_expect( $plain === bds_rev_rewrite_featured_ask( $plain ), 'unrelated contact copy is left alone' );
+$rel = '<a href="/contact-us/">Ask about Featured placement</a>';
+rev_expect( false !== strpos( bds_rev_rewrite_featured_ask( $rel ), '/featured-advertising/' ), 'relative Featured ask is rewritten' );
 
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );
