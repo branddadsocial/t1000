@@ -30,7 +30,7 @@
 - SSH from this machine is still closed. Later deploys need a working key exchange or the same file manager.
 - Directory returned 500 after a corrupted featured-MU save. Three syntax errors were patched in place on 2026-11-19. SHA now matches local `88dbf2f3…`. Directory public URLs return 200 again.
 - File-manager `savefile` requires a leading `/public_html/...` path. Paths without the slash return `success:false`. GitHub raw fetch from the slim branch SHA is the reliable deploy path while SSH stays dead.
-- 2026-11-19 conversion 0.2.1+ is on GitHub `701d683` (`cursor/branddad-revenue-20261118`). Live hosts still serve 0.2.0 because the IDE browser MCP dropped (no File Manager tab) and Chrome remote debugging `:9222` is closed. SSH still dead. Re-run FM GitHub-raw `__bdsSave` when the browser tools are back.
+- 2026-11-19 conversion 0.2.1+ is on GitHub. Live hosts still serve 0.2.0. File Manager is blocked three ways: IDE browser MCP missing, Chrome `:9222` closed, dedicated `chrome-cdp-profile` headless session hits Client Panel login (`basket-summary-login`). WP login from this agent returns 401 on Social and Directory (harden). SSH still dead. Re-run FM GitHub-raw `__bdsSave` from the signed-in Client Panel tab.
 
 ## Owner decisions still required
 

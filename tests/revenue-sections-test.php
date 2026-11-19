@@ -25,6 +25,7 @@ function sanitize_key( $s ) { return strtolower( preg_replace( '/[^a-z0-9_\-]/i'
 function sanitize_title( $s ) { return strtolower( preg_replace( '/[^a-z0-9\-]+/i', '-', trim( (string) $s, '-' ) ) ); }
 function wp_unslash( $s ) { return $s; }
 function add_query_arg( $key, $val, $url ) { return $url . '?' . $key . '=' . rawurlencode( (string) $val ); }
+function wp_strip_all_tags( $s ) { return trim( strip_tags( (string) $s ) ); }
 function bds_ai_commercial_checkout_url( $slug ) {
 	return 'ai-social-growth' === $slug ? 'https://branddad.social/product/ai-social-growth/' : '';
 }
@@ -80,6 +81,18 @@ $ask_note = bds_rev_offer_note_html( 'ai-business-monitoring' );
 rev_expect( false !== strpos( $ask_note, 'does not start checkout' ), 'staged contact note stays inquiry' );
 rev_expect( false === strpos( $ask_note, 'Subscribe now' ), 'staged contact note does not invent checkout' );
 rev_expect( '' === bds_rev_offer_note_html( '<script>x</script>' ), 'markup offer notes print nothing' );
+rev_expect(
+	'https://directory.branddad.social/featured-advertising/' === bds_rev_menu_featured_url( 'Get Featured', 'https://directory.branddad.social/' ),
+	'header Get Featured is sent to the Featured buy page'
+);
+rev_expect(
+	'https://directory.branddad.social/get-featured/' === bds_rev_menu_featured_url( 'Get Featured', 'https://directory.branddad.social/get-featured/' ),
+	'Verified pitch /get-featured/ is left alone'
+);
+rev_expect(
+	'https://directory.branddad.social/' === bds_rev_menu_featured_url( 'Directory', 'https://directory.branddad.social/' ),
+	'Directory browse label is not rewritten'
+);
 
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );

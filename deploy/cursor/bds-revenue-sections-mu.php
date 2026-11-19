@@ -91,6 +91,42 @@ function bds_rev_dir_url( $path ) {
 	return $url;
 }
 
+/**
+ * Header "Get Featured" currently points at Directory home. Send that item
+ * to the Featured buy page. Leave /get-featured/ (Verified pitch) alone.
+ *
+ * @param string $title Menu label.
+ * @param string $url   Current href.
+ * @return string
+ */
+function bds_rev_menu_featured_url( $title, $url ) {
+	if ( 0 !== strcasecmp( trim( wp_strip_all_tags( (string) $title ) ), 'Get Featured' ) ) {
+		return (string) $url;
+	}
+	$host = strtolower( (string) wp_parse_url( (string) $url, PHP_URL_HOST ) );
+	$path = (string) wp_parse_url( (string) $url, PHP_URL_PATH );
+	if ( 'directory.branddad.social' === $host && '' === trim( $path, '/' ) ) {
+		return bds_rev_dir_url( '/featured-advertising/' );
+	}
+	return (string) $url;
+}
+
+function bds_rev_fix_featured_menu( $items ) {
+	if ( ! is_array( $items ) || is_admin() || ! bds_rev_is_social() ) {
+		return $items;
+	}
+	foreach ( $items as $item ) {
+		if ( ! is_object( $item ) ) {
+			continue;
+		}
+		$title = isset( $item->title ) ? (string) $item->title : '';
+		$url   = isset( $item->url ) ? (string) $item->url : '';
+		$item->url = bds_rev_menu_featured_url( $title, $url );
+	}
+	return $items;
+}
+add_filter( 'wp_nav_menu_objects', 'bds_rev_fix_featured_menu', 20 );
+
 function bds_rev_featured_inquiry_offers() {
 	return array(
 		array( 'slug' => 'featured-local', 'name' => 'Local Featured', 'price' => '$9.99/month', 'state' => 'staged', 'who' => 'A claimed listing that wants nearby Directory placement.' ),
