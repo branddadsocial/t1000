@@ -445,7 +445,7 @@ function bds_feat_styles() {
 	if ( ! bds_feat_is_directory() ) {
 		return;
 	}
-	echo '<style id="bds-feat-css">.bds-feat-home,.bds-feat-buy-page{max-width:1100px;margin:0 auto;padding:16px 20px 32px;color:#0b172a}.bds-feat-lane{margin:20px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-feat-buy,.bds-feat-buy-page a.bds-feat-buy{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-feat-buy--quiet{background:#071a33}.bds-feat-buy-page form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-feat-buy-page input,.bds-feat-buy-page select,.bds-feat-buy-page textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-feat-hp{position:absolute;left:-9999px}#bds-feat-claim-ctas,#bds-feat-listing-ctas,#bds-feat-plans-ctas{margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;max-width:1100px;color:#0b172a}</style>';
+	echo '<style id="bds-feat-css">.bds-feat-home,.bds-feat-buy-page{max-width:1100px;margin:0 auto;padding:16px 20px 32px;color:#0b172a}.bds-feat-lane{margin:20px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-feat-buy,.bds-feat-buy-page a.bds-feat-buy{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-feat-buy--quiet{background:#071a33}.bds-feat-buy-page form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-feat-buy-page input,.bds-feat-buy-page select,.bds-feat-buy-page textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-feat-hp{position:absolute;left:-9999px}#bds-feat-claim-ctas,#bds-feat-listing-ctas,#bds-feat-plans-ctas,#bds-feat-door-ctas{margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;max-width:1100px;color:#0b172a}</style>';
 }
 add_action( 'wp_head', 'bds_feat_styles', 40 );
 
@@ -656,6 +656,41 @@ function bds_feat_plans_page_ctas( $content ) {
 	return $content . $band;
 }
 add_filter( 'the_content', 'bds_feat_plans_page_ctas', 30 );
+
+function bds_feat_request_path() {
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+	return trim( $path, '/' );
+}
+
+function bds_feat_door_band( $heading, $intro ) {
+	$html  = '<div id="bds-feat-door-ctas"><h2>' . esc_html( $heading ) . '</h2>';
+	$html .= '<p>' . esc_html( $intro ) . '</p>';
+	$html .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/claim-your-business-listing-branddad-directory/' ) ) . '">' . esc_html__( 'How to claim', 'branddad' ) . '</a></p></div>';
+	return $html;
+}
+
+function bds_feat_path_ctas() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	$path = bds_feat_request_path();
+	if ( is_404() ) {
+		echo bds_feat_door_band(
+			__( 'Find a business or get featured', 'branddad' ),
+			__( 'This page is missing. List, claim, or request Featured instead. Membership prices on Select your plan are unchanged.', 'branddad' )
+		);
+		return;
+	}
+	if ( 'add-listing' === $path ) {
+		echo bds_feat_door_band(
+			__( 'Get found, then get featured', 'branddad' ),
+			__( 'A basic listing is free after the existing $6.99 lifetime activation. Featured placement is a separate monthly request.', 'branddad' )
+		);
+	}
+}
+add_action( 'wp_footer', 'bds_feat_path_ctas', 24 );
 
 function bds_feat_client_key() {
 	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';

@@ -275,6 +275,14 @@ function bds_rev_append_content( $content ) {
 }
 add_filter( 'the_content', 'bds_rev_append_content', 1000 );
 
+function bds_rev_404_cta() {
+	if ( ! bds_rev_is_social() || is_admin() || ! is_404() ) {
+		return;
+	}
+	echo bds_rev_home_strip(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_footer', 'bds_rev_404_cta', 24 );
+
 /**
  * Secure design (untrusted GET): `offer` is sanitize_title, then matched to the
  * hard-coded catalog slug list. Unknown values print nothing. Name/price are

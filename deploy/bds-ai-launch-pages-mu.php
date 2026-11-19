@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Launch Pages (Staged)
  * Description: Consolidated, accessible homepage and services-page experience for the approved BrandDad AI launch plans.
- * Version: 0.5.0
+ * Version: 0.5.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.5.0' );
+define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.5.1' );
 
 /** Public replacement remains fail-closed until the final launch gate. */
 function bds_ai_launch_pages_enabled() {
@@ -272,6 +272,7 @@ function bds_ai_launch_revenue_sections() {
 	$contact   = esc_url( home_url( '/contact-us/' ) );
 	$directory = esc_url( 'https://directory.branddad.social/add-listing/' );
 	$browse    = esc_url( 'https://directory.branddad.social/' );
+	$featured  = esc_url( 'https://directory.branddad.social/featured-advertising/' );
 	$packages  = bds_ai_launch_catalog_cards( 'complete_package' );
 	$music     = bds_ai_launch_catalog_cards( 'music' );
 	ob_start();
@@ -311,7 +312,7 @@ function bds_ai_launch_revenue_sections() {
 			<article class="bdai-card"><h3><?php esc_html_e( 'National Featured', 'branddad' ); ?></h3><p class="bdai-price"><strong>$39.99</strong><span>/month</span></p><p><?php esc_html_e( 'One country, on relevant category and location pages.', 'branddad' ); ?></p></article>
 			<article class="bdai-card"><h3><?php esc_html_e( 'Global Homepage Featured', 'branddad' ); ?></h3><p class="bdai-price"><strong>$99.99</strong><span>/month</span></p><p><?php esc_html_e( 'Premium worldwide placement near Directory search.', 'branddad' ); ?></p></article>
 		</div>
-		<div class="bdai-actions"><a class="bdai-button" href="<?php echo $directory; ?>"><?php esc_html_e( 'Create a free Directory listing', 'branddad' ); ?></a><a class="bdai-button bdai-button--light" href="<?php echo $browse; ?>"><?php esc_html_e( 'Browse the Directory', 'branddad' ); ?></a><a class="bdai-button bdai-button--light" href="<?php echo $contact; ?>"><?php esc_html_e( 'Ask about Featured placement', 'branddad' ); ?></a></div>
+		<div class="bdai-actions"><a class="bdai-button" href="<?php echo $directory; ?>"><?php esc_html_e( 'Create a free Directory listing', 'branddad' ); ?></a><a class="bdai-button" href="<?php echo $featured; ?>"><?php esc_html_e( 'Get featured', 'branddad' ); ?></a><a class="bdai-button bdai-button--light" href="<?php echo $browse; ?>"><?php esc_html_e( 'Browse the Directory', 'branddad' ); ?></a></div>
 	</section>
 	<?php if ( $music ) : ?>
 	<section class="bdai-section" id="branddad-music" aria-labelledby="bdai-music-title">

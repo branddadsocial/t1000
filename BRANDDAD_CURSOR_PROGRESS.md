@@ -49,7 +49,7 @@ Featured-ad files were not uploaded to Social (Directory-gated).
 
 | Area | Status |
 |---|---|
-| Social homepage launch copy | Uploaded. `branddad-complete-packages` is on the homepage. Cursor 0.2.1 adds `#bds-rev-home-strip` with live Subscribe links plus Get featured / List a business. Codex launch chrome was not rewritten. |
+| Social homepage launch copy | Uploaded. `branddad-complete-packages` is on the homepage. Cursor 0.2.1 adds `#bds-rev-home-strip` with live Subscribe links plus Get featured / List a business. Launch 0.5.1 points the Featured section at `/featured-advertising/` instead of Contact. Layout chrome was not rewritten. |
 | Services catalog | Live 0.2.0. `/services/` leads with **Plans you can buy now** and **Subscribe now** for published products, then Directory/Get featured, then inquiry-only cards. Staged/quote-only stay closed. |
 | Complete AI packages | Uploaded. Entitlements stay proposed. Checkout stays closed for quote-only rows. |
 | Directory registration and claims | `/add-listing/` still gates guests through `/select-your-plan/` with $6.99 Activation unchanged. The claim explainer post now ends with **Claim, list, or get featured** CTAs. Listing singles now get a **Claim or get featured** band that prefills `/featured-advertising/?listing={id}`. The listing claim form itself was not completed (Codex). |
