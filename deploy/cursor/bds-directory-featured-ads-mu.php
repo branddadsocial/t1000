@@ -563,7 +563,11 @@ function bds_feat_clear_buy_404() {
 add_shortcode( 'bds_featured_buy', 'bds_feat_buy_markup' );
 
 function bds_feat_claim_guide_ctas( $content ) {
-	if ( ! bds_feat_is_directory() || is_admin() || ! in_the_loop() || ! is_main_query() || ! is_page( 'claim-your-business-listing-branddad-directory' ) ) {
+	if ( ! bds_feat_is_directory() || is_admin() || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	$post = get_post();
+	if ( ! $post || 'claim-your-business-listing-branddad-directory' !== $post->post_name ) {
 		return $content;
 	}
 	if ( false !== strpos( $content, 'id="bds-feat-claim-ctas"' ) ) {
