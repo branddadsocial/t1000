@@ -11,6 +11,7 @@ function in_the_loop() { return true; }
 function is_main_query() { return true; }
 function is_front_page() { return false; }
 function is_page() { return false; }
+function is_product() { return false; }
 function home_url( $path = '' ) { return 'https://branddad.social' . $path; }
 function admin_url( $path = '' ) { return 'https://branddad.social/wp-admin/' . $path; }
 function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); }
@@ -106,6 +107,13 @@ $plain = '<p>Contact us</p>';
 rev_expect( $plain === bds_rev_rewrite_featured_ask( $plain ), 'unrelated contact copy is left alone' );
 $rel = '<a href="/contact-us/">Ask about Featured placement</a>';
 rev_expect( false !== strpos( bds_rev_rewrite_featured_ask( $rel ), '/featured-advertising/' ), 'relative Featured ask is rewritten' );
+$studio = '<a class="bdai-text-link" href="https://branddad.social/services/#ai-social-growth">See social plans</a>';
+$studio_out = bds_rev_rewrite_conversion_ctas( $studio );
+rev_expect( false !== strpos( $studio_out, '/product/ai-social-growth/' ), 'See social plans goes to the live product' );
+rev_expect( false !== strpos( $studio_out, '>Subscribe to Social Growth</a>' ), 'See social plans becomes Subscribe' );
+rev_expect( false === strpos( $studio_out, 'See social plans' ), 'old social hash CTA is removed' );
+$seo = '<a href="https://branddad.social/services/#ai-local-seo">See SEO options</a>';
+rev_expect( $seo === bds_rev_rewrite_conversion_ctas( $seo ), 'SEO hash stays until that product URL exists' );
 
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );

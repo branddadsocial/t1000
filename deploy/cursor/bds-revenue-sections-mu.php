@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.2
+ * Version: 0.2.3
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -153,13 +153,62 @@ function bds_rev_rewrite_featured_ask( $html ) {
 	return is_string( $out ) ? $out : $html;
 }
 
+function bds_rev_rewrite_label_link( $html, $label, $href_pattern, $dest, $new_label ) {
+	$html = (string) $html;
+	$dest = esc_url( (string) $dest );
+	if ( '' === $dest || false === strpos( $html, $label ) ) {
+		return $html;
+	}
+	$out = preg_replace_callback(
+		'~<a([^>]*?)href="' . $href_pattern . '"([^>]*)>' . preg_quote( $label, '~' ) . '</a>~',
+		static function ( $m ) use ( $dest, $new_label ) {
+			return '<a' . $m[1] . 'href="' . $dest . '"' . $m[2] . '>' . esc_html( $new_label ) . '</a>';
+		},
+		$html,
+		1
+	);
+	return is_string( $out ) ? $out : $html;
+}
+
+function bds_rev_rewrite_conversion_ctas( $html ) {
+	$html   = bds_rev_rewrite_featured_ask( $html );
+	$pairs  = array(
+		array( 'See social plans', 'ai-social-growth', 'Subscribe to Social Growth', 'ai-social-growth' ),
+		array( 'See SEO options', 'ai-local-seo', 'Subscribe to Local SEO', 'ai-local-seo' ),
+	);
+	foreach ( $pairs as $pair ) {
+		$url = bds_rev_offer_url( $pair[1] );
+		if ( '' === $url ) {
+			continue;
+		}
+		$hash    = preg_quote( $pair[3], '~' );
+		$pattern = '(?:https://(?:www\.)?branddad\.social)?/services/#' . $hash;
+		$html    = bds_rev_rewrite_label_link( $html, $pair[0], $pattern, $url, $pair[2] );
+	}
+	return $html;
+}
+
 function bds_rev_rewrite_featured_ask_content( $content ) {
 	if ( ! bds_rev_is_social() || is_admin() ) {
 		return $content;
 	}
-	return bds_rev_rewrite_featured_ask( $content );
+	return bds_rev_rewrite_conversion_ctas( $content );
 }
 add_filter( 'the_content', 'bds_rev_rewrite_featured_ask_content', 1100 );
+
+function bds_rev_product_strip( $content ) {
+	if ( ! bds_rev_is_social() || is_admin() || ! in_the_loop() || ! is_main_query() ) {
+		return $content;
+	}
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return $content;
+	}
+	if ( false !== strpos( $content, 'id="bds-rev-home-strip"' ) ) {
+		return $content;
+	}
+	return $content . bds_rev_home_strip();
+}
+add_filter( 'the_content', 'bds_rev_product_strip', 1001 );
 
 function bds_rev_featured_inquiry_offers() {
 	return array(
