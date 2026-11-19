@@ -73,6 +73,13 @@ expect( false === $fake['ok'] && 2 === $fake['grant']['impressions'], 'a client 
 $idle  = bds_feat_apply_event( array( 'status' => 'pending_payment', 'impressions' => 0 ), array( 'type' => 'click', 'event_id' => 'click1234' ) );
 expect( false === $idle['ok'] && 0 === $idle['grant']['impressions'], 'an unpaid placement does not record a click' );
 
+$empty = bds_feat_empty_copy( 'local' );
+expect( 'Local Featured' === $empty['label'] && '9.99' === $empty['price'], 'empty local lane keeps the catalog price' );
+expect( 'Get featured' === $empty['cta'], 'empty lane sells featured' );
+expect( '' === bds_feat_empty_copy( 'nope' )['price'], 'unknown level has no price' );
+expect( 'bds-feat-global' === bds_feat_product_sku( 'global' ), 'sku is allowlisted from the level key' );
+expect( '' === bds_feat_product_sku( 'nope' ), 'unknown level has no sku' );
+
 if ( $failed > 0 ) {
 	fwrite( STDERR, "{$failed} failed\n" );
 	exit( 1 );

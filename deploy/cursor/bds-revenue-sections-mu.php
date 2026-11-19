@@ -2,10 +2,10 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: BrandDad
  *
- * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser.
+ * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -72,7 +72,7 @@ function bds_rev_card( array $offer ) {
 	$html .= '<p class="bds-rev-price">' . esc_html( $offer['price'] ) . '</p>';
 	$html .= '<p>' . esc_html( $offer['who'] ) . '</p>';
 	if ( '' !== $url ) {
-		$html .= '<a class="bds-rev-button" href="' . esc_url( $url ) . '">' . esc_html__( 'Continue to checkout', 'branddad' ) . '</a>';
+		$html .= '<a class="bds-rev-button" href="' . esc_url( $url ) . '">' . esc_html__( 'Subscribe now', 'branddad' ) . '</a>';
 	} else {
 		$html .= '<a class="bds-rev-button bds-rev-button--quiet" href="' . esc_url( $ask ) . '">' . esc_html__( 'Ask about this plan', 'branddad' ) . '</a>';
 		$html .= '<p class="bds-rev-note">' . esc_html__( 'Purchase stays closed until fulfillment and billing are verified.', 'branddad' ) . '</p>';
@@ -80,14 +80,45 @@ function bds_rev_card( array $offer ) {
 	return $html . '</article>';
 }
 
+function bds_rev_dir_url( $path ) {
+	$url = 'https://directory.branddad.social' . $path;
+	if ( function_exists( 'bds_po_url' ) ) {
+		$out = bds_po_url( $url );
+		if ( is_string( $out ) && '' !== $out ) {
+			return $out;
+		}
+	}
+	return $url;
+}
+
+function bds_rev_featured_inquiry_offers() {
+	return array(
+		array( 'slug' => 'featured-local', 'name' => 'Local Featured', 'price' => '$9.99/month', 'state' => 'staged', 'who' => 'A claimed listing that wants nearby Directory placement.' ),
+		array( 'slug' => 'featured-regional', 'name' => 'Regional Featured', 'price' => '$19.99/month', 'state' => 'staged', 'who' => 'A claimed listing that wants a wider regional lane.' ),
+		array( 'slug' => 'featured-national', 'name' => 'National Featured', 'price' => '$39.99/month', 'state' => 'staged', 'who' => 'A claimed listing that wants nationwide Directory placement.' ),
+		array( 'slug' => 'featured-global', 'name' => 'Global Homepage Featured', 'price' => '$99.99/month', 'state' => 'staged', 'who' => 'A claimed listing that wants the Directory homepage lane.' ),
+	);
+}
+
+function bds_rev_split_offer_cards() {
+	$live = '';
+	$ask  = '';
+	foreach ( bds_rev_offers() as $offer ) {
+		if ( '' !== bds_rev_offer_url( $offer['slug'] ) ) {
+			$live .= bds_rev_card( $offer );
+		} else {
+			$ask .= bds_rev_card( $offer );
+		}
+	}
+	return array( $live, $ask );
+}
+
 function bds_rev_markup() {
 	$audit     = esc_url( home_url( '/check-your-website/' ) );
-	$directory = esc_url( 'https://directory.branddad.social/add-listing/' );
-	$featured  = esc_url( 'https://directory.branddad.social/' );
-	$cards     = '';
-	foreach ( bds_rev_offers() as $offer ) {
-		$cards .= bds_rev_card( $offer );
-	}
+	$directory = esc_url( bds_rev_dir_url( '/add-listing/' ) );
+	$featured  = esc_url( bds_rev_dir_url( '/featured-advertising/' ) );
+	$browse    = esc_url( bds_rev_dir_url( '/' ) );
+	list( $live, $ask ) = bds_rev_split_offer_cards();
 	$music = bds_rev_music_options_html();
 	ob_start();
 	?>
@@ -97,22 +128,32 @@ function bds_rev_markup() {
 			<p><?php esc_html_e( 'The website check explains what to fix first. It does not invent rankings or promise revenue.', 'branddad' ); ?></p>
 			<a class="bds-rev-button" href="<?php echo $audit; ?>"><?php esc_html_e( 'Run the free audit', 'branddad' ); ?></a>
 		</section>
-		<section aria-labelledby="bds-rev-catalog">
-			<h2 id="bds-rev-catalog"><?php esc_html_e( 'AI services and complete business packages', 'branddad' ); ?></h2>
-			<p><?php esc_html_e( 'Prices below are the current proposed catalog. A button opens checkout only when that product is already approved for sale.', 'branddad' ); ?></p>
-			<div class="bds-rev-grid"><?php echo $cards; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+		<?php if ( '' !== $live ) : ?>
+		<section aria-labelledby="bds-rev-live">
+			<h2 id="bds-rev-live"><?php esc_html_e( 'Plans you can buy now', 'branddad' ); ?></h2>
+			<p><?php esc_html_e( 'These products are already published. Subscribe opens the live checkout. Directory members keep their existing 10% where the product allows it.', 'branddad' ); ?></p>
+			<div class="bds-rev-grid"><?php echo $live; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
 		</section>
+		<?php endif; ?>
 		<section aria-labelledby="bds-rev-directory">
 			<h2 id="bds-rev-directory"><?php esc_html_e( 'Free Directory listing and featured placement', 'branddad' ); ?></h2>
-			<p><?php esc_html_e( 'Create or claim a listing for free. Featured placement is Local $9.99, Regional $19.99, National $39.99, or Global Homepage $99.99 per month. Those ads are not charged from this page.', 'branddad' ); ?></p>
+			<p><?php esc_html_e( 'Create or claim a listing, then request Featured: Local $9.99, Regional $19.99, National $39.99, or Global Homepage $99.99 per month. Checkout opens only when that Directory product is already for sale.', 'branddad' ); ?></p>
 			<a class="bds-rev-button" href="<?php echo $directory; ?>"><?php esc_html_e( 'List a business', 'branddad' ); ?></a>
-			<a class="bds-rev-button bds-rev-button--quiet" href="<?php echo $featured; ?>"><?php esc_html_e( 'See the Directory', 'branddad' ); ?></a>
+			<a class="bds-rev-button" href="<?php echo $featured; ?>"><?php esc_html_e( 'Get featured', 'branddad' ); ?></a>
+			<a class="bds-rev-button bds-rev-button--quiet" href="<?php echo $browse; ?>"><?php esc_html_e( 'See the Directory', 'branddad' ); ?></a>
 		</section>
 		<section aria-labelledby="bds-rev-music">
 			<h2 id="bds-rev-music"><?php esc_html_e( 'BrandDad Music for Business', 'branddad' ); ?></h2>
 			<p><?php esc_html_e( 'Original music commissioned for a business. Artist T Dash. Songwriter Thaddeus McCollum. Production by BrandDad Music. Sold by BrandDad Social. This form requests a brief. It does not take payment or start production.', 'branddad' ); ?></p>
 			<?php echo bds_rev_music_form( $music ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 		</section>
+		<?php if ( '' !== $ask ) : ?>
+		<section aria-labelledby="bds-rev-catalog">
+			<h2 id="bds-rev-catalog"><?php esc_html_e( 'Upcoming plans — inquiry only', 'branddad' ); ?></h2>
+			<p><?php esc_html_e( 'These prices are proposed. Ask about a plan and we confirm fulfillment before any checkout opens.', 'branddad' ); ?></p>
+			<div class="bds-rev-grid"><?php echo $ask; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+		</section>
+		<?php endif; ?>
 	</div>
 	<?php
 	return (string) ob_get_clean();
@@ -137,7 +178,7 @@ function bds_rev_offer_by_slug( $slug ) {
 	if ( '' === $slug ) {
 		return null;
 	}
-	foreach ( bds_rev_offers() as $offer ) {
+	foreach ( array_merge( bds_rev_offers(), bds_rev_featured_inquiry_offers() ) as $offer ) {
 		if ( $offer['slug'] === $slug ) {
 			return $offer;
 		}

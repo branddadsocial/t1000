@@ -2,11 +2,15 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
- * Secure design: WordPress auth cookies and manage_options for grants. Public cards expose only Sponsored for paid placements. Private notes stay in the option and the admin screen. Tracking tokens are HMAC'd with wp_salt and expire in 15 minutes. Music and billing stay outside this plugin.
+ * Secure design:
+ * - Humans use WordPress cookies. Admin grants need manage_options + nonce.
+ * - Public featured inquiry: nonce, honeypot, 5/hour hashed IP, allowlisted level, length-capped text. No URL fetch, no file upload, no card data. Price is never taken from POST.
+ * - Paid activation still requires Woo is_paid() plus an allowlisted SKU. listing_id is an int on a published at_biz_dir. Client-supplied totals are ignored.
+ * - Empty-lane CTA and /featured-advertising/ do not charge. Virtual path is an exact allowlist.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -149,7 +153,21 @@ function bds_feat_render_lane( $title, $level, array $viewer ) {
 	$picked = bds_feat_select( $cards, $viewer, $cap );
 	$html   = '<section class="bds-feat-lane"><h2>' . esc_html( $title ) . '</h2>';
 	if ( empty( $picked['shown'] ) ) {
-		return $html . '<p>' . esc_html__( 'No featured businesses are reserved for this view yet.', 'branddad' ) . '</p></section>';
+		$copy = bds_feat_empty_copy( $level );
+		$buy  = esc_url( home_url( '/featured-advertising/' ) );
+		$html .= '<p>' . esc_html__( 'No featured businesses are showing here yet.', 'branddad' ) . '</p>';
+		if ( '' !== $copy['price'] ) {
+			$html .= '<p>' . esc_html(
+				sprintf(
+					/* translators: 1: placement name, 2: monthly price */
+					__( '%1$s is $%2$s per month after the listing is claimed. Request a placement — checkout opens only when that product is already for sale.', 'branddad' ),
+					$copy['label'],
+					$copy['price']
+				)
+			) . '</p>';
+		}
+		$html .= '<a class="bds-feat-buy" href="' . $buy . '">' . esc_html( $copy['cta'] ) . '</a></section>';
+		return $html;
 	}
 	$html .= '<div class="bds-feat-grid">';
 	foreach ( $picked['shown'] as $card ) {
@@ -421,3 +439,279 @@ function bds_feat_event_script() {
 	echo '<script id="bds-feat-events">document.querySelectorAll(".bds-feat-card").forEach(function(card){function send(type){var body=new URLSearchParams();body.set("action","bds_feat_event");body.set("grant_id",card.dataset.grant||"");body.set("type",type);if(type==="click"){body.set("token",card.dataset.clickToken||"");body.set("event_id",card.dataset.click||"");}else{body.set("token",card.dataset.seenToken||"");body.set("event_id",card.dataset.seen||"");}if(navigator.sendBeacon){navigator.sendBeacon(' . wp_json_encode( $endpoint ) . ',body);}else{fetch(' . wp_json_encode( $endpoint ) . ',{method:"POST",body:body,credentials:"same-origin",keepalive:true});}}send("impression");var link=card.querySelector("a");if(link){link.addEventListener("click",function(){send("click");});}});</script>';
 }
 add_action( 'wp_footer', 'bds_feat_event_script', 30 );
+
+function bds_feat_styles() {
+	if ( ! bds_feat_is_directory() ) {
+		return;
+	}
+	echo '<style id="bds-feat-css">.bds-feat-home,.bds-feat-buy-page{max-width:1100px;margin:0 auto;padding:16px 20px 32px;color:#0b172a}.bds-feat-lane{margin:20px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-feat-buy,.bds-feat-buy-page a.bds-feat-buy{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-feat-buy--quiet{background:#071a33}.bds-feat-buy-page form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-feat-buy-page input,.bds-feat-buy-page select,.bds-feat-buy-page textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-feat-hp{position:absolute;left:-9999px}#bds-feat-claim-ctas{margin:24px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}</style>';
+}
+add_action( 'wp_head', 'bds_feat_styles', 40 );
+
+function bds_feat_product_url( $level ) {
+	$sku = bds_feat_product_sku( $level );
+	if ( '' === $sku ) {
+		return '';
+	}
+	if ( function_exists( 'wc_get_product_id_by_sku' ) ) {
+		$pid = (int) wc_get_product_id_by_sku( $sku );
+		if ( $pid > 0 && function_exists( 'wc_get_product' ) ) {
+			$product = wc_get_product( $pid );
+			if ( $product && method_exists( $product, 'is_purchasable' ) && $product->is_purchasable() && 'publish' === get_post_status( $pid ) ) {
+				return get_permalink( $pid );
+			}
+		}
+	}
+	$post = get_page_by_path( 'featured-' . sanitize_title( $level ), OBJECT, 'product' );
+	if ( $post instanceof WP_Post && 'publish' === $post->post_status ) {
+		return get_permalink( $post );
+	}
+	return '';
+}
+
+function bds_feat_buy_markup() {
+	$levels = bds_feat_levels();
+	$status = isset( $_GET['bds_feat'] ) ? sanitize_key( wp_unslash( $_GET['bds_feat'] ) ) : '';
+	$note   = 'saved' === $status
+		? __( 'Your featured request was saved. BrandDad will confirm the listing and open checkout only when that product is already for sale.', 'branddad' )
+		: '';
+	$list   = esc_url( home_url( '/add-listing/' ) );
+	$plans  = esc_url( home_url( '/select-your-plan/' ) );
+	$claim  = esc_url( home_url( '/claim-your-business-listing-branddad-directory/' ) );
+	$html   = '<div class="bds-feat-buy-page" id="bds-featured-buy">';
+	$html  .= '<h1>' . esc_html__( 'Get featured on BrandDad Directory', 'branddad' ) . '</h1>';
+	$html  .= '<p>' . esc_html__( 'Claim or create your listing, then request a paid lane. Featured ads rotate with paid first. This page does not invent traffic or rankings.', 'branddad' ) . '</p>';
+	if ( '' !== $note ) {
+		$html .= '<p role="status">' . esc_html( $note ) . '</p>';
+	}
+	$html .= '<p><a class="bds-feat-buy" href="' . $list . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $claim . '">' . esc_html__( 'Claim a listing', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $plans . '">' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p>';
+	$html .= '<div class="bds-feat-grid">';
+	foreach ( $levels as $slug => $row ) {
+		$url   = bds_feat_product_url( $slug );
+		$html .= '<article class="bds-feat-lane"><h2>' . esc_html( $row['label'] ) . '</h2>';
+		$html .= '<p class="bds-feat-price">$' . esc_html( $row['price'] ) . ' / ' . esc_html__( 'month', 'branddad' ) . '</p>';
+		if ( '' !== $url ) {
+			$html .= '<a class="bds-feat-buy" href="' . esc_url( $url ) . '">' . esc_html__( 'Subscribe now', 'branddad' ) . '</a>';
+		} else {
+			$html .= '<p>' . esc_html__( 'Checkout is not open for this lane yet. Send a request below.', 'branddad' ) . '</p>';
+		}
+		$html .= '</article>';
+	}
+	$html .= '</div>';
+	$html .= '<h2>' . esc_html__( 'Request a featured placement', 'branddad' ) . '</h2>';
+	$html .= '<p>' . esc_html__( 'Use this if checkout is closed. We match the request to a claimed listing before any charge.', 'branddad' ) . '</p>';
+	$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+	$html .= wp_nonce_field( 'bds_feat_request', 'bds_feat_request_nonce', true, false );
+	$html .= '<input type="hidden" name="action" value="bds_feat_request" />';
+	$html .= '<p class="bds-feat-hp" aria-hidden="true"><label>Company website <input type="text" name="bds_company_url" tabindex="-1" autocomplete="off" /></label></p>';
+	$html .= '<p><label>' . esc_html__( 'Placement', 'branddad' ) . '<select name="level" required>';
+	foreach ( $levels as $slug => $row ) {
+		$html .= '<option value="' . esc_attr( $slug ) . '">' . esc_html( $row['label'] . ' — $' . $row['price'] . '/month' ) . '</option>';
+	}
+	$html .= '</select></label></p>';
+	$html .= '<p><label>' . esc_html__( 'Listing ID or Directory URL', 'branddad' ) . '<input name="listing_ref" maxlength="160" required /></label></p>';
+	$html .= '<p><label>' . esc_html__( 'Your name', 'branddad' ) . '<input name="customer_name" maxlength="80" required /></label></p>';
+	$html .= '<p><label>' . esc_html__( 'Email', 'branddad' ) . '<input name="email" type="email" maxlength="120" required /></label></p>';
+	$html .= '<p><label>' . esc_html__( 'What should customers see?', 'branddad' ) . '<textarea name="note" maxlength="400"></textarea></label></p>';
+	$html .= '<p><button class="bds-feat-buy" type="submit">' . esc_html__( 'Send the featured request', 'branddad' ) . '</button></p></form></div>';
+	return $html;
+}
+
+function bds_feat_buy_path() {
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+	return 'featured-advertising' === trim( $path, '/' );
+}
+
+function bds_feat_intercept_buy_page() {
+	if ( ! bds_feat_is_directory() || is_admin() || ! bds_feat_buy_path() ) {
+		return;
+	}
+	if ( get_page_by_path( 'featured-advertising' ) ) {
+		return;
+	}
+	status_header( 200 );
+	nocache_headers();
+	get_header();
+	echo bds_feat_buy_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	get_footer();
+	exit;
+}
+add_action( 'template_redirect', 'bds_feat_intercept_buy_page', 0 );
+add_shortcode( 'bds_featured_buy', 'bds_feat_buy_markup' );
+
+function bds_feat_claim_guide_ctas( $content ) {
+	if ( ! bds_feat_is_directory() || is_admin() || ! in_the_loop() || ! is_main_query() || ! is_page( 'claim-your-business-listing-branddad-directory' ) ) {
+		return $content;
+	}
+	if ( false !== strpos( $content, 'id="bds-feat-claim-ctas"' ) ) {
+		return $content;
+	}
+	$band  = '<div id="bds-feat-claim-ctas"><h2>' . esc_html__( 'Claim, list, or get featured', 'branddad' ) . '</h2>';
+	$band .= '<p>' . esc_html__( 'Open your listing, use Claim this listing, or start a new listing. Featured placement is a separate paid lane after the listing is claimed.', 'branddad' ) . '</p>';
+	$band .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Find my listing', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/select-your-plan/' ) ) . '">' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p></div>';
+	return $content . $band;
+}
+add_filter( 'the_content', 'bds_feat_claim_guide_ctas', 30 );
+
+function bds_feat_client_key() {
+	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';
+	return 'bds_feat_req_' . md5( $ip . '|' . wp_salt( 'auth' ) );
+}
+
+function bds_feat_handle_request() {
+	if ( ! bds_feat_is_directory() ) {
+		wp_die( esc_html__( 'This form is not available here.', 'branddad' ), 404 );
+	}
+	if ( ! isset( $_POST['bds_feat_request_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bds_feat_request_nonce'] ) ), 'bds_feat_request' ) ) {
+		wp_die( esc_html__( 'The form expired. Reload the page and try again.', 'branddad' ), 403 );
+	}
+	if ( ! empty( $_POST['bds_company_url'] ) ) {
+		wp_safe_redirect( home_url( '/featured-advertising/?bds_feat=saved' ) );
+		exit;
+	}
+	$key = bds_feat_client_key();
+	if ( (int) get_transient( $key ) >= 5 ) {
+		wp_die( esc_html__( 'Too many requests were sent. Try again later.', 'branddad' ), 429 );
+	}
+	$levels = bds_feat_levels();
+	$level  = isset( $_POST['level'] ) ? sanitize_key( wp_unslash( $_POST['level'] ) ) : '';
+	$email  = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+	$name   = isset( $_POST['customer_name'] ) ? sanitize_text_field( wp_unslash( $_POST['customer_name'] ) ) : '';
+	$ref    = isset( $_POST['listing_ref'] ) ? sanitize_text_field( wp_unslash( $_POST['listing_ref'] ) ) : '';
+	$note   = isset( $_POST['note'] ) ? sanitize_textarea_field( wp_unslash( $_POST['note'] ) ) : '';
+	if ( ! isset( $levels[ $level ] ) || ! is_email( $email ) || '' === $name || '' === $ref ) {
+		wp_die( esc_html__( 'Check the placement, listing, name, and email.', 'branddad' ), 400 );
+	}
+	if ( strlen( $ref ) > 160 || strlen( $note ) > 400 ) {
+		wp_die( esc_html__( 'That request is too long.', 'branddad' ), 400 );
+	}
+	$listing_id = ctype_digit( $ref ) ? (int) $ref : 0;
+	$body       = implode(
+		"\n\n",
+		array(
+			'Level: ' . $levels[ $level ]['label'] . ' ($' . $levels[ $level ]['price'] . '/month catalog)',
+			'Name: ' . $name,
+			'Email: ' . $email,
+			'Listing ref: ' . $ref,
+			'Listing ID parsed: ' . $listing_id,
+			'Note: ' . $note,
+			'Payment: not collected. Placement: not activated.',
+		)
+	);
+	$post_id = wp_insert_post(
+		array(
+			'post_type'    => 'bds_feat_request',
+			'post_status'  => 'private',
+			'post_title'   => 'Featured request ' . $level,
+			'post_content' => $body,
+			'post_author'  => get_current_user_id(),
+		),
+		true
+	);
+	if ( is_wp_error( $post_id ) ) {
+		wp_die( esc_html__( 'The request could not be saved. Try again later.', 'branddad' ), 500 );
+	}
+	update_post_meta( (int) $post_id, '_bds_feat_email', $email );
+	update_post_meta( (int) $post_id, '_bds_feat_level', $level );
+	update_post_meta( (int) $post_id, '_bds_feat_listing_ref', $ref );
+	set_transient( $key, (int) get_transient( $key ) + 1, HOUR_IN_SECONDS );
+	wp_safe_redirect( home_url( '/featured-advertising/?bds_feat=saved' ) );
+	exit;
+}
+add_action( 'admin_post_bds_feat_request', 'bds_feat_handle_request' );
+add_action( 'admin_post_nopriv_bds_feat_request', 'bds_feat_handle_request' );
+
+function bds_feat_register_request_type() {
+	if ( ! bds_feat_is_directory() ) {
+		return;
+	}
+	register_post_type(
+		'bds_feat_request',
+		array(
+			'label'           => 'Featured requests',
+			'public'          => false,
+			'show_ui'         => true,
+			'show_in_menu'    => true,
+			'capability_type' => 'post',
+			'map_meta_cap'    => true,
+			'supports'        => array( 'title', 'editor' ),
+		)
+	);
+}
+add_action( 'init', 'bds_feat_register_request_type' );
+
+function bds_feat_sku_level( $sku ) {
+	$sku = sanitize_title( (string) $sku );
+	foreach ( array_keys( bds_feat_levels() ) as $level ) {
+		if ( bds_feat_product_sku( $level ) === $sku ) {
+			return $level;
+		}
+	}
+	return '';
+}
+
+function bds_feat_activate_paid_order( $order_id ) {
+	if ( ! bds_feat_is_directory() || ! bds_feat_order_is_paid( $order_id ) || ! function_exists( 'wc_get_order' ) ) {
+		return;
+	}
+	$order = wc_get_order( (int) $order_id );
+	if ( ! $order ) {
+		return;
+	}
+	$listing_id = (int) $order->get_meta( '_bds_feat_listing_id' );
+	$level      = '';
+	foreach ( $order->get_items() as $item ) {
+		$product = method_exists( $item, 'get_product' ) ? $item->get_product() : null;
+		$sku     = $product && method_exists( $product, 'get_sku' ) ? (string) $product->get_sku() : '';
+		$found   = bds_feat_sku_level( $sku );
+		if ( '' !== $found ) {
+			$level = $found;
+			if ( $listing_id < 1 ) {
+				$listing_id = (int) $item->get_meta( '_bds_feat_listing_id' );
+			}
+			break;
+		}
+	}
+	if ( '' === $level || $listing_id < 1 ) {
+		return;
+	}
+	$post = get_post( $listing_id );
+	if ( ! $post instanceof WP_Post || 'at_biz_dir' !== $post->post_type || 'publish' !== $post->post_status ) {
+		return;
+	}
+	if ( ! bds_feat_has_capacity( bds_feat_grants(), $level ) ) {
+		bds_feat_audit( 'capacity', 'order_' . (int) $order_id, array( 'level' => $level ) );
+		return;
+	}
+	foreach ( bds_feat_grants() as $grant ) {
+		if ( (int) ( $grant['order_id'] ?? 0 ) === (int) $order_id && 'paid' === ( $grant['kind'] ?? '' ) ) {
+			return;
+		}
+	}
+	$grant    = array(
+		'id'         => 'g_' . wp_generate_password( 12, false, false ),
+		'listing_id' => $listing_id,
+		'kind'       => 'paid',
+		'level'      => $level,
+		'status'     => 'active',
+		'starts'     => gmdate( 'c' ),
+		'ends'       => gmdate( 'c', time() + 30 * DAY_IN_SECONDS ),
+		'country'    => '',
+		'lat'        => null,
+		'lng'        => null,
+		'notes'      => 'woo:' . (int) $order_id,
+		'order_id'   => (int) $order_id,
+		'actor'      => 0,
+	);
+	$grants   = bds_feat_grants();
+	$grants[] = $grant;
+	bds_feat_save_grants( $grants );
+	bds_feat_audit( 'woo_activate', $grant['id'], array( 'order_id' => (string) (int) $order_id, 'level' => $level ) );
+}
+add_action( 'woocommerce_order_status_processing', 'bds_feat_activate_paid_order', 20, 1 );
+add_action( 'woocommerce_order_status_completed', 'bds_feat_activate_paid_order', 20, 1 );

@@ -210,3 +210,34 @@ if ( ! function_exists( 'bds_feat_apply_event' ) ) {
 		return array( 'ok' => true, 'grant' => $grant, 'reason' => 'recorded' );
 	}
 }
+
+if ( ! function_exists( 'bds_feat_empty_copy' ) ) {
+	/**
+	 * Public empty-lane sell copy. Price is the catalog target, not a charged amount.
+	 *
+	 * @return array{label:string,price:string,cta:string}
+	 */
+	function bds_feat_empty_copy( $level ) {
+		$levels = bds_feat_levels();
+		$level  = (string) $level;
+		if ( ! isset( $levels[ $level ] ) ) {
+			return array(
+				'label' => '',
+				'price' => '',
+				'cta'   => 'Get featured',
+			);
+		}
+		return array(
+			'label' => (string) $levels[ $level ]['label'],
+			'price' => (string) $levels[ $level ]['price'],
+			'cta'   => 'Get featured',
+		);
+	}
+}
+
+if ( ! function_exists( 'bds_feat_product_sku' ) ) {
+	function bds_feat_product_sku( $level ) {
+		$level = (string) $level;
+		return isset( bds_feat_levels()[ $level ] ) ? 'bds-feat-' . $level : '';
+	}
+}

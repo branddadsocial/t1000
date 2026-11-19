@@ -81,6 +81,13 @@ hub_expect( array( 9 ) === $removed['ids'], 'remove drops only that listing' );
 $full = bds_hub_saved_change( range( 1, 50 ), 99, 'save' );
 hub_expect( false === $full['ok'] && 'limit' === $full['reason'], 'saved list stops at 50' );
 
+$dir_next = bds_hub_next_actions( 'directory' );
+hub_expect( 'Get featured' === $dir_next[2]['label'], 'directory hub sells featured' );
+hub_expect( '/featured-advertising/' === $dir_next[2]['path'], 'featured path is the buy page' );
+$soc_next = bds_hub_next_actions( 'social' );
+hub_expect( '/product/ai-social-growth/' === $soc_next[0]['path'], 'social hub leads with a live product' );
+hub_expect( false === strpos( json_encode( $soc_next ), '$' ), 'hub next actions do not invent a price' );
+
 $seo_dup = bds_seo_emit_decision( array( 'canonical' ), '/services/' );
 hub_expect( false === $seo_dup['emit'] && 'canonical_exists' === $seo_dup['reason'], 'existing canonical blocks a second tag' );
 $seo_city = bds_seo_emit_decision( array(), '/austin/texas/edge-rooftop/' );

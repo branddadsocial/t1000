@@ -24,6 +24,10 @@ function wp_nonce_field() {}
 function sanitize_key( $s ) { return strtolower( preg_replace( '/[^a-z0-9_\-]/i', '', (string) $s ) ); }
 function sanitize_title( $s ) { return strtolower( preg_replace( '/[^a-z0-9\-]+/i', '-', trim( (string) $s, '-' ) ) ); }
 function wp_unslash( $s ) { return $s; }
+function add_query_arg( $key, $val, $url ) { return $url . '?' . $key . '=' . rawurlencode( (string) $val ); }
+function bds_ai_commercial_checkout_url( $slug ) {
+	return 'ai-social-growth' === $slug ? 'https://branddad.social/product/ai-social-growth/' : '';
+}
 
 require dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php';
 
@@ -48,6 +52,18 @@ $hit = bds_rev_offer_by_slug( 'ai-business-monitoring' );
 rev_expect( is_array( $hit ) && 'AI Business Monitoring' === $hit['name'], 'known offer slug resolves' );
 rev_expect( null === bds_rev_offer_by_slug( 'not-a-real-offer' ), 'unknown offer slug is rejected' );
 rev_expect( null === bds_rev_offer_by_slug( '<script>x</script>' ), 'markup slug is rejected' );
+rev_expect( is_array( bds_rev_offer_by_slug( 'featured-local' ) ), 'featured inquiry slug is allowlisted' );
+
+list( $live, $ask ) = bds_rev_split_offer_cards();
+rev_expect( false !== strpos( $live, 'Subscribe now' ), 'live cards use Subscribe now' );
+rev_expect( false !== strpos( $live, '/product/ai-social-growth/' ), 'live Social Growth goes to the published product' );
+rev_expect( false === strpos( $live, 'Ask about this plan' ), 'live grid does not mix inquiry buttons' );
+rev_expect( false !== strpos( $ask, 'Ask about this plan' ), 'closed plans stay in the inquiry grid' );
+rev_expect( false !== strpos( $ask, 'ai-business-monitoring' ), 'monitoring stays inquiry' );
+$pos_live = strpos( bds_rev_markup(), 'Plans you can buy now' );
+$pos_ask  = strpos( bds_rev_markup(), 'Upcoming plans' );
+rev_expect( false !== $pos_live && false !== $pos_ask && $pos_live < $pos_ask, 'buyable plans render before inquiry' );
+rev_expect( false !== strpos( bds_rev_markup(), '/featured-advertising/' ), 'Directory featured door is present' );
 
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );

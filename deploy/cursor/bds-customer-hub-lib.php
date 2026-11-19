@@ -226,6 +226,32 @@ if ( ! function_exists( 'bds_hub_saved_change' ) ) {
 	}
 }
 
+if ( ! function_exists( 'bds_hub_next_actions' ) ) {
+	/**
+	 * Next converting doors. Paths only — the MU prefixes the live host.
+	 *
+	 * @return array<int,array{label:string,host:string,path:string}>
+	 */
+	function bds_hub_next_actions( $surface ) {
+		$surface = strtolower( (string) $surface );
+		if ( 'directory' === $surface ) {
+			return array(
+				array( 'label' => 'List my business', 'host' => 'directory', 'path' => '/add-listing/' ),
+				array( 'label' => 'See membership plans', 'host' => 'directory', 'path' => '/select-your-plan/' ),
+				array( 'label' => 'Get featured', 'host' => 'directory', 'path' => '/featured-advertising/' ),
+				array( 'label' => 'How to claim a listing', 'host' => 'directory', 'path' => '/claim-your-business-listing-branddad-directory/' ),
+			);
+		}
+		return array(
+			array( 'label' => 'Subscribe to AI Social Growth', 'host' => 'social', 'path' => '/product/ai-social-growth/' ),
+			array( 'label' => 'See all services', 'host' => 'social', 'path' => '/services/' ),
+			array( 'label' => 'Run the free audit', 'host' => 'social', 'path' => '/check-your-website/' ),
+			array( 'label' => 'List a business on Directory', 'host' => 'directory', 'path' => '/add-listing/' ),
+			array( 'label' => 'Get featured on Directory', 'host' => 'directory', 'path' => '/featured-advertising/' ),
+		);
+	}
+}
+
 if ( ! function_exists( 'bds_seo_emit_decision' ) ) {
 	/**
 	 * Refuse a second canonical, and refuse a new alternate for a Directory city URL.

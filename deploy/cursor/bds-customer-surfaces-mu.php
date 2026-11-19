@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Surfaces
  * Description: Account hub, membership status, free-AI allowance display, studio boards, and the Partnero affiliate door. Does not charge, invent balances, or publish.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: BrandDad
  *
  * Secure design: every account block uses the current WordPress user. Music briefs are limited to that user's posts. Affiliate money stays in Partnero. Studio buttons do not call providers.
@@ -197,11 +197,45 @@ function bds_hub_music_html() {
 	return $html;
 }
 
+function bds_hub_is_directory() {
+	$host = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+	return 'directory.branddad.social' === $host;
+}
+
+function bds_hub_action_url( array $action ) {
+	$host = isset( $action['host'] ) ? (string) $action['host'] : '';
+	$path = isset( $action['path'] ) ? (string) $action['path'] : '/';
+	if ( 'directory' === $host ) {
+		$url = 'https://directory.branddad.social' . $path;
+	} else {
+		$url = 'https://branddad.social' . $path;
+	}
+	if ( function_exists( 'bds_po_url' ) ) {
+		$out = bds_po_url( $url );
+		if ( is_string( $out ) && '' !== $out ) {
+			return $out;
+		}
+	}
+	return $url;
+}
+
+function bds_hub_next_html() {
+	if ( ! bds_hub_is_allowed_host() ) {
+		return '';
+	}
+	$surface = bds_hub_is_directory() ? 'directory' : 'social';
+	$html    = '<section id="bds-hub-next"><h2>Do this next</h2><p>These doors already exist. This screen does not change a price.</p><p>';
+	foreach ( bds_hub_next_actions( $surface ) as $action ) {
+		$html .= '<a href="' . esc_url( bds_hub_action_url( $action ) ) . '">' . esc_html( $action['label'] ) . '</a>';
+	}
+	return $html . '</p></section>';
+}
+
 function bds_hub_account_shortcode() {
 	if ( ! bds_hub_is_allowed_host() ) {
 		return '';
 	}
-	return '<div class="bds-hub" id="bds-account-hub">' . bds_hub_membership_html() . bds_hub_compare_html() . bds_hub_saved_html() . bds_hub_free_ai_html() . bds_hub_studio_html() . bds_hub_affiliate_html() . bds_hub_music_html() . '</div>';
+	return '<div class="bds-hub" id="bds-account-hub">' . bds_hub_next_html() . bds_hub_membership_html() . bds_hub_compare_html() . bds_hub_saved_html() . bds_hub_free_ai_html() . bds_hub_studio_html() . bds_hub_affiliate_html() . bds_hub_music_html() . '</div>';
 }
 add_shortcode( 'bds_account_hub', 'bds_hub_account_shortcode' );
 add_shortcode( 'bds_membership_status', 'bds_hub_membership_html' );
