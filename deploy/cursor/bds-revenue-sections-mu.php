@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.4
+ * Version: 0.2.5
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -121,6 +121,32 @@ function bds_rev_menu_featured_url( $title, $url ) {
 	return (string) $url;
 }
 
+/**
+ * "AI Packages" is stored as the homepage. Send it to the services catalog.
+ *
+ * @param string $title Menu label.
+ * @param string $url   Current href.
+ * @return string
+ */
+function bds_rev_menu_packages_url( $title, $url ) {
+	if ( 0 !== strcasecmp( trim( wp_strip_all_tags( (string) $title ) ), 'AI Packages' ) ) {
+		return (string) $url;
+	}
+	$host = strtolower( (string) wp_parse_url( (string) $url, PHP_URL_HOST ) );
+	$path = trim( (string) wp_parse_url( (string) $url, PHP_URL_PATH ), '/' );
+	if ( '' !== $path || ! in_array( $host, array( 'branddad.social', 'www.branddad.social', '' ), true ) ) {
+		return (string) $url;
+	}
+	$dest = home_url( '/services/' );
+	if ( function_exists( 'bds_po_url' ) ) {
+		$out = bds_po_url( $dest );
+		if ( is_string( $out ) && '' !== $out ) {
+			return $out;
+		}
+	}
+	return $dest;
+}
+
 function bds_rev_fix_featured_menu( $items ) {
 	if ( ! is_array( $items ) || is_admin() || ! bds_rev_is_social() ) {
 		return $items;
@@ -131,7 +157,7 @@ function bds_rev_fix_featured_menu( $items ) {
 		}
 		$title = isset( $item->title ) ? (string) $item->title : '';
 		$url   = isset( $item->url ) ? (string) $item->url : '';
-		$item->url = bds_rev_menu_featured_url( $title, $url );
+		$item->url = bds_rev_menu_packages_url( $title, bds_rev_menu_featured_url( $title, $url ) );
 	}
 	return $items;
 }
@@ -177,8 +203,22 @@ function bds_rev_rewrite_label_link( $html, $label, $href_pattern, $dest, $new_l
 	return is_string( $out ) ? $out : $html;
 }
 
+function bds_rev_rewrite_choose_plan( $html ) {
+	$html = (string) $html;
+	if ( false === strpos( $html, 'Choose this plan' ) ) {
+		return $html;
+	}
+	$out = preg_replace(
+		'#(<a\b[^>]*href="https://(?:www\.)?branddad\.social/product/(?:ai-lead-assistant|ai-social-growth|ai-local-seo|ai-business-essentials)/[^"]*"[^>]*)>Choose this plan</a>#',
+		'$1>Subscribe</a>',
+		$html
+	);
+	return is_string( $out ) ? $out : $html;
+}
+
 function bds_rev_rewrite_conversion_ctas( $html ) {
 	$html   = bds_rev_rewrite_featured_ask( $html );
+	$html   = bds_rev_rewrite_choose_plan( $html );
 	$pairs  = array(
 		array( 'See social plans', 'ai-social-growth', 'Subscribe to Social Growth', 'ai-social-growth' ),
 		array( 'See SEO options', 'ai-local-seo', 'Subscribe to Local SEO', 'ai-local-seo' ),

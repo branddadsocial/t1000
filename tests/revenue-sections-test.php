@@ -106,6 +106,18 @@ rev_expect(
 	'https://directory.branddad.social/featured-advertising/' === bds_rev_menu_featured_url( 'Get Featured', 'https://branddad.social/contact-us/' ),
 	'header Get Featured contact link is sent to Featured'
 );
+rev_expect(
+	'https://branddad.social/services/' === bds_rev_menu_packages_url( 'AI Packages', 'https://branddad.social/' ),
+	'AI Packages leaves the homepage and opens services'
+);
+rev_expect(
+	'https://branddad.social/services/' === bds_rev_menu_packages_url( 'AI Packages', 'https://branddad.social/services/' ),
+	'AI Packages that already open services stay there'
+);
+$choose = '<a class="bdai-button" href="https://branddad.social/product/ai-social-growth/">Choose this plan</a>';
+rev_expect( false !== strpos( bds_rev_rewrite_choose_plan( $choose ), '>Subscribe</a>' ), 'live plan cards say Subscribe' );
+$other = '<a href="https://branddad.social/product/branddad-custom-automation/">Choose this plan</a>';
+rev_expect( $other === bds_rev_rewrite_choose_plan( $other ), 'other product labels stay on their own wording' );
 $ask_html = '<p><a class="bdai-button bdai-button--light" href="https://branddad.social/contact-us/">Ask about Featured placement</a></p>';
 $fixed    = bds_rev_rewrite_featured_ask( $ask_html );
 rev_expect( false !== strpos( $fixed, '/featured-advertising/' ), 'Featured ask is sent to the buy page' );
