@@ -528,17 +528,38 @@ function bds_feat_intercept_buy_page() {
 	if ( ! bds_feat_is_directory() || is_admin() || ! bds_feat_buy_path() ) {
 		return;
 	}
-	if ( get_page_by_path( 'featured-advertising' ) ) {
+	$page = get_page_by_path( 'featured-advertising' );
+	if ( $page && 'publish' === get_post_status( $page ) ) {
 		return;
 	}
+	global $wp_query;
+	$wp_query->is_404  = false;
+	$wp_query->is_page = true;
 	status_header( 200 );
 	nocache_headers();
+	add_filter(
+		'pre_get_document_title',
+		static function () {
+			return __( 'Get featured on BrandDad Directory', 'branddad' );
+		},
+		20
+	);
 	get_header();
 	echo bds_feat_buy_markup(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	get_footer();
 	exit;
 }
+add_action( 'wp', 'bds_feat_clear_buy_404', 0 );
 add_action( 'template_redirect', 'bds_feat_intercept_buy_page', 0 );
+
+function bds_feat_clear_buy_404() {
+	if ( ! bds_feat_is_directory() || is_admin() || ! bds_feat_buy_path() ) {
+		return;
+	}
+	global $wp_query;
+	$wp_query->is_404 = false;
+	status_header( 200 );
+}
 add_shortcode( 'bds_featured_buy', 'bds_feat_buy_markup' );
 
 function bds_feat_claim_guide_ctas( $content ) {
