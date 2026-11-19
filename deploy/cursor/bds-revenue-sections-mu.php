@@ -258,6 +258,12 @@ function bds_rev_append_content( $content ) {
 		}
 		return bds_rev_inject_before_final( $content, bds_rev_markup() );
 	}
+	if ( is_page( 'check-your-website' ) ) {
+		if ( false !== strpos( $content, 'id="bds-rev-home-strip"' ) ) {
+			return $content;
+		}
+		return $content . bds_rev_home_strip();
+	}
 	if ( ! is_front_page() ) {
 		return $content;
 	}
@@ -288,26 +294,44 @@ add_action( 'wp_footer', 'bds_rev_404_cta', 24 );
  * hard-coded catalog slug list. Unknown values print nothing. Name/price are
  * esc_html. No checkout, no storage, no raw query echo.
  */
+function bds_rev_offer_note_html( $slug ) {
+	$offer = bds_rev_offer_by_slug( $slug );
+	if ( ! $offer ) {
+		return '';
+	}
+	$url   = bds_rev_offer_url( $offer['slug'] );
+	$note  = '<p class="bds-rev-note" id="bds-rev-offer-note">';
+	if ( '' !== $url ) {
+		$note .= esc_html(
+			sprintf(
+				/* translators: 1: plan name, 2: listed price */
+				__( 'You asked about %1$s (%2$s). Checkout is already open for this plan.', 'branddad' ),
+				$offer['name'],
+				$offer['price']
+			)
+		);
+		$note .= ' <a class="bds-rev-button" href="' . esc_url( $url ) . '">' . esc_html__( 'Subscribe now', 'branddad' ) . '</a>';
+	} else {
+		$note .= esc_html(
+			sprintf(
+				/* translators: 1: plan name, 2: listed price */
+				__( 'You asked about %1$s (%2$s). This page is an inquiry. It does not start checkout.', 'branddad' ),
+				$offer['name'],
+				$offer['price']
+			)
+		);
+	}
+	$note .= '</p>';
+	return $note;
+}
+
 function bds_rev_contact_offer_note( $content ) {
 	if ( ! bds_rev_is_social() || is_admin() || ! in_the_loop() || ! is_main_query() || ! is_page( 'contact-us' ) ) {
 		return $content;
 	}
-	$slug  = isset( $_GET['offer'] ) ? sanitize_title( wp_unslash( $_GET['offer'] ) ) : '';
-	$offer = bds_rev_offer_by_slug( $slug );
-	if ( ! $offer ) {
-		return $content;
-	}
-	$note  = '<p class="bds-rev-note" id="bds-rev-offer-note">';
-	$note .= esc_html(
-		sprintf(
-			/* translators: 1: plan name, 2: listed price */
-			__( 'You asked about %1$s (%2$s). This page is an inquiry. It does not start checkout.', 'branddad' ),
-			$offer['name'],
-			$offer['price']
-		)
-	);
-	$note .= '</p>';
-	if ( false !== strpos( $content, 'id="bds-rev-offer-note"' ) ) {
+	$slug = isset( $_GET['offer'] ) ? sanitize_title( wp_unslash( $_GET['offer'] ) ) : '';
+	$note = bds_rev_offer_note_html( $slug );
+	if ( '' === $note || false !== strpos( $content, 'id="bds-rev-offer-note"' ) ) {
 		return $content;
 	}
 	return $note . $content;

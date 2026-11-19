@@ -72,6 +72,15 @@ rev_expect( false !== strpos( $strip, '/product/ai-social-growth/' ), 'homepage 
 rev_expect( false !== strpos( $strip, '/featured-advertising/' ), 'homepage strip sells featured' );
 rev_expect( false === strpos( $strip, 'Ask about this plan' ), 'homepage strip does not mix inquiry CTAs' );
 
+$live_note = bds_rev_offer_note_html( 'ai-social-growth' );
+rev_expect( false !== strpos( $live_note, 'Subscribe now' ), 'contact note sells a live plan' );
+rev_expect( false !== strpos( $live_note, '/product/ai-social-growth/' ), 'contact note uses the published product URL' );
+rev_expect( false === strpos( $live_note, 'does not start checkout' ), 'live contact note is not inquiry-only' );
+$ask_note = bds_rev_offer_note_html( 'ai-business-monitoring' );
+rev_expect( false !== strpos( $ask_note, 'does not start checkout' ), 'staged contact note stays inquiry' );
+rev_expect( false === strpos( $ask_note, 'Subscribe now' ), 'staged contact note does not invent checkout' );
+rev_expect( '' === bds_rev_offer_note_html( '<script>x</script>' ), 'markup offer notes print nothing' );
+
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );
 	exit( 1 );

@@ -27,6 +27,7 @@
 - `php tests/customer-hub-test.php` passed on 2026-11-19.
 - `php tests/revenue-sections-test.php` passed on 2026-11-19.
   - Homepage strip sells live Subscribe and Get featured, not inquiry buttons.
+  - Contact offer notes Subscribe only when a published product URL exists.
   - Music form accepts the package array or empty args and still prints option values.
   - Unknown and markup offer slugs return null.
   - Membership labels come from the supplied tier record.

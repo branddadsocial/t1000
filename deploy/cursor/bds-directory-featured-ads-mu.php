@@ -638,6 +638,8 @@ function bds_feat_listing_cta_footer() {
 	}
 }
 add_action( 'wp_footer', 'bds_feat_listing_cta_footer', 25 );
+add_action( 'atbdp_after_single_listing', 'bds_feat_listing_cta_footer', 25 );
+add_action( 'directorist_single_listing_after_content', 'bds_feat_listing_cta_footer', 25 );
 
 function bds_feat_plans_page_ctas( $content ) {
 	if ( ! bds_feat_is_directory() || is_admin() || ! in_the_loop() || ! is_main_query() ) {
