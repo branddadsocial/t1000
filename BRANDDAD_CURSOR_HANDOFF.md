@@ -106,6 +106,6 @@ Do not auto-activate an earlier anonymous consent request after a later registra
 Do not deploy this branch over newer Cursor public-page files. Merge only the backend files and documented helper calls.
 # 2026-11-20 public audit-page presentation note
 
-- The free website-audit page is clean at 390px: no horizontal overflow, old pricing, provider branding, or green primary CTA remains.
+- The free website-audit page is clean at 320px, 390px, and 430px: no horizontal overflow remains, and the 390px content audit found no old pricing, provider branding, or green primary CTA.
 - The small EN/ES switch is still visible. The user previously requested removing translator clutter, while the current master requirements preserve multilingual support. Keep translation behavior but confirm whether the compact switch should remain or be visually relocated; do not restore a floating translator widget.
 - No frontend change was made in this Codex batch.

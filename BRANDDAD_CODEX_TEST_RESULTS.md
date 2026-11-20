@@ -567,10 +567,20 @@ Updated: 2026-11-19
 - Social Home, Social Services, and the Directory claim page each reported `innerWidth=390`, `clientWidth=390`, `documentElement.scrollWidth=390`, and `body.scrollWidth=390`; no horizontal page overflow was present.
 - The only negative-position Social elements were intentional honeypot fields and the translation helper's off-canvas internals. The Directory's negative-position navigation nodes were the intentionally closed mobile drawer and did not widen the document.
 - The homepage music brief was present with `display:block`, a 350px section width, and 13 form controls. It did not widen the 390px document.
+
 - Headless screenshots initially appeared visually cropped, but DOM geometry disproved page overflow; no production CSS change was made from a screenshot-only false signal.
 - Mobile DOM inspection confirmed that trial links resolve to the authoritative AI Business Essentials product, service-comparison links remain on Services, free-listing links resolve to Add Listing, and the claim journey exposes the `bdd_intent=claim` listing finder.
 - The music brief uses POST to WordPress's `admin-post.php`, contains the expected 13 controls, and requires package, customer name, email, and business description. No submission was made.
 - A fresh redirect-following request pass returned HTTP 200 for Business Essentials, Services, the website audit, unauthenticated Add Listing registration handoff, claim-intent listings, Directory plans, and Playa del Carmen location. Add Listing correctly ended at `/registration/?bds_form=1` for the anonymous audit session.
+
+## 2026-11-20 narrow/mobile-width follow-up
+
+- Rechecked Social Home, Social Services, the free website-audit page, and the canonical Directory claim page at measured 320px and 430px CSS viewports.
+- Every page reported `innerWidth`, `clientWidth`, document scroll width, and body scroll width equal to the requested viewport at both sizes; no horizontal page overflow was present.
+- The only off-screen interactive nodes were intentional Social honeypot inputs and the Directory skip link. No visible link, button, input, select, textarea, or form extended beyond either viewport.
+- This is browser emulation/DOM evidence, not a substitute for final physical iOS, Android, and touch-interaction acceptance.
+- Post-audit local regression remained green: 39/39 Node contract files, 44/44 deployment PHP syntax checks, 3/3 PHP compatibility suites, the release checksum contract, and `git diff --check` passed.
+- A low-rate public availability sweep returned HTTP 200 for Social Home, Services, AI Business Essentials, the website audit, Directory Home, all categories, all listings, and Playa del Carmen. Measured completion times were 0.86-2.57 seconds in that sample.
 
 ## 2026-11-20 free website-audit mobile recheck
 
