@@ -2,7 +2,7 @@
 
 Prepared: 2026-11-20
 
-Status: locally verified; production unchanged; deployment requires explicit action-time confirmation.
+Status: reviewed production subset deployed on 2026-11-20; fresh PHP output verified. Clean Directory specialty URLs remain behind stale provider/origin cache pending a supported purge.
 
 ## Purpose
 
@@ -22,7 +22,8 @@ The source worktrees already contained unrelated uncommitted work. Never deploy 
 | `deploy/cursor/bds-customer-surfaces-mu.php` | 0.2.5 | Social and Directory | `62d5b442559f05ac096ebd44901f342629e94652cdc7aa621149d89cb32471c2` | Passing account/studio action blue. |
 | `deploy/cursor/bds-directory-featured-ads-mu.php` | 0.2.13 | Directory only | `4fa8f31589d8b2ea6141285f662e903f7c98ca91b2ee7462401de1860c06e90c` | Passing Featured action blue. |
 | `deploy/cursor/bds-codex-bridge-mu.php` | 0.1.1 | Social and Directory | `23f89adec0495f69c89edfd0cc5b3a5d26f52a0dbab8d092a5196823a05f9464` | Passing bridge form action blue. This is an untracked local source; deploy only if installed-source comparison proves it is the same reviewed module apart from this version/color change. |
-| `deploy/bds-directory-qa-repair-mu.php` | 1.0.20 | Directory only | `d26b4b25fd8218be2a4df00b50254980df98b0db13707d58427522cbd0cbd88e` | Prefer current `#bdd-title`, demote retired `bds-wah__title`, and hide only the retired wrapper. |
+| `deploy/cursor/bds-sales-help-mu.php` | 0.1.3 | Social codebase; deployed to Directory to disable the duplicate helper there | `d397f102e24ec4d592b4c77d48c6dd6a43e2737da247e0b0b36f2539f9d28b24` | Render only on `branddad.social` and `www.branddad.social`; Directory keeps its contextual Concierge. |
+| `deploy/bds-directory-qa-repair-mu.php` | 1.0.21 | Directory only | `dca6a417e52d430f24b44139de2926375a3127f5156b050fb415fffd34f1030c` | Prefer current `#bdd-title`, demote the retired hero, and strip the demo refund modal only from Events, Jobs, and Classifieds public browse output. |
 
 ## Directory source prerequisites to verify, not blindly overwrite
 
@@ -45,7 +46,7 @@ These prerequisite files were not changed in this batch. Read back the installed
 
 1. Social contrast files, one at a time, with PHP syntax verification after each replacement.
 2. Directory contrast files, one at a time, with PHP syntax verification after each replacement.
-3. Directory QA repair `1.0.20`.
+3. Directory QA repair `1.0.21` and Sales Help `0.1.3`.
 4. Verify the installed gift-slider and front-compose prerequisites; replace them only if the installed source is an older reviewed version and that additional replacement is explicitly approved.
 5. Purge only the generated Directory page cache through the existing bounded cache-control path. Do not recursively delete an unresolved filesystem target.
 
@@ -60,6 +61,7 @@ These prerequisite files were not changed in this batch. Read back the installed
 - Exactly one Directory Concierge launcher is present and its dialog remains contained.
 - Social Home, Services, Directory Home, categories, listings, and the Playa del Carmen result path have no horizontal overflow at 320, 390, and 430 CSS pixels.
 - Critical CTA destinations still return HTTP 200 after expected redirects.
+- Events, Jobs, and Classifieds clean URLs contain one Directory Concierge, no `#bds-sales-help`, and no `#dcl-claim-modal` after the supported cache refresh.
 
 ## Rollback
 
@@ -75,3 +77,10 @@ These prerequisite files were not changed in this batch. Read back the installed
 - The focused contrast, launch funnel, language, heading, revenue, Featured, customer-hub, bridge, and Directory H1/gift contracts pass.
 - PHP syntax and targeted diff checks pass.
 - File-specific Rafter secret scan found no secrets. Manual OWASP review found no new request, auth, SQL, network, credential, payment, storage, or deletion path. Remote fast Rafter remains blocked at the 16/16 quota; paid Plus was not used.
+
+## Production result
+
+- Uploaded Social launch pages `0.5.24`, Social revenue sections `0.2.21`, Directory Featured `0.2.13`, Directory QA repair `1.0.21`, and Sales Help `0.1.3`.
+- Fresh `nocache=1` Events, Jobs, and Classifieds output passes the specialty-page acceptance: one H1, Directory Concierge present, duplicate Sales Help absent, demo refund modal absent.
+- Ordinary specialty URLs still serve older generated HTML. Three locally derived objects were uploaded after content validation, but the live clean routes did not select them; no additional keys were guessed and no broad cache directory was deleted.
+- StartHost's Edge Caching page does not render its controls because its own JavaScript throws `SyntaxError: Unexpected identifier 'theme'`. Directory Speed Auto-Heal requires a WordPress-admin login in the current browser session. A supported provider purge/authenticated bounded refresh remains the final presentation step for these clean URLs.
