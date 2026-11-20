@@ -143,7 +143,9 @@ Nothing unchecked above may be described as fully operational.
 - [x] Complete and verify a recoverable combined files-and-databases backup; StartHost reports `Backup job completed` and exposes Download.
 - [x] Identify the pending financial-adjacent work: exactly two no-argument WP Swings recurring checks are overdue; the active subscription's next payment is 2026-12-13.
 - [x] Prepare the exact StartHost task form with the reviewed command and five-minute cadence without testing or saving it.
-- [ ] Receive exact action-time confirmation and save `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
+- [x] Receive exact action-time confirmation for `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
+- [!] StartHost rejected the first approved save with `Cron failed to add` because the package remains malware-flagged; no task was created and no cron batch ran. A fresh scan is in progress.
+- [ ] After StartHost clears the package restriction, re-enter and save the exact reviewed task.
 - [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
 - [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
 - [ ] Classify historical no-callback failures; any cleanup is a separate destructive action and must not be combined with scheduler recovery.
