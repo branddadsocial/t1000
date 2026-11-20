@@ -1,6 +1,6 @@
 # BrandDad Codex test results
 
-## 2026-11-19 website-monitoring acceptance preparation
+## 2026-11-19 hosted website-monitoring acceptance
 
 - `tests/website-monitoring-contract.mjs`: 22/22 assertions passed.
 - `tests/staging-website-monitoring-acceptance-contract.mjs`: 54/54 assertions passed.
@@ -8,7 +8,10 @@
 - Manual Rafter review confirmed that the internal plan candidate is revalidated through paid-mode and plan allowlists; the browser cannot choose the destination; local/private/IP/credential/port targets fail closed; each production fetch rechecks DNS under a stale-safe owner lock; safe HTTP has zero redirects, a 10-second timeout, and a 64 KiB cap; only measurements/hash are stored; and all customer routes require a WordPress session.
 - The exact-host helper accepts no browser input, enables the feature for only one request, suppresses recurring scheduling, limits its synthetic plan to the marked non-admin fixture, fetches only BrandDad staging, returns boolean evidence, and restores fixture metadata in `finally`.
 - `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- The helper has not been uploaded or executed. No DNS lookup from WordPress, HTTP request, lifecycle event, customer/profile change, plan grant, message, queue, or production mutation occurred in this preparation step.
+- Hosted report: `complete=true`; 27/27 checks true; no error codes.
+- Verified anonymous denial, plan revalidation, SSRF target rejection, owned-host DNS/fetch, bounded response metadata, hash-only retention, exact report counters, active/stale locks, network failure, visible 3xx without following, URL/plan shutdown, manual rate limiting, cross-account isolation, fixture restoration, and no recurring schedule.
+- Post-run staging smoke: homepage/product/catalog 200, noindex retained, and anonymous account/value/AI/onboarding/monitoring/admin-finance routes 401.
+- Production evidence route returned HTTP 404. No real customer entitlement, message, provider call, recurring job, payment, or production mutation occurred.
 
 ## 2026-11-19 hosted provider-cost acceptance
 

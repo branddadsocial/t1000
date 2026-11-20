@@ -2,14 +2,17 @@
 
 Updated: 2026-11-19
 
-## 2026-11-19 website-monitoring acceptance preparation
+## 2026-11-19 hosted website-monitoring acceptance
 
 - Added a revalidated internal monitoring-plan candidate hook so isolated staging can exercise the real service without creating a fake Woo order or subscription. Hook output is still restricted to paid mode and the fixed monitoring-plan allowlist.
 - Added an exact-host, one-time staging harness that enables monitoring for one request, suppresses the recurring scheduler, uses only marker-owned non-admin fixtures, restores all fixture metadata, and exposes boolean-only evidence.
 - Acceptance covers anonymous denial; local/private/credential/port rejection; real public-DNS fetches to BrandDad staging; bounded measurements and hash-only retention; value-report deltas; active/stale locks; simulated network failure; no-follow redirect behavior; URL-change and plan-loss shutdown; manual rate limiting; and cross-account report isolation.
 - Added 54 staging security/behavior assertions and expanded the main monitoring contract to 22 checks. The complete local suite passes 26/26 Node contracts, three PHP compatibility suites, 26 deployment PHP syntax checks, and `git diff --check`.
 - Rafter secure-design ingestion/threat-model and API/web-app review walks were completed. Local secret scanning found no secrets; required remote fast SAST/SCA was attempted and remains quota-blocked at 16/16. Paid Plus was not used.
-- No staging upload, outbound request, plan grant, customer change, message, queue, or production mutation occurred in this preparation step.
+- After explicit action-time confirmation, uploaded the revised monitor and exact-host helper to isolated staging and triggered the one-time run.
+- Hosted evidence returned `complete=true` with all 27 checks true and no error codes: fixture/anonymous controls; revalidated plan; SSRF rejection; public DNS; authorization; real owned-host fetch; bounded measurements/hash-only storage; exact monthly/value-report deltas; lock behavior; network failure; no-follow redirect; URL/plan shutdown; manual rate limiting; tenant isolation; metadata restoration; and no recurring schedule.
+- Post-run smoke kept the homepage, product, and public catalog at HTTP 200; staging remained noindex; anonymous account/value/AI/onboarding/monitoring/finance routes returned HTTP 401. The production evidence route returned HTTP 404.
+- No real customer entitlement, message, provider call, recurring job, payment, or production mutation occurred. Two bounded HTTPS checks reached only BrandDad's own staging host; the synthetic network failure made no outbound call.
 
 ## 2026-11-19 hosted provider-cost acceptance
 
