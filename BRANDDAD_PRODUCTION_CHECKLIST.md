@@ -32,7 +32,7 @@
 - [x] Prepare and review an exact-host staging-only Business Essentials product fixture with fixed price/trial metadata and no payment/customer mutation.
 - [x] Create the approved staging-only Business Essentials Woo product fixture and verify its canonical catalog mapping, hidden visibility, disposable cart behavior, and absence of payment methods.
 - [ ] Capture authenticated checkout/database evidence for exact seven-day trial metadata, then configure Stripe test mode before payment lifecycle acceptance testing.
-- [~] Upload and run the reviewed synthetic subscription-lifecycle harness on isolated staging; local trial/grant/replay/renewal/revocation/cancellation/failure/cleanup checks pass, hosted evidence remains pending.
+- [x] Run the reviewed synthetic subscription-lifecycle harness on isolated staging; 36/36 trial/grant/replay/renewal/revocation/cancellation/failure/cleanup checks pass.
 - [ ] Create any additional approved staging-only product fixtures/mappings required for the launch catalog.
 - [ ] Install or safely clone Directorist on staging before Directory ownership/claim/free-AI acceptance testing.
 - [ ] Provision valid TLS for `staging.branddad.social` at the authoritative DNS/CDN provider, or use the valid StartHost temporary hostname for acceptance tests.
@@ -58,8 +58,8 @@
 - [ ] First authenticated AI job completes and deducts the correct customer allowance once.
 - [ ] Renewal resets/reconciles exactly once.
 - [x] Reconciliation code uses latest paid renewal and a per-paid-order allowance marker; same-cycle reactivation cannot reset credits.
-- [ ] Failed payment/on-hold revokes according to policy.
-- [ ] Cancellation prevents unauthorized renewal and preserves permitted records/free access.
+- [~] Synthetic hosted acceptance proves failed-payment/on-hold revocation and stale-parent denial; real Stripe webhook acceptance remains pending.
+- [~] Synthetic hosted acceptance proves cancellation revocation and trial-history preservation; real checkout/customer cancellation acceptance remains pending.
 - [ ] Customer billing portal and invoice paths work.
 
 ## Directory acceptance

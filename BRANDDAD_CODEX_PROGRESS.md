@@ -11,7 +11,9 @@ Updated: 2026-11-19
 - Local validation passes 31/31 Node contracts, 3/3 PHP compatibility tests, 31/31 deployment PHP lints, and `git diff --check`. The new helper contract contains 44 security/behavior assertions.
 - The first hosted run failed safely on four assertions while all isolation/cleanup checks passed. Three were harness timing/shape expectations; the fourth exposed a real reactivation defect: the legacy active-status hook used the original parent order instead of the latest authoritative paid renewal, allowing an incorrect allowance-cycle advance after renewal.
 - Corrected the production subscription adapter to use `bds_ai_subscription_current_paid_order()` for legacy active-status reconciliation, bumped it to 0.5.1, expanded its contract, and prepared acceptance helper 0.1.1 under a fresh one-time report key. The reviewed release copy and ZIP match SHA-256 `5D8BBE37A65334CA0A50EEDA5AFD9E8589118F9FBE2A59AED612DE55BB20CAAA`.
-- Corrected hosted runtime remains pending upload confirmation. This synthetic test does not replace Stripe test checkout/webhooks or a real FormWise mutation.
+- After confirmation, uploaded adapter 0.5.1 and helper 0.1.1 to isolated staging. Hosted evidence returned `complete=true` with all 36 checks true and no error codes, including trial/paid resolution, replay, two renewal cycles, failed-latest-order no-fallback, immediate on-hold/cancellation revocation, duplicate callback idempotency, same-order reactivation without credit reset, provider failure/retry, provider isolation, and exact cleanup/restoration.
+- Post-run smoke kept the staging homepage and Business Essentials product at HTTP 200 with `noindex`, public sales catalog at HTTP 200, and nine private customer/admin routes plus trial at HTTP 401 anonymously. Production exposed no acceptance route (HTTP 404).
+- This synthetic test does not replace Stripe test checkout/webhooks or a real FormWise mutation; no real gateway, provider, customer, message, or production mutation occurred.
 
 ## 2026-11-19 hosted website-monitoring acceptance
 
