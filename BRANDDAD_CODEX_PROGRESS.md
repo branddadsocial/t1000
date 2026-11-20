@@ -2,6 +2,13 @@
 
 Updated: 2026-11-20
 
+## 2026-11-20 staging launch-catalog fixtures preparation
+
+- Added an exact-host, fail-closed staging fixture for AI Studio Starter ($14.99/50 credits), AI Local SEO ($19.99/60), AI Lead Assistant ($19.99/80), and AI Social Growth ($29.99/150).
+- The helper cross-checks every price, allowance, and `launch_candidate` state against the authoritative catalog and preflights all four slugs before the first write. Only exact marked simple-product fixtures can be reused; any unmarked collision aborts the run.
+- Products are catalog-hidden, virtual, sold individually, monthly, no-expiry, zero-setup, zero-trial staging records. The helper creates no customer/order/subscription/payment/message/provider call and contains no deletion primitive.
+- Secure design and ASVS L2 web/API review are recorded. The fixture contract passes 22 assertions; the full local suite passes 34/34 Node contract files, 40/40 PHP syntax checks, and `git diff --check`. Local secret scanning is clean; required remote `rafter run` remains quota-blocked at 16/16 and paid Plus was not used.
+
 ## 2026-11-20 sales-assistant grounding/cost acceptance preparation
 
 - Added an exact-host, one-time staging harness around the existing public BrandDad salesperson. A visibly dummy execution key enables only the acceptance request, and every request to the fixed FormWise endpoint is intercepted locally; unexpected or out-of-context provider traffic fails closed.

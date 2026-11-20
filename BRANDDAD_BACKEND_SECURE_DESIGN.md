@@ -4,6 +4,20 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Hosted launch-catalog staging fixtures — 2026-11-20
+
+Data flow: `[exact Stackstaging bootstrap] -> [literal four-product catalog] -> [preflight every slug/collision/type] -> [Woo product writes] -> [fixed subscription/allowance metadata] -> [read-back verification] -> [boolean-only report]`. The only trust boundary is the reviewed helper entering the isolated staging WordPress/Woo database. No browser input, customer, order, subscription, gateway, provider, email, production host, or external network is involved.
+
+- Products are a fixed server literal: AI Studio Starter $14.99/50 credits, AI Local SEO $19.99/60, AI Lead Assistant $19.99/80, and AI Social Growth $29.99/150. Each must exist in the authoritative commercial catalog as `launch_candidate` with the identical price/credits before any write.
+- A full preflight runs before the first mutation. An existing slug is reusable only if it already has the exact staging-fixture marker and simple-product type; any unmarked collision or catalog mismatch aborts the entire run.
+- Each product is published but catalog-hidden, virtual, sold individually, non-taxable, monthly recurring, no expiry, no setup fee, zero trial days, customer audience, and marked as a staging launch-catalog fixture. It is not a production offer or payment acceptance claim.
+- The runner is canonical-home-host, one-time, stale-lock protected, and request-input-free. The report exposes only per-slug booleans, overall completion, bounded error codes, version, and time—never post ids, filesystem paths, credentials, or customer data.
+- Idempotent reruns update only exact marked fixtures. There is deliberately no deletion or rollback primitive; a guarded failure leaves already marked staging fixtures for inspection rather than risking a broad delete. Production cannot register the report route.
+
+STRIDE: spoofing/tampering are constrained by canonical `home_url()`, literal slugs, authoritative catalog cross-check, and exact marker/type validation; repudiation uses a bounded staging report plus Git-reviewed source; disclosure contains no sensitive data; denial is bounded to four products and one pass; elevation creates no user/role/session and invokes no gateway. Abuse twin “add a sales product” -> “silently sell an unverified service” is blocked by hidden visibility, staging-only host, catalog launch-state/price/credit checks, no gateway, and production isolation.
+
+Residual boundary: this proves deterministic staging product identity and link resolution only. It does not approve production publication, checkout copy, real Stripe prices, fulfillment costs, provider delivery, subscription webhooks, refunds, or existing-customer migration.
+
 ## Hosted sales-assistant grounding/cost acceptance — 2026-11-20
 
 ### Data flow and trust boundaries

@@ -3,6 +3,19 @@
 Updated: 2026-11-19
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
+### Staging launch-catalog product fixture review
+
+- L2/V1 design and threat model: the fixed catalog, host/database boundary, full-preflight rule, idempotent retry, no-delete policy, STRIDE abuse case, and production/checkout residual boundary are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.
+- A01/API1/API5/V4: the runner and read-only report exist only on the canonical configured staging host, accept no caller id/input, and create no user/session/role (`deploy/bds-staging-launch-products-fixture-mu.php:16-27`, `:72-91`, `:174-191`).
+- A02/A07/V2/V3/V6: N/A; no credential, token, authentication, password, cookie, or cryptographic primitive is introduced.
+- A03/API3/V5: no request value reaches a product, query, or report. Slugs, names, prices, and credits are fixed literals; error codes are sanitized and bounded (`deploy/bds-staging-launch-products-fixture-mu.php:20-57`). WordPress/Woo APIs perform all storage writes; no raw SQL, shell, deserialization, HTML output, or file path exists.
+- A04/API4/API6/V11: one stale-safe lock and complete-report guard bound execution to four products. Every authoritative catalog and existing-slug/type/marker check completes before the first write (`deploy/bds-staging-launch-products-fixture-mu.php:72-116`). Partial marked fixtures can be safely reverified on a later request.
+- A05/API8/API9/V14: all products are published but catalog-hidden and explicitly described as non-production staging fixtures (`deploy/bds-staging-launch-products-fixture-mu.php:117-136`). Production has no report route. The report exposes four slug booleans and bounded errors, not post ids or internal paths.
+- A06/A08/API10: N/A; no dependency, update channel, external API, provider, gateway, or network call is added.
+- A09/V7: Git history plus the bounded report records intended fixture state without customer or payment data. Every product and metadata field is read back before completion (`deploy/bds-staging-launch-products-fixture-mu.php:142-160`).
+- A10/API7: N/A; there is no server-side fetch or user-controlled URL.
+- Financial/data safety: fixed monthly price/allowance must match the authoritative catalog; products have zero setup fee and zero trial, and no order/subscription/customer/payment is created. There is no deletion primitive. New products persist exact fixture ownership markers in the same Woo save before later metadata verification (`deploy/bds-staging-launch-products-fixture-mu.php:98-139`).
+
 ### Staging sales-assistant grounding and cost-cap review
 
 - L2/V1 and LLM architecture: the data flow, public/provider trust boundaries, token decisions, STRIDE abuse cases, default-off deployment, exact restoration, and residual live-provider boundary are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.

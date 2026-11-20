@@ -1,5 +1,13 @@
 # BrandDad Codex test results
 
+## 2026-11-20 staging launch-catalog fixtures preparation
+
+- `tests/staging-launch-products-fixture-contract.mjs`: 22/22 assertions passed.
+- Full local suite: 34/34 Node contract files, 40/40 PHP syntax checks, and `git diff --check` passed.
+- Manual ASVS L2 web/API review: canonical staging isolation; literal four-product scope; authoritative launch-state/price/credit cross-check; all-slug preflight; exact marker/type collision denial; ownership marker saved with creation; hidden/virtual/monthly/zero-setup/zero-trial state; full read-back verification; bounded report; no external call, user, order, subscription, payment, message, or deletion.
+- `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- Hosted fixture creation and link verification are pending upload to the isolated Stackstaging database.
+
 ## 2026-11-20 sales-assistant grounding/cost acceptance preparation
 
 - `tests/staging-sales-assistant-acceptance-contract.mjs`: 39/39 assertions passed.
