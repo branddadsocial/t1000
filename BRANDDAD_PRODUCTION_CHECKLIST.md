@@ -15,6 +15,8 @@
 - [x] Add local PHP lint and contract tests.
 - [x] Complete Rafter code-review walk, local secret scan, and document fast-scan quota blocker.
 - [ ] Run `rafter run` fast after quota resets and reconcile findings.
+- [x] Build and independently verify current production-only Social and Directory archives; package-local checksums and PHP lint pass, and no staging/acceptance/repair helper is present.
+- [!] Live Social currently returns `rest_no_route` for the reviewed backend APIs; production package deployment has not occurred.
 - [ ] Test cross-account denial, CSRF/nonce, replay, rate-limit, and provider-outage cases in WordPress.
 - [x] Add a verified-only provider-cost ledger with no public write route and explicit incomplete-coverage reporting.
 - [x] Reject negative and fractional provider costs before WordPress integer normalization.

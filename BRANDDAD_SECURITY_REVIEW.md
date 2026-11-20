@@ -1,5 +1,18 @@
 # BrandDad backend security review
 
+## 2026-11-20 production-package release gate
+
+The exact 2026-11-20 Social and Directory production packages were re-walked using the Rafter web-application, API, and LLM checklists. This is a release review of unchanged, previously tested source rather than a new feature diff.
+
+- Access control/BOLA/BFLA: customer routes derive identity from `get_current_user_id()` and register explicit permission callbacks; AI job reads recheck the private post author (`deploy/bds-ai-execution-mu.php:356`), inquiry updates return 404 unless the private record belongs to the current user (`deploy/bds-customer-inquiries-mu.php:237`), and administrative lead/finance/report functions require `manage_woocommerce` (`deploy/bds-sales-lead-pipeline-mu.php:375`, `deploy/bds-provider-cost-ledger-mu.php:136`).
+- Input/property/resource controls: onboarding, AI, lead, inquiry, and sales-chat bodies are capped before parsing; fields are allowlisted and sanitized; public lead/inquiry/sales flows have bounded client/global rate controls and return 429 when exhausted (`deploy/bds-onboarding-api-mu.php:16`, `deploy/bds-ai-execution-mu.php:138`, `deploy/bds-sales-lead-pipeline-mu.php:94`, `deploy/bds-customer-inquiries-mu.php:54`, `deploy/bds-sales-assistant-api-mu.php:54`).
+- Crypto/replay: account and conversation tokens use HMAC-SHA-256 plus constant-time comparison and bounded expiry (`deploy/bds-account-link-mu.php:89`, `deploy/bds-sales-assistant-api-mu.php:90`); cross-site membership messages bind timestamp, body hash, and idempotency key and reject replay (`deploy/bds-directory-membership-bridge-mu.php:138`). MD5 occurrences are limited to deterministic internal option/transient key names, not signatures, passwords, or bearer tokens.
+- SSRF/third-party consumption: monitoring resolves and revalidates public DNS, rejects unsafe targets, follows zero redirects, and caps response size (`deploy/bds-website-monitoring-mu.php:37`, `deploy/bds-website-monitoring-mu.php:72`, `deploy/bds-website-monitoring-mu.php:261`); FormWise, membership, and provisioning requests use fixed provider/owned endpoints, server-only credentials, zero redirects, response ceilings, stable error handling, and default-off feature flags (`deploy/bds-ai-execution-mu.php:557`, `deploy/bds-directory-membership-bridge-mu.php:102`, `deploy/bds-ai-subscriptions-mu.php:100`).
+- LLM handling/agency/cost: AI inputs use tool-specific schemas; outputs are bounded and sanitized before storage/return; the public sales assistant strips provider-generated links and supplies checkout URLs only from the authoritative catalog; credits are reserved before execution and released on failure; no model output can charge a card, send a message, publish content, change authorization, or invoke a destructive tool (`deploy/bds-ai-execution-mu.php:161`, `deploy/bds-ai-execution-mu.php:300`, `deploy/bds-ai-execution-mu.php:496`, `deploy/bds-sales-assistant-api-mu.php:108`).
+- Destructive/data-retention surface: production routines use exact ownership/type checks and bounded metadata anonymization; the release archive contains no staging acceptance helper or temporary repair utility. No dependency or executable installer was added.
+
+`rafter secrets .` found no secrets. Required remote `rafter run` was attempted against the release branch and remains blocked by the existing 16/16 fast-scan quota; paid Plus was not used. Production deployment therefore still requires the quota-reset scan (or an explicitly approved equivalent), exact-file/database backups, default-off server configuration, and protected deployment authorization.
+
 Updated: 2026-11-20
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
