@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-000-staging-sales-assistant-acceptance-mu.php', 'utf8');
 
 const checks = [
-  ['version is explicit', /BDS_STAGING_SALES_ACCEPTANCE_VERSION', '0\.1\.0'/.test(source)],
+  ['version is explicit', /BDS_STAGING_SALES_ACCEPTANCE_VERSION', '0\.1\.1'/.test(source)],
   ['canonical TLS staging host is fixed', /BDS_STAGING_SALES_ACCEPTANCE_HOST', 'staging-branddad-social\.stackstaging\.com'/.test(source)],
   ['host derives from configured home URL', /wp_parse_url\( home_url\( '\/' \), PHP_URL_HOST \)/.test(source)],
   ['execution is one-time report gated', /sales_acceptance_pending[\s\S]*! get_option\( BDS_STAGING_SALES_ACCEPTANCE_REPORT, false \)/.test(source)],
@@ -25,12 +25,12 @@ const checks = [
   ['owned and attacker origins are tested', /branddad\.social[\s\S]*owned_origin_allowed[\s\S]*attacker\.example[\s\S]*unowned_origin_denied/.test(source)],
   ['request-size denial occurs before provider call', /CONTENT_LENGTH'\] = '20000'[\s\S]*request_too_large[\s\S]*0 === absint\( \$http_state\['calls'\]/.test(source)],
   ['public catalog requires exact flagship price and authoritative checkout host', /catalog_grounded[\s\S]*29\.99[\s\S]*catalog_checkout_authoritative[\s\S]*BDS_STAGING_SALES_ACCEPTANCE_HOST/.test(source)],
-  ['SEO recommendation is first and unavailable link fails closed', /seo_offer_ranked_first[\s\S]*ai-local-seo[\s\S]*unavailable_offer_has_no_link/.test(source)],
+  ['SEO recommendation is first with authoritative saleable link', /seo_offer_ranked_first[\s\S]*ai-local-seo[\s\S]*seo_offer_saleable[\s\S]*BDS_STAGING_SALES_ACCEPTANCE_HOST/.test(source)],
   ['fallback checkout must be server saleable', /fallback_offer_saleable[\s\S]*BDS_STAGING_SALES_ACCEPTANCE_HOST/.test(source)],
   ['hostile reply links and HTML are asserted removed', /hostile_reply_links_removed[\s\S]*stripos[\s\S]*hostile_reply_html_removed/.test(source)],
   ['session validity tamper expiry and client binding are tested', /session_token_valid[\s\S]*session_token_tamper_denied[\s\S]*session_token_expiry_denied[\s\S]*session_token_client_bound/.test(source)],
   ['server-side continuation is tested', /conversation_continues_server_side[\s\S]*continuations/.test(source)],
-  ['lead and social recommendations are grounded', /second_reply_grounded[\s\S]*ai-lead-assistant/.test(source) && /third_reply_grounded[\s\S]*ai-social-growth/.test(source)],
+  ['lead and social recommendations have authoritative links', /second_reply_grounded[\s\S]*ai-lead-assistant[\s\S]*for_sale[\s\S]*BDS_STAGING_SALES_ACCEPTANCE_HOST/.test(source) && /third_reply_grounded[\s\S]*ai-social-growth[\s\S]*for_sale[\s\S]*BDS_STAGING_SALES_ACCEPTANCE_HOST/.test(source)],
   ['fourth request is denied before a provider call', /daily_cap_denies_fourth[\s\S]*rate_limited[\s\S]*daily_cap_stops_provider_call/.test(source)],
   ['per-client minute cap is tested', /set_transient\( \$rate_key, 10[\s\S]*client_minute_cap_denies/.test(source)],
   ['exact provider call and continuation counts are required', /exact_provider_call_count[\s\S]*3 === absint[\s\S]*2 === absint/.test(source)],

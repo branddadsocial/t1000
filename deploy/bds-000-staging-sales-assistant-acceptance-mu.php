@@ -2,15 +2,15 @@
 /**
  * Plugin Name: BrandDad Staging Sales Assistant Acceptance
  * Description: One-time, exact-host grounding, session, sanitization, and cost-cap acceptance.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_STAGING_SALES_ACCEPTANCE_VERSION', '0.1.0' );
+define( 'BDS_STAGING_SALES_ACCEPTANCE_VERSION', '0.1.1' );
 define( 'BDS_STAGING_SALES_ACCEPTANCE_HOST', 'staging-branddad-social.stackstaging.com' );
-define( 'BDS_STAGING_SALES_ACCEPTANCE_REPORT', 'bds_staging_sales_assistant_report_v1' );
+define( 'BDS_STAGING_SALES_ACCEPTANCE_REPORT', 'bds_staging_sales_assistant_report_v2' );
 define( 'BDS_STAGING_SALES_ACCEPTANCE_IP', '192.0.2.77' );
 define( 'BDS_STAGING_SALES_ACCEPTANCE_KEY', 'staging-sales-acceptance-only-not-a-provider-credential' );
 
@@ -105,7 +105,7 @@ function bds_staging_sales_acceptance_save_report( $complete, $checks, $errors )
 		'catalog_grounded',
 		'catalog_checkout_authoritative',
 		'seo_offer_ranked_first',
-		'unavailable_offer_has_no_link',
+		'seo_offer_saleable',
 		'fallback_offer_saleable',
 		'first_provider_shape_valid',
 		'hostile_reply_links_removed',
@@ -271,7 +271,8 @@ function bds_staging_sales_acceptance_run() {
 		$seo_offer = bds_staging_sales_acceptance_offer( $first_offers, 'ai-local-seo' );
 		$fallback_offer = bds_staging_sales_acceptance_offer( $first_offers, 'ai-business-essentials' );
 		$checks['seo_offer_ranked_first'] = 'ai-local-seo' === (string) ( $first_offers[0]['slug'] ?? '' );
-		$checks['unavailable_offer_has_no_link'] = false === ( $seo_offer['for_sale'] ?? true ) && '' === (string) ( $seo_offer['url'] ?? '' );
+		$checks['seo_offer_saleable'] = true === ( $seo_offer['for_sale'] ?? false )
+			&& BDS_STAGING_SALES_ACCEPTANCE_HOST === strtolower( (string) wp_parse_url( (string) ( $seo_offer['url'] ?? '' ), PHP_URL_HOST ) );
 		$checks['fallback_offer_saleable'] = true === ( $fallback_offer['for_sale'] ?? false )
 			&& BDS_STAGING_SALES_ACCEPTANCE_HOST === strtolower( (string) wp_parse_url( (string) ( $fallback_offer['url'] ?? '' ), PHP_URL_HOST ) );
 		$checks['first_provider_shape_valid'] = 1 === absint( $http_state['calls'] ) && 0 === absint( $http_state['unexpected'] );
@@ -293,12 +294,18 @@ function bds_staging_sales_acceptance_run() {
 		$_SERVER['REMOTE_ADDR'] = BDS_STAGING_SALES_ACCEPTANCE_IP;
 
 		$second = bds_staging_sales_acceptance_data( bds_staging_sales_acceptance_request( 'I also need help finding leads.', $session ) );
+		$lead_offer = bds_staging_sales_acceptance_offer( $second['offers'] ?? array(), 'ai-lead-assistant' );
 		$checks['conversation_continues_server_side'] = 2 === absint( $http_state['calls'] ) && 1 === absint( $http_state['continuations'] );
 		$checks['second_reply_grounded'] = 'ai-lead-assistant' === (string) ( $second['offers'][0]['slug'] ?? '' )
+			&& true === ( $lead_offer['for_sale'] ?? false )
+			&& BDS_STAGING_SALES_ACCEPTANCE_HOST === strtolower( (string) wp_parse_url( (string) ( $lead_offer['url'] ?? '' ), PHP_URL_HOST ) )
 			&& false === stripos( (string) ( $second['reply'] ?? '' ), 'http' );
 
 		$third = bds_staging_sales_acceptance_data( bds_staging_sales_acceptance_request( 'I need social posts and content.', (string) ( $second['session'] ?? '' ) ) );
+		$social_offer = bds_staging_sales_acceptance_offer( $third['offers'] ?? array(), 'ai-social-growth' );
 		$checks['third_reply_grounded'] = 'ai-social-growth' === (string) ( $third['offers'][0]['slug'] ?? '' )
+			&& true === ( $social_offer['for_sale'] ?? false )
+			&& BDS_STAGING_SALES_ACCEPTANCE_HOST === strtolower( (string) wp_parse_url( (string) ( $social_offer['url'] ?? '' ), PHP_URL_HOST ) )
 			&& false === stripos( (string) ( $third['reply'] ?? '' ), 'http' );
 		$calls_before_cap = absint( $http_state['calls'] );
 		$fourth = bds_staging_sales_acceptance_request( 'This fixed request must be stopped by the daily cap.', (string) ( $third['session'] ?? '' ) );
