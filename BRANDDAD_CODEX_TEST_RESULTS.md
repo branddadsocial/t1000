@@ -1,5 +1,14 @@
 # BrandDad Codex test results
 
+## 2026-11-19 authenticated staging acceptance preparation
+
+- `php -l deploy/bds-staging-auth-acceptance-mu.php`: passed.
+- `tests/staging-auth-acceptance-contract.mjs`: 23/23 assertions passed.
+- Full local suite: 21/21 Node contract files, three PHP compatibility suites, two PHP syntax checks, and `git diff --check` passed.
+- Local Rafter secret scans of the helper and contract found no secrets. Manual authorization review found no public credential, administrator role, request parameter, outbound request, payment/provider/message side effect, or deletion path.
+- Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- No staging or production mutation occurred in this preparation batch. Hosted results remain unverified until the reviewed helper is explicitly approved and uploaded to the isolated staging MU directory.
+
 ## 2026-11-19 FormWise published-contract audit
 
 - Read-only FormWise evidence: BrandDad Social organization, owner role, published assets, restricted portals, and commercial tier plans were available.

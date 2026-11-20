@@ -2,6 +2,15 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 authenticated staging acceptance preparation
+
+- Added an exact-host, one-time staging harness for authenticated authorization and ownership checks without exposing a login credential or creating an administrator.
+- The harness creates at most two marker-owned subscriber fixtures with random undisclosed passwords, verifies anonymous denial and authenticated permission acceptance, exercises onboarding optimistic concurrency and tenant isolation, and verifies AI-job owner access plus cross-account 404 behavior.
+- Its evidence endpoint is available only on the configured staging home host and exposes allowlisted booleans and bounded error codes—never user ids, email, password, cookie, nonce, profile data, or job content.
+- Added 23 static security/behavior assertions. The complete local suite passes 21/21 Node contracts, three PHP compatibility suites, two PHP syntax checks, and `git diff --check`.
+- Local Rafter secret scans found no secrets. Manual review found no privilege elevation, caller-controlled input, credential disclosure, outbound request, payment, provider execution, message, or deletion. Required remote fast scan was attempted and remains quota-blocked at 16/16; paid Plus was not used.
+- The harness is local only. Uploading it would create two inert subscriber fixtures and one private AI-job fixture in the isolated staging database, so deployment remains an explicit action-time-confirmed step. Production is unchanged.
+
 ## 2026-11-19 FormWise published-contract audit
 
 - Re-read the connected BrandDad Social FormWise workspace without mutating it or spending execution credits.

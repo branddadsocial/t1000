@@ -4,6 +4,16 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Staging authenticated-ownership acceptance harness — 2026-11-19
+
+- Scope is one isolated host: `staging-branddad-social.stackstaging.com`, derived from configured `home_url()` rather than a caller-controlled Host header.
+- The harness creates at most two marker-owned subscriber fixtures with random undisclosed passwords and `.invalid` email addresses. It never creates or elevates an administrator.
+- Deterministic usernames are accepted only when the existing account already carries the harness marker; any unmarked collision fails closed.
+- It exercises anonymous denial, authenticated permission acceptance, onboarding optimistic concurrency, onboarding tenant isolation, AI-job owner access, and cross-account 404 behavior.
+- The only public evidence endpoint is exact-host gated and returns allowlisted booleans, bounded error codes, version, completion status, and timestamp. It exposes no ids, email, password, nonce, cookie, submitted profile, or job result.
+- Execution is one-time with a non-autoloaded result and stale-recoverable lock. It performs no outbound request, payment, provider execution, message, deletion, or production mutation.
+- Fixture cleanup is intentionally separate because deletion requires its own target verification and approval. The fixtures are inert subscribers/private records and cannot authenticate because their random passwords are never disclosed.
+
 ## Verified provider-cost ledger and profitability summary (2026-11-19)
 
 ### Data flow and trust boundaries
