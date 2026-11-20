@@ -183,3 +183,6 @@ Nothing unchecked above may be described as fully operational.
 - [!] Ordinary clean URLs still serve stale generated HTML. StartHost Edge Caching controls fail to render, and Directory Speed Auto-Heal requires an authenticated WordPress-admin session.
 - [ ] Complete a provider-supported edge/origin purge or authenticated bounded refresh, then repeat the clean-URL acceptance without `nocache=1`.
 - [ ] Receive StartHost's response on ticket `898665003`, save the already reviewed five-minute scheduler if they unblock it, and observe the first bounded run before launch classification.
+- [x] Verify the four primary Social subscription pages return HTTP 200, display the approved launch price, and expose a real WooCommerce product-ID-backed add-to-cart control.
+- [x] Verify the free website check, Directory browse/location/plan/claim routes, anonymous Add Listing registration handoffs, and protected Dashboard sign-in handoff.
+- [x] Distinguish the non-rendered `bds-sales-help` analytics selector from an actual duplicate `#bds-sales-help` widget during production acceptance.

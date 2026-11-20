@@ -644,3 +644,12 @@ Updated: 2026-11-19
 - Live uncached Jobs: Concierge `true`, Sales Help `false`, refund modal `false`, removal marker `true`, H1 count `1`.
 - Live uncached Classifieds: Concierge `true`, Sales Help `false`, refund modal `false`, removal marker `true`, H1 count `1`.
 - Live clean URLs remain stale and therefore fail the duplicate-helper/refund-modal acceptance until a supported cache refresh completes.
+
+## 2026-11-20 post-deployment revenue and navigation smoke
+
+- Social Home, Services, AI Business Essentials, AI Lead Assistant, AI Social Growth, AI Local SEO, and the free website-check page each returned HTTP 200.
+- The four launch products displayed the approved prices and a real WooCommerce add-to-cart control: Business Essentials `$29.99` (`53760`), Lead Assistant `$19.99` (`53756`), Social Growth `$29.99` (`53757`), and Local SEO `$19.99` (`53755`). Business Essentials exposed its seven-day-trial copy. No cart, checkout, order, subscription, or payment was created.
+- Directory Home, All Categories, All Listings, All Locations, Plans, Claim, Dashboard, Registration, and all four Add Listing entry points returned HTTP 200 after redirects.
+- Anonymous Add Business, Post Event, Post Job, and Post Classified requests correctly ended at `/registration/?bds_form=1`; the protected Dashboard correctly ended at Sign In with a dashboard return URL.
+- Exact widget selectors on fresh Directory Home, All Categories, All Listings, and Plans confirmed one Directory Concierge and no `#bds-sales-help` widget. The broader `bds-sales-help` source token remains in analytics code and is not evidence of a rendered second widget.
+- Clean Directory Home and Events still select older cached HTML containing the retired helper, while fresh `nocache=1` output is correct. This narrows the remaining defect to the documented provider/origin cache layer.
