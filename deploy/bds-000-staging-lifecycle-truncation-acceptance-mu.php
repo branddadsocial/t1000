@@ -14,8 +14,9 @@ define( 'BDS_STAGING_TRUNCATION_REPORT', 'bds_staging_lifecycle_truncation_repor
 define( 'BDS_STAGING_TRUNCATION_STATE', 'bds_staging_lifecycle_truncation_state_v1' );
 define( 'BDS_STAGING_TRUNCATION_MARKER', 'bds-stage-truncation-v1' );
 define( 'BDS_STAGING_TRUNCATION_TARGET', 5000 );
-define( 'BDS_STAGING_TRUNCATION_BATCH', 50 );
+define( 'BDS_STAGING_TRUNCATION_BATCH', 20 );
 define( 'BDS_STAGING_TRUNCATION_OBJECT_BASE', 940000 );
+define( 'BDS_STAGING_TRUNCATION_CONTINUE_CREATION', false );
 
 function bds_staging_truncation_is_host() {
 	return BDS_STAGING_TRUNCATION_HOST === strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
@@ -111,6 +112,45 @@ function bds_staging_truncation_delete_event( $event_id, $user_id, $offset, $gmt
 		return false;
 	}
 	return (bool) wp_delete_post( absint( $event_id ), true );
+}
+
+function bds_staging_truncation_reconcile_events( $user_id, $gmt ) {
+	$ids = get_posts(
+		array(
+			'post_type'      => 'bds_lifecycle_evt',
+			'post_status'    => 'private',
+			'posts_per_page' => BDS_STAGING_TRUNCATION_TARGET + 1,
+			'fields'         => 'ids',
+			'meta_key'       => '_bds_event_object_type',
+			'meta_value'     => 'staging_truncation',
+			'orderby'        => 'ID',
+			'order'          => 'ASC',
+		)
+	);
+	if ( count( $ids ) > BDS_STAGING_TRUNCATION_TARGET ) {
+		return new WP_Error( 'recovery_over_target' );
+	}
+	$map = array();
+	foreach ( $ids as $event_id ) {
+		$object_id = absint( get_post_meta( $event_id, '_bds_event_object_id', true ) );
+		$offset = $object_id - BDS_STAGING_TRUNCATION_OBJECT_BASE;
+		if ( $offset < 0 || $offset >= BDS_STAGING_TRUNCATION_TARGET || isset( $map[ $offset ] ) ) {
+			return new WP_Error( 'recovery_range_or_duplicate' );
+		}
+		if ( ! bds_staging_truncation_event_owned( $event_id, $user_id, $offset, $gmt ) ) {
+			return new WP_Error( 'recovery_ownership_failed' );
+		}
+		$map[ $offset ] = absint( $event_id );
+	}
+	ksort( $map, SORT_NUMERIC );
+	$expected = 0;
+	foreach ( array_keys( $map ) as $offset ) {
+		if ( $expected !== absint( $offset ) ) {
+			return new WP_Error( 'recovery_gap' );
+		}
+		$expected++;
+	}
+	return array_values( $map );
 }
 
 function bds_staging_truncation_allowed_checks() {
@@ -211,6 +251,16 @@ function bds_staging_truncation_run() {
 		}
 		$user_id = absint( $state['user_id'] ?? 0 );
 		$gmt = sanitize_text_field( (string) ( $state['fixed_gmt'] ?? '' ) );
+		if ( ! BDS_STAGING_TRUNCATION_CONTINUE_CREATION && 'create' === ( $state['phase'] ?? '' ) ) {
+			$reconciled = bds_staging_truncation_reconcile_events( $user_id, $gmt );
+			if ( is_wp_error( $reconciled ) || count( $reconciled ) < absint( $state['next'] ?? 0 ) ) {
+				throw new RuntimeException( is_wp_error( $reconciled ) ? $reconciled->get_error_code() : 'recovery_missing_events' );
+			}
+			$state['ids'] = $reconciled;
+			$state['next'] = count( $reconciled );
+			$state['errors'][] = 'host_execution_ceiling';
+			$state['phase'] = 'cleanup';
+		}
 		if ( 'create' === ( $state['phase'] ?? '' ) ) {
 			$limit = min( BDS_STAGING_TRUNCATION_TARGET, absint( $state['next'] ?? 0 ) + BDS_STAGING_TRUNCATION_BATCH );
 			while ( absint( $state['next'] ?? 0 ) < $limit ) {

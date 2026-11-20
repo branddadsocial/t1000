@@ -4,7 +4,8 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-000-staging-lifecycle-truncation-acceptance-mu.php', 'utf8');
 const checks = [
   ['version and canonical host fixed', /BDS_STAGING_TRUNCATION_VERSION', '0\.1\.0'/.test(source) && /staging-branddad-social\.stackstaging\.com/.test(source)],
-  ['target and batch are fixed and bounded', /TRUNCATION_TARGET', 5000/.test(source) && /TRUNCATION_BATCH', 50/.test(source)],
+  ['target and batch are fixed and bounded', /TRUNCATION_TARGET', 5000/.test(source) && /TRUNCATION_BATCH', 20/.test(source)],
+  ['continued creation is fail-closed after host ceiling', /TRUNCATION_CONTINUE_CREATION', false/.test(source) && /host_execution_ceiling/.test(source)],
   ['host derives from canonical home URL', /wp_parse_url\( home_url\( '\/' \), PHP_URL_HOST \)/.test(source)],
   ['production aggregate is reused with a server period', /WP_REST_Request[\s\S]*set_param\( 'period'[\s\S]*bds_lifecycle_admin_summary/.test(source)],
   ['summary stores only bounded aggregate fields', /unique_customers_with_events[\s\S]*confirmed_gross_minor[\s\S]*refunds_minor[\s\S]*net_confirmed_minor[\s\S]*truncated/.test(source)],
@@ -20,6 +21,9 @@ const checks = [
   ['production truncation flag must be true', /truncation_flag_true[\s\S]*\$after\['truncated'\][\s\S]*truncation_flag_missing/.test(source)],
   ['cleanup works in fixed reverse batches', /while \( ! empty\( \$state\['ids'\] \) && \$removed < BDS_STAGING_TRUNCATION_BATCH \)[\s\S]*array_pop/.test(source)],
   ['cleanup requires exact owned event before hard delete', /truncation_delete_event[\s\S]*truncation_event_owned[\s\S]*wp_delete_post\( absint\( \$event_id \), true \)/.test(source)],
+  ['recovery discovery is fixed and capped one beyond target', /truncation_reconcile_events[\s\S]*BDS_STAGING_TRUNCATION_TARGET \+ 1[\s\S]*_bds_event_object_type[\s\S]*staging_truncation/.test(source)],
+  ['recovery requires range uniqueness ownership and contiguity', /recovery_range_or_duplicate[\s\S]*recovery_ownership_failed[\s\S]*ksort[\s\S]*recovery_gap/.test(source)],
+  ['recovery refuses fewer rows than persisted progress', /count\( \$reconciled \) < absint\( \$state\['next'\]/.test(source)],
   ['completion requires byte-equivalent restored summary', /summary_restored[\s\S]*\( \$state\['before'\] \?\? array\(\) \) === \$restored[\s\S]*summary_not_restored/.test(source)],
   ['state removal is verified before final report', /delete_option\( BDS_STAGING_TRUNCATION_STATE \)[\s\S]*state_removed[\s\S]*save_report/.test(source)],
   ['errors block safely and remain resumable evidence', /catch \( Throwable \$exception \)[\s\S]*'phase'\] = 'blocked'[\s\S]*update_option\( BDS_STAGING_TRUNCATION_STATE/.test(source)],
