@@ -53,9 +53,9 @@ Updated: 2026-11-19
 ## FormWise content and access reconciliation — 2026-11-20
 
 - The restricted customer portal now admits the existing Business Essentials, AI Lead Assistant, AI Local SEO, and AI Social Growth groups in addition to the previously admitted customer and AI Studio groups. The four repaired groups already had scoped grants; the repair added only the portal door.
-- The public Directory should converge on one canonical assistant: keep the Finder-enabled Directory Concierge and retire or restrict the older no-flow Directory Assistant after checking UUID references.
+- The public Directory has converged at the sampled page layer: home, Events, Jobs, and Classifieds each reference only the Finder-enabled Concierge UUID, while Social home references only the Sales Assistant UUID. No sampled page references the older no-flow Directory Assistant. The older agent nevertheless remains published and should be retired or restricted after a broader no-reference sweep.
 - The three public agents currently allow direct links and embedding anywhere. Domain restriction remains an external configuration gate for the stated BrandDad-only white-label policy.
-- The Sales Assistant knowledge remains usable but legacy-first; the failed Services crawl means its approved manual pages, not the website source, currently provide grounding. Update and semantic acceptance must precede any new publication.
+- The Sales Assistant knowledge remains legacy-first, but its draft now contains an authoritative current-launch override for Business Essentials, Lead Assistant, Local SEO, Social Growth, AI Studio, and quote-only Business Automation. Stale setup-fee offers and the private-preview claim were removed from the draft, and the saved test set was revised. The published version remains intentionally unchanged until controlled semantic/cost tests pass.
 | MyMarky/social publishers | No verified production authorization in this pass | Not operationally claimed |
 | WhatsApp | Public 312 number/links exist; official Business API automation not verified | Manual contact only |
 | Video providers | Staged planning work only | Not production-ready |
