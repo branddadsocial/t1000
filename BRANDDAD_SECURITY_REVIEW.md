@@ -23,6 +23,7 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - Paid allowance cycles are now keyed to a new authoritative paid order, not an access reactivation generation. Reconciliation selects the newest paid renewal and refuses stale-parent fallback after a failed renewal (`deploy/bds-ai-subscriptions-mu.php`).
 - The Directory membership bridge is exact-host pinned, HMAC body/timestamp signed, constant-time verified, stable-event idempotent, consent gated, retry bounded, and can create only a private subscriber (`deploy/bds-directory-membership-bridge-mu.php`).
 - The Featured adapter disables the older activation callbacks and will activate only one of four fixed SKUs for the authenticated approved listing owner, an active WPS subscription, a matching paid parent/renewal order, valid real geography, and available inventory (`deploy/bds-featured-billing-adapter-mu.php`).
+- The lifecycle ledger is internal-only, uses HMAC idempotency plus a stale-recoverable lock, stores only allowlisted identifiers/amounts, exposes only an aggregate to `manage_woocommerce`, counts AI work only after metering commits, and records refunds without deleting the original payment event (`deploy/bds-lifecycle-events-mu.php`).
 
 ## Web application walk — OWASP Top 10
 
@@ -45,6 +46,7 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - API3 property authorization: request fields are allowlisted and response DTOs exclude provider credentials, raw bodies, subscription metadata, and remote conversation ids.
 - API4 resource consumption: raw/request/field/response sizes, timeouts, credits, per-client limits, and global daily limits are bounded (`bds-ai-execution-mu.php:132`, `bds-sales-assistant-api-mu.php:54`).
 - API5 function authorization: customer AI routes are authenticated; admin-only lifecycle actions use Woo capability plus nonce; no client role field controls privilege.
+- Lifecycle analytics has no public write route; its aggregate requires `manage_woocommerce`, is limited to 24 UTC months and 5,000 events, and returns no per-customer payload.
 - API6 sensitive flows: idempotency, atomic allowance reservations, replay prevention, active-subscription checks, and daily provider caps protect billable actions.
 - Background subscription reconciliation is provider-key gated, locked, limited to 25 records per pass, and continues at five-minute intervals; idempotent event keys avoid repeated provider calls.
 - API7 SSRF: no request-controlled outbound URL exists.

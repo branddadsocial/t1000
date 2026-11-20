@@ -245,6 +245,7 @@ function bds_featured_billing_sync( $order_id, $subscription_id ) {
 		if ( function_exists( 'bds_feat_audit' ) ) {
 			bds_feat_audit( null === $index ? 'billing_activate' : 'billing_renew', $grant['id'], array( 'subscription_id' => (string) $subscription_id, 'order_id' => (string) $order_id ) );
 		}
+		do_action( 'bds_featured_access_provisioned', $order_id, $subscription_id, $context );
 		return true;
 	} finally {
 		delete_option( $lock );

@@ -16,7 +16,7 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 | AI Website Chatbot | $29.99/mo | Blocked by observed reply cost and customer knowledge automation |
 | AI Sales Assistant Plus | $39.99/mo | Blocked by observed reply cost; BrandDad's own assistant has a separate capped proxy |
 | Complete AI Starter/Growth/Pro/DFY | $79.99/$149.99/$249.99/from $399 | Quote-only until real fulfillment allowances/providers pass cost tests |
-| Directory Free/Pro/Elite | $0 / variable Pro / $49 | Preserve existing entitlements and variable Pro prices; do not flatten legacy agreements |
+| Directory Free/Pro/Elite | $0 / variable Pro / $49 | New basic registration/listing/claim/management is free with no $6.99 activation dependency; preserve historical orders, existing entitlements, paid benefits, and variable Pro prices |
 | Directory Featured | $9.99/$19.99/$39.99/$99.99 | Display rules live; Woo SKUs/payment event adapter not production-tested |
 | BrandDad Music | $79/$129/$249/$449/$799/from $199 | Brief intake only; payment closed until licensing/cost/delivery confirmed |
 

@@ -175,6 +175,7 @@ function bds_ai_trial_record_activation( $order_id, $subscription_id ) {
 			'product_slug'    => BDS_AI_TRIAL_PRODUCT_SLUG,
 		)
 	);
+	do_action( 'bds_ai_trial_activated', $user_id, $subscription_id );
 }
 add_action( 'wps_sfw_order_status_changed', 'bds_ai_trial_record_activation', 40, 2 );
 

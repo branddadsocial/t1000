@@ -61,6 +61,12 @@ Authenticated customer-owned summary containing access mode (`paid`, `trial`, `d
 
 Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, and committed customer credits. Failed work is not counted as completed value. Unconnected publishing, rankings, leads, and revenue are explicitly returned as unavailable rather than inferred. Results are capped at 500 jobs with a `truncated` flag.
 
+## GET `/admin/analytics/summary?period=YYYY-MM`
+
+Admin-only (`manage_woocommerce`) monthly aggregate over the current or preceding 23 UTC months. It returns allowlisted lifecycle event counts, the number of unique customers with events, confirmed gross Woo transaction events, recorded refund events, and net confirmed events by ISO currency. The query is capped at 5,000 private events and exposes `truncated`. It returns no emails, IP addresses, conversation text, provider bodies, or customer-level rows. The monetary fields are event-ledger amounts, not MRR, profit, or a gateway/bank settlement report.
+
+The ledger is written internally only after authoritative success: persisted trial history, successful FormWise plan provisioning for a paid order, committed AI metering, replay-safe Directory membership persistence, completed onboarding state, successful access removal, or an actual Woo refund id. Stable HMAC idempotency keys prevent duplicate hook delivery from double-counting.
+
 ## POST `/internal/free-membership`
 
 Server-to-server only on `directory.branddad.social`. BrandDad Social sends this event only after explicit `bds_directory_membership_consent` was stored on an eligible Business Essentials checkout and the WPS subscription activated. The request uses the fixed Directory HTTPS endpoint, a five-minute timestamp, body HMAC, and stable idempotency key under `BDS_ACCOUNT_LINK_SECRET`. It reuses an account by email or creates a private `subscriber`; it never creates or publishes a business listing. Cursor must show the consent checkbox and submit value `1`, `yes`, `true`, or `on`.
@@ -79,6 +85,7 @@ Source POST `wp-admin/admin-post.php` action `bds_account_link_start` with WordP
 - `bds_dir_free_ai_status( $listing_id, $user_id )`: authoritative free-AI ledger or `WP_Error`.
 - `bds_mt_user_tier()`: existing Directory membership view model.
 - Featured grants remain inactive until a Woo order `is_paid()` and the SKU is allowlisted.
+- New basic Directory registration, listing creation, claiming, and management are free. Do not route a new basic listing through the obsolete $6.99 activation product; preserve historical paid records and benefits.
 
 ## Directory Featured billing adapter
 

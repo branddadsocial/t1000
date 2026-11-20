@@ -19,9 +19,11 @@ Updated: 2026-11-19
 - Trial state: `GET /wp-json/branddad/v1/trial`; do not calculate trial dates in JavaScript.
 - Unified customer state: `GET /wp-json/branddad/v1/account/status`.
 - Monthly evidence report: `GET /wp-json/branddad/v1/reports/value?period=YYYY-MM`.
+- Admin lifecycle aggregate: `GET /wp-json/branddad/v1/admin/analytics/summary?period=YYYY-MM`; requires `manage_woocommerce`. Present its gross/refund/net fields as confirmed transaction events, never as MRR, profit, or settled cash.
 - Cross-site button: call `bds_account_link_form( 'directory.branddad.social', '/account-hub/' )` on Social, and the inverse host on Directory. The form appears only for signed-in users after the shared secret is configured and source email ownership is verified.
 - On the Business Essentials checkout, show a clear optional free-Directory-membership consent checkbox and submit it as `bds_directory_membership_consent=1`. Do not preselect it. The backend will create/reuse only a private Directory account after activation; listing creation remains a separate customer action.
 - For each Featured product link, preserve the selected claimed listing as `?listing={id}` (or hidden `_bds_feat_listing_id`). Add the `bds_featured_listing_geo` filter returning the listing's real ISO-3166 alpha-2 country and, for Local/Regional, real latitude/longitude. Do not infer geography from the purchaser's billing address.
+- Remove the obsolete $6.99 activation requirement and related new-customer copy from the basic Directory registration/listing/claim flow. Free basic access must not pass through a paid product. Preserve historical orders, existing customer agreements, and paid benefits; this is not authorization to delete or rewrite old accounting records.
 
 ## Expected frontend states
 
@@ -68,5 +70,6 @@ Replace the example meta key with the authoritative key from the existing regist
 - `deploy/bds-sales-assistant-api-mu.php` on Social
 - `deploy/bds-onboarding-api-mu.php` on each dashboard host that exposes onboarding.
 - `deploy/bds-consent-followup-worker-mu.php` only beside Cursor's existing consent plugin and only after mail acceptance testing.
+- `deploy/bds-lifecycle-events-mu.php` on Social with the subscription/trial/execution/onboarding plugins; install on Directory too only if that host is expected to record local registration/link events. It stores private allowlisted events and exposes only the admin aggregate.
 
 Do not deploy this branch over newer Cursor public-page files. Merge only the backend files and documented helper calls.

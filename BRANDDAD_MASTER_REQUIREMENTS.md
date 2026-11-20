@@ -36,7 +36,7 @@ Source: the 2026-11-18 Cursor assignment. Status is what was verified, not the t
 | Services catalog and proposed prices | Local section added. Sale remains gated. |
 | Complete AI packages | Local comparison copy only. Entitlements unconfirmed. |
 | Directory public site | Live. Registration and claim code already exist and were not retested. |
-| Membership Free / Pro / Elite and $6.99 lifetime | Existing prices untouched. Local comparison reads the existing entitlement rows. |
+| Membership Free / Pro / Elite | New basic registration/listing/claim must be free; historical $6.99 orders and benefits remain preserved. Pro/Elite pricing and existing customer agreements remain untouched. |
 | Featured ads, trials, partnerships, inventory | Rules, capacity, and one-step impression/click recording are tested locally. Paid stays unpaid until Woo confirms. |
 | Free Directory AI interface | Display only. Shared execution is Codex. |
 | Partnero | Door stays on the portal root. No commission rate was added. The live host still has the older file. |

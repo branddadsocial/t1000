@@ -225,7 +225,11 @@ function bds_onboarding_update( WP_REST_Request $request ) {
 		$current['version'] = absint( $current['version'] ) + 1;
 		$current['updated_at'] = gmdate( DATE_ATOM );
 		update_user_meta( $user_id, '_bds_onboarding_v1', $current );
-		return rest_ensure_response( bds_onboarding_response( $user_id ) );
+		$response = bds_onboarding_response( $user_id );
+		if ( ! empty( $response['complete'] ) ) {
+			do_action( 'bds_onboarding_completed', $user_id, $current['version'] );
+		}
+		return rest_ensure_response( $response );
 	} finally {
 		delete_option( $lock_key );
 	}

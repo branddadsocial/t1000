@@ -361,6 +361,7 @@ function bds_ai_provision_active_subscription( $order_id, $subscription_id ) {
 		if ( ! absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_order_id' ) ) ) {
 			wps_sfw_update_meta_data( $subscription_id, '_bds_ai_allowance_order_id', $order_id );
 		}
+		do_action( 'bds_ai_access_provisioned', $order_id, $subscription_id, $plan );
 		return true;
 	}
 
@@ -438,6 +439,7 @@ function bds_ai_provision_active_subscription( $order_id, $subscription_id ) {
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_cancel_attempts', 0 );
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_access_removed', '' );
 		$order->add_order_note( sprintf( 'BrandDad AI access provisioned (%s).', sanitize_text_field( $plan['slug'] ) ), false, false );
+		do_action( 'bds_ai_access_provisioned', $order_id, $subscription_id, $plan );
 		return true;
 	} finally {
 		delete_option( $lock_key );
@@ -484,6 +486,7 @@ function bds_ai_sfw_cancel_access( $subscription_id ) {
 		return;
 	}
 	if ( '' !== (string) bds_ai_sfw_meta( $subscription_id, '_bds_ai_access_removed' ) ) {
+		do_action( 'bds_ai_access_revoked', $subscription_id, $status );
 		return;
 	}
 
@@ -497,6 +500,7 @@ function bds_ai_sfw_cancel_access( $subscription_id ) {
 
 	try {
 		if ( '' !== (string) bds_ai_sfw_meta( $subscription_id, '_bds_ai_access_removed' ) ) {
+			do_action( 'bds_ai_access_revoked', $subscription_id, $status );
 			return;
 		}
 		if ( bds_ai_formwise_remove_tier( $user_id, $plan_id ) ) {
@@ -505,6 +509,7 @@ function bds_ai_sfw_cancel_access( $subscription_id ) {
 			wps_sfw_update_meta_data( $subscription_id, '_bds_ai_last_event_key', '' );
 			wps_sfw_update_meta_data( $subscription_id, '_bds_ai_cancel_attempts', 0 );
 			wps_sfw_update_meta_data( $subscription_id, '_bds_ai_access_removed', gmdate( 'c' ) );
+			do_action( 'bds_ai_access_revoked', $subscription_id, $status );
 			return;
 		}
 		$attempts = absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_cancel_attempts' ) );

@@ -587,6 +587,8 @@ function bds_ai_exec_process_job( $job_id ) {
 	if ( ! $committed ) {
 		update_post_meta( $job_id, '_bds_status', 'completed_metering_review' );
 		update_post_meta( $job_id, '_bds_error_code', 'metering_commit_failed' );
+	} else {
+		do_action( 'bds_ai_job_completed', $job_id, $user_id, $tool_key, $mode );
 	}
 }
 add_action( 'bds_ai_exec_process_job', 'bds_ai_exec_process_job', 10, 1 );

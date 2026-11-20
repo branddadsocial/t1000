@@ -7,6 +7,7 @@
 - Directorist claim ownership and listing publication state are authoritative for Directory free-AI eligibility.
 - Partnero remains authoritative for affiliate balances/commissions.
 - Cursor Featured rotation consumes paid/trial/partnership grant records; Codex billing may activate a paid grant only after `wc_get_order( order_id )->is_paid()`.
+- New basic Directory registration, listing creation, claiming, and management have no payment entitlement requirement. Historical activation purchases remain accounting history and keep any already-promised benefits.
 
 ## Paid AI
 

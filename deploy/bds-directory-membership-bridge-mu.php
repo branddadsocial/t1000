@@ -165,6 +165,7 @@ function bds_directory_membership_receive( WP_REST_Request $request ) {
 	$result_key = 'bds_directory_membership_' . $event_id;
 	$existing   = get_option( $result_key, array() );
 	if ( is_array( $existing ) && ! empty( $existing['user_id'] ) ) {
+		do_action( 'bds_directory_member_linked', absint( $existing['user_id'] ), $event_id );
 		return rest_ensure_response( array( 'status' => 'complete', 'created' => false ) );
 	}
 	$lock_key = $result_key . '_lock';
@@ -220,6 +221,7 @@ function bds_directory_membership_receive( WP_REST_Request $request ) {
 		if ( $created ) {
 			wp_new_user_notification( $user->ID, null, 'user' );
 		}
+		do_action( 'bds_directory_member_linked', $user->ID, $event_id );
 		$response = new WP_REST_Response( array( 'status' => 'complete', 'created' => $created ), $created ? 201 : 200 );
 		return $response;
 	} finally {

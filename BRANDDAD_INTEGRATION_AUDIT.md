@@ -15,6 +15,7 @@ Updated: 2026-11-19
 | FormWise | BrandDad Social org, owner access, API scopes, published app/agents/flows, plans, restricted portal verified | Operational; separate execution key required on server |
 | Directorist | Existing listing ownership/publication source | Operational; Cursor owns listing/search UX |
 | Directory Featured billing | Cursor owns grant inventory/rotation; four intended SKUs are absent | Codex lifecycle adapter implemented fail-closed; Cursor selection/geography + SKUs + staging payment remain |
+| Lifecycle analytics | Private WordPress event ledger with admin-only aggregate | Implemented locally; duplicate/refund/capability staging tests remain |
 | Partnero | Existing affiliate portal retained | Event adapter/balance API not verified in this pass |
 | Make | Prior documentation reports free-plan operations exhausted until reset | Blocked for new automation runs |
 | AutoTranslator | Present historically; latest Directory direction removed public translator clutter | Needs dedicated production verification |
