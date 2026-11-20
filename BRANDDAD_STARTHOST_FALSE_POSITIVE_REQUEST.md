@@ -1,6 +1,6 @@
 # StartHost false-positive clearance request
 
-Status: prepared, not submitted. Sending the request is an external representational action and requires action-time confirmation.
+Status: submitted after explicit action-time confirmation. StartHost Web Hosting ticket `898665003` is open against the `branddad.social` package, created 2026-11-20 17:48:42.
 
 ## Form selections
 
