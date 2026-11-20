@@ -143,4 +143,4 @@ Hosted result: the product exists only on the isolated staging hostname, is hidd
 - Privacy: test contacts use `.invalid`, the IP is RFC documentation space, lifecycle evidence excludes submitted content, and old closed fixture PII is anonymized before the marked record is deleted.
 - Side effects: no email, WhatsApp, provider API, payment, order, subscription, public post, or production mutation is reachable from the helper.
 - Evidence: 56 helper contract assertions, the complete 27-file Node suite, 3 PHP compatibility tests, 27 PHP lints, and `git diff --check` passed. Local secrets scan passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus run was used.
-- Residual gate: hosted runtime evidence and cleanup must pass before the inquiry path can be described as staging-accepted; real frontend nonce/copy/notification acceptance remains separate.
+- Hosted result: 34/34 runtime checks passed, including narrowly marked fixture deletion, metadata/rate restoration, cross-tenant denial, replay, locks, reports, and retention. Production exposes no acceptance route. Real Cursor frontend nonce/copy/notification acceptance remains separate.

@@ -259,7 +259,7 @@ Updated: 2026-11-19
 - Real Woo partial/full refund hooks, UTC month-boundary behavior, and bounded 5,000-event truncation remain untested. Hosted staging now proves event deduplication, privacy allowlisting, subscriber capability denial, and gross/refund/net aggregate deltas.
 - Lead capture owned-origin/rate behavior, concurrent deduplication, verified stage hook ordering, admin authorization, opt-out propagation, and scheduled anonymization in WordPress staging.
 - Website-monitor configuration authorization, public/private DNS cases, safe real fetch, redirect/timeout behavior, concurrent/manual scheduling, plan loss, profile URL change, batch cursor, and actual value-report counters on WordPress staging.
-- Customer inquiry public form, spam/rate behavior, owner reference uniqueness, cross-account denial, nonce protection, concurrent version conflict, status workflow, retention anonymization, and real value-report counts on WordPress staging.
+- Customer inquiry backend staging now proves owned-origin/body/rate behavior, opaque-reference ambiguity rejection, consent validation, idempotent replay, private ownership, cross-account denial, active/stale locks, optimistic versions, status workflow, retention anonymization, actual report deltas, and fixture/state cleanup. Cursor's real browser REST nonce, final customer-facing copy, and approved notification delivery remain untested.
 
 ## 2026-11-19 customer-inquiry staging acceptance preparation
 
@@ -271,4 +271,6 @@ Updated: 2026-11-19
 - `git diff --check`: passed.
 - `rafter secrets .`: passed with no detected secrets.
 - `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
-- Hosted runtime acceptance: pending upload confirmation; do not treat this preparation as live evidence.
+- Hosted runtime acceptance: version 0.1.0, `complete=true`, 34/34 allowlisted checks true, no error codes.
+- Hosted cleanup evidence: fixture posts deleted, form metadata restored, and isolated rate counters restored all returned true.
+- Hosted smoke: staging homepage/product HTTP 200 with `noindex`; sales catalog HTTP 200; account status, value report, AI tools, onboarding, monitor configuration, inquiry form/inbox, analytics, and finance contribution returned HTTP 401 anonymously; the production acceptance route returned HTTP 404.

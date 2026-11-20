@@ -178,7 +178,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 - Lifecycle analytics ledger and admin-only monthly aggregate API.
 - Sales lead capture/stage API and consent-safe retention pipeline (public capture remains disabled until frontend/privacy/staging acceptance).
 - Website monitoring API/worker and evidence reporting (execution remains disabled until real-host DNS/queue/fetch staging acceptance).
-- Customer inquiry form/list/status APIs and actual lead reporting (capture remains disabled until Cursor form/privacy and staging acceptance).
+- Customer inquiry form/list/status APIs and actual lead reporting (backend runtime acceptance passed 34/34; capture remains disabled until Cursor's real form/inbox, browser nonce, consent copy, and any approved notification delivery pass).
 - Cross-site account linking.
 - Public sales-assistant proxy.
 - Subscription bridge and free-AI ledger copied into the clean integration branch.
@@ -189,7 +189,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 2. Connect Cursor's lead form to the new capture contract and exercise privacy acknowledgment, optional consent, deduplication, stage progression, unsubscribe, and retention in staging; enable capture only after acceptance.
 3. Exercise one authorized public website through configure, async/manual check, DNS/redirect/error, plan-loss, URL-change, daily batch, and value-report paths on WordPress staging; then enable monitoring server-side.
 4. Add trial reminder and monitor-alert delivery only after a verified communications provider and sender are available.
-5. Connect Cursor's hosted inquiry form and customer inbox to the new endpoints; test spam/rates, cross-account denial, status conflicts, consent, retention, and real counts before enabling.
+5. Connect Cursor's real hosted inquiry form and customer inbox to the accepted backend; validate browser REST nonce, final consent copy, and any approved notification delivery before enabling.
 6. Add signed Stripe/Woo webhook reconciliation only if the installed gateway does not already provide authoritative Woo transitions.
 7. Create/approve the four Featured Woo SKUs, connect Cursor listing selection/geography, then run the adapter's staging lifecycle test.
 8. Extend customer value reports when real publishing adapters provide verified customer outcomes.
@@ -206,4 +206,5 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Cleanup hard-deletes only private inquiry posts created by this helper that are marker-owned by fixture B; form metadata, rate counters, server values, and current-user context are restored in `finally`.
 - Local validation passed: 27/27 Node contracts, 3/3 PHP compatibility tests, 27/27 deploy PHP syntax checks, and `git diff --check`.
 - `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
-- The staging upload and hosted runtime report remain pending explicit action-time confirmation. Production remains unchanged.
+- Uploaded the reviewed inquiry module and exact-host helper to isolated hosted staging after explicit confirmation. The one-time runtime report completed with 34/34 checks true and no error codes.
+- Hosted smoke passed on the homepage and Business Essentials product with `noindex`, public catalog HTTP 200, nine protected customer/admin routes HTTP 401 anonymously, and the production acceptance route HTTP 404. Production remains unchanged.

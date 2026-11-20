@@ -89,7 +89,8 @@
 - [ ] Run authorized real-host monitor acceptance across DNS/private-IP rejection/redirect/timeout/manual/daily/plan-loss/URL-change/report cases before enabling.
 - [x] Exercise the isolated exact-host monitoring harness for SSRF rejection, bounded owned-host fetch, locks, network failure, redirect, plan/URL shutdown, reporting, restoration, and tenant isolation.
 - [x] Implement owner-scoped customer inquiry capture/inbox/status with explicit contact consent, spam/rate bounds, actual reports, and closed/lost retention.
-- [~] Prepare the exact-host hosted inquiry acceptance harness for tenant denial, versions, rates, consent, retention, reports, and narrowly marked fixture cleanup; runtime upload/report remains pending before enabling.
+- [x] Exercise the exact-host hosted inquiry acceptance harness for tenant denial, versions, rates, consent, replay, retention, reports, narrowly marked fixture cleanup, and state restoration (34/34 runtime checks passed).
+- [ ] Connect Cursor's real hosted inquiry form/inbox, validate browser REST nonce and customer-facing consent copy, and verify any approved notification delivery before enabling production capture.
 - [ ] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes.
 - [x] Monthly AI report counts actual job states/completions and explicitly labels currently unavailable outcome metrics.
 - [x] Implement a private idempotent lifecycle ledger and admin-only gross/refund/net event aggregate.
