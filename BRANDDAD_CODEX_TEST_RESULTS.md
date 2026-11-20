@@ -462,3 +462,10 @@ Updated: 2026-11-19
 - Rechecked twelve public priority surfaces with redirect following and a 45-second ceiling. Social homepage, Services, website check, Business Essentials, Lead Assistant, Social Growth, Local SEO, and the empty-cart checkout path all returned HTTP 200; the empty checkout redirected to the cart as expected. Directory homepage, categories, listings, and the restaurant category returned HTTP 200.
 - Observed total request times were roughly 0.91-1.55 seconds on the Social/Directory cached priority routes, 2.39 seconds on the restaurant category, and 3.34 seconds on all categories. No public outage was observed.
 - This pass made no payment, account, subscription, provider, message, listing, or customer-data change. It does not supersede the unresolved StartHost scheduled-task blocker or substitute for real payment/provider acceptance.
+
+## 2026-11-20 production-package refresh
+
+- Built `branddad-social-backend-2026-11-20.zip` with 16 production MU plugins; archive SHA-256 `52507864CBAD16F45391E8FEC7A0C4F352E0450CE7748C41F48D06EF3957DC05`.
+- Built `branddad-directory-backend-2026-11-20.zip` with 7 production MU plugins; archive SHA-256 `2DC0C499C0C6276B269B045437CDF5DCBA48F5B1F2C69056CFE4384D07394B93`.
+- Expanded both archives into isolated temporary verification folders. All package-local checksums matched, all 23 packaged PHP files passed syntax checks, and neither archive contained a staging helper, acceptance helper, or temporary repair utility.
+- The tracked production-source checksum contract passed, `git diff --check` passed, and `rafter secrets .` found no secrets. The Betterleaks-version warning remains informational and does not report a secret.

@@ -1,14 +1,14 @@
 # BrandDad backend deployment manifest
 
-Prepared: 2026-11-19
+Prepared: 2026-11-20
 
 Source checksums refreshed: 2026-11-20
 
 This manifest describes the reviewed Codex backend artifacts. It does not authorize a production deployment or activation of paid/external services. Deploy to an isolated WordPress staging environment first. All files target `wp-content/mu-plugins/` unless noted otherwise.
 
-## Release currency warning
+## Release currency
 
-The immutable 2026-11-19 ZIP archives predate later reviewed changes to `bds-ai-trial-mu.php`, `bds-customer-status-api-mu.php`, `bds-directory-membership-bridge-mu.php`, and `bds-lifecycle-events-mu.php`. Do not treat those archives as the current deployable source of truth. The current reviewed source files are under `deploy/`, and their exact hashes are recorded in the root `SHA256SUMS.txt`.
+The current production-only archives are the immutable 2026-11-20 packages documented below. They are built from the exact reviewed files under `deploy/`, contain no staging acceptance helpers, and include package-local SHA-256 manifests. The 2026-11-19 archives remain historical and must not be deployed.
 
 The current reporting-stage staging upload consists of exactly:
 
@@ -27,7 +27,7 @@ Isolated Social staging is available at `public_html/staging.branddad.social/`; 
 
 ## Social package
 
-Prepared archive: `release/2026-11-19/branddad-social-backend-2026-11-19.zip`
+Prepared archive: `release/2026-11-20/branddad-social-backend-2026-11-20.zip`
 
 Install only after exact-file backups and database backup verification:
 
@@ -50,7 +50,7 @@ Install only after exact-file backups and database backup verification:
 
 ## Directory package
 
-Prepared archive: `release/2026-11-19/branddad-directory-backend-2026-11-19.zip`
+Prepared archive: `release/2026-11-20/branddad-directory-backend-2026-11-20.zip`
 
 Install only after exact-file backups and database backup verification:
 
