@@ -45,6 +45,18 @@ This endpoint is not a general health check. A successful HTTP response proves o
 - **Repudiation:** Capture the runner definition, activation time, first-run evidence, queue counts, public health, and stop/rollback decision in the project evidence files.
 - **Availability:** Cloudflare propagation can take up to 15 minutes. GitHub schedules can be delayed or dropped. Neither external option should be represented as equal to a working host scheduler.
 
+## GitHub re-registration adjustment
+
+The deployed `*/5 * * * *` schedule produced one successful controlled `workflow_dispatch` run but no `schedule` event during the observed window. GitHub documents that scheduled events may be delayed or dropped under load, especially near the start of an hour, and that committing a cron-expression change re-registers the schedule actor.
+
+If the current schedule still has no automatic run when the required Rafter gate becomes available, change only the cron expression to:
+
+```text
+2-59/5 * * * *
+```
+
+This preserves a five-minute cadence at minutes 2, 7, 12, and so on while avoiding the busiest start-of-hour boundary. Keep the same HTTPS-only endpoint, zero retries, read-only repository permission, two-minute job timeout, concurrency group, and no-secret design. Do not combine the adjustment with a second runner or a manual production invocation. The adjustment is accepted only after the exact diff passes the mandatory Rafter review and three real `event=schedule` runs succeed without duplicate WooCommerce effects or worsening public-site health.
+
 ## Activation prerequisites
 
 All of these must be true before enabling an external runner:
@@ -87,4 +99,4 @@ Disable or delete only the external runner. Do not remove the MU guards, edit qu
 
 ## Status
 
-Design complete; no external runner, workflow, Worker, scheduled request, or live cron invocation was created by this batch. StartHost ticket `898665003` remains the first recovery path.
+The temporary GitHub workflow is active on `main`. Controlled manual run `44830790644` returned HTTP 200 and reduced the Action Scheduler backlog without increasing historical failures, but no automatic `event=schedule` run appeared through 23:15:20 UTC on 2026-11-20. StartHost ticket `898665003` remains the preferred recovery path. The offset adjustment above is designed but not implemented because the mandatory Rafter fast-scan quota is exhausted until 2026-11-23.
