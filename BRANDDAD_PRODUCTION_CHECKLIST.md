@@ -115,4 +115,8 @@ Nothing unchecked above may be described as fully operational.
 - [ ] Verify the installed asset advertises `0.68.14` and no longer contains the `items.length === 100` stop condition.
 - [x] At 390px, complete Mexico -> Quintana Roo -> Playa del Carmen -> restaurant type and verify the resulting URL/listings stay location-scoped (36 matches; correct active filters).
 - [x] Run the approved exact-homepage cache repair and confirm the clean homepage returns one index/follow robots policy with no stale noindex.
+- [x] Check all 45 Directory homepage category destinations and the priority public/protected route behaviors.
+- [x] Check Directory responsive behavior at 320, 390, 768, 1024, and 1440 pixels with no horizontal overflow.
+- [x] Check Social responsive behavior at 320, 390, 768, 1024, and 1440 pixels with no horizontal overflow, no broken images, and one AI launcher.
+- [x] Check the six priority Social sales links and all 93 same-ecosystem homepage destinations; every destination returned HTTP 200.
 - [ ] After separate deletion confirmation, remove only `wp-content/mu-plugins/bds-directory-home-cache-repair-mu.php` and verify the admin repair menu disappears.

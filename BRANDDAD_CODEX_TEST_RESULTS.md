@@ -400,6 +400,11 @@ Updated: 2026-11-19
 - Package verification: 24 archive entries, 91,143 bytes, SHA-256 `3FBA1E17727221EAA6D7FAFF17CDDBC6353852DD51CF5CBFEB3CA29461223158`; re-extracted PHP/JavaScript syntax and behavior markers passed.
 - Clean-homepage cache repair: HTTP 200, `x-bd-eco-cache: html-early`, exactly one `index, follow` robots tag, exactly one clean homepage canonical, and no `noindex` passed after the confirmed repair.
 - Live 390px restaurant funnel: Mexico -> Quintana Roo -> Playa del Carmen -> All Restaurants navigated to `in_cat=191`, `in_loc=13445`, and `directory_type=food-beverage`; the results surface showed 36 matches and the correct Food & Beverage / Playa del Carmen / Restaurants active filters. The visible result cards were Playa del Carmen businesses.
+- Directory route/link sweep: all 45 category links exposed by the homepage returned HTTP 200. The priority listings/events/jobs/classifieds/categories/locations/plans/claim/sign-in routes returned HTTP 200; add-listing and dashboard used the expected unauthenticated redirects.
+- Directory responsive matrix: 320, 390, 768, 1024, and 1440 pixels had no horizontal overflow. Mobile navigation was visible through 768 pixels; desktop navigation was visible at 1024 and 1440 pixels.
+- Social responsive matrix: 320, 390, 768, 1024, and 1440 pixels had no horizontal overflow and no broken images. The compact menu was visible at 320/390/768/1024 and the desktop navigation at 1440. Exactly one fixed `Ask BrandDad AI` launcher was detected at every width.
+- Social priority links: the Business Essentials trial, Lead Assistant, Social Growth, Local SEO, free website check, and Services destinations were present, visible, and correct. The broader same-ecosystem homepage link sweep checked 93 unique Social/Directory destinations; all 93 returned HTTP 200.
+- Directory location timing: after a single approximately 18-second cold `all-locations` response, warmed and parallel clean requests returned roughly 1.3-2.0 second TTFB and 1.65-2.1 second total time. The slow cold response was not reproducible.
 - Not yet evidenced: the final live `0.68.14` activation, the same mobile funnel specifically on that release, real Stripe payment, provisioning, renewal, refund, cancellation, or billing portal.
 
 ## 2026-11-19 hosted account-link cryptographic staging acceptance
