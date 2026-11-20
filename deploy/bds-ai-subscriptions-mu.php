@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Subscriptions
  * Description: BrandDad AI recurring billing safeguards and fail-closed FormWise entitlement lifecycle.
- * Version: 0.4.2
+ * Version: 0.4.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.4.2' );
+define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.4.3' );
 
 /**
  * Approved offer configuration. Product ids are resolved by slug to preserve existing products.
@@ -321,6 +321,18 @@ function bds_ai_provision_active_subscription( $order_id, $subscription_id ) {
 	$status = sanitize_key( (string) bds_ai_sfw_meta( $subscription_id, 'wps_subscription_status' ) );
 	$order  = wc_get_order( $order_id );
 	if ( 'active' !== $status || ! $order || ! $order->is_paid() || ! bds_ai_order_matches_subscription( $order_id, $subscription_id ) ) {
+		return false;
+	}
+
+	// A zero-dollar initial trial order can have a paid Woo status because the
+	// customer authorized a future payment method. It is not a paid renewal.
+	// Keep trial access on the bounded local trial ledger until the provider
+	// confirms the first recurring payment after the authoritative trial end.
+	$trial_number = absint( bds_ai_sfw_meta( $subscription_id, 'wps_sfw_subscription_free_trial_number' ) );
+	$trial_unit   = sanitize_key( (string) bds_ai_sfw_meta( $subscription_id, 'wps_sfw_subscription_free_trial_interval' ) );
+	$trial_end    = absint( bds_ai_sfw_meta( $subscription_id, 'wps_susbcription_trial_end' ) );
+	$is_renewal   = 'yes' === (string) bds_ai_sfw_meta( $order_id, 'wps_sfw_renewal_order' );
+	if ( 7 === $trial_number && 'day' === $trial_unit && $trial_end > current_time( 'timestamp' ) && ! $is_renewal ) {
 		return false;
 	}
 

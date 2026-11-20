@@ -7,7 +7,7 @@ Authentication: existing WordPress cookie session. Authenticated write calls req
 
 Purpose: show the signed-in customer only the server-approved tool schemas and customer-credit cost.
 
-Response: `{ "tools": [{ "key", "label", "credit_cost", "fields", "free" }] }`.
+Response: `{ "tools": [{ "key", "label", "credit_cost", "fields", "free", "trial" }] }`.
 
 Errors: 401 unauthenticated. No provider ids or credentials are returned.
 
@@ -17,7 +17,7 @@ Purpose: reserve allowance and enqueue one FormWise execution.
 
 Headers: `Idempotency-Key` of 16–64 safe characters.
 
-Body: `{ "tool": "social_draft", "inputs": { ... }, "access_mode": "paid|directory_free", "listing_id": 123 }`.
+Body: `{ "tool": "social_draft", "inputs": { ... }, "access_mode": "paid|directory_free", "listing_id": 123 }`. Trial access is resolved server-side; the browser cannot self-select it.
 
 Rules: `listing_id` is used only for `directory_free`; ownership is rechecked against Directorist. Paid plan identity and allowance cycle are read from active WPS subscription metadata. Unknown fields are discarded. The browser cannot choose a provider id, credit cost, plan id, owner, allowance cycle, or origin.
 
@@ -46,6 +46,22 @@ Authenticated customer-owned onboarding view model. Response includes `version`,
 ## POST `/onboarding`
 
 Authenticated optimistic update. Body: `{ "version": 0, "profile": { "business_name", "website_url", "industry", "service_area", "primary_goal", "brand_voice" } }`. Unknown fields are discarded. A stale version returns 409. The website field is stored as a reference only and is never fetched by this endpoint.
+
+## GET `/trial`
+
+Authenticated seven-day Business Essentials trial state. Response exposes only `status`, `eligible`, `active`, `trial_days`, bounded trial credits, dates, and days remaining. State is derived from the exact WP Swings subscription product, status, start, and `wps_susbcription_trial_end` values. It never trusts page copy or a browser-provided date. A zero-dollar authorization order cannot provision the full paid FormWise tier; the first verified renewal does that.
+
+## GET `/account/status`
+
+Authenticated customer-owned summary containing access mode (`paid`, `trial`, `directory_free`, or `none`), safe plan slug, Directory listing id where eligible, allowance/used/pending/remaining counts, trial state, onboarding step states, and the authoritative Woo account subscriptions URL. Provider ids and internal ledger keys are excluded.
+
+## GET `/reports/value?period=YYYY-MM`
+
+Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, and committed customer credits. Failed work is not counted as completed value. Unconnected publishing, rankings, leads, and revenue are explicitly returned as unavailable rather than inferred. Results are capped at 500 jobs with a `truncated` flag.
+
+## POST `/internal/free-membership`
+
+Server-to-server only on `directory.branddad.social`. BrandDad Social sends this event only after explicit `bds_directory_membership_consent` was stored on an eligible Business Essentials checkout and the WPS subscription activated. The request uses the fixed Directory HTTPS endpoint, a five-minute timestamp, body HMAC, and stable idempotency key under `BDS_ACCOUNT_LINK_SECRET`. It reuses an account by email or creates a private `subscriber`; it never creates or publishes a business listing. Cursor must show the consent checkbox and submit value `1`, `yes`, `true`, or `on`.
 
 ## Consent follow-up worker
 

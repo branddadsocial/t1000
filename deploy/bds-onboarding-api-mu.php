@@ -167,7 +167,7 @@ function bds_onboarding_response( $user_id ) {
 	$listing_id  = bds_onboarding_directory_access( $user_id );
 	$first_job   = bds_onboarding_first_completed_job( $user_id );
 	$profile_ok  = '' !== (string) $profile['business_name'] && '' !== (string) $profile['industry'] && '' !== (string) $profile['primary_goal'];
-	$access_mode = $paid_plan ? 'paid' : ( $listing_id ? 'directory_free' : 'none' );
+	$access_mode = $paid_plan ? sanitize_key( (string) ( $paid_plan['access_mode'] ?? 'paid' ) ) : ( $listing_id ? 'directory_free' : 'none' );
 	$recommended = bds_onboarding_recommended_tool( $profile['primary_goal'] );
 	$free_tools  = array( 'social_draft', 'local_seo_report', 'review_response', 'assistant_request' );
 	if ( 'directory_free' === $access_mode && ! in_array( $recommended, $free_tools, true ) ) {

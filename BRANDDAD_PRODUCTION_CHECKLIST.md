@@ -29,6 +29,8 @@
 ## Revenue acceptance
 
 - [ ] AI Business Essentials product exists at $29.99/month with exact seven-day trial terms.
+- [x] Trial runtime uses authoritative WPS start/end/status fields, a separate 25-credit ledger, and blocks full paid provisioning before renewal.
+- [ ] Cursor checkout displays optional free Directory consent and the signed bridge succeeds/replays safely in staging.
 - [ ] Safe checkout creates one order/subscription and no duplicate charge.
 - [ ] One active subscription grants exactly one FormWise plan.
 - [ ] First authenticated AI job completes and deducts the correct customer allowance once.
@@ -54,5 +56,6 @@
 - [ ] Sales assistant recommends only verified products and links under cost caps.
 - [ ] SEO/social/WhatsApp/video/music adapters have provider-specific permissions, costs, retries, and proof.
 - [ ] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes.
+- [x] Monthly AI report counts actual job states/completions and explicitly labels currently unavailable outcome metrics.
 
 Nothing unchecked above may be described as fully operational.

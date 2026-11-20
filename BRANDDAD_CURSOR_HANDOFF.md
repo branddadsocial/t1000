@@ -16,11 +16,15 @@ Updated: 2026-11-19
 - Public assistant: `POST /wp-json/branddad/v1/sales/chat`; render `offers[].url`, never infer a link from `reply`.
 - Onboarding state: `GET /wp-json/branddad/v1/onboarding`.
 - Save onboarding: `POST /wp-json/branddad/v1/onboarding` with the returned `version` and a `profile` object. On 409, reload before resubmitting.
+- Trial state: `GET /wp-json/branddad/v1/trial`; do not calculate trial dates in JavaScript.
+- Unified customer state: `GET /wp-json/branddad/v1/account/status`.
+- Monthly evidence report: `GET /wp-json/branddad/v1/reports/value?period=YYYY-MM`.
 - Cross-site button: call `bds_account_link_form( 'directory.branddad.social', '/account-hub/' )` on Social, and the inverse host on Directory. The form appears only for signed-in users after the shared secret is configured and source email ownership is verified.
+- On the Business Essentials checkout, show a clear optional free-Directory-membership consent checkbox and submit it as `bds_directory_membership_consent=1`. Do not preselect it. The backend will create/reuse only a private Directory account after activation; listing creation remains a separate customer action.
 
 ## Expected frontend states
 
-- AI jobs: pending, running, completed, completed_metering_review, failed.
+- AI jobs: pending, running, awaiting_customer_approval, completed, completed_metering_review, failed, cancelled.
 - Show `credit_cost` before submission.
 - Treat 403 as an upgrade/sign-in state, 429 as allowance exhausted, 503 as temporarily unavailable, and 409 as retry/poll the existing request.
 - Do not show provider names, provider UUIDs, raw error bodies, or provider conversation ids.
@@ -55,6 +59,9 @@ Replace the example meta key with the authoritative key from the existing regist
 - `deploy/bds-ai-subscriptions-mu.php`
 - `deploy/bds-directory-free-ai-mu.php` on Directory
 - `deploy/bds-ai-execution-mu.php`
+- `deploy/bds-ai-trial-mu.php` on Social.
+- `deploy/bds-customer-status-api-mu.php` on each customer-dashboard host.
+- `deploy/bds-directory-membership-bridge-mu.php` on both hosts; it self-restricts sender/receiver behavior by exact host.
 - `deploy/bds-account-link-mu.php` on both hosts
 - `deploy/bds-sales-assistant-api-mu.php` on Social
 - `deploy/bds-onboarding-api-mu.php` on each dashboard host that exposes onboarding.

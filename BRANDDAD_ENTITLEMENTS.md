@@ -15,7 +15,10 @@ An eligible request needs an active `wps_subscriptions` record for the authentic
 ## Seven-day Business Essentials trial
 
 - Same product/entitlement family as paid Business Essentials.
-- Trial dates and billing terms come from Woo checkout/subscription data.
+- Trial dates and billing terms come from the exact Woo/WP Swings product and subscription data (`wps_schedule_start`, `wps_susbcription_trial_end`, seven/day terms).
+- The bounded trial allowance is 25 BrandDad customer credits (five current 5-credit executions). Trial tools are server-allowlisted.
+- A zero-dollar order/payment-method authorization does not receive the paid FormWise plan or paid allowance. The paid plan is provisioned after a verified recurring payment.
+- One trial history is retained per WordPress customer; repeat signed-in add-to-cart and duplicate activation access are denied.
 - Trial does not grant Directory Pro/Elite, Featured, Travel search, or an invented 10% discount.
 - Expiration removes trial-only access but preserves the WordPress account, free Directory account/listing, customer-created records, and eligible free-AI allowances.
 
@@ -25,7 +28,7 @@ Per verified business per UTC month: one website-audit allowance reserved for a 
 
 ## Stacking
 
-Each execution chooses exactly one source: `paid` or `directory_free`. There is no automatic fallback or double deduction. Separate purchased subscriptions remain separate unless a future approved migration explicitly combines them.
+Each execution chooses exactly one source: `paid`, `trial`, or `directory_free`. Paid/trial access takes deterministic precedence, so an active subscriber or trial user cannot also spend the free Directory allowance. Trial and paid ledgers have distinct keys, so a renewal cannot inherit trial usage or deduct twice. There is no automatic fallback or double deduction. Separate purchased subscriptions remain separate unless a future approved migration explicitly combines them.
 
 ## Cancellation and failure
 

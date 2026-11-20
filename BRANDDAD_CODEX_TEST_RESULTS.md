@@ -20,6 +20,13 @@ Updated: 2026-11-19
 - `node tests/consent-followup-worker-contract.mjs`.
 - `node tests/onboarding-api-contract.mjs`.
 - Combined validation after this batch: 19 checks, 0 failures.
+- PHP lint: `deploy/bds-ai-trial-mu.php`.
+- PHP lint: `deploy/bds-customer-status-api-mu.php`.
+- PHP lint: `deploy/bds-directory-membership-bridge-mu.php`.
+- `node tests/ai-trial-contract.mjs`.
+- `node tests/customer-status-api-contract.mjs`.
+- `node tests/directory-membership-bridge-contract.mjs`.
+- Final local batch: 12 deploy PHP lint commands, 10 Node contract suites, and 3 legacy PHP suites passed (25 validation commands, 0 failures).
 - `rafter secrets .`: no hardcoded secrets detected (exit 0; Betterleaks output-version warning noted).
 
 ## Required security scan

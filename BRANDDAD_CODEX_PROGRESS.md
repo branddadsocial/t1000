@@ -7,7 +7,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 ## Completed and retained
 
 - Preserved Cursor branch `cursor/branddad-revenue-20261118` and both dirty existing worktrees; no production or Cursor-owned file was overwritten.
-- Reused the verified AI commercial catalog, Woo product mapping, Subscriptions for WooCommerce lifecycle bridge 0.4.2, and Directory free-AI ledger 0.1.0.
+- Reused the verified AI commercial catalog, Woo product mapping, upgraded Subscriptions for WooCommerce lifecycle bridge 0.4.3, and Directory free-AI ledger 0.1.0.
 - Verified the FormWise organization, owner role, published app/agent/flow UUIDs, tier plans, and restricted customer portal.
 - Added `bds-ai-execution-mu.php`: authenticated REST jobs, explicit workflow schemas, subscription-cycle and Directory-free metering, idempotency, verified async queueing, fixed provider origin, bounded results, and failure-safe allowance release.
 - Added `bds-account-link-mu.php`: five-minute single-use HMAC account handoff between the two owned WordPress hosts, POST-only token transfer, replay protection, fail-closed source email verification, account reuse, and audit mapping.
@@ -15,22 +15,27 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 - Completed the Rafter/OWASP manual security walk and local secret scan; the remote fast scan is recorded as quota-blocked.
 - Added a default-off consent follow-up worker that reuses Cursor's existing consent list/copy, rechecks fresh consent, stops converted contacts, avoids uncertain duplicate delivery, and provides durable opt-out.
 - Added a customer-owned onboarding REST API with strict profile fields, optimistic concurrency, paid/Directory-free access state, completed-job detection, and safe first-tool guidance.
+- Added the authoritative seven-day trial backend: exact WP Swings metadata, 25-credit bounded ledger, one-trial history, paid/trial isolation, server-side trial tool allowlist, and prevention of full paid provisioning from a zero-dollar authorization order.
+- Added a signed, replay-safe, consent-only Social-to-Directory free-membership bridge. It reuses/creates a private subscriber and never creates a public listing.
+- Added unified customer status and evidence-based monthly value-report APIs. Reports count only actual customer-owned job records and explicitly mark unconnected outcomes/provider cost unavailable.
 - Added security design, contracts, handoff, audit, entitlement, product, test, blocker, and production-checklist documentation.
 
 ## Implemented but not yet deployed
 
 - AI execution REST API and metering.
+- Seven-day trial lifecycle and customer status/reporting APIs.
+- Consented Social-to-Directory free membership provisioning bridge.
 - Cross-site account linking.
 - Public sales-assistant proxy.
 - Subscription bridge and free-AI ledger copied into the clean integration branch.
 
 ## Next unblocked backend work
 
-1. Add WordPress staging fixtures for REST permission/ownership, provider failure, idempotent replay, onboarding concurrency, unsubscribe, and HPOS subscription discovery.
-2. Add trial lifecycle/funnel events after verifying the exact installed Woo trial metadata and existing communications provider.
+1. Add WordPress staging fixtures for REST permission/ownership, provider failure, idempotent replay, trial conversion, Directory bridge replay, onboarding concurrency, unsubscribe, and HPOS subscription discovery.
+2. Add trial reminder/funnel events only after a verified communications provider and sender are available.
 3. Add signed Stripe/Woo webhook reconciliation only if the installed gateway does not already provide authoritative Woo transitions.
 4. Implement Featured payment-event adapter after the four Woo SKUs exist.
-5. Add customer value-report aggregation from actual completed jobs and publishing events.
+5. Extend value reports when real publishing/lead adapters provide verified events.
 
 ## Production status
 

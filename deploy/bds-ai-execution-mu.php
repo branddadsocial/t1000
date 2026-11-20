@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.1.0' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.2.0' );
 
 /**
  * Published workflows verified in the BrandDad Social FormWise workspace.
@@ -25,6 +25,7 @@ function bds_ai_exec_tool_catalog() {
 			'remote_id'   => '0cc9b6ff-309a-49f7-9a47-dd66c926208a',
 			'credit_cost' => 5,
 			'free_key'    => 'social_draft',
+			'trial'       => true,
 			'forced'      => array( 'what_would_you_like_to_create_' => 'Social caption' ),
 			'fields'      => array(
 				'provide_the_source_details_'       => array( 'type' => 'string', 'required' => true, 'max' => 4000 ),
@@ -39,6 +40,7 @@ function bds_ai_exec_tool_catalog() {
 			'remote_id'   => '0cc9b6ff-309a-49f7-9a47-dd66c926208a',
 			'credit_cost' => 5,
 			'free_key'    => 'review_response',
+			'trial'       => true,
 			'forced'      => array( 'what_would_you_like_to_create_' => 'Customer review response' ),
 			'fields'      => array(
 				'provide_the_source_details_'       => array( 'type' => 'string', 'required' => true, 'max' => 4000 ),
@@ -53,6 +55,7 @@ function bds_ai_exec_tool_catalog() {
 			'remote_id'   => '2e9921a0-5996-4bc9-a053-49fab3a7fc58',
 			'credit_cost' => 5,
 			'free_key'    => 'local_seo_report',
+			'trial'       => true,
 			'forced'      => array( 'which_seo_focus_should_the_plan_use_' => 'Local SEO' ),
 			'fields'      => array(
 				'which_page_and_goal_are_you_working_on_' => array( 'type' => 'string', 'required' => true, 'max' => 2000 ),
@@ -65,6 +68,7 @@ function bds_ai_exec_tool_catalog() {
 			'kind'        => 'flow',
 			'remote_id'   => '3d3deeff-cc55-43a3-b96e-4969df4296cc',
 			'credit_cost' => 5,
+			'trial'       => true,
 			'fields'      => array(
 				'what_kind_of_website_help_is_needed_' => array( 'type' => 'enum', 'required' => true, 'options' => array( 'Repair', 'Speed', 'Conversion', 'Ongoing care' ) ),
 				'what_public_page_and_goal_should_we_focus_on_' => array( 'type' => 'string', 'required' => true, 'max' => 2000 ),
@@ -77,6 +81,7 @@ function bds_ai_exec_tool_catalog() {
 			'remote_id'   => '571f6f9c-7f7a-4b44-9e32-5d5b2fe11c6e',
 			'credit_cost' => 5,
 			'free_key'    => 'assistant_request',
+			'trial'       => true,
 			'fields'      => array(
 				'message' => array( 'type' => 'string', 'required' => true, 'max' => 4000 ),
 			),
@@ -146,6 +151,7 @@ function bds_ai_exec_public_tools() {
 			'credit_cost' => absint( $tool['credit_cost'] ),
 			'fields'      => $tool['fields'],
 			'free'        => ! empty( $tool['free_key'] ),
+			'trial'       => ! empty( $tool['trial'] ),
 		);
 	}
 	return $out;
@@ -188,7 +194,7 @@ function bds_ai_exec_validate_inputs( $tool, $raw ) {
 }
 
 /** Find one active, locally provisioned AI subscription owned by the user. */
-function bds_ai_exec_active_plan( $user_id ) {
+function bds_ai_exec_active_paid_plan( $user_id ) {
 	if ( ! function_exists( 'wps_sfw_get_meta_data' ) ) {
 		return array();
 	}
@@ -231,12 +237,45 @@ function bds_ai_exec_active_plan( $user_id ) {
 	return array();
 }
 
+/** Prefer a paid entitlement; otherwise accept one bounded active trial. */
+function bds_ai_exec_active_plan( $user_id ) {
+	$paid = bds_ai_exec_active_paid_plan( $user_id );
+	if ( $paid ) {
+		$paid['access_mode'] = 'paid';
+		return $paid;
+	}
+	return function_exists( 'bds_ai_trial_plan' ) ? bds_ai_trial_plan( $user_id ) : array();
+}
+
 function bds_ai_exec_period() {
 	return gmdate( 'Y-m' );
 }
 
 function bds_ai_exec_paid_ledger_key( $user_id, $plan ) {
-	return 'bds_ai_paid_' . absint( $user_id ) . '_' . absint( $plan['subscription_id'] ?? 0 ) . '_' . max( 1, absint( $plan['allowance_cycle'] ?? 1 ) );
+	$suffix = 'trial' === ( $plan['access_mode'] ?? '' ) ? '_trial' : '';
+	return 'bds_ai_paid_' . absint( $user_id ) . '_' . absint( $plan['subscription_id'] ?? 0 ) . '_' . max( 1, absint( $plan['allowance_cycle'] ?? 1 ) ) . $suffix;
+}
+
+/** Read a customer-safe allowance summary without exposing reservation tokens. */
+function bds_ai_exec_plan_usage( $user_id, $plan ) {
+	$allowance = absint( $plan['credits'] ?? 0 );
+	$key       = bds_ai_exec_paid_ledger_key( $user_id, $plan );
+	$ledger    = get_option( $key, array() );
+	$ledger    = is_array( $ledger ) ? $ledger : array();
+	$used      = absint( $ledger['used'] ?? 0 );
+	$pending   = 0;
+	$now       = time();
+	foreach ( (array) ( $ledger['pending'] ?? array() ) as $row ) {
+		if ( absint( $row['expires_at'] ?? 0 ) > $now ) {
+			$pending += absint( $row['cost'] ?? 0 );
+		}
+	}
+	return array(
+		'allowance' => $allowance,
+		'used'      => min( $allowance, $used ),
+		'pending'   => min( $allowance, $pending ),
+		'remaining' => max( 0, $allowance - $used - $pending ),
+	);
 }
 
 function bds_ai_exec_lock( $scope ) {
@@ -378,19 +417,23 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 		$access_mode = sanitize_key( (string) $request->get_param( 'access_mode' ) );
 		$reservation = '';
 		$listing_id  = 0;
-		$plan        = array();
-		if ( 'directory_free' === $access_mode ) {
+		$plan        = bds_ai_exec_active_plan( $user_id );
+		// Paid/trial access has deterministic precedence. A customer cannot spend
+		// free Directory allowances while a paid or trial allowance is active.
+		if ( $plan ) {
+			$access_mode = sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
+			if ( 'trial' === ( $plan['access_mode'] ?? '' ) && empty( $tools[ $tool_key ]['trial'] ) ) {
+				return new WP_Error( 'trial_tool_unavailable', 'This tool is not included in the trial.', array( 'status' => 403 ) );
+			}
+			$reservation = bds_ai_exec_paid_reserve( $user_id, $plan, $tools[ $tool_key ]['credit_cost'] );
+		} elseif ( 'directory_free' === $access_mode ) {
 		$listing_id = absint( $request->get_param( 'listing_id' ) );
 		if ( empty( $tools[ $tool_key ]['free_key'] ) || ! function_exists( 'bds_dir_free_ai_reserve' ) ) {
 			return new WP_Error( 'free_access_unavailable', 'This tool is not available with free Directory access.', array( 'status' => 403 ) );
 		}
 		$reservation = bds_dir_free_ai_reserve( $listing_id, $user_id, $tools[ $tool_key ]['free_key'], 1 );
 		} else {
-		$plan = bds_ai_exec_active_plan( $user_id );
-		if ( ! $plan ) {
 			return new WP_Error( 'subscription_required', 'An active eligible subscription is required.', array( 'status' => 403 ) );
-		}
-		$reservation = bds_ai_exec_paid_reserve( $user_id, $plan, $tools[ $tool_key ]['credit_cost'] );
 		}
 		if ( is_wp_error( $reservation ) ) {
 			return $reservation;
@@ -417,7 +460,8 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 	update_post_meta( $job_id, '_bds_inputs', wp_json_encode( $inputs ) );
 	update_post_meta( $job_id, '_bds_status', 'pending' );
 	update_post_meta( $job_id, '_bds_credit_cost', absint( $tools[ $tool_key ]['credit_cost'] ) );
-	update_post_meta( $job_id, '_bds_access_mode', 'directory_free' === $access_mode ? 'directory_free' : 'paid' );
+	$resolved_mode = 'directory_free' === $access_mode ? 'directory_free' : sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
+	update_post_meta( $job_id, '_bds_access_mode', $resolved_mode );
 	update_post_meta( $job_id, '_bds_listing_id', $listing_id );
 	update_post_meta( $job_id, '_bds_subscription_id', absint( $plan['subscription_id'] ?? 0 ) );
 	update_post_meta( $job_id, '_bds_allowance_cycle', max( 1, absint( $plan['allowance_cycle'] ?? 1 ) ) );
@@ -481,6 +525,7 @@ function bds_ai_exec_process_job( $job_id ) {
 	$subscription_id = absint( get_post_meta( $job_id, '_bds_subscription_id', true ) );
 	$allowance_cycle = max( 1, absint( get_post_meta( $job_id, '_bds_allowance_cycle', true ) ) );
 	$plan        = array( 'subscription_id' => $subscription_id, 'allowance_cycle' => $allowance_cycle );
+	$plan['access_mode'] = $mode;
 	$reservation = sanitize_text_field( get_post_meta( $job_id, '_bds_reservation', true ) );
 	$inputs      = json_decode( (string) get_post_meta( $job_id, '_bds_inputs', true ), true );
 	$failed      = static function ( $code ) use ( $job_id, $mode, $listing_id, $user_id, $reservation, $plan ) {

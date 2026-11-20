@@ -10,6 +10,8 @@ Updated: 2026-11-19
 | WooCommerce | Live products/orders preserved | Operational |
 | Subscriptions for WooCommerce | Version previously verified; lifecycle hooks and metadata audited | Bridge implemented; E2E acceptance required |
 | Stripe | Live checkout observed previously; card data remains with gateway | No account changes made; safe E2E required |
+| WP Swings trial | Official installed-plugin source confirms `wps_schedule_start`, `wps_susbcription_trial_end`, `wps_next_payment_date`, and seven/day subscription metadata | Local backend enforces exact terms, separate trial credits, one customer history, and renewal-only paid provisioning; staging transaction required |
+| Social-to-Directory free membership | Existing account-link shared secret is the approved trust root | New protocol-specific HMAC bridge is implemented default-fail-closed; checkout consent UI and cross-host staging replay test remain |
 | FormWise | BrandDad Social org, owner access, API scopes, published app/agents/flows, plans, restricted portal verified | Operational; separate execution key required on server |
 | Directorist | Existing listing ownership/publication source | Operational; Cursor owns listing/search UX |
 | Partnero | Existing affiliate portal retained | Event adapter/balance API not verified in this pass |

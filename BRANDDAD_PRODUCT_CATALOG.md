@@ -4,7 +4,7 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 
 | Product | Intended price | Backend state |
 |---|---:|---|
-| AI Business Essentials | $29.99/mo, 7-day trial | Woo product and FormWise 75-credit plan verified; lifecycle bridge retained; new execution API implemented; staging/live E2E still required |
+| AI Business Essentials | $29.99/mo, 7-day trial | Woo product and FormWise 75-credit paid plan verified; runtime trial uses a separate 25-credit ledger and grants the paid tier only after verified renewal; staging/live E2E still required |
 | AI Studio Starter | $14.99/mo, 50 credits | FormWise plan verified; launch candidate after lifecycle test |
 | AI Studio Growth | $29.99/mo, 150 credits | FormWise plan verified; launch candidate after lifecycle test |
 | AI Studio Pro | $49.99/mo, 400 credits | FormWise plan verified; launch candidate after lifecycle test |

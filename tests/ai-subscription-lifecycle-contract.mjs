@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-ai-subscriptions-mu.php', 'utf8');
 
 const checks = [
-  ['version is 0.4.2', /BDS_AI_SUBSCRIPTIONS_VERSION', '0\.4\.2'/],
+  ['version is 0.4.3', /BDS_AI_SUBSCRIPTIONS_VERSION', '0\.4\.3'/],
   ['launch subscription identity comes from the server-side catalog', /function bds_ai_cart_has_launch_subscription[\s\S]*bds_ai_subscription_catalog\(\)[\s\S]*get_post_field\( 'post_name'/],
   ['only customer plans with FormWise tier ids enter the live lane', /'customer' === \( \$plan\['audience'\][\s\S]*wp_is_uuid\( \(string\) \( \$plan\['formwise_plan_id'\]/],
   ['launch subscription checkout is Stripe only and fails closed', /return isset\( \$gateways\['stripe'\] \) \? array\( 'stripe' => \$gateways\['stripe'\] \) : array\(\)/],
@@ -13,6 +13,7 @@ const checks = [
   ['grants require recurring engine, server key, and enable flag', /'ready'\s*=>\s*\$recurring\s*&&\s*\$api_key\s*&&\s*\$enabled/],
   ['revocation remains available when grants are disabled', /return \$state\['recurring_engine'\]\s*&&\s*\$state\['formwise_key'\]/],
   ['provisioning requires active status and a paid order', /'active' !== \$status\s*\|\|\s*! \$order\s*\|\|\s*! \$order->is_paid\(\)/],
+  ['zero-dollar trial authorization cannot grant a full paid plan', /wps_sfw_subscription_free_trial_number[\s\S]*wps_susbcription_trial_end[\s\S]*\$trial_end > current_time\( 'timestamp' \)[\s\S]*! \$is_renewal/],
   ['provisioning verifies the order belongs to the subscription', /bds_ai_order_matches_subscription\( \$order_id, \$subscription_id \)/],
   ['parent and renewal order relationships are allowlisted', /wps_parent_order[\s\S]*wps_sfw_renewal_order[\s\S]*wps_sfw_subscription/],
   ['provisioning sends an idempotency key', /'Idempotency-Key'\s*=>\s*substr\( \$event_key, 0, 64 \)/],
