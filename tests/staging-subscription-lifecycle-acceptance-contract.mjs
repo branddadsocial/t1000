@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-000-staging-subscription-lifecycle-acceptance-mu.php', 'utf8');
 
 const checks = [
-  ['helper version is explicit', /BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_VERSION', '0\.1\.0'/.test(source)],
+  ['helper version is explicit', /BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_VERSION', '0\.1\.1'/.test(source)],
   ['helper is pinned to the canonical TLS staging host', /BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_HOST', 'staging-branddad-social\.stackstaging\.com'/.test(source)],
   ['host derives from configured home_url', /wp_parse_url\( home_url\( '\/' \), PHP_URL_HOST \)/.test(source)],
   ['execution is one-time report gated', /subscription_acceptance_pending[\s\S]*! get_option\( BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_REPORT, false \)/.test(source)],

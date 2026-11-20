@@ -7,7 +7,9 @@
 - Full local suite: 31/31 Node contract files, 3/3 PHP compatibility suites, 31/31 deployment PHP syntax checks, and `git diff --check` passed.
 - `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
 - Manual L2 review: the route is canonical-host/one-time gated and parameter-free; fixture identity/product/order/subscription are server-derived and marker checked; the acceptance credential is dummy and every fixed FormWise request is locally intercepted; reports expose only allowlisted booleans; retry/event/user-state cleanup is exact; deletion requires ids created in the request plus exact markers; no SQL, shell, file path, deserialization, real gateway, message, account creation, or external provider request exists.
-- Hosted runtime evidence remains pending upload confirmation. Stripe checkout/webhook, real FormWise provisioning, browser REST nonce, email, and production behavior remain outside this synthetic test.
+- Hosted helper 0.1.0 report: HTTP 200, `complete=false`; 32/36 checks true. Exact cleanup, state restoration, retry removal, event cleanup, provider isolation, and no-gateway checks all passed. Failures identified immediate WP Swings status-meta callbacks plus a real stale-parent reactivation defect; no customer/provider/payment/production mutation occurred.
+- Adapter 0.5.1 now makes the legacy active-status callback use the newest authoritative paid order. Helper 0.1.1 accounts for immediate status-meta revocation callbacks and tests the customer-facing active-plan resolver. Focused and full local suites pass again; corrected hosted runtime is pending upload confirmation.
+- Stripe checkout/webhook, real FormWise provisioning, browser REST nonce, email, and production behavior remain outside this synthetic test.
 
 ## 2026-11-19 hosted website-monitoring acceptance
 

@@ -9,7 +9,9 @@ Updated: 2026-11-19
 - Acceptance covers authoritative seven-day trial metadata/history/25-credit access; zero-dollar trial grant denial; paid renewal matching and grant; replay idempotency; per-paid-order allowance cycles; failed-latest-order no-fallback; on-hold revocation; duplicate callback idempotency; same-order reactivation without credit reset; cancellation/history preservation; provider failure/retry; exact scheduled-job cleanup; lifecycle-event cleanup; exact user-state restoration; and no real gateway.
 - The Rafter secure-design and L2 web/API review walks are recorded. Exact markers protect every deletion; the report is boolean-only and exact-host gated. Local secret scanning found no secrets. Required `rafter run` was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
 - Local validation passes 31/31 Node contracts, 3/3 PHP compatibility tests, 31/31 deployment PHP lints, and `git diff --check`. The new helper contract contains 44 security/behavior assertions.
-- Hosted upload/runtime remains pending explicit action-time confirmation. This synthetic test does not replace Stripe test checkout/webhooks or a real FormWise mutation.
+- The first hosted run failed safely on four assertions while all isolation/cleanup checks passed. Three were harness timing/shape expectations; the fourth exposed a real reactivation defect: the legacy active-status hook used the original parent order instead of the latest authoritative paid renewal, allowing an incorrect allowance-cycle advance after renewal.
+- Corrected the production subscription adapter to use `bds_ai_subscription_current_paid_order()` for legacy active-status reconciliation, bumped it to 0.5.1, expanded its contract, and prepared acceptance helper 0.1.1 under a fresh one-time report key. The reviewed release copy and ZIP match SHA-256 `5D8BBE37A65334CA0A50EEDA5AFD9E8589118F9FBE2A59AED612DE55BB20CAAA`.
+- Corrected hosted runtime remains pending upload confirmation. This synthetic test does not replace Stripe test checkout/webhooks or a real FormWise mutation.
 
 ## 2026-11-19 hosted website-monitoring acceptance
 

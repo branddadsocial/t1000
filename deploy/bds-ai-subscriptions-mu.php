@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Subscriptions
  * Description: BrandDad AI recurring billing safeguards and fail-closed FormWise entitlement lifecycle.
- * Version: 0.5.0
+ * Version: 0.5.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.5.0' );
+define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.5.1' );
 
 /**
  * Approved offer configuration. Product ids are resolved by slug to preserve existing products.
@@ -556,7 +556,10 @@ function bds_ai_sfw_status_meta_updated( $meta_id, $post_id, $meta_key, $meta_va
 	}
 	$status = sanitize_key( (string) $meta_value );
 	if ( 'active' === $status ) {
-		$order_id = absint( bds_ai_sfw_meta( $post_id, 'wps_parent_order' ) );
+		// A reactivation after renewal must use the newest authoritative paid
+		// order. Falling back to the original parent can reset the allowance or
+		// restore access after the latest renewal failed.
+		$order_id = bds_ai_subscription_current_paid_order( $post_id );
 		if ( $order_id ) {
 			bds_ai_provision_active_subscription( $order_id, $post_id );
 		}

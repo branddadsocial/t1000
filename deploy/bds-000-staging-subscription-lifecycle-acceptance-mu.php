@@ -2,16 +2,16 @@
 /**
  * Plugin Name: BrandDad Staging Subscription Lifecycle Acceptance
  * Description: One-time, exact-host synthetic trial, renewal, revocation, and cleanup acceptance.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_VERSION', '0.1.0' );
+define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_VERSION', '0.1.1' );
 define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_HOST', 'staging-branddad-social.stackstaging.com' );
-define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_REPORT', 'bds_staging_subscription_lifecycle_report_v1' );
-define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_MARKER', 'bds-stage-subscription-lifecycle-v1' );
+define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_REPORT', 'bds_staging_subscription_lifecycle_report_v2' );
+define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_MARKER', 'bds-stage-subscription-lifecycle-v2' );
 define( 'BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_REMOTE_USER', '5f45a2b1-9057-4fa1-b3c3-f1fda826a111' );
 
 /** Use the installed WordPress home URL rather than the caller-controlled Host header. */
@@ -282,6 +282,7 @@ function bds_staging_subscription_acceptance_run() {
 			'bds_ai_trial_state',
 			'bds_ai_trial_plan',
 			'bds_ai_exec_active_paid_plan',
+			'bds_ai_exec_active_plan',
 			'wps_sfw_get_meta_data',
 			'wps_sfw_update_meta_data',
 			'wc_create_order',
@@ -413,7 +414,7 @@ function bds_staging_subscription_acceptance_run() {
 			&& BDS_STAGING_SUBSCRIPTION_ACCEPTANCE_REMOTE_USER === (string) bds_ai_sfw_meta( $subscription_id, '_bds_ai_formwise_user_id' );
 		$checks['first_allowance_cycle'] = 1 === absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_cycle' ) )
 			&& $renewal_one->get_id() === absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_order_id' ) );
-		$paid_plan = bds_ai_exec_active_paid_plan( $fixture_user_id );
+		$paid_plan = bds_ai_exec_active_plan( $fixture_user_id );
 		$checks['paid_plan_resolves'] = $subscription_id === absint( $paid_plan['subscription_id'] ?? 0 )
 			&& 'paid' === (string) ( $paid_plan['access_mode'] ?? '' );
 		$upserts_after_first = absint( $http_state['upserts'] );
@@ -440,8 +441,8 @@ function bds_staging_subscription_acceptance_run() {
 		bds_staging_subscription_acceptance_mark_renewal( $failed_renewal->get_id(), $subscription_id );
 		wps_sfw_update_meta_data( $subscription_id, 'wps_wsp_last_renewal_order_id', $failed_renewal->get_id() );
 		$checks['failed_latest_order_no_fallback'] = 0 === bds_ai_subscription_current_paid_order( $subscription_id );
-		wps_sfw_update_meta_data( $subscription_id, 'wps_subscription_status', 'on-hold' );
 		$deletes_before_failure = absint( $http_state['deletes'] );
+		wps_sfw_update_meta_data( $subscription_id, 'wps_subscription_status', 'on-hold' );
 		bds_ai_sfw_renewal_order_status_changed( $failed_renewal->get_id(), 'pending', 'failed', $failed_renewal );
 		$checks['failed_renewal_revokes'] = '' !== (string) bds_ai_sfw_meta( $subscription_id, '_bds_ai_access_removed' )
 			&& $deletes_before_failure + 1 === absint( $http_state['deletes'] );
@@ -460,8 +461,8 @@ function bds_staging_subscription_acceptance_run() {
 		$checks['reactivation_no_credit_reset'] = $cycle_before_reactivation === absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_cycle' ) )
 			&& $renewal_two->get_id() === absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_order_id' ) );
 
-		wps_sfw_update_meta_data( $subscription_id, 'wps_subscription_status', 'cancelled' );
 		$deletes_before_cancel = absint( $http_state['deletes'] );
+		wps_sfw_update_meta_data( $subscription_id, 'wps_subscription_status', 'cancelled' );
 		bds_ai_sfw_cancel_access( $subscription_id );
 		$checks['cancellation_revokes'] = $deletes_before_cancel + 1 === absint( $http_state['deletes'] )
 			&& 2 === absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_access_generation' ) );
