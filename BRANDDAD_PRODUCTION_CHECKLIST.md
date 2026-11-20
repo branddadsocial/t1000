@@ -171,3 +171,15 @@ Nothing unchecked above may be described as fully operational.
 - [x] Prepare a precise, non-destructive StartHost incident request without sending it.
 - [~] Immediate recovery observation passed three homepage/REST rounds plus one seven-route homepage/REST/category/location/listing/submission sample with HTTP 200 throughout; continue the window and obtain provider telemetry before stable launch classification.
 - [ ] If a repair, restart, credential rotation, plugin disablement, or cache purge is proposed, back up and obtain separate approval before executing it.
+
+## 2026-11-20 frontend deployment and cache gate
+
+- [x] Deploy Social launch pages `0.5.24` and revenue sections `0.2.21`.
+- [x] Verify fresh Social output uses BrandDad blue `#0668D8`, returns HTTP 200, keeps one H1, and has no sampled horizontal overflow.
+- [x] Deploy Directory Featured `0.2.13` and QA repair `1.0.20`.
+- [x] Deploy Sales Help `0.1.3` so Directory no longer renders the second sticky helper in fresh output.
+- [x] Deploy QA repair `1.0.21` so fresh Events, Jobs, and Classifieds output excludes the unrelated demo refund modal.
+- [x] Verify fresh uncached Events, Jobs, and Classifieds have one H1, the Directory Concierge, no Sales Help helper, and no demo refund modal.
+- [!] Ordinary clean URLs still serve stale generated HTML. StartHost Edge Caching controls fail to render, and Directory Speed Auto-Heal requires an authenticated WordPress-admin session.
+- [ ] Complete a provider-supported edge/origin purge or authenticated bounded refresh, then repeat the clean-URL acceptance without `nocache=1`.
+- [ ] Receive StartHost's response on ticket `898665003`, save the already reviewed five-minute scheduler if they unblock it, and observe the first bounded run before launch classification.

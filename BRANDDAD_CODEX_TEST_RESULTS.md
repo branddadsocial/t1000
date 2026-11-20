@@ -633,3 +633,14 @@ Updated: 2026-11-19
 - `rafter secrets deploy/bds-directory-qa-repair-mu.php` found no secrets. Required remote `rafter run` was attempted but blocked by the 16/16 fast-scan quota; paid Plus was not used.
 - These are local source results in dirty pre-existing Cursor/recovery worktrees. They are not evidence that production changed. Deployment, cache purge, and live 320/390/430px validation remain required.
 - Full Cursor revenue PHP-contract batch: 15 total, 15 passed, 0 failed. The only initial failure was the standalone sales-help harness omitting `add_filter()` before requiring the language module; adding that no-op WordPress stub made the existing test exercise complete and did not alter deployed code.
+
+## 2026-11-20 production frontend deployment verification
+
+- Cursor revenue PHP contracts: 15/15 passed after Sales Help `0.1.3` and Directory QA `1.0.21`.
+- PHP syntax: Sales Help `0.1.3` and Directory QA `1.0.21` passed.
+- Directory public-output fixtures prove nested demo-modal removal for `events`, `jobs-careers`, and `classifieds`, while `/dashboard/` and ordinary business browse remain byte-for-byte unchanged.
+- `rafter secrets` found no secrets in either changed production file. Remote `rafter run --mode fast` was attempted twice and rejected only because the monthly quota is 16/16; paid Plus was not used.
+- Live uncached Events: Concierge `true`, Sales Help `false`, refund modal `false`, removal marker `true`, H1 count `1`.
+- Live uncached Jobs: Concierge `true`, Sales Help `false`, refund modal `false`, removal marker `true`, H1 count `1`.
+- Live uncached Classifieds: Concierge `true`, Sales Help `false`, refund modal `false`, removal marker `true`, H1 count `1`.
+- Live clean URLs remain stale and therefore fail the duplicate-helper/refund-modal acceptance until a supported cache refresh completes.
