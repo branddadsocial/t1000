@@ -2,6 +2,14 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 FormWise published-contract audit
+
+- Re-read the connected BrandDad Social FormWise workspace without mutating it or spending execution credits.
+- Reconfirmed the published workflow and App UUIDs referenced by the backend, plus the exact question keys, required states, and enum values for every customer-facing AI tool in the execution catalog.
+- Confirmed the backend's fixed API-v1 Flow/App endpoints, keyed Flow payload, single-message App payload, and server-only bearer-auth shape remain aligned with FormWise's official External API contract.
+- Added a regression contract covering six provider assets, 23 published enum values, all referenced question keys, endpoint construction, payload construction, and credential handling.
+- No FormWise content, customer, entitlement, plan, portal, WordPress host, payment, or production record changed. A real provider execution remains pending an approved server key and credit-consuming staging acceptance.
+
 ## 2026-11-19 hosted staging Business Essentials fixture activation
 
 - Uploaded the reviewed exact-host fixture helper to the isolated staging MU directory after explicit action-time confirmation.

@@ -16,6 +16,15 @@
 
 Updated: 2026-11-19
 
+## FormWise published-contract verification — 2026-11-19
+
+- Read-only workspace inspection reconfirmed the BrandDad Social organization, owner role, published AI Studio App, published execution Flows, restricted portals, and seven commercial tier plans.
+- The six FormWise assets used by `bds-ai-execution-mu.php` match the published UUIDs: Copy and Reviews, SEO Action Planner, Website Improvement Planner, Directory Listing Studio, LinkedIn Profile Analyzer, and BrandDad AI Studio.
+- Every WordPress allowlisted Flow question key, required flag, and enum option matches the current published FormWise schema. The app request remains a single validated `message`.
+- The WordPress seven-day trial remains intentionally separate from FormWise plan billing: FormWise's Business Essentials plan has no provider-side trial, while WordPress enforces the bounded 25-credit trial ledger and expiration.
+- Added `tests/formwise-published-contract.mjs` to fail if a referenced UUID, question key, enum value, endpoint shape, payload shape, or server-side bearer-auth contract drifts.
+- No FormWise Agent, Flow, App, plan, group, portal, or end-user was changed. No credit-consuming execution was run during this read-only verification.
+
 | System | Verified state | Status |
 |---|---|---|
 | GitHub | One repo `branddadsocial/t1000`; Cursor and Codex branches/worktrees identified | Operational, dirty worktrees preserved |

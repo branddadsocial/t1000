@@ -1,5 +1,16 @@
 # BrandDad Codex test results
 
+## 2026-11-19 FormWise published-contract audit
+
+- Read-only FormWise evidence: BrandDad Social organization, owner role, published assets, restricted portals, and commercial tier plans were available.
+- Backend-to-provider identity: all six referenced Flow/App UUIDs match the current published assets.
+- Backend-to-provider input contract: all referenced field keys, required states, and enum options match the current published Flow schemas.
+- `tests/formwise-published-contract.mjs`: passed all 56 assertions covering asset ids, field keys, enum values, endpoint construction, payload construction, and server-only bearer authentication.
+- Full local suite: 20/20 Node contract files, three PHP compatibility suites, AI execution PHP syntax, and `git diff --check` passed.
+- `rafter secrets tests/formwise-published-contract.mjs`: no secrets detected. Manual review found no dynamic input, outbound request, credential value, mutation, or executable command in the regression test.
+- Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- No credit-consuming FormWise execution was performed; provider response parsing and live WordPress queue completion remain explicitly untested.
+
 ## 2026-11-19 hosted staging bootstrap
 
 - Created `staging.branddad.social` at `public_html/staging.branddad.social` with a separate one-click WordPress database.
