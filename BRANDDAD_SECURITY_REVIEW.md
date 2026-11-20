@@ -3,6 +3,19 @@
 Updated: 2026-11-19
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
+### Staging lifecycle 5,000-record truncation acceptance review
+
+- L2/V1 design and threat model: the bounded state machine, exact-host boundary, persistent restart state, cleanup ownership, STRIDE abuse case, temporary resource cost, and limits of the evidence are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md` before implementation.
+- A01/API1/API5/V4: no caller can choose the fixture, target, batch, period, event, phase, or deletion id. The exact canonical staging host and exact marker-owned non-admin fixture are server-owned (`deploy/bds-000-staging-lifecycle-truncation-acceptance-mu.php:13-27`, `:149-180`, `:293-337`).
+- A02/A07/V2/V3/V6: no credential, password, login, cookie, session, or browser token is introduced. Each event uses the production HMAC event-key function and cleanup verifies it with `hash_equals()` (`deploy/bds-000-staging-lifecycle-truncation-acceptance-mu.php:48-104`).
+- A03/API3/V5: the route accepts no input. Target 5,000, batch 100, object base, marker, fixture username, captured current month, and fixed midpoint timestamp are server constants. WordPress APIs perform storage; no raw SQL, shell, HTML, deserialization, or caller-controlled path exists.
+- A04/API4/API6/V11: batches are capped at 100 and serialized by a stale-safe lock. Persistent `create -> verify -> cleanup` state prevents restarts from duplicating the fixed 5,000 ceiling. The route returns bounded progress rather than holding one unbounded HTTP request (`deploy/bds-000-staging-lifecycle-truncation-acceptance-mu.php:184-283`, `:293-323`).
+- A05/API8/API9/V14: state contains only aggregate baseline data, fixed phase/offset/date, request-created ids, allowlisted booleans, and bounded error codes. Public output excludes ids, user id, event keys, email, amounts, paths, and internal state details. Production cannot register the route.
+- A06/A08/API10: N/A; no dependency, update channel, external API, provider, gateway, or serializer is added.
+- A09/V7: completion requires 5,000 unique tracked ids, the production summary's `truncated=true`, exact deletion, and byte-equivalent restoration of the original event/customer/gross/refund/net/truncation aggregate. The test deliberately does not interpret capped financial totals as complete (`deploy/bds-000-staging-lifecycle-truncation-acceptance-mu.php:229-276`).
+- A10/API7: N/A; no URL or outbound fetch exists.
+- Data/deletion safety: every offset is collision-checked before creation; date and full event ownership are read back before progress advances. Cleanup works backward over ids stored by this run and requires exact private post type/status/author/date, fixture user, event type, object type/id, and HMAC key before hard deletion. A mismatch moves to a visible blocked state and retains the record; it never widens the delete query.
+
 ### Staging lifecycle UTC-boundary acceptance review
 
 - L2/V1 design and threat model: the exact-host data flow, trust boundary, cleanup ownership, UTC decisions, STRIDE abuse case, and limits of the evidence are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.
