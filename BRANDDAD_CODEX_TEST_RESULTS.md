@@ -550,6 +550,7 @@ Updated: 2026-11-19
 - A final low-rate recheck returned HTTP 200 for Directory homepage, Directory REST index, Social homepage, and Social Services. No repair action preceded recovery.
 - A short follow-up observation collected three additional homepage and REST samples four seconds apart. All six requests returned HTTP 200; homepage response times were 551-788 ms and REST response times were 1,694-2,143 ms. This confirms immediate recovery but is not long enough to close the hosting-stability gate.
 - A subsequent low-rate seven-route sample returned HTTP 200 for the homepage, REST index, All Categories, All Listings, Restaurants, Playa del Carmen location, and Add Listing surfaces. Observed response times were 593-2,976 ms. The broader surface is presently available, but the provider root-cause/stability gate remains open.
+- A further five-cycle observation sampled the homepage, REST index, and Restaurants route ten seconds apart. All 15 requests returned HTTP 200 with no failures; the slowest response was 2,118 ms. This supplies short-window recovery evidence only and does not replace StartHost database telemetry.
 - No database password, table, database, file, plugin, cache, customer record, or hosting setting was changed.
 
 ## 2026-11-20 post-incident local regression

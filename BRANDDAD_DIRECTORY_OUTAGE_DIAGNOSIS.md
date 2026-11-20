@@ -8,6 +8,8 @@ BrandDad Directory experienced a verified intermittent production outage. Multip
 
 The Directory later recovered without a BrandDad-side change. A final low-rate recheck returned HTTP 200 for both the Directory homepage and `/wp-json/`. This recovery does not prove stability because the hosting access log shows successful and failed Directory requests interleaved within seconds.
 
+Short-window recovery observation subsequently produced 28 successful HTTP 200 responses and zero failures across repeated homepage/REST checks plus category, listing, location, submission, and restaurant surfaces. The observation is useful evidence of recovery, but it is not a provider root-cause determination or a long-duration availability guarantee.
+
 ## Read-only hosting evidence
 
 - The Directory MySQL database still exists in StartHost/StackCP.
