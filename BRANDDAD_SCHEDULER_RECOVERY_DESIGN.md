@@ -15,6 +15,7 @@ Restore reliable WordPress and WooCommerce background processing without letting
 - WooCommerce Action Scheduler reports 4,990 actions: 771 complete, 4,166 failed, 53 pending, and 52 past due.
 - The failed scheduled event is `action_scheduler_run_queue`.
 - Past-due hooks include ordinary WooCommerce maintenance plus WP Swings subscription hooks. One active owner subscription exists, with its next payment shown as 2026-12-13.
+- A focused pending-action search found exactly two WP Swings recurring checks: `wps_sfw_expired_renewal_subscription` and `wps_sfw_create_renewal_order_schedule`, both scheduled every 30 minutes and overdue since 2026-11-13. They carry no displayed action arguments. The remaining pending work is dominated by WooCommerce product-attribute lookup updates, plus one future GeoIP updater. No subscription has a payment due before the verified active subscription's 2026-12-13 date, but the two recurring checks still make scheduler activation financial-adjacent.
 
 ## Proposed host task
 
@@ -56,9 +57,10 @@ The command is derived from the hosting panel's verified PHP interpreter list, a
 2. Save the exact scheduled task only after action-time confirmation.
 3. Wait for one scheduled interval and verify the task remains configured.
 4. Re-read Action Scheduler counts and the oldest pending/past-due rows.
-5. Verify the homepage, Services page, Business Essentials product, checkout, and REST health.
-6. If counts move safely, continue monitoring bounded batches. If errors or load increase, disable the exact task and investigate.
-7. Classify historical no-callback failures separately; cleanup is a distinct destructive action requiring its own evidence and approval.
+5. Confirm the two WP Swings recurring checks complete without creating an unexpected renewal order or changing a subscription before its verified due date.
+6. Verify the homepage, Services page, Business Essentials product, checkout, and REST health.
+7. If counts move safely, continue monitoring bounded batches. If errors or load increase, disable the exact task and investigate.
+8. Classify historical no-callback failures separately; cleanup is a distinct destructive action requiring its own evidence and approval.
 
 ## Acceptance criteria
 
