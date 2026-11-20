@@ -116,3 +116,9 @@ Do not deploy this branch over newer Cursor public-page files. Merge only the ba
 - Directory Home contains an H1 (`Find a business. See what it offers. Contact it.`), but it is inside a zero-size legacy block at 390px. The current visible page begins with `Start With Your Location` as an H2. Promote the current visible hero/area heading to the single visible H1, or otherwise expose one meaningful visible H1 without duplicating headings.
 - The zero-size legacy DOM still contains older homepage sections, including `Brand gift cards under face value`, even though that section is not visible. Remove the legacy gift-card/homepage block from the public DOM while preserving any legitimate backend records and secondary access, as required by the master prompt.
 - Do not re-enable the hidden legacy sections merely to expose their H1. Remove/consolidate the obsolete markup and keep the current local-first visible journey.
+
+## 2026-11-20 CTA color-contrast follow-up
+
+- Computed mobile styles show no blue-on-blue or dark-on-dark key CTA combination. Directory primary buttons and the Concierge use white on `#0668D8`, which measures approximately 5.28:1 and passes the 4.5:1 WCAG AA normal-text threshold.
+- Social `.bdai-button` and `.bds-rev-button` use 16px/800 white text on `#0878ED`, which measures approximately 4.27:1 and misses that threshold. The light, ghost, and navy variants pass comfortably.
+- Use the existing Directory blue `#0668D8` (or another approved BrandDad blue at 4.5:1 or better) for the Social primary CTA background. Preserve white text and the current light-on-dark rule. Recheck default, hover, focus, active, and disabled states after the frontend change.

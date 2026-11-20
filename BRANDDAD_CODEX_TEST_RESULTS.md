@@ -597,6 +597,14 @@ Updated: 2026-11-19
 - The same zero-size legacy DOM includes the old `Brand gift cards under face value` homepage heading. It is not visually displayed, but it remains public markup and should be removed/consolidated by the Cursor-owned frontend rather than re-enabled.
 - This is a focused structure/name/label baseline, not a complete WCAG 2.2 AA audit; automated contrast, keyboard-only, screen-reader, zoom, and physical-device testing remain separate.
 
+## 2026-11-20 key CTA color-contrast follow-up
+
+- Computed 390px styles found no blue-on-blue or dark-on-dark combination in the audited Social/Directory primary CTA classes.
+- Social primary `.bdai-button` and `.bds-rev-button` styles render 16px/800 white text on `rgb(8,120,237)` (`#0878ED`), approximately 4.27:1. Because 16px bold text is below WCAG's large-text size threshold, this misses the 4.5:1 AA normal-text target.
+- Social light/ghost variants use dark `#0B172A` on white (approximately 17.95:1), and quiet variants use white on `#071A33` (approximately 17.43:1); both pass.
+- Directory primary buttons and the Concierge use white on `#0668D8` (approximately 5.28:1), and Directory secondary buttons use `#10243A` on white (approximately 15.72:1); both pass.
+- Hover, focus, active, disabled, forced-colors, and actual screen-reader/keyboard behavior were not changed or fully audited in this read-only batch.
+
 ## 2026-11-20 free website-audit mobile recheck
 
 - The live page returned HTTP 200 at a measured 390px CSS viewport with `clientWidth`, document scroll width, and body scroll width all equal to 390; no horizontal page overflow was present.
