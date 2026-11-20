@@ -1,5 +1,14 @@
 # BrandDad Codex test results
 
+## 2026-11-20 release-integrity refresh
+
+- Reconciled the root source checksum manifest against every listed `deploy/` artifact and corrected four stale hashes: trial, customer reporting, Directory membership bridge, and lifecycle events.
+- Added a separate two-file staging checksum manifest for the customer-status module and the staging-only reporting acceptance helper. The helper is deliberately absent from the production manifest.
+- `tests/release-checksums-contract.mjs` validates strict manifest syntax, unique filenames, exact SHA-256 source matches, the exact reporting-stage staging pair, and production exclusion of the acceptance helper.
+- Full local suite: 38/38 Node contract files, 43/43 recursive deployment PHP syntax checks, and `git diff --check` passed.
+- `rafter secrets .`: no secrets detected. Required `rafter run` was attempted again and remains blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- The immutable 2026-11-19 ZIP archives are now explicitly documented as older than four reviewed source revisions and are not the current deployment source of truth.
+
 ## 2026-11-20 evidence-stage monthly customer reporting
 
 - `tests/customer-status-api-contract.mjs`: passed all 17 assertions, including exact stage keys, completed-job-only generation, and unavailable later stages.

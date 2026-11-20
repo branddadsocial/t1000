@@ -2,6 +2,14 @@
 
 Updated: 2026-11-20
 
+## 2026-11-20 release-integrity refresh
+
+- Audited the prepared 2026-11-19 archives and found four source files that changed after packaging. The older archives remain immutable for history but are explicitly marked stale for those files.
+- Refreshed `SHA256SUMS.txt` to the current reviewed `deploy/` sources and added `STAGING_SHA256SUMS.txt` for the exact reporting-stage upload pair.
+- Added an automated release checksum contract so later source changes cannot silently leave the source manifest stale.
+- Validation passes 38/38 Node contract files, 43/43 recursive PHP syntax checks, `git diff --check`, and local secret scanning. Remote Rafter fast scanning remains quota-blocked.
+- This improves deployment safety but does not replace the pending hosted upload or hosted 10/10 reporting-stage acceptance.
+
 ## 2026-11-20 evidence-stage monthly customer reporting
 
 - Added backward-compatible `delivery_outcomes` to the authenticated monthly value report with stable `generated`, `approved`, `submitted`, `published`, and `measured` stages.

@@ -1,7 +1,15 @@
 # BrandDad backend security review
 
-Updated: 2026-11-19
+Updated: 2026-11-20
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
+
+### Release checksum contract review
+
+- The test reads only two fixed repository-owned manifests and fixed `deploy/` paths; it accepts no request, environment, network, archive, or user-controlled path input.
+- Manifest rows must match one strict uppercase SHA-256 plus PHP-basename grammar, filenames must be unique, and every hash is recomputed from the reviewed source bytes.
+- The staging-only reporting helper is required in the staging manifest and explicitly forbidden from the production source manifest, reducing accidental production exposure.
+- The test performs no write, extraction, subprocess, dynamic import, dependency install, deserialization, or external request. The current full suite and local secret scan pass.
+- Required remote `rafter run` was attempted and remained quota-blocked at 16/16. Paid Plus was not used.
 
 ### Evidence-stage monthly reporting review
 

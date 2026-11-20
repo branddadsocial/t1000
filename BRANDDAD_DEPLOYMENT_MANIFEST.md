@@ -2,7 +2,20 @@
 
 Prepared: 2026-11-19
 
+Source checksums refreshed: 2026-11-20
+
 This manifest describes the reviewed Codex backend artifacts. It does not authorize a production deployment or activation of paid/external services. Deploy to an isolated WordPress staging environment first. All files target `wp-content/mu-plugins/` unless noted otherwise.
+
+## Release currency warning
+
+The immutable 2026-11-19 ZIP archives predate later reviewed changes to `bds-ai-trial-mu.php`, `bds-customer-status-api-mu.php`, `bds-directory-membership-bridge-mu.php`, and `bds-lifecycle-events-mu.php`. Do not treat those archives as the current deployable source of truth. The current reviewed source files are under `deploy/`, and their exact hashes are recorded in the root `SHA256SUMS.txt`.
+
+The current reporting-stage staging upload consists of exactly:
+
+- `deploy/bds-customer-status-api-mu.php`
+- `deploy/bds-000-staging-report-stages-acceptance-mu.php`
+
+Verify those two uploads against `STAGING_SHA256SUMS.txt`. The acceptance helper is test-only, must remain on the isolated staging host, and must never be installed on production.
 
 ## Hosting paths verified read-only
 
@@ -79,7 +92,7 @@ Enable one capability at a time only after its staging acceptance tests, provide
 2. Export the affected WordPress database tables/options and verify the backup opens.
 3. Copy each replaced target file into a timestamped folder under `_bds_deploy_backups/` while preserving its host and relative path.
 4. Upload to a temporary non-executable staging folder on the same filesystem.
-5. Verify uploaded size and SHA-256 against `SHA256SUMS.txt`.
+5. Verify uploaded size and SHA-256 against `SHA256SUMS.txt`; for a staging acceptance helper, use `STAGING_SHA256SUMS.txt` and confirm that the helper is not present on production.
 6. Move one file at a time into the target `mu-plugins` directory using an atomic same-filesystem rename where the host permits it.
 7. Confirm WordPress front page, login, REST index, WooCommerce checkout, cron/Action Scheduler, and error log after every activation group.
 8. Leave all default-off capabilities disabled until their individual acceptance gates pass.
