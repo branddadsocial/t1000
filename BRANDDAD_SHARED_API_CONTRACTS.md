@@ -77,3 +77,9 @@ Source POST `wp-admin/admin-post.php` action `bds_account_link_start` with WordP
 - `bds_dir_free_ai_status( $listing_id, $user_id )`: authoritative free-AI ledger or `WP_Error`.
 - `bds_mt_user_tier()`: existing Directory membership view model.
 - Featured grants remain inactive until a Woo order `is_paid()` and the SKU is allowlisted.
+
+## Directory Featured billing adapter
+
+The adapter recognizes only `bds-feat-local`, `bds-feat-regional`, `bds-feat-national`, and `bds-feat-global`. The add-to-cart request must carry `listing={published_claimed_listing_id}` or `_bds_feat_listing_id`. The authenticated customer must be the Directorist author and approved claimant; the adapter persists both listing and owner on the order item and rechecks them at every activation/renewal.
+
+Cursor must provide `bds_featured_listing_geo` with `{ country, lat, lng }` from authoritative listing data. Country is required for non-global lanes; valid coordinates are also required for Local/Regional. Missing geography fails closed. Activation uses an active WPS subscription, a paid matching parent/renewal order, and the authoritative next-payment date. Renewal extends the same grant, failure pauses it, cancellation preserves paid-through display until its end, expiry ends it, and refund revokes it without deleting history.

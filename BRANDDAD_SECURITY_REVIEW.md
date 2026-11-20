@@ -21,6 +21,7 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - Zero-dollar trial authorizations cannot provision the full paid FormWise plan; the paid grant waits for a verified renewal after the authoritative trial end (`deploy/bds-ai-subscriptions-mu.php`).
 - Trial and paid usage use distinct ledger keys, preventing renewal from inheriting trial deductions (`deploy/bds-ai-execution-mu.php`).
 - The Directory membership bridge is exact-host pinned, HMAC body/timestamp signed, constant-time verified, stable-event idempotent, consent gated, retry bounded, and can create only a private subscriber (`deploy/bds-directory-membership-bridge-mu.php`).
+- The Featured adapter disables the older activation callbacks and will activate only one of four fixed SKUs for the authenticated approved listing owner, an active WPS subscription, a matching paid parent/renewal order, valid real geography, and available inventory (`deploy/bds-featured-billing-adapter-mu.php`).
 
 ## Web application walk — OWASP Top 10
 
@@ -34,6 +35,7 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - A08 integrity: provisioning accepts only an active subscription, paid matching Woo order, allowlisted product, and allowlisted FormWise plan; initial free-trial authorization is explicitly excluded until renewal (`bds-ai-subscriptions-mu.php`).
 - A09 logging: account links keep a bounded audit without token/email; AI jobs retain stable status/error and provider request id but not credentials (`bds-account-link-mu.php:118`, `bds-ai-execution-mu.php:527`). Production alerting is still a deployment acceptance item.
 - A10 SSRF: all outbound origins and remote UUIDs are fixed server-side, safe HTTP is used for AI execution/chat, and redirects are disabled (`bds-ai-execution-mu.php:508`, `bds-sales-assistant-api-mu.php:183`). Subscription calls use fixed FormWise URLs with redirects disabled.
+- Featured billing accepts a listing id only after Directorist author/claim verification, copies the verified owner into the order item, and rechecks both at activation; client SKU, price, geography, and grant status are never trusted.
 
 ## API walk — OWASP API Top 10
 

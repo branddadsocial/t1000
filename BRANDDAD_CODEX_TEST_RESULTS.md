@@ -27,6 +27,9 @@ Updated: 2026-11-19
 - `node tests/customer-status-api-contract.mjs`.
 - `node tests/directory-membership-bridge-contract.mjs`.
 - Final local batch: 12 deploy PHP lint commands, 10 Node contract suites, and 3 legacy PHP suites passed (25 validation commands, 0 failures).
+- PHP lint: `deploy/bds-featured-billing-adapter-mu.php`.
+- `node tests/featured-billing-adapter-contract.mjs`.
+- Current full suite: 13 deploy PHP lint commands, 11 Node contract suites, and 3 legacy PHP suites passed (27 validation commands, 0 failures).
 - `rafter secrets .`: no hardcoded secrets detected (exit 0; Betterleaks output-version warning noted).
 
 ## Required security scan

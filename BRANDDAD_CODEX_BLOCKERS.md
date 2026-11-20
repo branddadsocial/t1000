@@ -12,6 +12,7 @@ Updated: 2026-11-19
 - Sales-assistant execution remains disabled until `BDS_SALES_ASSISTANT_ENABLED` is explicitly enabled after cost and abuse tests.
 - Follow-up sending remains disabled until the Cursor consent plugin is present on the target host, a BrandDad-domain sender is verified, mail acceptance/unsubscribe tests pass, and `BDS_FOLLOWUP_ENABLED` is deliberately enabled.
 - New Directory Featured SKUs (`bds-feat-local`, `bds-feat-regional`, `bds-feat-national`, `bds-feat-global`) do not exist; billing integration cannot be production-tested without them.
+- Cursor's Featured purchase links must carry the selected claimed listing and provide `bds_featured_listing_geo`; the new adapter intentionally refuses non-global activation without authoritative country and Local/Regional activation without coordinates.
 - Complete AI packages and music products remain quote-only until delivery cost/licensing/fulfillment approval.
 - Make is reported over its free operation allowance until the provider reset; do not promise Make-backed execution.
 - Social publishing, WhatsApp, video rendering, and music distribution need verified provider credentials/permissions and cost ceilings. No unauthorized provider purchase was made.

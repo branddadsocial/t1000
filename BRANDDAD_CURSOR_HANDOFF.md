@@ -21,6 +21,7 @@ Updated: 2026-11-19
 - Monthly evidence report: `GET /wp-json/branddad/v1/reports/value?period=YYYY-MM`.
 - Cross-site button: call `bds_account_link_form( 'directory.branddad.social', '/account-hub/' )` on Social, and the inverse host on Directory. The form appears only for signed-in users after the shared secret is configured and source email ownership is verified.
 - On the Business Essentials checkout, show a clear optional free-Directory-membership consent checkbox and submit it as `bds_directory_membership_consent=1`. Do not preselect it. The backend will create/reuse only a private Directory account after activation; listing creation remains a separate customer action.
+- For each Featured product link, preserve the selected claimed listing as `?listing={id}` (or hidden `_bds_feat_listing_id`). Add the `bds_featured_listing_geo` filter returning the listing's real ISO-3166 alpha-2 country and, for Local/Regional, real latitude/longitude. Do not infer geography from the purchaser's billing address.
 
 ## Expected frontend states
 
@@ -62,6 +63,7 @@ Replace the example meta key with the authoritative key from the existing regist
 - `deploy/bds-ai-trial-mu.php` on Social.
 - `deploy/bds-customer-status-api-mu.php` on each customer-dashboard host.
 - `deploy/bds-directory-membership-bridge-mu.php` on both hosts; it self-restricts sender/receiver behavior by exact host.
+- `deploy/bds-featured-billing-adapter-mu.php` on Directory together with Cursor's Featured MU. It removes the older paid activation hooks and replaces them with ownership-, subscription-, geography-, renewal-, failure-, cancellation-, and refund-aware lifecycle handling.
 - `deploy/bds-account-link-mu.php` on both hosts
 - `deploy/bds-sales-assistant-api-mu.php` on Social
 - `deploy/bds-onboarding-api-mu.php` on each dashboard host that exposes onboarding.

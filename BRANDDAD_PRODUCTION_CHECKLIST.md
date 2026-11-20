@@ -45,6 +45,8 @@
 - [ ] Cross-site handoff reuses/creates the correct account and rejects replay/wrong host.
 - [ ] Verified listing receives only its own free-AI ledger.
 - [ ] Featured Woo SKUs exist and only paid orders activate placements.
+- [x] Featured adapter rechecks claimed ownership, paid subscription linkage, geography, capacity, renewal, failure, cancellation, expiry, and refund.
+- [ ] Cursor passes selected listing + authoritative geography and staging proves all four lanes.
 - [ ] Partnero free-to-paid attribution/refund/cancellation events reconcile.
 
 ## Automation acceptance
