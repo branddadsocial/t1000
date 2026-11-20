@@ -26,7 +26,9 @@
 - [x] Upload the checksum-reviewed Social package to staging without changing production files.
 - [x] Complete the isolated WordPress administrator setup and verify staging REST activation.
 - [x] Verify public catalog access and anonymous denial on private customer/admin routes.
-- [ ] Install or safely clone the WooCommerce/WPS Subscriptions/HPOS/Directorist staging dependencies before lifecycle acceptance testing.
+- [x] Safely clone and activate WooCommerce, WooCommerce Stripe Gateway, and Subscriptions for WooCommerce on isolated staging.
+- [ ] Create approved staging-only Woo product/subscription fixtures and authoritative product mappings before payment lifecycle acceptance testing.
+- [ ] Install or safely clone Directorist on staging before Directory ownership/claim/free-AI acceptance testing.
 - [ ] Provision valid TLS for `staging.branddad.social` at the authoritative DNS/CDN provider, or use the valid StartHost temporary hostname for acceptance tests.
 - [ ] Restore reliable SSH or execute an approved protected File Manager deployment procedure.
 - [x] Document exact per-host artifacts, fail-closed switches, checksums/rollback requirements, and acceptance evidence in `BRANDDAD_DEPLOYMENT_MANIFEST.md`.
@@ -36,7 +38,8 @@
 - [ ] Deploy to staging/QA first; do not overwrite newer Cursor public files.
 - [ ] Verify rollback by restoring prior MU files.
 - [x] Confirm current Social/Directory homepages and REST indexes return HTTP 200 with valid TLS before deployment.
-- [ ] After staging and approved deployment, confirm the intended `/branddad/v1` routes appear with the documented authorization behavior.
+- [x] Confirm the intended `/branddad/v1` routes appear on hosted staging with the documented anonymous authorization behavior.
+- [ ] Complete authenticated ownership/capability/nonce behavior and provider/payment lifecycle acceptance on hosted staging before any production deployment.
 
 ## Revenue acceptance
 

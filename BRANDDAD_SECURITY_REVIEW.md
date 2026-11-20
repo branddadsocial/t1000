@@ -91,3 +91,17 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - Connect the existing registration/email-verification workflow to the fail-closed account-link filter on both hosts.
 - Exercise replay, wrong-audience, cross-account, CSRF/nonce, concurrent metering, provider outage, and rate-limit behavior in an isolated WordPress staging environment.
 - Configure secrets outside Git and validate backup/rollback before deployment.
+
+## 2026-11-19 hosted-staging dependency helper review
+
+- Scope: `deploy/bds-staging-dependency-activator-mu.php`, a temporary isolated-staging bootstrap helper. It adds no route, form, request input, credential, network call, deletion, or production switch.
+- A01 access control: there is no callable endpoint; execution is restricted to the exact canonical staging host with constant-time comparison (`:13-18`).
+- A02 cryptography: no credential or token is handled. The file-specific Rafter secret scan passed with no findings.
+- A03 injection: plugin entry points are literal strings (`:29-33`) and each is checked by WordPress `validate_plugin()` before `activate_plugin()` (`:43-52`). No user-controlled path, SQL, shell, eval, or deserialization exists.
+- A04/A05 design and configuration: the helper fails closed off staging, uses a one-time completion report (`:20-25`), activates in dependency order, and verifies the final active state (`:65-82`).
+- A06 components: no new dependency is downloaded by the code. It activates the exact existing plugin code copied from the live Social installation into the empty staging database. Remote Rafter fast SAST/SCA was attempted and remains quota-blocked at 16/16; paid Plus was not run.
+- A07/A08 identity and integrity: WordPress's core activation primitive is used; no custom authentication or update channel is introduced. The exact host and plugin allowlists prevent production or arbitrary-plugin activation.
+- A09 logging: the bounded local report contains only the staging host, plugin identifiers, status/error codes, a 240-character sanitized error message, and timestamp (`:73-82`). It contains no secret or customer data.
+- A10 SSRF: N/A; no outbound request or request-controlled URL exists.
+- Static contract evidence: `tests/staging-dependency-activator-contract.mjs` passed all 12 assertions covering host/plugin allowlists, validation order, one-time behavior, final-state verification, and absence of request, REST/admin endpoint, outbound HTTP, and deletion primitives.
+- Residual risk: standard plugin activation hooks may create or migrate staging tables. This is accepted only for the new isolated empty staging database and must be verified before any production decision.

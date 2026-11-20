@@ -155,3 +155,19 @@ Inquiry records are private posts owned by the receiving WordPress user. Custome
 ## Release gates
 
 No public execution or production billing change is enabled until: local contracts pass; a safe QA purchase provisions once; renewal resets once; failure revokes according to policy; cancellation leaves no unauthorized renewal; cross-account access tests fail correctly; provider costs are measured; and rollback is verified.
+
+## Hosted-staging dependency activator
+
+The clean hosted staging install needs the already licensed WooCommerce, Subscriptions for WooCommerce, and WooCommerce Stripe plugin code that was copied from the Social host. A temporary MU helper may activate only these three exact plugin entry points. It has no request parameters, REST route, form, credential, outbound request, deletion, or production deployment path.
+
+Data flow: `staging WordPress bootstrap -> exact temporary MU helper -> exact plugin-file allowlist -> WordPress activate_plugin() -> staging active_plugins option -> bounded local activation report`.
+
+Trust boundaries and controls:
+
+- The helper refuses to run unless `home_url()` has the exact host `staging-branddad-social.stackstaging.com`; production and the custom staging hostname fail closed.
+- Plugin entry points are hard-coded and checked with `validate_plugin()` before activation. No request, option, environment variable, or user can choose a file path.
+- Activation is ordered WooCommerce, Stripe, then subscriptions, runs at most once, and stores only plugin identifiers, status codes, and bounded WordPress error messages in a staging option.
+- No database, customer record, order, payment, gateway credential, or network call is copied. The source archive contains plugin code only.
+- The helper intentionally remains inert after its completed report is written. Removal is a separate cleanup action after staging evidence is captured.
+
+STRIDE findings: host spoofing is constrained by the exact canonical WordPress home host; path tampering is constrained by a literal allowlist plus `validate_plugin()`; repudiation is addressed by the bounded activation report; information disclosure is limited by omitting file-system paths and secrets; denial is bounded to one attempt; elevation is limited to WordPress's existing plugin activation primitive and a staging-only host. Residual risk is that a copied plugin may execute its normal activation migrations; this is accepted only on the isolated empty staging database and is verified before any production decision.

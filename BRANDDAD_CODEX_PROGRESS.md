@@ -2,6 +2,17 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 hosted staging commerce dependency batch
+
+- Copied the already installed WooCommerce, WooCommerce Stripe Gateway, and Subscriptions for WooCommerce plugin code from the Social host into the isolated hosted staging install. No production plugin, setting, order, subscription, or customer record was changed.
+- Added and ran a one-time staging-only MU activator that is exact-host pinned, has a literal three-plugin allowlist, accepts no request input, performs no network request, and becomes inert after recording completion.
+- Verified the valid-TLS staging hostname returns HTTP 200 with `noindex`, the BrandDad namespace still exposes 21 routes, and anonymous customer/admin endpoints continue to fail closed with HTTP 401.
+- Verified WooCommerce (`wc/v3` and Store API), WooCommerce Stripe REST routes, and Subscriptions for WooCommerce (`wsp-route/v1`) are active on staging.
+- Verified the public BrandDad sales catalog returns HTTP 200 but remains safely non-purchasable: its single fallback offer has no purchase URL because the clean staging database has no approved Woo product fixture or product mapping yet.
+- Added a 12-assertion static contract for the staging activator, then ran all 17 Node contract suites, all three PHP compatibility suites, the helper PHP syntax check, and `git diff --check`; all passed.
+- Completed the file-specific local Rafter secret scan and manual OWASP review. The required remote fast scan was attempted but could not run because the account remains at its 16/16 quota; no paid Plus scan was used.
+- Directorist, test product/subscription fixtures, FormWise server configuration, authenticated staging fixtures, and real payment lifecycle acceptance remain outstanding. Production remains unchanged.
+
 ## 2026-11-19 deployment preparation batch
 
 - Inspected the signed-in hosting File Manager read-only and verified separate WordPress roots for Social and Directory.

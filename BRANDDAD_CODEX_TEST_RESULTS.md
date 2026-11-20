@@ -52,6 +52,23 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 hosted staging commerce dependency verification
+
+- Hosted staging home: HTTP 200 over the valid StartHost temporary TLS hostname, with `noindex` present.
+- WordPress REST index: HTTP 200.
+- BrandDad namespace: HTTP 200 with 21 expected routes.
+- Public sales catalog (`/branddad/v1/sales/catalog`): HTTP 200 with one fallback offer; `url` is empty and `for_sale` is false because no staging product fixture/mapping exists.
+- Anonymous protected routes returned HTTP 401 for AI tools, customer status, value reports, analytics, finance, onboarding, monitoring, inquiry inbox/form, and trial state.
+- WooCommerce namespaces (`wc/v3`, Store API), WooCommerce Stripe REST routes, and Subscriptions for WooCommerce (`wsp-route/v1`) are present after one-time activation.
+- One transient HTTP 500 was observed during the activation request itself. Immediate and repeated post-activation requests returned HTTP 200; no continuing 500 was reproduced.
+- All 17 Node contract suites passed (17/17), including 12 staging-activator assertions covering the exact host, literal plugin allowlist, path validation, one-time guard, active-state verification, non-autoloaded report, and absence of request/network/deletion surfaces.
+- PHP compatibility suites passed: revenue sections, Featured rotation, and customer hub (3/3).
+- `php -l deploy/bds-staging-dependency-activator-mu.php` passed.
+- `git diff --check` passed.
+- `rafter secrets deploy/bds-staging-dependency-activator-mu.php` passed with no detected secrets.
+- `rafter run deploy/bds-staging-dependency-activator-mu.php` was attempted but blocked by the 16/16 fast-scan quota. Paid Plus was not used.
+- No checkout, charge, refund, subscription mutation, FormWise execution, customer message, or production deployment was performed.
+
 ## Passed locally
 
 - Combined validation: 15 checks, 0 failures after security hardening.
