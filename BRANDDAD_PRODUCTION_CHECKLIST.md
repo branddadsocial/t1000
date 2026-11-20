@@ -189,4 +189,5 @@ Nothing unchecked above may be described as fully operational.
 - [x] Distinguish the non-rendered `bds-sales-help` analytics selector from an actual duplicate `#bds-sales-help` widget during production acceptance.
 - [x] Design, implement, PHP-lint, contract-test, manually review, and secret-scan a recoverable four-object cache refresh; preserve unrelated cache files and fixed `.bak` rollback objects.
 - [!] Do not upload the targeted refresh until mandatory `rafter run --mode fast` succeeds; the current free-scan quota remains 16/16 and paid Plus is not approved.
+- [x] Push the clean Codex branch without merging and verify local/remote commit identity so the mandatory remote scan will cover the exact helper; quota resets 2026-11-23 20:03:31 UTC.
 - [x] Observe the clean homepage cross its hard stale cutoff and regenerate automatically; verify the new early object starts at age 6 with one Concierge and no duplicate Sales Help widget.
