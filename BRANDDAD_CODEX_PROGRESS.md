@@ -416,3 +416,11 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Fresh uncached production output for Events, Jobs, and Classifieds now has one H1, one Directory Concierge, no Sales Help helper, no demo refund modal, no horizontal overflow in the sampled Events DOM, and an explicit removal marker.
 - The clean public variants still select older generated HTML: they retain the duplicate helper and demo modal. Three newly rendered anonymous cache objects were validated and uploaded under the locally derived keys, but the clean routes did not select them, so the active provider/origin key was not guessed further.
 - StartHost's Edge Caching page currently fails to render its controls with `SyntaxError: Unexpected identifier 'theme'`. Directory Speed Auto-Heal redirects to WordPress login in the current browser session. No broad cache purge, recursive deletion, cron run, payment, subscription, order, or customer mutation was performed.
+
+## 2026-11-20 FormWise Sales Assistant publication
+
+- Used the user's explicit credit approval to run the saved ten-case Sales Assistant quality suite. Corrected the initial SEO expectation mismatch and genuine trial-billing omission, then verified the post-fix provider executions without launching an unnecessary duplicate full run.
+- The final diff review caught two accidentally negated instructions before publication. Repaired both, strengthened the security guardrails, and embedded the verified current launch catalog directly in the prompt after a targeted trial retry exposed inconsistent knowledge retrieval.
+- Replaced the stale legacy-first FormWise catalog page with the verified November 20 current offers, allowances, trial language, limitations, product URLs, quote paths, and legacy-customer handling.
+- Final targeted quality gates passed for trial accuracy, current pricing, and prompt-injection resistance. Published Sales Assistant production version `6993354e-ab96-4ad2-9a54-479263de8b40` (`Current launch catalog and trial safeguards`).
+- Provider read-back confirms production version 8, the owned `ai.branddad.social` public link, and permission to embed on `branddad.social`. No payment, order, subscription, refund, customer record, external message, or social post was created or changed.
