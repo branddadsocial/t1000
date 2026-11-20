@@ -299,4 +299,7 @@ Updated: 2026-11-19
 - `git diff --check`: passed.
 - `rafter secrets .`: passed with no detected secrets.
 - `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
-- Hosted runtime acceptance: pending upload confirmation; real mail transport and the public unsubscribe HTTP page are deliberately outside this no-email test.
+- Hosted runtime acceptance: version 0.1.0, `complete=true`, 26/26 allowlisted checks true, no error codes.
+- Hosted restoration: exact fake consent row, isolated unsubscribe-rate transient, server IP value, and current-user context all returned true.
+- Hosted smoke: staging home/product HTTP 200 with `noindex`; catalog HTTP 200; protected lead/account/report/AI routes HTTP 401 anonymously; lead capture HTTP 503 `lead_capture_disabled`; production acceptance route HTTP 404.
+- Real mail transport and the public unsubscribe HTTP page remain deliberately outside this no-email test.

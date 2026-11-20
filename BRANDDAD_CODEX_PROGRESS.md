@@ -205,7 +205,8 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - It never enables the worker, defines a sender, calls `wp_mail()`, invokes the public unsubscribe handler, creates a user/lead/order/payment, or calls an external provider.
 - Local validation passed: 29/29 Node contracts, 3/3 PHP compatibility tests, 29/29 deployment PHP syntax checks, and `git diff --check`.
 - `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
-- Hosted upload/runtime acceptance remains pending explicit action-time confirmation. Production remains unchanged.
+- Uploaded the exact-host no-email helper after explicit confirmation. Hosted runtime acceptance passed 26/26 checks with no error codes; the exact fake consent row, isolated rate counter, and original context were restored.
+- Hosted smoke confirmed staging home/product HTTP 200 with `noindex`, protected routes HTTP 401 anonymously, lead capture remained HTTP 503 `lead_capture_disabled`, and production exposed no acceptance route. No email was sent and production remains unchanged.
 
 ## 2026-11-19 sales-lead acceptance preparation
 

@@ -76,7 +76,7 @@
 ## Automation acceptance
 
 - [x] Implement default-off consent-based follow-up with stop/unsubscribe and uncertain-delivery deduplication.
-- [~] Prepare the exact-host no-email follow-up consent harness for eligibility, token/hash privacy, compare-and-set updates, opt-out persistence, reactivation blocking, rate bounds, and exact restoration; hosted runtime remains pending.
+- [x] Exercise the exact-host no-email follow-up consent harness for eligibility, token/hash privacy, compare-and-set updates, opt-out persistence, reactivation blocking, rate bounds, exact restoration, and disabled-worker state (26/26 runtime checks passed).
 - [ ] Verify sender, mail acceptance, one-click unsubscribe, conversion stop, and retries in staging before enabling.
 - [x] Implement customer-owned onboarding state and first-task guidance API.
 - [x] Exercise onboarding ownership isolation and optimistic version conflict in WordPress staging.
