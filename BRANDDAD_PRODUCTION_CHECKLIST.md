@@ -157,10 +157,10 @@ Nothing unchecked above may be described as fully operational.
 - [x] Submit the exact false-positive evidence to StartHost/20i support. Ticket `898665003` is open with Web Hosting and requests non-destructive package clearance or a safe allowlist.
 - [~] StartHost replied that it cannot remove the false-positive flag and suggested ignoring the warning. That does not resolve `Cron failed to add`; request a specific scheduler unblock or provider-supported alternative before attempting the exact task again.
 - [x] Document a no-extra-cost, single-runner external fallback with official provider limits, threat model, prerequisites, first-run observation, stop conditions, and rollback; no runner was enabled.
-- [ ] If StartHost cannot supply a working runner, select Cloudflare Cron Trigger or temporary GitHub Actions and obtain exact action-time approval before its first production invocation.
+- [x] Activate the temporary single-runner GitHub Actions fallback on `main`, add a manual dispatch for controlled observation, and complete one exact production invocation. Run `44830790644` returned `http_status=200`; no StartHost runner is active.
 - [ ] Reauthenticate to StartHost after support confirms clearance, then re-enter and save the exact reviewed task once.
-- [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
-- [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
+- [~] Observe the first bounded interval: the manual fallback run reduced pending from 53 to 30 and past due from 52 to 12, kept historical failures at 4,166, and rescheduled the two WP Swings hooks. The 30 pending / 12 past-due state was unchanged eleven minutes later; wait for a real `schedule` event before calling recurrence operational.
+- [~] Recheck Site Health and Action Scheduler: the Action Scheduler queue failure cleared, while `wpseo-reindex` remains a separate scheduled-event warning. Public priority-route and checkout checks passed earlier; authoritative payment/subscription lifecycle testing remains outstanding.
 - [ ] Classify historical no-callback failures; any cleanup is a separate destructive action and must not be combined with scheduler recovery.
 
 ## 2026-11-20 Directory database stability gate
@@ -189,7 +189,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Send StartHost a direct reply on ticket `898665003` with the exact PHP 8.4 cron command, all three confirmed specialty cache basenames, and explicit no-broad-purge/no-customer-data-deletion boundaries; Gmail recorded sent message `1a1fb065c1cb1df2` in the existing support thread.
 - [x] Clarify to StartHost that the temporary GitHub cron fallback must not coexist with an activated host cron; sent message `1a1fb0ad5e42fe7e` asks them to repair the control but wait for BrandDad to disable the fallback before activating the host task.
 - [x] Resubmit the cron, exact three-object cache, duplicate-runner, and database-telemetry requirements through StartHost's authenticated ticket UI after support stated that email replies are not accepted; portal confirmation is visible at 22:32:40 on 2026-11-20.
-- [~] GitHub reports workflow `425477211` (`BrandDad Social wp-cron`) as active on `main`, with a five-minute HTTPS call and read-only permissions, but the Actions API has not yet recorded a scheduled run. Do not call this operational until a real run succeeds.
+- [~] GitHub reports workflow `425477211` (`BrandDad Social wp-cron`) as active on `main`, with a five-minute HTTPS call, read-only permissions, and successful manual run `44830790644` (`http_status=200`). No `event=schedule` run has been recorded yet, so automatic recurrence is not yet proven.
 - [~] Post-incident stability sample passed 15/15 HTTP requests across Social home, Directory home, and Directory REST with zero database-error bodies; keep the host database incident open until provider telemetry or a longer observation window supports closure.
 - [x] Verify the four primary Social subscription pages return HTTP 200, display the approved launch price, and expose a real WooCommerce product-ID-backed add-to-cart control.
 - [x] Verify isolated anonymous cart-to-checkout handoff for Business Essentials, Lead Assistant, Local SEO, Social Growth, and all three AI Studio tiers without submitting an order or payment; all seven exact products reached Checkout with the correct cart item and Place Order control.
