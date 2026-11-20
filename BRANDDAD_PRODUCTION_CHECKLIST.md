@@ -142,6 +142,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Document the threat model, allowlisted command, five-minute cadence, acceptance criteria, and rollback in `BRANDDAD_SCHEDULER_RECOVERY_DESIGN.md`.
 - [~] A combined files-and-databases backup was accepted and queued; reauthenticate and verify its completed row/download before enabling queue execution.
 - [x] Identify the pending financial-adjacent work: exactly two no-argument WP Swings recurring checks are overdue; the active subscription's next payment is 2026-12-13.
+- [x] Prepare the exact StartHost task form with the reviewed command and five-minute cadence without testing or saving it.
 - [ ] Receive exact action-time confirmation and save `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
 - [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
 - [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
