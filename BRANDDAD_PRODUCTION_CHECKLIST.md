@@ -161,3 +161,12 @@ Nothing unchecked above may be described as fully operational.
 - [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
 - [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
 - [ ] Classify historical no-callback failures; any cleanup is a separate destructive action and must not be combined with scheduler recovery.
+
+## 2026-11-20 Directory database stability gate
+
+- [x] Reproduce and record the production database-connection failures without changing state.
+- [x] Verify that the Directory database still exists and is below its storage allowance.
+- [x] Confirm that Social remained available and that Directory later recovered without a BrandDad-side change.
+- [ ] Obtain StartHost database telemetry for the incident window and a provider determination of the intermittent 200/500 pattern.
+- [ ] Complete a low-rate observation window for Directory homepage, REST, category, location, search, and submission routes before stable launch classification.
+- [ ] If a repair, restart, credential rotation, plugin disablement, or cache purge is proposed, back up and obtain separate approval before executing it.

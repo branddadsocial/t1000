@@ -539,3 +539,14 @@ Updated: 2026-11-19
 - Facebook structural read: scenario status error; Facebook connection expiring; OpenAI connection healthy.
 - Execution-history requests returned `INVALID_ARGUMENT` for scenarios with historical usage, so no recent-runtime success claim was made.
 - No scenario was run, replayed, activated, deactivated, edited, created, or deleted; no webhook, connection, social post, message, lead, payment, or customer record changed.
+
+## 2026-11-20 Directory intermittent database outage
+
+- Sequential low-rate checks reproduced HTTP 500 on the Directory homepage, Add Listing, All Categories, All Listings, and `/wp-json/`; the response identified a WordPress database connection failure.
+- Social homepage and Services remained HTTP 200 during the Directory failures.
+- StartHost's read-only database inventory showed the Directory database present at approximately 131.04 MB of 1,024 MB.
+- Hosting access logs showed Directory HTTP 200 and 500 responses interleaved within seconds across pages, REST routes, AJAX, and cron traffic.
+- Error-log searches for `mysqli` and `connections` returned no matching diagnostic entry; no unsupported root-cause claim was made.
+- A final low-rate recheck returned HTTP 200 for Directory homepage, Directory REST index, Social homepage, and Social Services. No repair action preceded recovery.
+- A short follow-up observation collected three additional homepage and REST samples four seconds apart. All six requests returned HTTP 200; homepage response times were 551-788 ms and REST response times were 1,694-2,143 ms. This confirms immediate recovery but is not long enough to close the hosting-stability gate.
+- No database password, table, database, file, plugin, cache, customer record, or hosting setting was changed.
