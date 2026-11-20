@@ -140,7 +140,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Audit StartHost Scheduled Tasks and confirm that no task currently exists.
 - [x] Verify active PHP 8.4, `/usr/bin/php84`, and the exact Social WordPress root.
 - [x] Document the threat model, allowlisted command, five-minute cadence, acceptance criteria, and rollback in `BRANDDAD_SCHEDULER_RECOVERY_DESIGN.md`.
-- [ ] Verify or create a recoverable production database/files backup before enabling queue execution.
+- [~] A combined files-and-databases backup was accepted and queued; reauthenticate and verify its completed row/download before enabling queue execution.
 - [ ] Receive exact action-time confirmation and save `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
 - [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
 - [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.

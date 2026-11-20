@@ -443,3 +443,4 @@ Updated: 2026-11-19
 - The authenticated StartHost Scheduled Tasks page reports: `You currently don't have any scheduled tasks.`
 - StartHost's active PHP selection is PHP 8.4 and its interpreter list maps PHP 8.4 to `/usr/bin/php84`.
 - The exact proposed command and five-minute schedule are documented in `BRANDDAD_SCHEDULER_RECOVERY_DESIGN.md`. No command was tested or saved, no cron batch was triggered, and no payment/subscription/customer data was changed.
+- StartHost accepted a combined files-and-databases backup request and displayed a queued job plus two success notifications. Completion could not be independently confirmed because the control-panel session expired on refresh; do not treat the backup as recoverable until its completed row/download is visible after reauthentication.
