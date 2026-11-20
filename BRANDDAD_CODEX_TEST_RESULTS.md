@@ -30,6 +30,7 @@ Updated: 2026-11-19
 - PHP lint: `deploy/bds-featured-billing-adapter-mu.php`.
 - `node tests/featured-billing-adapter-contract.mjs`.
 - Current full suite: 13 deploy PHP lint commands, 11 Node contract suites, and 3 legacy PHP suites passed (27 validation commands, 0 failures).
+- Subscription bridge 0.5.0 contract adds latest-renewal reconciliation, same-cycle credit protection, legacy marker migration, stale-lock recovery, and bounded continuation checks.
 - `rafter secrets .`: no hardcoded secrets detected (exit 0; Betterleaks output-version warning noted).
 
 ## Required security scan

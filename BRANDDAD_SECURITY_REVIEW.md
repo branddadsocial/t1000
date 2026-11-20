@@ -20,6 +20,7 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - Sales-chat session tokens are bound to the requesting client, browser origins are restricted, and the per-client counter is updated under the global lock (`deploy/bds-sales-assistant-api-mu.php:30`, `:54`, `:84`).
 - Zero-dollar trial authorizations cannot provision the full paid FormWise plan; the paid grant waits for a verified renewal after the authoritative trial end (`deploy/bds-ai-subscriptions-mu.php`).
 - Trial and paid usage use distinct ledger keys, preventing renewal from inheriting trial deductions (`deploy/bds-ai-execution-mu.php`).
+- Paid allowance cycles are now keyed to a new authoritative paid order, not an access reactivation generation. Reconciliation selects the newest paid renewal and refuses stale-parent fallback after a failed renewal (`deploy/bds-ai-subscriptions-mu.php`).
 - The Directory membership bridge is exact-host pinned, HMAC body/timestamp signed, constant-time verified, stable-event idempotent, consent gated, retry bounded, and can create only a private subscriber (`deploy/bds-directory-membership-bridge-mu.php`).
 - The Featured adapter disables the older activation callbacks and will activate only one of four fixed SKUs for the authenticated approved listing owner, an active WPS subscription, a matching paid parent/renewal order, valid real geography, and available inventory (`deploy/bds-featured-billing-adapter-mu.php`).
 
@@ -45,6 +46,7 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - API4 resource consumption: raw/request/field/response sizes, timeouts, credits, per-client limits, and global daily limits are bounded (`bds-ai-execution-mu.php:132`, `bds-sales-assistant-api-mu.php:54`).
 - API5 function authorization: customer AI routes are authenticated; admin-only lifecycle actions use Woo capability plus nonce; no client role field controls privilege.
 - API6 sensitive flows: idempotency, atomic allowance reservations, replay prevention, active-subscription checks, and daily provider caps protect billable actions.
+- Background subscription reconciliation is provider-key gated, locked, limited to 25 records per pass, and continues at five-minute intervals; idempotent event keys avoid repeated provider calls.
 - API7 SSRF: no request-controlled outbound URL exists.
 - API8 configuration: stable `WP_Error` responses hide provider internals; capabilities default off; no permissive CORS configuration was added.
 - API9 inventory: all routes and response states are documented in `BRANDDAD_SHARED_API_CONTRACTS.md` and `BRANDDAD_CURSOR_HANDOFF.md`.

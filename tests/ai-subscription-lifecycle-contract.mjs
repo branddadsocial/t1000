@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-ai-subscriptions-mu.php', 'utf8');
 
 const checks = [
-  ['version is 0.4.3', /BDS_AI_SUBSCRIPTIONS_VERSION', '0\.4\.3'/],
+  ['version is 0.5.0', /BDS_AI_SUBSCRIPTIONS_VERSION', '0\.5\.0'/],
   ['launch subscription identity comes from the server-side catalog', /function bds_ai_cart_has_launch_subscription[\s\S]*bds_ai_subscription_catalog\(\)[\s\S]*get_post_field\( 'post_name'/],
   ['only customer plans with FormWise tier ids enter the live lane', /'customer' === \( \$plan\['audience'\][\s\S]*wp_is_uuid\( \(string\) \( \$plan\['formwise_plan_id'\]/],
   ['launch subscription checkout is Stripe only and fails closed', /return isset\( \$gateways\['stripe'\] \) \? array\( 'stripe' => \$gateways\['stripe'\] \) : array\(\)/],
@@ -32,7 +32,13 @@ const checks = [
   ['duplicate revocation callbacks stop at the removal marker', /'' !== \(string\) bds_ai_sfw_meta\( \$subscription_id, '_bds_ai_access_removed' \)/],
   ['grant and revocation share one subscription lock', (source.match(/\$lock_key = 'bds_ai_lock_' \. md5\( \(string\) \$subscription_id \);/g) || []).length >= 2],
   ['successful reactivation clears the removal marker', /_bds_ai_access_removed', ''/],
-  ['each verified paid activation advances the allowance cycle', /_bds_ai_allowance_cycle'[\s\S]*\+ 1/],
+  ['each new verified paid order advances the allowance cycle once', /_bds_ai_allowance_order_id[\s\S]*\$allowance_order !== \$order_id[\s\S]*_bds_ai_allowance_cycle'[\s\S]*\+ 1/],
+  ['same-cycle reactivation does not reset customer credits', /if \( \$allowance_order !== \$order_id \)/],
+  ['existing idempotent grants migrate the allowance-order marker safely', /_bds_ai_last_event_key'[\s\S]*! absint\( bds_ai_sfw_meta\( \$subscription_id, '_bds_ai_allowance_order_id' \) \)[\s\S]*_bds_ai_allowance_order_id', \$order_id/],
+  ['reconciliation uses the latest paid renewal and never a stale parent fallback', /wps_wsp_last_renewal_order_id[\s\S]*return \$order && \$order->is_paid[\s\S]*\? \$last_renewal : 0/],
+  ['reconciliation is bounded to 25 records with five-minute continuation', /bds_ai_reconciliation_subscription_ids\( \$offset, 25 \)[\s\S]*5 \* MINUTE_IN_SECONDS[\s\S]*bds_ai_reconcile_subscriptions_continue/],
+  ['reconciliation lock has stale recovery', /bds_ai_reconcile_lock[\s\S]*time\(\) - 600/],
+  ['reconciliation remains disabled without recurring engine and provider key', /! \$state\['recurring_engine'\] \|\| ! \$state\['formwise_key'\]/],
   ['provider credential is never rendered into frontend markup', !/echo\s+[^;]*BDS_FORMWISE_PROVISIONING_KEY/.test(source)],
 ];
 

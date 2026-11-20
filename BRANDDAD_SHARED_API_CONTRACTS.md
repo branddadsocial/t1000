@@ -21,6 +21,8 @@ Body: `{ "tool": "social_draft", "inputs": { ... }, "access_mode": "paid|directo
 
 Rules: `listing_id` is used only for `directory_free`; ownership is rechecked against Directorist. Paid plan identity and allowance cycle are read from active WPS subscription metadata. Unknown fields are discarded. The browser cannot choose a provider id, credit cost, plan id, owner, allowance cycle, or origin.
 
+Paid/trial access takes deterministic precedence over free Directory allowance. A paid allowance cycle advances only when the authoritative paid order id changes; reactivation within the same billing period does not reset credits. The reconciliation worker uses the latest renewal order and never falls back to a stale paid parent after a failed renewal.
+
 Response: HTTP 202 with `{ id, tool, status, credit_cost, result, error_code, created_at, updated_at }` and `Location` header. An idempotent replay returns the existing job.
 
 Errors: 403 no entitlement, 404 unknown tool, 409 in progress, 413 request too large, 422 invalid input/idempotency key, 429 allowance exhausted, 503 provider disabled or job scheduling failed. A scheduling failure releases the reservation.

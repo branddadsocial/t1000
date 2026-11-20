@@ -35,6 +35,7 @@
 - [ ] One active subscription grants exactly one FormWise plan.
 - [ ] First authenticated AI job completes and deducts the correct customer allowance once.
 - [ ] Renewal resets/reconciles exactly once.
+- [x] Reconciliation code uses latest paid renewal and a per-paid-order allowance marker; same-cycle reactivation cannot reset credits.
 - [ ] Failed payment/on-hold revokes according to policy.
 - [ ] Cancellation prevents unauthorized renewal and preserves permitted records/free access.
 - [ ] Customer billing portal and invoice paths work.

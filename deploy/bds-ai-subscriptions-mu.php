@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Subscriptions
  * Description: BrandDad AI recurring billing safeguards and fail-closed FormWise entitlement lifecycle.
- * Version: 0.4.3
+ * Version: 0.5.0
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.4.3' );
+define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.5.0' );
 
 /**
  * Approved offer configuration. Product ids are resolved by slug to preserve existing products.
@@ -289,6 +289,19 @@ function bds_ai_order_matches_subscription( $order_id, $subscription_id ) {
 	return $is_renewal && $subscription_id === $renewal_subscription_id;
 }
 
+/** Latest billing order is authoritative; never fall back past a failed renewal. */
+function bds_ai_subscription_current_paid_order( $subscription_id ) {
+	$subscription_id = absint( $subscription_id );
+	$last_renewal    = absint( bds_ai_sfw_meta( $subscription_id, 'wps_wsp_last_renewal_order_id' ) );
+	if ( $last_renewal ) {
+		$order = wc_get_order( $last_renewal );
+		return $order && $order->is_paid() && bds_ai_order_matches_subscription( $last_renewal, $subscription_id ) ? $last_renewal : 0;
+	}
+	$parent_id = absint( bds_ai_sfw_meta( $subscription_id, 'wps_parent_order' ) );
+	$order     = $parent_id ? wc_get_order( $parent_id ) : false;
+	return $order && $order->is_paid() && bds_ai_order_matches_subscription( $parent_id, $subscription_id ) ? $parent_id : 0;
+}
+
 /** Schedule a bounded provisioning retry for transient network/API failures. */
 function bds_ai_schedule_provision_retry( $order_id, $subscription_id ) {
 	$attempts = absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_provision_attempts' ) );
@@ -345,6 +358,9 @@ function bds_ai_provision_active_subscription( $order_id, $subscription_id ) {
 	$generation = absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_access_generation' ) );
 	$event_key  = hash( 'sha256', 'grant|' . $subscription_id . '|' . $order_id . '|' . $plan['formwise_plan_id'] . '|' . $generation );
 	if ( hash_equals( (string) bds_ai_sfw_meta( $subscription_id, '_bds_ai_last_event_key' ), $event_key ) ) {
+		if ( ! absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_order_id' ) ) ) {
+			wps_sfw_update_meta_data( $subscription_id, '_bds_ai_allowance_order_id', $order_id );
+		}
 		return true;
 	}
 
@@ -413,7 +429,11 @@ function bds_ai_provision_active_subscription( $order_id, $subscription_id ) {
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_last_event_key', $event_key );
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_formwise_user_id', sanitize_text_field( $data['endUser']['id'] ) );
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_formwise_plan_id', sanitize_text_field( $plan['formwise_plan_id'] ) );
-		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_allowance_cycle', max( 1, absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_cycle' ) ) + 1 ) );
+		$allowance_order = absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_order_id' ) );
+		if ( $allowance_order !== $order_id ) {
+			wps_sfw_update_meta_data( $subscription_id, '_bds_ai_allowance_cycle', max( 1, absint( bds_ai_sfw_meta( $subscription_id, '_bds_ai_allowance_cycle' ) ) + 1 ) );
+			wps_sfw_update_meta_data( $subscription_id, '_bds_ai_allowance_order_id', $order_id );
+		}
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_provision_attempts', 0 );
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_cancel_attempts', 0 );
 		wps_sfw_update_meta_data( $subscription_id, '_bds_ai_access_removed', '' );
@@ -548,7 +568,7 @@ function bds_ai_reconcile_one_subscription( $subscription_id ) {
 	$subscription_id = absint( $subscription_id );
 	$status          = sanitize_key( (string) bds_ai_sfw_meta( $subscription_id, 'wps_subscription_status' ) );
 	if ( 'active' === $status ) {
-		$order_id = absint( bds_ai_sfw_meta( $subscription_id, 'wps_parent_order' ) );
+		$order_id = bds_ai_subscription_current_paid_order( $subscription_id );
 		if ( $order_id ) {
 			bds_ai_provision_active_subscription( $order_id, $subscription_id );
 		}
@@ -579,3 +599,74 @@ function bds_ai_capture_admin_reactivation() {
 	}
 }
 add_action( 'admin_init', 'bds_ai_capture_admin_reactivation', 1 );
+
+/** Return one bounded page of WP Swings subscription ids across HPOS/legacy. */
+function bds_ai_reconciliation_subscription_ids( $offset, $limit = 25 ) {
+	$offset = max( 0, absint( $offset ) );
+	$limit  = min( 50, max( 1, absint( $limit ) ) );
+	$hpos   = class_exists( '\\Automattic\\WooCommerce\\Utilities\\OrderUtil' )
+		&& \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
+	if ( $hpos && function_exists( 'wc_get_orders' ) ) {
+		$rows = wc_get_orders( array( 'type' => 'wps_subscriptions', 'return' => 'ids', 'limit' => $limit, 'offset' => $offset, 'orderby' => 'ID', 'order' => 'ASC' ) );
+		return array_values( array_filter( array_map( 'absint', is_array( $rows ) ? $rows : array() ) ) );
+	}
+	return array_values(
+		array_filter(
+			array_map(
+				'absint',
+				get_posts( array( 'post_type' => 'wps_subscriptions', 'post_status' => 'any', 'posts_per_page' => $limit, 'offset' => $offset, 'fields' => 'ids', 'orderby' => 'ID', 'order' => 'ASC' ) )
+			)
+		)
+	);
+}
+
+/** Recover missed lifecycle hooks in bounded idempotent batches. */
+function bds_ai_reconcile_subscriptions_batch() {
+	$state = bds_ai_subscription_readiness();
+	if ( ! $state['recurring_engine'] || ! $state['formwise_key'] ) {
+		return;
+	}
+	$lock = 'bds_ai_reconcile_lock';
+	if ( ! add_option( $lock, time(), '', false ) ) {
+		if ( absint( get_option( $lock, 0 ) ) < time() - 600 ) {
+			delete_option( $lock );
+		}
+		if ( ! add_option( $lock, time(), '', false ) ) {
+			return;
+		}
+	}
+	try {
+		$offset = absint( get_option( 'bds_ai_reconcile_offset', 0 ) );
+		$ids    = bds_ai_reconciliation_subscription_ids( $offset, 25 );
+		foreach ( $ids as $subscription_id ) {
+			$status = sanitize_key( (string) bds_ai_sfw_meta( $subscription_id, 'wps_subscription_status' ) );
+			if ( 'active' === $status ) {
+				$order_id = bds_ai_subscription_current_paid_order( $subscription_id );
+				if ( $order_id ) {
+					bds_ai_provision_active_subscription( $order_id, $subscription_id );
+				}
+			} elseif ( in_array( $status, array( 'cancelled', 'expired', 'on-hold', 'paused' ), true ) ) {
+				bds_ai_sfw_cancel_access( $subscription_id );
+			}
+		}
+		if ( count( $ids ) < 25 ) {
+			update_option( 'bds_ai_reconcile_offset', 0, false );
+			return;
+		}
+		update_option( 'bds_ai_reconcile_offset', $offset + count( $ids ), false );
+		if ( ! wp_next_scheduled( 'bds_ai_reconcile_subscriptions_continue' ) ) {
+			wp_schedule_single_event( time() + ( 5 * MINUTE_IN_SECONDS ), 'bds_ai_reconcile_subscriptions_continue' );
+		}
+	} finally {
+		delete_option( $lock );
+	}
+}
+add_action( 'bds_ai_reconcile_subscriptions_batch', 'bds_ai_reconcile_subscriptions_batch' );
+add_action( 'bds_ai_reconcile_subscriptions_continue', 'bds_ai_reconcile_subscriptions_batch' );
+
+function bds_ai_schedule_reconciliation() {
+	if ( ! wp_next_scheduled( 'bds_ai_reconcile_subscriptions_batch' ) ) {
+		wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'bds_ai_reconcile_subscriptions_batch' );
+	}
+}
+add_action( 'init', 'bds_ai_schedule_reconciliation' );
