@@ -182,6 +182,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Deploy QA repair `1.0.21` so fresh Events, Jobs, and Classifieds output excludes the unrelated demo refund modal.
 - [x] Verify fresh uncached Events, Jobs, and Classifieds have one H1, the Directory Concierge, no Sales Help helper, and no demo refund modal.
 - [!] Ordinary clean URLs still serve stale generated HTML. StartHost Edge Caching controls fail to render, and Directory Speed Auto-Heal requires an authenticated WordPress-admin session.
+- [x] Reconfirm fresh canonical Events, Jobs, and Classifieds output by applying `nocache=1` to each final all-listings URL after redirects; all three have one Concierge, no rendered Sales Help widget, and no refund modal.
 - [ ] Complete a provider-supported edge/origin purge or authenticated bounded refresh, then repeat the clean-URL acceptance without `nocache=1`.
 - [ ] Receive StartHost's response on ticket `898665003`, save the already reviewed five-minute scheduler if they unblock it, and observe the first bounded run before launch classification.
 - [x] Add the stale clean-URL evidence and broken Edge Caching UI error to ticket `898665003`; request only a hostname-bounded provider purge or supported control repair, with explicit no-content/no-database/no-broad-cache-deletion safeguards.
