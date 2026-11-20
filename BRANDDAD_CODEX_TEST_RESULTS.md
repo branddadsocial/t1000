@@ -260,3 +260,15 @@ Updated: 2026-11-19
 - Lead capture owned-origin/rate behavior, concurrent deduplication, verified stage hook ordering, admin authorization, opt-out propagation, and scheduled anonymization in WordPress staging.
 - Website-monitor configuration authorization, public/private DNS cases, safe real fetch, redirect/timeout behavior, concurrent/manual scheduling, plan loss, profile URL change, batch cursor, and actual value-report counters on WordPress staging.
 - Customer inquiry public form, spam/rate behavior, owner reference uniqueness, cross-account denial, nonce protection, concurrent version conflict, status workflow, retention anonymization, and real value-report counts on WordPress staging.
+
+## 2026-11-19 customer-inquiry staging acceptance preparation
+
+- `node tests/customer-inquiries-contract.mjs`: passed 26 assertions, including internal plan-candidate revalidation.
+- `node tests/staging-customer-inquiries-acceptance-contract.mjs`: passed 56 assertions covering exact-host/one-time execution, fixture identity, owned origin, size/rate limits, consent, idempotency, private ownership, cross-account 404, locks/versions, reports, retention, narrowly marked cleanup, state restoration, and no messaging/provider/payment surface.
+- Full suite: 27/27 Node contract files passed.
+- PHP compatibility: 3/3 passed.
+- PHP syntax: 27/27 deployment modules passed.
+- `git diff --check`: passed.
+- `rafter secrets .`: passed with no detected secrets.
+- `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
+- Hosted runtime acceptance: pending upload confirmation; do not treat this preparation as live evidence.

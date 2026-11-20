@@ -89,7 +89,7 @@
 - [ ] Run authorized real-host monitor acceptance across DNS/private-IP rejection/redirect/timeout/manual/daily/plan-loss/URL-change/report cases before enabling.
 - [x] Exercise the isolated exact-host monitoring harness for SSRF rejection, bounded owned-host fetch, locks, network failure, redirect, plan/URL shutdown, reporting, restoration, and tenant isolation.
 - [x] Implement owner-scoped customer inquiry capture/inbox/status with explicit contact consent, spam/rate bounds, actual reports, and closed/lost retention.
-- [ ] Connect/test the hosted inquiry form and owner inbox across tenant denial, versions, rates, consent, retention, and reports before enabling.
+- [~] Prepare the exact-host hosted inquiry acceptance harness for tenant denial, versions, rates, consent, retention, reports, and narrowly marked fixture cleanup; runtime upload/report remains pending before enabling.
 - [ ] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes.
 - [x] Monthly AI report counts actual job states/completions and explicitly labels currently unavailable outcome metrics.
 - [x] Implement a private idempotent lifecycle ledger and admin-only gross/refund/net event aggregate.

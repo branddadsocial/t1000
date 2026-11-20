@@ -191,7 +191,19 @@ The helper exists only to prove the production monitor on the canonical Stacksta
 
 Each eligible paid owner receives one opaque public form reference; it is an identifier, not an authorization credential. A public submission is accepted only on an owned BrandDad form origin while the owner's entitlement and form-enabled state are rechecked. The request requires a privacy acknowledgment, separate consent for the business to respond, a blank honeypot, bounded contact/message fields, at least one contact method, and client/global rate limits using non-stored HMAC IP keys.
 
+An internal plan-candidate integration hook is treated as untrusted. Its result is converted to an array, the slug/access mode are re-sanitized, and the service still requires `paid` plus the fixed inquiry-plan allowlist. No browser field can select a plan or owner.
+
 Inquiry records are private posts owned by the receiving WordPress user. Customer list/read/update APIs always query or compare `post_author` to the authenticated user; another user's id returns 404. Public callers cannot set the owner or workflow status. Status updates require the current version to prevent lost writes. No submission sends email, WhatsApp, or another side effect. Customer value reports count actual stored inquiries only. Contact/message data is excluded from lifecycle aggregates and provider prompts unless a later separately approved workflow explicitly needs it.
+
+### Isolated staging inquiry acceptance design
+
+`[fixed fake submission + owned origin] -> [production validation/rate/idempotency] -> [private marked inquiry] -> [owner-scoped APIs/report] -> [verified fixture cleanup]`
+
+- The helper runs once only on the canonical staging hostname, enables capture for that request, grants a synthetic allowlisted plan only to marker-owned non-admin fixture B, and suppresses no production permission check.
+- Inputs are fixed fake `.invalid` contact details and a non-sensitive test message. The helper accepts no browser parameters and exposes only allowlisted boolean evidence.
+- Acceptance covers origin/body/rate controls, honeypot/privacy/contact/idempotency validation, duplicate replay, ambiguous form references, private storage, owner list/read/update isolation, active/stale update locks, optimistic versions, real monthly/value-report counters, and closed-record retention anonymization.
+- The helper snapshots/restores both fixtures' form metadata and test rate counters. It hard-deletes only inquiry posts that it just created, marked, and verified as owned by fixture B; cleanup is in `finally` and never queries a broad deletion target.
+- No email, WhatsApp, provider execution, order, subscription, payment, public post, or production mutation occurs. Residual launch gates are the actual Cursor form/inbox, browser REST nonce acceptance, real consent copy, cron retention, and notification delivery.
 
 ## STRIDE findings and controls
 

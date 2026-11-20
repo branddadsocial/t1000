@@ -197,3 +197,13 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 ## Production status
 
 Not deployed. Follow-up delivery is compiled default-off. No purchase, subscription change, provider run, email, WhatsApp message, social post, listing publication, or customer billing modification was performed by this branch.
+
+## 2026-11-19 customer-inquiry acceptance preparation
+
+- Hardened the inquiry entitlement seam with an internal plan-candidate filter whose result is revalidated as an array, a paid access mode, and one of the fixed inquiry plan slugs.
+- Added an exact-host, one-time isolated-staging acceptance helper for consent, origin, body/rate limits, opaque form references, replay, private ownership, cross-account denial, optimistic versions, monthly evidence, and retention.
+- The helper uses only fixed fake `.invalid` contact data and a documentation-range IP. It sends no message, invokes no provider, creates no account/order/subscription/payment, and exposes only allowlisted boolean evidence.
+- Cleanup hard-deletes only private inquiry posts created by this helper that are marker-owned by fixture B; form metadata, rate counters, server values, and current-user context are restored in `finally`.
+- Local validation passed: 27/27 Node contracts, 3/3 PHP compatibility tests, 27/27 deploy PHP syntax checks, and `git diff --check`.
+- `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
+- The staging upload and hosted runtime report remain pending explicit action-time confirmation. Production remains unchanged.

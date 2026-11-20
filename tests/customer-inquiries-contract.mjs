@@ -6,7 +6,8 @@ const report = fs.readFileSync('deploy/bds-customer-status-api-mu.php', 'utf8');
 const lifecycle = fs.readFileSync('deploy/bds-lifecycle-events-mu.php', 'utf8');
 
 const checks = [
-  ['inquiry service is versioned', /BDS_CUSTOMER_INQUIRIES_VERSION', '0\.1\.0'/.test(source)],
+  ['inquiry service is versioned', /BDS_CUSTOMER_INQUIRIES_VERSION', '0\.1\.1'/.test(source)],
+  ['synthetic plan candidates are filtered then revalidated', /apply_filters\( 'bds_inquiries_plan_candidate'/.test(source) && /\$plan = is_array\( \$plan \) \? \$plan : array\(\)/.test(source) && /in_array\( \$slug, \$allowed, true \)/.test(source) && /'paid' === \$mode/.test(source)],
   ['public capture defaults off', /BDS_CUSTOMER_INQUIRIES_ENABLED[\s\S]*true === BDS_CUSTOMER_INQUIRIES_ENABLED/.test(source)],
   ['records are private and excluded from REST', /register_post_type\([\s\S]*'public' => false[\s\S]*'show_in_rest' => false/.test(source)],
   ['form availability requires active paid allowlisted plan', /'paid' === \$mode[\s\S]*in_array\( \$slug, \$allowed/.test(source)],

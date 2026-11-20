@@ -132,3 +132,15 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - Residual risk: the temporary product URL can be guessed. Hidden visibility, staging noindex, no cloned payment credentials/settings, account-required AI checkout, and fail-closed gateway/entitlement code limit impact. A real Stripe test-mode transaction remains a separately authorized acceptance step.
 
 Hosted result: the product exists only on the isolated staging hostname, is hidden from catalog browsing, noindex, virtual, sold individually, and limited to one item. A disposable Store API cart showed no available payment methods and an uninitialized Stripe checkout-session extension. No payment/order/customer/subscription mutation occurred. The helper's read-back gate covers the exact trial metadata, but independent database-row evidence remains an explicit acceptance item because the host's phpMyAdmin SSO did not open the selected staging database session.
+
+## 2026-11-19 customer-inquiry staging acceptance review
+
+- Scope: inquiry entitlement filter plus an exact-host staging helper that exercises public input validation and private fixture lifecycle.
+- Access control: production code still requires the default-off feature flag, paid allowlisted entitlement, opaque form ownership, owned HTTPS origin, and authenticated author-scoped private APIs. The synthetic plan applies only to non-admin fixture B on the canonical isolated staging host while no report exists.
+- Input/resource controls: the production permission callback enforces the 12 KiB raw-body limit, owned origin, HMAC-IP client rate, and bounded global rate. The helper verifies honeypot, privacy acknowledgment, contact consent, contact method, field limits, and body-bound idempotency.
+- Tenant isolation/integrity: records are private and owner-authored; list/update are customer-scoped; cross-account update is indistinguishable 404; updates use stale-safe locks plus optimistic versions; public responses are checked for PII/internal-id leakage.
+- Deletion safety: the only hard delete iterates exact ids created during this run and requires matching post type, fixture-B author, and `_bds_staging_inquiry_fixture=1`. Cleanup runs in `finally`; no broad query or user deletion exists.
+- Privacy: test contacts use `.invalid`, the IP is RFC documentation space, lifecycle evidence excludes submitted content, and old closed fixture PII is anonymized before the marked record is deleted.
+- Side effects: no email, WhatsApp, provider API, payment, order, subscription, public post, or production mutation is reachable from the helper.
+- Evidence: 56 helper contract assertions, the complete 27-file Node suite, 3 PHP compatibility tests, 27 PHP lints, and `git diff --check` passed. Local secrets scan passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus run was used.
+- Residual gate: hosted runtime evidence and cleanup must pass before the inquiry path can be described as staging-accepted; real frontend nonce/copy/notification acceptance remains separate.

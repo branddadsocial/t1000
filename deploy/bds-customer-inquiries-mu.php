@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Inquiries
  * Description: Private, owner-scoped inquiry capture for eligible BrandDad customers.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_CUSTOMER_INQUIRIES_VERSION', '0.1.0' );
+define( 'BDS_CUSTOMER_INQUIRIES_VERSION', '0.1.1' );
 
 function bds_inquiries_enabled() {
 	return defined( 'BDS_CUSTOMER_INQUIRIES_ENABLED' ) && true === BDS_CUSTOMER_INQUIRIES_ENABLED;
@@ -27,6 +27,8 @@ add_action( 'init', 'bds_inquiries_register_type' );
 
 function bds_inquiries_plan( $user_id ) {
 	$plan = function_exists( 'bds_ai_exec_active_plan' ) ? bds_ai_exec_active_plan( absint( $user_id ) ) : array();
+	$plan = apply_filters( 'bds_inquiries_plan_candidate', is_array( $plan ) ? $plan : array(), absint( $user_id ) );
+	$plan = is_array( $plan ) ? $plan : array();
 	$slug = sanitize_key( (string) ( $plan['slug'] ?? '' ) );
 	$mode = sanitize_key( (string) ( $plan['access_mode'] ?? '' ) );
 	$allowed = array( 'ai-lead-assistant', 'ai-business-essentials', 'ai-business-essentials-pro', 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro' );
