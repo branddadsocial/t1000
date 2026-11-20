@@ -22,6 +22,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 - Added bounded daily subscription reconciliation across HPOS/legacy storage, latest-renewal selection, stale-lock recovery, and five-minute batch continuation. Reactivation no longer resets monthly credits unless a genuinely new paid order exists.
 - Added an idempotent, privacy-limited lifecycle event ledger and admin analytics API. It records registration, trial activation, successfully provisioned payments, refunds, committed AI work, access revocation, Directory linking, and onboarding completion at the backend success points; reports separate gross, refunds, and net confirmed transaction events without calling them MRR or settled cash.
 - Added a default-off BrandDad acquisition lead pipeline: owned-origin public capture, explicit privacy/email-consent separation, HMAC email deduplication, bounded rates and fields, deterministic catalog recommendations, verified registration/trial/checkout/payment/onboarding/revocation stages, admin pagination, opt-out propagation, and bounded anonymization of stale unconverted PII. It sends no message itself.
+- Added a default-off daily website availability monitor for eligible paid plans: customer authorization attestation, onboarding-URL-only configuration, public-DNS/SSRF validation on every check, safe bounded no-redirect fetches, manual rate limits, per-customer/batch locks, Action Scheduler/cron queueing, plan-loss and URL-change shutdown, 24-month actual counters, lifecycle evidence, and customer value-report integration. It stores no response body and sends no alert.
 - Added security design, contracts, handoff, audit, entitlement, product, test, blocker, and production-checklist documentation.
 
 ## Implemented but not yet deployed
@@ -32,6 +33,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 - Directory Featured billing lifecycle adapter (not activatable until SKUs/geography integration exist).
 - Lifecycle analytics ledger and admin-only monthly aggregate API.
 - Sales lead capture/stage API and consent-safe retention pipeline (public capture remains disabled until frontend/privacy/staging acceptance).
+- Website monitoring API/worker and evidence reporting (execution remains disabled until real-host DNS/queue/fetch staging acceptance).
 - Cross-site account linking.
 - Public sales-assistant proxy.
 - Subscription bridge and free-AI ledger copied into the clean integration branch.
@@ -40,10 +42,11 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 
 1. Add WordPress staging fixtures for REST permission/ownership, provider failure, idempotent replay, trial conversion, Directory bridge replay, onboarding concurrency, lifecycle-event deduplication/refunds, unsubscribe, and HPOS subscription discovery.
 2. Connect Cursor's lead form to the new capture contract and exercise privacy acknowledgment, optional consent, deduplication, stage progression, unsubscribe, and retention in staging; enable capture only after acceptance.
-3. Add trial reminder delivery only after a verified communications provider and sender are available.
-4. Add signed Stripe/Woo webhook reconciliation only if the installed gateway does not already provide authoritative Woo transitions.
-5. Create/approve the four Featured Woo SKUs, connect Cursor listing selection/geography, then run the adapter's staging lifecycle test.
-6. Extend customer value reports when real publishing/lead adapters provide verified customer outcomes.
+3. Exercise one authorized public website through configure, async/manual check, DNS/redirect/error, plan-loss, URL-change, daily batch, and value-report paths on WordPress staging; then enable monitoring server-side.
+4. Add trial reminder and monitor-alert delivery only after a verified communications provider and sender are available.
+5. Add signed Stripe/Woo webhook reconciliation only if the installed gateway does not already provide authoritative Woo transitions.
+6. Create/approve the four Featured Woo SKUs, connect Cursor listing selection/geography, then run the adapter's staging lifecycle test.
+7. Extend customer value reports when real publishing/lead adapters provide verified customer outcomes.
 
 ## Production status
 

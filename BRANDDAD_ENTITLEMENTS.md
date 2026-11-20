@@ -36,3 +36,7 @@ Each execution chooses exactly one source: `paid`, `trial`, or `directory_free`.
 - Cancellation/expiry/on-hold revokes the exact FormWise plan through the allowlisted subscription bridge.
 - Renewal success provisions/reconciles once; failed renewal removes access according to subscription state.
 - Historical orders, outputs, and audit records are preserved according to retention policy.
+
+## Website monitoring
+
+Monitoring requires an active allowlisted paid plan and an explicitly authorized onboarding website. Trials and Directory-free access do not receive recurring monitoring. Plan loss or a changed onboarding URL disables future checks. The customer may request at most one manual check per hour; the daily worker remains bounded. Availability evidence does not represent SEO rankings, traffic, leads, or revenue.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Status API
  * Description: Customer-owned account, entitlement, usage, and evidence-based monthly value reporting.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_CUSTOMER_STATUS_API_VERSION', '0.1.0' );
+define( 'BDS_CUSTOMER_STATUS_API_VERSION', '0.2.0' );
 
 function bds_customer_status_permission() {
 	return is_user_logged_in();
@@ -129,6 +129,7 @@ function bds_customer_value_report( $user_id, $period ) {
 			'provider_cost'  => 'unavailable',
 			'note'           => 'Provider cost is not reported until a verified provider cost value is returned or reconciled.',
 		),
+		'website_monitoring' => function_exists( 'bds_monitoring_customer_summary' ) ? bds_monitoring_customer_summary( $user_id, $period ) : array( 'status' => 'unavailable' ),
 		'unavailable_metrics' => array(
 			'social_posts_published',
 			'blogs_published',

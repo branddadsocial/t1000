@@ -60,6 +60,8 @@
 - [x] Implement private, deduplicated lead capture and verified lifecycle stage backend with separate email consent and bounded retention.
 - [ ] Connect Cursor's form with mandatory privacy acknowledgment and optional unselected email consent; test origin/rates/deduplication/admin denial/unsubscribe/retention before enabling.
 - [ ] SEO/social/WhatsApp/video/music adapters have provider-specific permissions, costs, retries, and proof.
+- [x] Implement paid-entitlement website availability checks with customer authorization, SSRF controls, bounded queues, actual counters, and no unverified alerts.
+- [ ] Run authorized real-host monitor acceptance across DNS/private-IP rejection/redirect/timeout/manual/daily/plan-loss/URL-change/report cases before enabling.
 - [ ] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes.
 - [x] Monthly AI report counts actual job states/completions and explicitly labels currently unavailable outcome metrics.
 - [x] Implement a private idempotent lifecycle ledger and admin-only gross/refund/net event aggregate.

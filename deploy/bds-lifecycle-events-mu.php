@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Lifecycle Events
  * Description: Idempotent, privacy-limited customer lifecycle and confirmed-revenue event ledger.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: BrandDad Social
  */
 
@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LIFECYCLE_EVENTS_VERSION', '0.2.0' );
+define( 'BDS_LIFECYCLE_EVENTS_VERSION', '0.3.0' );
 
 function bds_lifecycle_event_types() {
-	return array( 'registered', 'lead_created', 'lead_stage_changed', 'trial_started', 'payment_confirmed', 'payment_refunded', 'access_revoked', 'ai_task_completed', 'directory_member_linked', 'onboarding_completed' );
+	return array( 'registered', 'lead_created', 'lead_stage_changed', 'trial_started', 'payment_confirmed', 'payment_refunded', 'access_revoked', 'ai_task_completed', 'website_monitor_check', 'directory_member_linked', 'onboarding_completed' );
 }
 
 function bds_lifecycle_register_type() {
@@ -191,6 +191,12 @@ function bds_lifecycle_ai_completed( $job_id, $user_id, $tool, $mode ) {
 	bds_lifecycle_record( 'ai_task_completed', $user_id, 'ai_job', $job_id, array( 'tool' => $tool, 'access_mode' => $mode, 'stage' => 'active' ), 'ai-job-' . absint( $job_id ) );
 }
 add_action( 'bds_ai_job_completed', 'bds_lifecycle_ai_completed', 10, 4 );
+
+function bds_lifecycle_monitor_checked( $user_id, $status, $checked_at ) {
+	$status = in_array( sanitize_key( $status ), array( 'available', 'failed' ), true ) ? sanitize_key( $status ) : 'failed';
+	bds_lifecycle_record( 'website_monitor_check', $user_id, 'user', $user_id, array( 'stage' => $status ), 'monitor-' . absint( $user_id ) . '-' . sanitize_text_field( $checked_at ) );
+}
+add_action( 'bds_website_monitor_checked', 'bds_lifecycle_monitor_checked', 10, 3 );
 
 function bds_lifecycle_directory_linked( $user_id, $event_id ) {
 	bds_lifecycle_record( 'directory_member_linked', $user_id, 'user', $user_id, array( 'stage' => 'registered' ), 'directory-' . sanitize_text_field( $event_id ) );

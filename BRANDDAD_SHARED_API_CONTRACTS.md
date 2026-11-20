@@ -51,6 +51,16 @@ Response: `{ "status", "reference", "recommendation", "email_followup", "email_c
 
 Admin-only (`manage_woocommerce`) paginated lead records, 50 per page. The optional stage must be server-allowlisted. Registration, trial, checkout, paid provisioning, onboarding, and revocation stages are updated only by verified backend hooks. Public capture cannot mark a lead paid or active. Stale unconverted contact data is anonymized after a bounded retention period; customer/account records and suppression evidence follow their separate retention obligations.
 
+## GET/POST `/monitor/site`
+
+Authenticated customer-owned website monitor state/configuration. The customer cannot submit a URL here; the backend uses only the URL already saved in that customer's onboarding profile. `POST` body is `{ "enabled": true, "authorization_confirmed": true }`. Enabling requires an active allowlisted paid plan and a customer attestation that they own, manage, or have permission to monitor the site. Changing the onboarding URL disables the monitor until the customer explicitly reconnects.
+
+Every check resolves all available A/AAAA records and refuses local/private/reserved destinations, IP-literal hosts, URL credentials, and nonstandard ports. It uses safe HTTP with a 10-second timeout, 64 KiB cap, and no redirects. The body is hashed for change evidence but never stored. Response state includes actual status, HTTP code, latency, byte count, check time, and consecutive failures; it does not claim SEO, traffic, lead, or revenue results.
+
+## POST `/monitor/site/check`
+
+Authenticated manual check request, limited to one per customer per hour. It queues the same locked worker used by the bounded daily batch. No alert is sent by this endpoint. Monitoring defaults off and requires `BDS_WEBSITE_MONITORING_ENABLED=true` only after staging acceptance.
+
 ## GET `/onboarding`
 
 Authenticated customer-owned onboarding view model. Response includes `version`, allowlisted `profile`, access mode, step states, first completed job id, recommended allowlisted tool, and `complete`. It never returns provider ids, credentials, or another user's data.
@@ -69,7 +79,7 @@ Authenticated customer-owned summary containing access mode (`paid`, `trial`, `d
 
 ## GET `/reports/value?period=YYYY-MM`
 
-Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, and committed customer credits. Failed work is not counted as completed value. Unconnected publishing, rankings, leads, and revenue are explicitly returned as unavailable rather than inferred. Results are capped at 500 jobs with a `truncated` flag.
+Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, committed customer credits, and—when the verified monitor plugin is present—actual availability checks. Failed AI work is not counted as completed value. Unconnected publishing, rankings, leads, and revenue are explicitly returned as unavailable rather than inferred. AI results are capped at 500 jobs with a `truncated` flag.
 
 ## GET `/admin/analytics/summary?period=YYYY-MM`
 

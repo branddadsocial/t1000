@@ -12,7 +12,7 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 | AI Lead Assistant | $19.99/mo, 80 credits | Plan verified; private BrandDad acquisition lead pipeline now implemented, but the customer-facing lead form/delivery and verified follow-up sender remain staging-blocked |
 | AI Social Growth | $29.99/mo, 150 credits | Plan and draft flow verified; publishing adapter not yet production-ready |
 | AI Review Assistant | $9.99/mo | Draft workflow available; standalone plan mapping remains staged |
-| AI Business Monitoring | $9.99/mo | Monitoring worker/cost ceiling not yet implemented |
+| AI Business Monitoring | $9.99/mo | SSRF-resistant daily availability worker and actual monthly counters implemented default-off; standalone plan mapping, real-host acceptance, and verified failure alerts remain staged |
 | AI Website Chatbot | $29.99/mo | Blocked by observed reply cost and customer knowledge automation |
 | AI Sales Assistant Plus | $39.99/mo | Blocked by observed reply cost; BrandDad's own assistant has a separate capped proxy |
 | Complete AI Starter/Growth/Pro/DFY | $79.99/$149.99/$249.99/from $399 | Quote-only until real fulfillment allowances/providers pass cost tests |

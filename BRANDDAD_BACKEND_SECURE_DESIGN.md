@@ -82,6 +82,12 @@ Lead records are private, non-public, excluded from REST and search, keyed for d
 
 Unconverted records have bounded retention and are anonymized rather than silently retained forever. Follow-up consent can be withdrawn, and no outbound message is sent by the lead API. The separate follow-up worker remains default-off and must recheck fresh consent immediately before delivery. Payment/order data remains authoritative in WooCommerce; the lead pipeline is not a billing source.
 
+## Website availability monitoring
+
+Monitoring is available only to an authenticated customer with an active allowlisted paid entitlement. The browser cannot submit a destination URL to the monitoring endpoint; configuration reads the URL already stored in that customer's onboarding profile. Each configuration and scheduled check revalidates scheme, userinfo, port, hostname, and every available A/AAAA address. Local names, IP literals in private/reserved ranges, DNS failures, and any non-public address fail closed.
+
+The fetch uses WordPress safe HTTP, a short timeout, zero redirects, a small response cap, and a fixed user agent. It never sends cookies, authorization, customer text, or provider credentials. The response body is not retained; only status, bounded latency, response byte count, a content hash, and timestamps are stored in customer-owned user metadata. Manual checks are rate-limited and all checks use stale-recoverable per-customer locks. The scheduler processes bounded batches with a recoverable cursor. No failure email or external side effect is sent until a separate verified notification adapter exists.
+
 ## STRIDE findings and controls
 
 - Spoofing: WordPress session + nonce, capability/ownership checks, signed single-use link tokens, separate service credentials.
