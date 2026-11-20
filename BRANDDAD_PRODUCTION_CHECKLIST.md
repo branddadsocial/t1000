@@ -169,5 +169,5 @@ Nothing unchecked above may be described as fully operational.
 - [x] Confirm that Social remained available and that Directory later recovered without a BrandDad-side change.
 - [ ] Obtain StartHost database telemetry for the incident window and a provider determination of the intermittent 200/500 pattern.
 - [x] Prepare a precise, non-destructive StartHost incident request without sending it.
-- [ ] Complete a low-rate observation window for Directory homepage, REST, category, location, search, and submission routes before stable launch classification.
+- [~] Immediate recovery observation passed three homepage/REST rounds plus one seven-route homepage/REST/category/location/listing/submission sample with HTTP 200 throughout; continue the window and obtain provider telemetry before stable launch classification.
 - [ ] If a repair, restart, credential rotation, plugin disablement, or cache purge is proposed, back up and obtain separate approval before executing it.
