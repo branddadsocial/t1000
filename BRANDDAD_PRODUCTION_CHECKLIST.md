@@ -144,7 +144,8 @@ Nothing unchecked above may be described as fully operational.
 - [x] Identify the pending financial-adjacent work: exactly two no-argument WP Swings recurring checks are overdue; the active subscription's next payment is 2026-12-13.
 - [x] Prepare the exact StartHost task form with the reviewed command and five-minute cadence without testing or saving it.
 - [x] Receive exact action-time confirmation for `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
-- [!] StartHost rejected the first approved save with `Cron failed to add` because the package remains malware-flagged; no task was created and no cron batch ran. A fresh scan is in progress.
+- [!] StartHost rejected the first approved save with `Cron failed to add` because the package remains malware-flagged; no task was created and no cron batch ran. Fresh scan `24662257` completed and reproduced six generated-cache false positives plus the historical quarantined file, so the restriction remains.
+- [ ] Submit the exact false-positive evidence to StartHost/20i support and obtain package clearance or a safe allowlist for the generated Directory cache path/signature (requires action-time confirmation because this sends a support request on the owner's behalf).
 - [ ] After StartHost clears the package restriction, re-enter and save the exact reviewed task.
 - [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
 - [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
