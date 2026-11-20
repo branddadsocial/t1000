@@ -2,14 +2,17 @@
 
 Updated: 2026-11-19
 
-## 2026-11-19 provider-cost acceptance preparation
+## 2026-11-19 hosted provider-cost acceptance
 
 - Corrected a verified-cost input defect where a negative PHP integer could be converted to a positive value by `absint`; signed integers, fractional values, invalid timestamps, and all other malformed accounting inputs now fail closed before normalization.
 - Added an exact-host, one-time staging harness for provider-cost authorization, validation, HMAC idempotency, privacy, grouped aggregation, contribution math, incomplete-coverage labeling, and invalid-period handling.
 - The harness uses one fixed 137-cent synthetic staging fixture and compares deltas only. Its public evidence is boolean-only and creates no user, administrator, order, subscription, payment, refund, provider call, message, entitlement, or production mutation.
 - Added 42 staging security/behavior assertions and expanded the ledger contract to 19 checks. The complete local suite passes 25/25 Node contracts, three PHP compatibility suites, 25 PHP syntax checks, and `git diff --check`.
 - Rafter secure-design and API review walks were completed. Local secret scanning found no secrets; remote fast SAST/SCA was attempted and remains quota-blocked at 16/16. Paid Plus was not used.
-- Upload is not yet performed. Isolated staging requires the corrected ledger plus the exact-host acceptance helper; production remains unchanged.
+- After explicit action-time confirmation, uploaded the corrected ledger and exact-host acceptance helper to isolated staging and triggered the one-time run.
+- Hosted evidence returned `complete=true` with all 24 checks true and no error codes: non-admin denial; invalid provider/product/basis/currency/amount/timestamp/idempotency rejection; private storage; duplicate reuse/single-row storage; hashed-reference privacy; untrusted metadata stripping; exact provider/product/cost/contribution deltas; explicit incomplete coverage; and invalid-period rejection.
+- Post-run smoke kept the homepage and product at HTTP 200/noindex, the public sales catalog at HTTP 200, and anonymous account/value/AI/onboarding/finance routes at HTTP 401. The production evidence route returned HTTP 404.
+- No real provider expense, payment, refund, customer charge, message, provider call, entitlement, or production mutation occurred.
 
 ## 2026-11-19 hosted customer API acceptance
 

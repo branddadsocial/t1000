@@ -18,7 +18,7 @@
 - [ ] Test cross-account denial, CSRF/nonce, replay, rate-limit, and provider-outage cases in WordPress.
 - [x] Add a verified-only provider-cost ledger with no public write route and explicit incomplete-coverage reporting.
 - [x] Reject negative and fractional provider costs before WordPress integer normalization.
-- [ ] Exercise provider-cost validation, replay, privacy, admin denial, and contribution deltas in isolated WordPress staging.
+- [x] Exercise provider-cost validation, replay, privacy, admin denial, and contribution deltas in isolated WordPress staging.
 - [ ] Reconcile provider/processor/invoice costs and prove contribution totals against accounting records before displaying a margin as complete.
 
 ## Deployment

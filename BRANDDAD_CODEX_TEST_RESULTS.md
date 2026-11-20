@@ -1,6 +1,6 @@
 # BrandDad Codex test results
 
-## 2026-11-19 provider-cost acceptance preparation
+## 2026-11-19 hosted provider-cost acceptance
 
 - `tests/provider-cost-ledger-contract.mjs`: 19/19 assertions passed.
 - `tests/staging-provider-cost-acceptance-contract.mjs`: 42/42 assertions passed.
@@ -9,7 +9,10 @@
 - Manual Rafter review confirmed that the accounting writer has no public REST route; the admin aggregate remains GET-only and `manage_woocommerce` gated; the staging evidence route is exact-host, request-input-free, and boolean-only; invalid signed/fractional/oversized/future values fail closed; the fixed fixture reuses the normal HMAC and lock path; and no customer/payment/provider/message mutation exists.
 - `rafter secrets .`: no secrets detected. The CLI emitted its known Betterleaks version warning and exited successfully.
 - Required `rafter run` fast scan was attempted and blocked by the 16/16 quota. Paid Plus was not used.
-- No staging upload, synthetic cost row, payment, message, provider run, entitlement, or production mutation occurred in this preparation batch.
+- Hosted report: `complete=true`; 24/24 checks true; no error codes.
+- Verified non-admin denial; all malformed accounting inputs fail closed; one fixed synthetic private row is stored; replay reuses that row; raw reference and untrusted metadata are absent; provider/product/total cost deltas are +137 minor units; contribution delta is -137; coverage remains explicitly partial; and invalid periods are rejected.
+- Post-run staging smoke: homepage 200/noindex, product 200/noindex, public sales catalog 200, and anonymous account/value/AI/onboarding/admin-finance routes 401.
+- Production evidence route returned HTTP 404. No real provider cost, payment, refund, customer charge, message, provider run, entitlement, or production mutation occurred.
 
 ## 2026-11-19 hosted customer API acceptance
 
