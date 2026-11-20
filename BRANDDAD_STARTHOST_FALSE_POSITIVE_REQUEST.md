@@ -1,6 +1,22 @@
 # StartHost false-positive clearance request
 
-Status: submitted after explicit action-time confirmation. StartHost Web Hosting ticket `898665003` is open against the `branddad.social` package, created 2026-11-20 17:48:42.
+Status: submitted after explicit action-time confirmation. StartHost Web Hosting ticket `898665003` is `Awaiting Customer Reply` against the `branddad.social` package, created 2026-11-20 17:48:42 and last updated 2026-11-20 18:10:34.
+
+## Provider reply
+
+StartHost said it cannot remove the flag and that the warning can be ignored when the owner knows it is a false positive. That response does not resolve the operational blocker: after the visible package banner cleared, the exact reviewed PHP 8.4 scheduled task still returned `Cron failed to add`, the task list remained empty, and no cron batch ran.
+
+## Prepared follow-up — not sent
+
+Sending this is a representational action and requires action-time confirmation.
+
+> Thank you. Ignoring the warning does not resolve the operational issue. The exact PHP 8.4 scheduled task was attempted again after the visible package warning cleared, and StartHost still returned `Cron failed to add`; no scheduled task was created.
+>
+> Please identify the exact remaining backend restriction preventing Scheduled Tasks for this package and either release that restriction or provide the provider-supported alternative for running WordPress `wp-cron.php` every five minutes. The reviewed command is:
+>
+> `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php`
+>
+> Please do not delete or modify production files, databases, customer data, or subscriptions. We only need the scheduler restriction resolved or a safe supported runner documented.
 
 ## Form selections
 
