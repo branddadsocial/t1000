@@ -4,6 +4,51 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Hosted synthetic subscription-lifecycle acceptance — 2026-11-19
+
+### Scope and data flow
+
+`[Public GET trigger on exact Stackstaging host] -> [one-time MU acceptance runner] -> [fixture-marked Woo orders + WPS subscription owned by existing subscriber fixture] -> [production trial/provision/revoke functions] -> [request-scoped pre_http_request simulator for the fixed FormWise endpoint] -> [boolean-only report]`. The runner never invokes a gateway, never submits card data, never reaches FormWise, and never changes a production host. The trust boundaries are public request to exact-host runner, runner to WordPress/Woo storage, and production entitlement code to the intercepted fixed provider URL.
+
+### Authentication and authorization decisions
+
+- Human identity remains the existing WordPress cookie/session primitive. The public evidence route is intentionally unauthenticated because it returns only an allowlisted boolean report and registers only on the canonical temporary staging hostname.
+- The runner reuses only `bds_stage_acceptance_a` when its exact fixture marker is `a` and it lacks administrator capabilities. It accepts no user, order, subscription, product, status, email, plan, URL, or amount from the request.
+- Production subscription ownership remains server-derived from WP Swings metadata and the Woo order/customer relationship. No tenant id is accepted from the browser.
+- Refuse-list check: no password/token design, no JWT, no browser-supplied identity, no role mutation, and no authentication bypass is introduced.
+
+### Stored data, retention, and cleanup
+
+- Stored fixtures are exact marked synthetic Woo orders, one exact marked WPS subscription, existing fixture-user trial history temporarily saved/restored, bounded subscription metadata, and a boolean-only acceptance report. The fixture email is the existing `.invalid` staging address; no real customer PII or PCI data is used.
+- Every created record id is retained in request-local memory, rechecked for the exact acceptance marker before forced deletion, and deleted in `finally`. Pre-existing trial history and user context are restored exactly. If marker verification fails, cleanup fails closed and the report records a bounded error code for manual recovery.
+- No raw provider credential, synthetic authorization header, order id, subscription id, email, response body, or internal metadata is returned by the report. Existing hosting/database encryption and backup controls remain authoritative; this batch adds no new key store.
+
+### API, idempotency, and resource controls
+
+- The only new route is GET-only, versioned under `/branddad/v1/staging/subscription-lifecycle-acceptance`, canonical-host gated, and one-time report gated. It has no parameters or body and performs no mass assignment.
+- A stale-safe option lock prevents concurrent execution. Creation refuses pre-existing records carrying the exact run marker. All orders are synthetic and explicitly marked as no-gateway/no-charge before production lifecycle functions are called.
+- The request-scoped HTTP simulator answers only the exact FormWise HTTPS end-user create/remove endpoints while the exact acceptance context is active. Any other outbound request is rejected and counted; no redirects are followed.
+- Production grant/revoke idempotency, allowance-order markers, access generations, and retry bounds are exercised rather than replaced. Scheduled retry artifacts created by simulated failure are unscheduled only for exact fixture arguments.
+
+### Deployment and secret decisions
+
+- The helper filename sorts before the production subscription MU plugin so it can define an acceptance-only dummy provisioning constant on the exact staging host for the one request. The value is deterministic, non-production, never returned, and unavailable after the report exists.
+- Production remains fail-closed. The helper registers no route, constants, simulator, or execution hook when the canonical temporary staging hostname does not match or the one-time report already exists.
+- No new dependency is installed. The reviewed source checksum, isolated staging upload, production 404 check, and rollback copy remain deployment controls.
+
+### STRIDE and abuse cases
+
+- Spoofing/elevation: a caller cannot select a user or plan; the exact existing subscriber marker and non-admin capability are mandatory. A forged Host header cannot pass the installed `home_url()` host check.
+- Tampering: exact product slug/fixture marker, order/subscription relationships, statuses, trial fields, and renewal links are re-read from server storage. Test provider responses are fixed and their email/UUID/tier claims must satisfy production validation.
+- Repudiation: the one-time report records completion time and boolean checks only; created record ids remain private and all production access hooks still emit their existing bounded lifecycle evidence.
+- Information disclosure: no ids, email, credential, token, provider body, order note, or customer data appears in the response. Errors are bounded sanitize-key codes.
+- Denial of service: one-time execution, stale-safe lock, fixed small record count, bounded retry tests, and exact cleanup prevent fan-out or repeated cost.
+- Abuse twins: "test a renewal" becomes "create a real charge"—blocked because no gateway/payment API is invoked; "test revocation" becomes "remove a real customer's tier"—blocked by fixture-only records and the request-scoped provider simulator; "clean up fixtures" becomes "delete another record"—blocked by exact run markers and ids created in the same request.
+
+### Residual risk and acceptance boundary
+
+This proves WordPress/Woo/WP Swings metadata handling, trial gating, paid grant/replay, allowance-cycle behavior, failed-renewal revocation, cancellation, provider-failure retry, cleanup, and report privacy under hosted PHP. It does not prove Stripe test checkout, gateway webhooks, a real FormWise mutation, browser REST nonce behavior, real email, or production deployment. Those remain separate approval-gated acceptance stages.
+
 ## Staging authenticated-ownership acceptance harness — 2026-11-19
 
 - Scope is one isolated host: `staging-branddad-social.stackstaging.com`, derived from configured `home_url()` rather than a caller-controlled Host header.

@@ -1,5 +1,14 @@
 # BrandDad Codex test results
 
+## 2026-11-19 synthetic subscription-lifecycle acceptance preparation
+
+- `tests/staging-subscription-lifecycle-acceptance-contract.mjs`: 44/44 assertions passed.
+- `tests/ai-subscription-lifecycle-contract.mjs` and `tests/ai-trial-contract.mjs`: passed.
+- Full local suite: 31/31 Node contract files, 3/3 PHP compatibility suites, 31/31 deployment PHP syntax checks, and `git diff --check` passed.
+- `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- Manual L2 review: the route is canonical-host/one-time gated and parameter-free; fixture identity/product/order/subscription are server-derived and marker checked; the acceptance credential is dummy and every fixed FormWise request is locally intercepted; reports expose only allowlisted booleans; retry/event/user-state cleanup is exact; deletion requires ids created in the request plus exact markers; no SQL, shell, file path, deserialization, real gateway, message, account creation, or external provider request exists.
+- Hosted runtime evidence remains pending upload confirmation. Stripe checkout/webhook, real FormWise provisioning, browser REST nonce, email, and production behavior remain outside this synthetic test.
+
 ## 2026-11-19 hosted website-monitoring acceptance
 
 - `tests/website-monitoring-contract.mjs`: 22/22 assertions passed.

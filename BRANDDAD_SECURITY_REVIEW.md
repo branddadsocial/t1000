@@ -3,6 +3,19 @@
 Updated: 2026-11-19
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
+### Synthetic subscription-lifecycle acceptance review
+
+- L2/V1 architecture and threat model: the data flow, trust boundaries, STRIDE abuse cases, cleanup rules, and residual acceptance boundary are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.
+- A01/API1/API5 access control: the public route exposes no object operation and registers only on the configured canonical staging home host (`deploy/bds-000-staging-subscription-lifecycle-acceptance-mu.php:18-25`, `:549-566`). The runner accepts no request parameters and requires the exact marker-owned non-admin fixture and staging product (`:298-337`).
+- A02/V6 credentials: the dummy non-production key exists only while the one-time report is absent (`:36-43`). It is not returned, and local Rafter secret scanning is clean.
+- A03/V5 injection: there is no direct SQL, shell, file path, unserialize, or request-superglobal path. Provider-shaped JSON is locally generated and validated for email, UUID tier, and idempotency key before use (`:49-113`).
+- A04/API4/API6 business logic: a stale-safe lock and collision check bound execution to one small fixture set (`:244-340`). Trial, grant, replay, renewal, failed-payment, reactivation, cancellation, and failure/retry paths use the production functions (`:391-486`).
+- A05/API8/API9 staging isolation: the helper is exact-host and report gated, production registers no route, and no dependency or production configuration changes are introduced.
+- A09/V7 privacy: the report exposes 36 allowlisted booleans, bounded sanitized error codes, version, completion state, and time only (`:116-174`). It excludes ids, emails, credentials, provider bodies, order notes, and customer data.
+- A10/API7/API10 outbound safety: while the dummy key exists, all FormWise end-user traffic is intercepted. Only the fixed HTTPS create/delete shapes are accepted; calls outside the request-scoped context or unexpected URL/method fail closed (`:49-114`). Production response validation remains unchanged.
+- V11/V12 cleanup integrity: no gateway/payment API is called. Scheduled retries are removed only with exact hook arguments; lifecycle events are scoped to the fixture user; subscription/order deletion requires ids created in the same request plus the exact marker; prior trial history and current-user context are restored (`:177-242`, `:493-538`).
+- Residual: hosted PHP evidence is pending. Even after it passes, real Stripe test checkout/webhooks, real FormWise mutation, browser nonce behavior, and production deployment remain separate gates.
+
 Release packaging verification: the Social and Directory archives were built from the reviewed `deploy/` sources, and every packaged PHP file matched its source SHA-256. The packaging batch added documentation and archives only; it did not alter backend execution code or relax any default-off gate.
 
 ### Verified provider-cost ledger batch

@@ -2,6 +2,15 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 synthetic subscription-lifecycle acceptance preparation
+
+- Added an exact-host, one-time staging harness that creates only marker-owned synthetic Woo orders and one WPS subscription for the existing non-admin fixture, invokes the production trial/grant/revoke/reconcile functions, and deletes the exact fixtures afterward.
+- The helper sorts before the production subscription module so an acceptance-only dummy provisioning configuration can exist for one request. Every FormWise end-user request is intercepted locally; any request outside the exact acceptance context fails closed, and no real provider or gateway can run.
+- Acceptance covers authoritative seven-day trial metadata/history/25-credit access; zero-dollar trial grant denial; paid renewal matching and grant; replay idempotency; per-paid-order allowance cycles; failed-latest-order no-fallback; on-hold revocation; duplicate callback idempotency; same-order reactivation without credit reset; cancellation/history preservation; provider failure/retry; exact scheduled-job cleanup; lifecycle-event cleanup; exact user-state restoration; and no real gateway.
+- The Rafter secure-design and L2 web/API review walks are recorded. Exact markers protect every deletion; the report is boolean-only and exact-host gated. Local secret scanning found no secrets. Required `rafter run` was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
+- Local validation passes 31/31 Node contracts, 3/3 PHP compatibility tests, 31/31 deployment PHP lints, and `git diff --check`. The new helper contract contains 44 security/behavior assertions.
+- Hosted upload/runtime remains pending explicit action-time confirmation. This synthetic test does not replace Stripe test checkout/webhooks or a real FormWise mutation.
+
 ## 2026-11-19 hosted website-monitoring acceptance
 
 - Added a revalidated internal monitoring-plan candidate hook so isolated staging can exercise the real service without creating a fake Woo order or subscription. Hook output is still restricted to paid mode and the fixed monitoring-plan allowlist.
