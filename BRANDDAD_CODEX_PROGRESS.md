@@ -2,6 +2,15 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 provider-cost acceptance preparation
+
+- Corrected a verified-cost input defect where a negative PHP integer could be converted to a positive value by `absint`; signed integers, fractional values, invalid timestamps, and all other malformed accounting inputs now fail closed before normalization.
+- Added an exact-host, one-time staging harness for provider-cost authorization, validation, HMAC idempotency, privacy, grouped aggregation, contribution math, incomplete-coverage labeling, and invalid-period handling.
+- The harness uses one fixed 137-cent synthetic staging fixture and compares deltas only. Its public evidence is boolean-only and creates no user, administrator, order, subscription, payment, refund, provider call, message, entitlement, or production mutation.
+- Added 42 staging security/behavior assertions and expanded the ledger contract to 19 checks. The complete local suite passes 25/25 Node contracts, three PHP compatibility suites, 25 PHP syntax checks, and `git diff --check`.
+- Rafter secure-design and API review walks were completed. Local secret scanning found no secrets; remote fast SAST/SCA was attempted and remains quota-blocked at 16/16. Paid Plus was not used.
+- Upload is not yet performed. Isolated staging requires the corrected ledger plus the exact-host acceptance helper; production remains unchanged.
+
 ## 2026-11-19 hosted customer API acceptance
 
 - Added one exact-host harness covering onboarding validation/locking and customer value-report tenant isolation in a single batch.

@@ -1,5 +1,16 @@
 # BrandDad Codex test results
 
+## 2026-11-19 provider-cost acceptance preparation
+
+- `tests/provider-cost-ledger-contract.mjs`: 19/19 assertions passed.
+- `tests/staging-provider-cost-acceptance-contract.mjs`: 42/42 assertions passed.
+- `php -l` passed for the corrected ledger, the new acceptance helper, and all 25 deployment PHP files.
+- Full local suite: 25/25 Node contract files, three PHP compatibility suites, all deployment PHP syntax checks, and `git diff --check` passed.
+- Manual Rafter review confirmed that the accounting writer has no public REST route; the admin aggregate remains GET-only and `manage_woocommerce` gated; the staging evidence route is exact-host, request-input-free, and boolean-only; invalid signed/fractional/oversized/future values fail closed; the fixed fixture reuses the normal HMAC and lock path; and no customer/payment/provider/message mutation exists.
+- `rafter secrets .`: no secrets detected. The CLI emitted its known Betterleaks version warning and exited successfully.
+- Required `rafter run` fast scan was attempted and blocked by the 16/16 quota. Paid Plus was not used.
+- No staging upload, synthetic cost row, payment, message, provider run, entitlement, or production mutation occurred in this preparation batch.
+
 ## 2026-11-19 hosted customer API acceptance
 
 - `php -l deploy/bds-staging-customer-api-acceptance-mu.php`: passed.

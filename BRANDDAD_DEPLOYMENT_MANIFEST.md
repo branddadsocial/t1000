@@ -10,7 +10,7 @@ This manifest describes the reviewed Codex backend artifacts. It does not author
 - BrandDad Directory: `public_html/directory.branddad.social/wp-content/mu-plugins/`
 - Existing host-level rollback area: `_bds_deploy_backups/`
 
-No isolated staging WordPress root was visible in the hosting File Manager. The hosting panel also displayed `6 infection(s) found`; resolve or positively classify those detections before treating production as clean.
+Isolated Social staging is available at `public_html/staging.branddad.social/`; its valid public TLS hostname is `staging-branddad-social.stackstaging.com`. The owner has classified the earlier hosting-panel detections as false positives. Production security posture still requires routine monitoring and must not be inferred from that classification alone.
 
 ## Social package
 

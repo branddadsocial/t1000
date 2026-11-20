@@ -78,6 +78,17 @@ The recorder is not a public REST write endpoint. A server adapter supplies a fi
 - Abuse twin: a compromised adapter attempts to inflate cost or add arbitrary products. Mitigation: fixed provider/basis allowlists, authoritative catalog membership, bounded amounts, and admin-visible grouped totals. Residual risk is that compromised privileged server code can still submit false verified costs; reconciliation against provider invoices remains required.
 - Incorrect-margin abuse: estimated or unknown costs are rejected. Reports explicitly label absent cost coverage and never present incomplete data as final profit.
 
+### Isolated staging acceptance design
+
+The provider-cost acceptance helper is restricted to the canonical Stackstaging hostname and has no request-controlled write path. On its one automatic run it uses a fixed catalog product, fixed provider, fixed USD amount, fixed verified basis, current UTC timestamp, and fixed idempotency reference. It compares aggregate deltas before and after the fixture instead of exposing raw accounting rows.
+
+- The only public evidence route is exact-host gated and returns allowlisted booleans plus bounded error codes; it exposes no customer, post, order, invoice, idempotency reference, or financial total.
+- A marked non-administrator fixture account proves the admin read permission fails closed. The helper does not grant capabilities or create users.
+- Invalid provider, product, basis, currency, amount, timestamp, and idempotency values are rejected before the valid fixture is recorded.
+- The valid fixture is private, replayed through the normal HMAC/idempotency path, and checked for a single stored row, hashed reference only, ignored untrusted metadata, and exact provider/product/contribution deltas.
+- The helper creates no order, subscription, payment, refund, provider call, message, entitlement, customer charge, or production mutation. The fixture affects only isolated staging and is deliberately not evidence of a real provider expense or accounting reconciliation.
+- Residual risk: the staging aggregate contains a synthetic cost row while the helper remains installed. It is visibly isolated by hostname and fixed idempotency; the helper must never be uploaded to production, and real margin reporting remains blocked on invoice/processor reconciliation.
+
 ## Existing systems retained
 
 - Human identity remains the existing WordPress account and secure cookie session. No second password database or homegrown token format is introduced.

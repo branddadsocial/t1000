@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Verified Provider Cost Ledger
  * Description: Append-only verified provider-cost records and privacy-limited contribution reporting for WooCommerce administrators.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_PROVIDER_COST_LEDGER_VERSION', '0.1.0' );
+define( 'BDS_PROVIDER_COST_LEDGER_VERSION', '0.1.1' );
 
 function bds_provider_cost_register_type() {
 	register_post_type(
@@ -66,8 +66,10 @@ function bds_provider_cost_record( $event ) {
 	$currency = strtoupper( sanitize_text_field( (string) ( $event['currency'] ?? '' ) ) );
 	$amount_raw = $event['amount_minor'] ?? null;
 	$occurred_raw = $event['occurred_at'] ?? null;
-	$amount   = ( is_int( $amount_raw ) || ( is_string( $amount_raw ) && ctype_digit( $amount_raw ) ) ) ? absint( $amount_raw ) : 0;
-	$occurred = ( is_int( $occurred_raw ) || ( is_string( $occurred_raw ) && ctype_digit( $occurred_raw ) ) ) ? absint( $occurred_raw ) : 0;
+	$amount_valid = ( is_int( $amount_raw ) && $amount_raw >= 0 ) || ( is_string( $amount_raw ) && ctype_digit( $amount_raw ) );
+	$occurred_valid = ( is_int( $occurred_raw ) && $occurred_raw >= 0 ) || ( is_string( $occurred_raw ) && ctype_digit( $occurred_raw ) );
+	$amount   = $amount_valid ? absint( $amount_raw ) : 0;
+	$occurred = $occurred_valid ? absint( $occurred_raw ) : 0;
 	$idem     = sanitize_text_field( (string) ( $event['idempotency'] ?? '' ) );
 
 	if ( ! in_array( $provider, bds_provider_cost_allowed_providers(), true )
