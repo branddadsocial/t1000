@@ -4,6 +4,32 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Hosted sales-assistant grounding/cost acceptance — 2026-11-20
+
+### Data flow and trust boundaries
+
+`[fixed synthetic public question + owned Origin + documentation IP] -> [production /sales/chat handler] -> [request and daily rate limits] -> [authoritative commercial catalog] -> [fixed FormWise agent request intercepted locally] -> [hostile provider-shaped reply] -> [link/HTML stripping + server-owned offers] -> [bounded boolean report]`. Trust boundaries are public input to WordPress, WordPress to the fixed provider endpoint, and provider-shaped output back to the response. No real provider, customer, payment, email, lead, or production boundary is crossed.
+
+### Identity, tokens, input, and API controls
+
+- The production endpoint is intentionally public. It uses a server-generated UUID session, HMAC-SHA-256 token bound to purpose, expiry, and the HMAC of the caller IP; no WordPress login, tenant id, or caller-selected session id is trusted. Acceptance tests valid continuation plus tampered, expired, and different-client rejection.
+- The helper is canonical-home-host and one-time gated, accepts no request parameters, and temporarily supplies a visibly dummy execution key only before the sales plugin loads. All traffic to the one fixed FormWise agent endpoint is intercepted; calls outside the exact active request fail closed.
+- Synthetic messages are fixed and short. Production still enforces 16 KiB request, 2,000-character message, owned browser Origin, ten-per-minute client, and a helper-bounded daily cap. Only sanitized model text can return; HTML and every model-provided HTTP(S) URL are stripped.
+- Clickable offers are reconstructed from `bds_ai_commercial_catalog()` and `bds_ai_commercial_checkout_url()`. Missing or non-saleable Woo products return an empty URL and `for_sale=false`; the model never supplies a clickable link, price, or discount.
+
+### State, cleanup, deployment, and failures
+
+- The helper snapshots/restores the exact documentation-IP rate transient, current-day counter option, any request-created conversation transients, current user, and relevant server globals. It creates no post, user, order, subscription, lead, job, payment, email, or scheduled task.
+- The public report contains only allowlisted booleans, version, completion time, and bounded sanitized error codes. It never exposes IP, token, session/conversation id, provider body, key, prompt, price, URL, or customer data.
+- Production remains default-off. On later requests the stored report prevents the helper from defining the dummy key or enable flag, so the normal assistant remains unavailable until a real least-privilege key, approved allowance, and explicit production enablement exist.
+
+### STRIDE and abuse twins
+
+- Spoofing: token/client/purpose/expiry checks prevent cross-client continuation. Tampering: hostile URLs/HTML in provider output are removed and authoritative offers are rebuilt server-side. Repudiation: provider-call and rate-counter assertions are recorded as non-sensitive booleans. Disclosure: no secrets or conversation ids leave the report. Denial/cost abuse: per-client plus daily counters stop provider calls before egress. Elevation: the helper never authenticates, creates an account, or gains a role.
+- Abuse twin “ask for help” -> “burn the entire AI budget”: fixed daily cap plus client limit and request size. “Continue my chat” -> “steal another visitor's conversation”: client-bound signed token. “AI recommends a product” -> “AI invents a discount or phishing checkout”: hostile model links stripped; offers and links only from the catalog.
+
+Residual boundaries: local interception proves request shape, prompt constraints, output sanitization, offer grounding, session controls, and cost caps. It does not prove live FormWise availability, execution pricing, semantic answer quality, frontend rendering/escaping, human escalation, or production enablement. Those remain approval- and credential-gated.
+
 ## Hosted Woo refund-hook acceptance — 2026-11-20
 
 ### Scope, data flow, and trust boundaries

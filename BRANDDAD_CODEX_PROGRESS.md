@@ -2,6 +2,13 @@
 
 Updated: 2026-11-20
 
+## 2026-11-20 sales-assistant grounding/cost acceptance preparation
+
+- Added an exact-host, one-time staging harness around the existing public BrandDad salesperson. A visibly dummy execution key enables only the acceptance request, and every request to the fixed FormWise endpoint is intercepted locally; unexpected or out-of-context provider traffic fails closed.
+- The harness verifies owned-origin enforcement, raw-size denial, authoritative $29.99 Business Essentials catalog/checkout mapping, SEO/lead/social recommendation order, fail-closed links for unavailable products, hostile model HTML/link stripping, signed session validity/tamper/expiry/client binding, server-side continuation, three-call daily cost cap, ten-per-minute client cap, and exact state restoration.
+- The runner creates no user, lead, post, AI job, order, subscription, payment, email, or scheduled task. The report is exact-host, request-input-free, and boolean-only; production remains default-off after the one-time report is stored.
+- Secure design and the ASVS L2 web/API plus OWASP LLM manual review are recorded. The new static contract passes 39 assertions; the full local suite passes 33/33 Node contract files, 39/39 PHP syntax checks, and `git diff --check`. Local secret scanning is clean; required remote `rafter run` remains quota-blocked at 16/16 and paid Plus was not used.
+
 ## 2026-11-20 hosted Woo refund-hook acceptance preparation
 
 - Added a canonical-host, one-time staging harness for one synthetic $29.99 Woo order, a $5.00 partial refund, and a $24.99 remaining refund. Both refunds use WooCommerce's real `wc_create_refund()` and `woocommerce_order_refunded` path with `refund_payment=false` and `restock_items=false`; no gateway, card, transaction, provider, or production system is contacted.
