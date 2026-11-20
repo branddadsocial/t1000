@@ -476,3 +476,4 @@ Updated: 2026-11-19
 - Checked all three preserved `live_legacy` product slugs: AI Sales Assistant Basic, AI Sales Assistant Plus, and Custom Business Automation.
 - All ten canonical product URLs returned HTTP 200 without a cross-product redirect. Each page displayed the catalog price, a product image, and its primary add-to-cart/subscribe control. AI Business Essentials displayed its seven-day trial disclosure.
 - This is public catalog/presentation evidence only. It does not prove gateway charging, subscription provisioning, renewal, refund, cancellation, or provider delivery.
+- Negative sale gate: all 21 canonical slugs marked `staged` or `quote_only` returned HTTP 404 and rendered neither the requested product title nor the requested Product schema. No unfinished catalog offer was directly saleable at its reserved product URL.
