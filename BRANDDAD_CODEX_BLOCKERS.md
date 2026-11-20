@@ -5,7 +5,7 @@ Updated: 2026-11-20
 ## External or owner-controlled
 
 - **Critical production scheduler blocker:** BrandDad Social has no StartHost scheduled task while its live MU guards disable visitor-triggered WP-Cron/async Action Scheduler execution. WooCommerce reports 53 pending and 52 past-due actions plus 4,166 historical failures; Site Health reports `action_scheduler_run_queue` failed. The exact bounded PHP 8.4 command is prepared in `BRANDDAD_SCHEDULER_RECOVERY_DESIGN.md`, but saving it can execute subscription-related hooks and requires an exact action-time confirmation plus observed post-run reconciliation. Do not describe Social as launch-ready until this is resolved.
-- A combined files-and-databases backup was queued successfully, but the hosting session expired before completion could be verified. Reauthenticate, verify the completed backup row, then request the exact scheduler confirmation; do not run the queue on an unverified backup.
+- The combined files-and-databases backup completed and is downloadable. The remaining scheduler blocker is now only the required exact action-time confirmation to save the reviewed five-minute task, followed by bounded queue and financial reconciliation.
 
 - `staging.branddad.social` now exists with an isolated document root/database, staging-only administrator, the reviewed Social MU package, and active WooCommerce, WooCommerce Stripe Gateway, and Subscriptions for WooCommerce dependencies. Basic REST activation and anonymous-denial tests pass.
 - The owner positively classified the hosting panel's six detections as false positives. They were preserved and are no longer treated as an unresolved deletion/quarantine decision.

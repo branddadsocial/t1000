@@ -140,7 +140,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Audit StartHost Scheduled Tasks and confirm that no task currently exists.
 - [x] Verify active PHP 8.4, `/usr/bin/php84`, and the exact Social WordPress root.
 - [x] Document the threat model, allowlisted command, five-minute cadence, acceptance criteria, and rollback in `BRANDDAD_SCHEDULER_RECOVERY_DESIGN.md`.
-- [~] A combined files-and-databases backup was accepted and queued; reauthenticate and verify its completed row/download before enabling queue execution.
+- [x] Complete and verify a recoverable combined files-and-databases backup; StartHost reports `Backup job completed` and exposes Download.
 - [x] Identify the pending financial-adjacent work: exactly two no-argument WP Swings recurring checks are overdue; the active subscription's next payment is 2026-12-13.
 - [x] Prepare the exact StartHost task form with the reviewed command and five-minute cadence without testing or saving it.
 - [ ] Receive exact action-time confirmation and save `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
