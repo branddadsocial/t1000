@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Staging Sales Lead Acceptance
  * Description: One-time, exact-host lead validation, consent, deduplication, lifecycle, retention, and cleanup acceptance.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_STAGING_LEADS_VERSION', '0.1.0' );
+define( 'BDS_STAGING_LEADS_VERSION', '0.1.1' );
 define( 'BDS_STAGING_LEADS_HOST', 'staging-branddad-social.stackstaging.com' );
-define( 'BDS_STAGING_LEADS_REPORT_OPTION', 'bds_staging_sales_leads_report_v1' );
+define( 'BDS_STAGING_LEADS_REPORT_OPTION', 'bds_staging_sales_leads_report_v2' );
 
 function bds_staging_leads_is_host() {
 	return BDS_STAGING_LEADS_HOST === strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
@@ -56,9 +56,9 @@ function bds_staging_leads_save_report( $complete, $checks, $errors = array() ) 
 		'duplicate_reuses_reference',
 		'duplicate_single_record',
 		'signed_email_mismatch_rejected',
-		'verified_capture_created',
-		'signed_lead_private_owned',
-		'verified_consent_queued',
+		'fixture_email_verified_filter',
+		'consent_lead_private',
+		'verified_consent_mirrored',
 		'lifecycle_monotonic',
 		'unsubscribe_propagates',
 		'retention_anonymizes_unsubscribed',
@@ -231,7 +231,7 @@ function bds_staging_leads_run() {
 	$original_remote         = $_SERVER['REMOTE_ADDR'] ?? null;
 	$original_content_length = $_SERVER['CONTENT_LENGTH'] ?? null;
 	$fake_email              = 'staging-lead@example.invalid';
-	$verified_email          = '';
+	$consent_email           = 'staging-consent@example.invalid';
 	$test_ip                 = '203.0.113.223';
 	$client_key              = 'bds_lead_client_' . substr( hash_hmac( 'sha256', $test_ip, wp_salt( 'nonce' ) ), 0, 32 );
 	$global_key              = 'bds_lead_global_' . gmdate( 'Ymd' );
@@ -273,19 +273,16 @@ function bds_staging_leads_run() {
 			bds_staging_leads_save_report( false, $checks, $errors );
 			return;
 		}
-		$verified_email = strtolower( sanitize_email( $user_b_data->user_email ) );
 		$checks['capture_enabled'] = bds_lead_pipeline_enabled();
-		$checks['fixture_collision_absent'] = is_email( $verified_email )
-			&& 0 === bds_lead_find_by_email( $fake_email )
-			&& 0 === bds_lead_find_by_email( $verified_email )
-			&& 0 === bds_lead_find_by_user( $user_b );
+		$checks['fixture_collision_absent'] = 0 === bds_lead_find_by_email( $fake_email )
+			&& 0 === bds_lead_find_by_email( $consent_email );
 		if ( ! $checks['capture_enabled'] || ! $checks['fixture_collision_absent'] ) {
 			$errors[] = 'fixture_collision_or_capture_disabled';
 			bds_staging_leads_save_report( false, $checks, $errors );
 			return;
 		}
 
-		$consent_snapshots = array( bds_staging_leads_consent_snapshot( $fake_email ), bds_staging_leads_consent_snapshot( $verified_email ) );
+		$consent_snapshots = array( bds_staging_leads_consent_snapshot( $fake_email ), bds_staging_leads_consent_snapshot( $consent_email ) );
 		$_SERVER['REMOTE_ADDR'] = $test_ip;
 		delete_transient( $client_key );
 		delete_transient( $global_key );
@@ -339,39 +336,44 @@ function bds_staging_leads_run() {
 		wp_set_current_user( $user_b );
 		$mismatch = bds_lead_capture( bds_staging_leads_request( array( 'email' => $fake_email ) ) );
 		$checks['signed_email_mismatch_rejected'] = is_wp_error( $mismatch ) && 'email_mismatch' === $mismatch->get_error_code();
-		$verified_request = bds_staging_leads_request( array( 'email' => $verified_email, 'primary_need' => 'Need more customer leads', 'source' => 'trial' ) );
-		$verified = bds_lead_capture( $verified_request );
-		$verified_data = $verified instanceof WP_REST_Response ? $verified->get_data() : array();
-		$verified_reference = (string) ( $verified_data['reference'] ?? '' );
-		$verified_id = bds_staging_leads_find_by_reference( $verified_reference );
-		if ( $verified_id ) {
-			update_post_meta( $verified_id, '_bds_staging_lead_fixture', '1' );
-			$fixture_posts[ $verified_id ] = $user_b;
+		$checks['fixture_email_verified_filter'] = true === apply_filters( 'bds_lead_email_verified', false, $user_b_data );
+
+		wp_set_current_user( 0 );
+		$consent_request = bds_staging_leads_request( array( 'email' => $consent_email, 'primary_need' => 'Need more customer leads', 'source' => 'trial', 'email_consent' => false ) );
+		$consent_response = bds_lead_capture( $consent_request );
+		$consent_data = $consent_response instanceof WP_REST_Response ? $consent_response->get_data() : array();
+		$consent_reference = (string) ( $consent_data['reference'] ?? '' );
+		$consent_id = bds_staging_leads_find_by_reference( $consent_reference );
+		if ( $consent_id ) {
+			update_post_meta( $consent_id, '_bds_staging_lead_fixture', '1' );
+			$fixture_posts[ $consent_id ] = 0;
 		}
-		$checks['verified_capture_created'] = 201 === ( $verified instanceof WP_REST_Response ? $verified->get_status() : 0 ) && 'registered' === (string) ( $verified_data['status'] ?? '' );
-		$checks['signed_lead_private_owned'] = $verified_id > 0 && 'private' === get_post_status( $verified_id ) && $user_b === absint( get_post_field( 'post_author', $verified_id ) ) && $user_b === absint( get_post_meta( $verified_id, '_bds_lead_user_id', true ) );
-		$checks['verified_consent_queued'] = ! empty( $verified_data['email_followup'] ) && empty( $verified_data['email_confirmation_required'] ) && 'yes' === (string) get_post_meta( $verified_id, '_bds_lead_email_consent', true );
+		$checks['consent_lead_private'] = 201 === ( $consent_response instanceof WP_REST_Response ? $consent_response->get_status() : 0 ) && $consent_id > 0 && 'private' === get_post_status( $consent_id ) && 0 === absint( get_post_field( 'post_author', $consent_id ) );
+		$mirrored = $consent_id ? bds_lead_mirror_email_consent( $consent_id, $consent_email, 'trial' ) : false;
+		$all_consent = get_option( 'bds_follow_consent_v1', array() );
+		$consent_snapshot = $consent_snapshots[1];
+		$consent_row = is_array( $all_consent ) && is_array( $all_consent[ $consent_snapshot['key'] ] ?? null ) ? $all_consent[ $consent_snapshot['key'] ] : array();
+		$checks['verified_consent_mirrored'] = $mirrored && $consent_email === (string) ( $consent_row['email'] ?? '' ) && 1 === absint( $consent_row['consent'] ?? 0 ) && $consent_id === absint( $consent_row['lead_id'] ?? 0 );
 
 		$lifecycle_ok = true;
-		foreach ( array( 'trial_started', 'checkout_started', 'paid', 'onboarding', 'active' ) as $stage ) {
-			$lifecycle_ok = bds_lead_set_stage( $verified_id, $stage, 'staging' ) && $lifecycle_ok;
+		foreach ( array( 'qualified', 'registered', 'trial_started', 'checkout_started', 'paid', 'onboarding', 'active' ) as $stage ) {
+			$lifecycle_ok = bds_lead_set_stage( $consent_id, $stage, 'staging' ) && $lifecycle_ok;
 		}
-		$history = get_post_meta( $verified_id, '_bds_lead_stage_history', true );
-		$checks['lifecycle_monotonic'] = $lifecycle_ok && 'active' === (string) get_post_meta( $verified_id, '_bds_lead_stage', true ) && 6 === absint( get_post_meta( $verified_id, '_bds_lead_stage_version', true ) ) && is_array( $history ) && 6 === count( $history );
+		$history = get_post_meta( $consent_id, '_bds_lead_stage_history', true );
+		$checks['lifecycle_monotonic'] = $lifecycle_ok && 'active' === (string) get_post_meta( $consent_id, '_bds_lead_stage', true ) && 8 === absint( get_post_meta( $consent_id, '_bds_lead_stage_version', true ) ) && is_array( $history ) && 8 === count( $history );
 
-		bds_lead_unsubscribed( $verified_id );
-		$checks['unsubscribe_propagates'] = 'unsubscribed' === (string) get_post_meta( $verified_id, '_bds_lead_stage', true ) && 'no' === (string) get_post_meta( $verified_id, '_bds_lead_email_consent', true ) && '' !== (string) get_post_meta( $verified_id, '_bds_lead_unsubscribed_at', true );
-		update_post_meta( $verified_id, '_bds_lead_last_activity_ts', time() - ( 366 * DAY_IN_SECONDS ) );
+		bds_lead_unsubscribed( $consent_id );
+		$checks['unsubscribe_propagates'] = 'unsubscribed' === (string) get_post_meta( $consent_id, '_bds_lead_stage', true ) && 'no' === (string) get_post_meta( $consent_id, '_bds_lead_email_consent', true ) && '' !== (string) get_post_meta( $consent_id, '_bds_lead_unsubscribed_at', true );
+		update_post_meta( $consent_id, '_bds_lead_last_activity_ts', time() - ( 366 * DAY_IN_SECONDS ) );
 		update_post_meta( $anonymous_id, '_bds_lead_last_activity_ts', time() - ( 366 * DAY_IN_SECONDS ) );
-		$GLOBALS['bds_staging_lead_retention_ids'] = array( $verified_id, $anonymous_id );
+		$GLOBALS['bds_staging_lead_retention_ids'] = array( $consent_id, $anonymous_id );
 		add_filter( 'bds_lead_retention_candidate_ids', 'bds_staging_leads_retention_candidates' );
 		bds_lead_retention_run();
 		remove_filter( 'bds_lead_retention_candidate_ids', 'bds_staging_leads_retention_candidates' );
 		unset( $GLOBALS['bds_staging_lead_retention_ids'] );
-		$checks['retention_anonymizes_unsubscribed'] = 'anonymized' === (string) get_post_meta( $verified_id, '_bds_lead_stage', true ) && '' === (string) get_post_meta( $verified_id, '_bds_lead_email', true ) && '' === (string) get_post_meta( $verified_id, '_bds_lead_primary_need', true ) && '' !== (string) get_post_meta( $verified_id, '_bds_lead_email_hash', true );
+		$checks['retention_anonymizes_unsubscribed'] = 'anonymized' === (string) get_post_meta( $consent_id, '_bds_lead_stage', true ) && '' === (string) get_post_meta( $consent_id, '_bds_lead_email', true ) && '' === (string) get_post_meta( $consent_id, '_bds_lead_primary_need', true ) && '' !== (string) get_post_meta( $consent_id, '_bds_lead_email_hash', true );
 		$all_consent = get_option( 'bds_follow_consent_v1', array() );
-		$verified_snapshot = $consent_snapshots[1];
-		$suppression_row = is_array( $all_consent ) && is_array( $all_consent[ $verified_snapshot['key'] ] ?? null ) ? $all_consent[ $verified_snapshot['key'] ] : array();
+		$suppression_row = is_array( $all_consent ) && is_array( $all_consent[ $consent_snapshot['key'] ] ?? null ) ? $all_consent[ $consent_snapshot['key'] ] : array();
 		$checks['suppression_preserved'] = '' === (string) ( $suppression_row['email'] ?? 'missing' ) && 0 === absint( $suppression_row['consent'] ?? 1 ) && 'unsubscribed' === (string) ( $suppression_row['status'] ?? '' );
 		$checks['anonymous_retention_anonymizes'] = 'anonymized' === (string) get_post_meta( $anonymous_id, '_bds_lead_stage', true ) && '' === (string) get_post_meta( $anonymous_id, '_bds_lead_email', true ) && '' === (string) get_post_meta( $anonymous_id, '_bds_lead_email_hash', true );
 

@@ -285,4 +285,7 @@ Updated: 2026-11-19
 - `git diff --check`: passed.
 - `rafter secrets .`: passed with no detected secrets.
 - `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
-- Hosted runtime acceptance: pending upload confirmation; do not treat local preparation as live evidence.
+- Hosted run v0.1.0 failed closed on a pre-existing fixture-user lead collision before mutation. The v0.1.1 helper was revised to leave that record untouched and use a second anonymous marked fixture for consent/lifecycle acceptance.
+- Corrected hosted runtime: version 0.1.1, `complete=true`, 34/34 allowlisted checks true, no error codes.
+- Hosted cleanup/restoration: fixture post deletion, exact consent-row restoration, isolated rate-counter restoration, and original server/user context all returned true.
+- Hosted smoke: staging home/product HTTP 200 with `noindex`; catalog HTTP 200; protected lead/account/report/AI/onboarding/finance routes HTTP 401 anonymously; public capture returned to HTTP 503 `lead_capture_disabled`; production acceptance route HTTP 404.

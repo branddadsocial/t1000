@@ -206,7 +206,9 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - It sends no email or message, invokes no provider/network call, creates no user/order/subscription/payment, and exposes only allowlisted boolean evidence.
 - Local validation passed: 28/28 Node contracts, 3/3 PHP compatibility tests, 28/28 deployment PHP syntax checks, and `git diff --check`.
 - `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
-- Hosted upload/runtime acceptance remains pending explicit action-time confirmation. Production remains unchanged.
+- The first hosted helper run failed closed when it detected the pre-existing fixture-user lead created by the registration hook; it made no mutation. The corrected helper uses a second anonymous marked fake lead and leaves all pre-existing user leads untouched.
+- Hosted runtime acceptance then passed 34/34 checks with no error codes. Cleanup, exact consent-row restoration, isolated rate restoration, and context restoration all passed.
+- Hosted smoke confirmed staging home/product HTTP 200 with `noindex`, protected routes HTTP 401 anonymously, public capture returned to HTTP 503 `lead_capture_disabled`, and the production acceptance route remained HTTP 404. Production remains unchanged.
 
 ## 2026-11-19 customer-inquiry acceptance preparation
 

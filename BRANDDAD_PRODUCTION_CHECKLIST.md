@@ -83,7 +83,7 @@
 - [ ] Exercise browser-session REST nonce and paid/Directory-free onboarding access states in WordPress staging.
 - [ ] Sales assistant recommends only verified products and links under cost caps.
 - [x] Implement private, deduplicated lead capture and verified lifecycle stage backend with separate email consent and bounded retention.
-- [~] Prepare the exact-host sales-lead acceptance harness for origin/rates, validation, deduplication, consent, lifecycle, unsubscribe suppression, fixture-only retention, cleanup, and state restoration; hosted runtime upload/report remains pending.
+- [x] Exercise the exact-host sales-lead acceptance harness for origin/rates, validation, deduplication, consent, lifecycle, unsubscribe suppression, fixture-only retention, cleanup, state restoration, and automatic return to disabled (34/34 runtime checks passed).
 - [ ] Connect Cursor's form with mandatory privacy acknowledgment and optional unselected email consent; test origin/rates/deduplication/admin denial/unsubscribe/retention before enabling.
 - [ ] SEO/social/WhatsApp/video/music adapters have provider-specific permissions, costs, retries, and proof.
 - [x] Implement paid-entitlement website availability checks with customer authorization, SSRF controls, bounded queues, actual counters, and no unverified alerts.
