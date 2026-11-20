@@ -168,7 +168,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Verify that the Directory database still exists and is below its storage allowance.
 - [x] Confirm that Social remained available and that Directory later recovered without a BrandDad-side change.
 - [ ] Obtain StartHost database telemetry for the incident window and a provider determination of the intermittent 200/500 pattern.
-- [x] Prepare a precise, non-destructive StartHost incident request without sending it.
+- [x] Send the precise, non-destructive StartHost incident request; Gmail recorded reply `1a1fb1500b583bef` in ticket `898665003`.
 - [~] Immediate recovery observation passed three homepage/REST rounds plus one seven-route homepage/REST/category/location/listing/submission sample with HTTP 200 throughout; continue the window and obtain provider telemetry before stable launch classification.
 - [ ] If a repair, restart, credential rotation, plugin disablement, or cache purge is proposed, back up and obtain separate approval before executing it.
 
