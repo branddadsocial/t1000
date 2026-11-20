@@ -1,0 +1,26 @@
+# BrandDad integration audit
+
+Updated: 2026-11-19
+
+| System | Verified state | Status |
+|---|---|---|
+| GitHub | One repo `branddadsocial/t1000`; Cursor and Codex branches/worktrees identified | Operational, dirty worktrees preserved |
+| Hosting | Separate WordPress roots on StackCP/StartHost; prior File Manager deploy; SSH currently unreliable | Deployment blocker |
+| WordPress | Social and Directory separate installs; existing cookie identity on each | Operational, cross-site link staged |
+| WooCommerce | Live products/orders preserved | Operational |
+| Subscriptions for WooCommerce | Version previously verified; lifecycle hooks and metadata audited | Bridge implemented; E2E acceptance required |
+| Stripe | Live checkout observed previously; card data remains with gateway | No account changes made; safe E2E required |
+| FormWise | BrandDad Social org, owner access, API scopes, published app/agents/flows, plans, restricted portal verified | Operational; separate execution key required on server |
+| Directorist | Existing listing ownership/publication source | Operational; Cursor owns listing/search UX |
+| Partnero | Existing affiliate portal retained | Event adapter/balance API not verified in this pass |
+| Make | Prior documentation reports free-plan operations exhausted until reset | Blocked for new automation runs |
+| AutoTranslator | Present historically; latest Directory direction removed public translator clutter | Needs dedicated production verification |
+| Warpindex | Existing integration referenced | Authentication/current operation not reverified |
+| Vexp | Previously healthy on `branddad-seoestore`, repository limit reached | Development aid only |
+| Rafter | Existing scans; secure-design gate applied to this branch | Code review/scan required before release |
+| MyMarky/social publishers | No verified production authorization in this pass | Not operationally claimed |
+| WhatsApp | Public 312 number/links exist; official Business API automation not verified | Manual contact only |
+| Video providers | Staged planning work only | Not production-ready |
+| Music providers/distribution | Commission workflow concept only | Not production-ready |
+
+No installed plugin or subscription was treated as proof of API readiness.

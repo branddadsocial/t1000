@@ -1,0 +1,41 @@
+# BrandDad Codex test results
+
+Updated: 2026-11-19
+
+## Passed locally
+
+- Combined validation: 15 checks, 0 failures after security hardening.
+- PHP lint: `deploy/bds-ai-subscriptions-mu.php`.
+- PHP lint: `deploy/bds-directory-free-ai-mu.php`.
+- PHP lint: `deploy/bds-ai-execution-mu.php`.
+- PHP lint: `deploy/bds-account-link-mu.php`.
+- PHP lint: `deploy/bds-sales-assistant-api-mu.php`.
+- `node tests/ai-subscription-lifecycle-contract.mjs`.
+- `node tests/directory-free-ai-contract.mjs`.
+- `node tests/ai-execution-contract.mjs`.
+- `node tests/account-link-contract.mjs`.
+- `node tests/sales-assistant-api-contract.mjs`.
+- `rafter secrets .`: no hardcoded secrets detected (exit 0; Betterleaks output-version warning noted).
+
+## Required security scan
+
+- `rafter run` fast was attempted. It was blocked before scanning because the account has used 16/16 fast scans; quota resets 2026-11-23.
+- Paid Plus was not run because it consumes credits and requires explicit approval.
+- Manual OWASP web/API/LLM evidence and corrected findings are recorded in `BRANDDAD_SECURITY_REVIEW.md`.
+
+## Verified connected state
+
+- FormWise organization: BrandDad Social (`branddad-social`), owner role.
+- Published App: BrandDad AI Studio.
+- Published Agent: BrandDad Sales Assistant.
+- Published execution flows include Copy and Reviews, SEO Action Planner, Website Improvement Planner, Directory Listing Studio, Directory Finder, LinkedIn Profile Analyzer, Review Dispute Assistant, Campaign Brief Builder, and Marketing Strategy Builder.
+- Tier plans confirmed: Starter 50/$14.99, Growth 150/$29.99, Pro 400/$49.99, Business Essentials 75/$29.99, AI Lead Assistant 80/$19.99, AI Local SEO 60/$19.99, AI Social Growth 150/$29.99.
+
+## Not yet tested
+
+- Live WordPress route execution, cron/Action Scheduler processing, and FormWise response parsing with a new paid provider run.
+- Cross-host account creation and cookie handoff on staging.
+- Email-verification filter integration on both hosts.
+- Real trial purchase, provisioning, renewal, failed renewal, paid-through cancellation, refund, and billing portal.
+- Real Featured Woo purchase and placement handoff.
+- Follow-up sending, social publishing, WhatsApp, SEO publishing, music delivery, and video generation.
