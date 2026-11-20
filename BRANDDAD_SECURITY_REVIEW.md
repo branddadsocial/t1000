@@ -3,6 +3,8 @@
 Updated: 2026-11-19
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
+Release packaging verification: the Social and Directory archives were built from the reviewed `deploy/` sources, and every packaged PHP file matched its source SHA-256. The packaging batch added documentation and archives only; it did not alter backend execution code or relax any default-off gate.
+
 The follow-up worker and onboarding API added in the second batch use the same secure-design baseline. Follow-up has an explicit default-off kill switch, fresh consent checks before send, a one-message limit, bounded retry on definite local failure, an uncertain-delivery review state, conversion stop, hashed opaque unsubscribe tokens, opt-out persistence checks, public unsubscribe rate limiting, and opt-out propagation into the lead pipeline. Onboarding is authenticated, owner-scoped, field-allowlisted, body-bounded, optimistic-concurrency protected, and never fetches the stored website URL. The third batch adds a separate bounded trial ledger, exact subscription-derived expiry, a signed/idempotent consent-only cross-host membership event, and customer-owned status/reporting DTOs. The acquisition pipeline is default-off, origin/rate/body/field bounded, deduplicated by HMAC email, private, stage-authoritative, and retention-limited.
 
 ## Rafter gate

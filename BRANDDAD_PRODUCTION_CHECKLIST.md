@@ -19,7 +19,9 @@
 
 ## Deployment
 
-- [ ] Restore reliable SSH or approved protected File Manager procedure.
+- [x] Verify the protected File Manager path and both live WordPress roots read-only.
+- [ ] Restore reliable SSH or execute an approved protected File Manager deployment procedure.
+- [x] Document exact per-host artifacts, fail-closed switches, checksums/rollback requirements, and acceptance evidence in `BRANDDAD_DEPLOYMENT_MANIFEST.md`.
 - [ ] Back up exact MU files and database tables/options before deployment.
 - [ ] Configure server-only provisioning key, execution key, and account-link secret.
 - [ ] Connect and test the fail-closed source email-verification filter on both hosts.

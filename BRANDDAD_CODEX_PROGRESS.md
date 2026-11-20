@@ -1,6 +1,15 @@
 # BrandDad Codex progress
 
 Updated: 2026-11-19
+
+## 2026-11-19 deployment preparation batch
+
+- Inspected the signed-in hosting File Manager read-only and verified separate WordPress roots for Social and Directory.
+- Verified Social's live backend target at `public_html/branddad.social/wp-content/mu-plugins/` and Directory's root at `public_html/directory.branddad.social/`.
+- Confirmed the host has an existing `_bds_deploy_backups/` area; no isolated staging WordPress root was visible.
+- Recorded the hosting panel's unresolved `6 infection(s) found` warning as a production-readiness issue rather than dismissing it.
+- Added `BRANDDAD_DEPLOYMENT_MANIFEST.md` with per-host module inventories, fail-closed switches, server-only configuration, staged deployment steps, rollback, and acceptance evidence.
+- No production file, billing state, provider switch, message, or customer record was changed during this inspection.
 Branch: `codex/final-backend-20261119`
 Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 

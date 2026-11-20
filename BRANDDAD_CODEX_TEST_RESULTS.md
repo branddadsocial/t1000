@@ -1,5 +1,18 @@
 # BrandDad Codex test results
 
+## 2026-11-19 release-package verification
+
+- 17/17 deploy PHP files passed `php -l`.
+- 15/15 Node contract suites passed.
+- 3/3 compatibility PHP suites passed.
+- 35/35 local validation commands passed; zero failures.
+- Social archive contains the intended 15 MU modules plus manifest and checksum file.
+- Directory archive contains the intended 7 MU modules plus manifest and checksum file.
+- Every packaged PHP file has the same SHA-256 as its reviewed `deploy/` source.
+- `rafter secrets .` passed with no detected secrets; the CLI still reports its known Betterleaks output-version warning.
+- `rafter run --mode fast` was attempted again and remains blocked by the 16/16 account quota until reset. No paid Plus scan was used.
+- No live provider execution, payment, email, public-post edit, or production file change occurred during this verification.
+
 Updated: 2026-11-19
 
 ## Passed locally

@@ -4,6 +4,9 @@ Updated: 2026-11-19
 
 ## External or owner-controlled
 
+- Read-only hosting inspection confirmed separate live WordPress roots and the MU-plugin target, but no isolated staging WordPress root was visible. A safe staging database/site still needs to be created or identified before activation testing.
+- The hosting panel currently reports `6 infection(s) found`. These findings must be reviewed and resolved or positively classified before production is considered clean; do not delete or quarantine files without exact evidence and a recoverable backup.
+
 - Production SSH key exchange/authentication is not working from this PC. Previous File Manager deployment succeeded, but a reliable protected deployment path and rollback must be restored.
 - A separate least-privilege `flows:execute`/`apps:execute` FormWise key must be present as `BDS_FORMWISE_EXECUTION_KEY` on the server. Do not reuse a broad key in browser code or repository files.
 - `BDS_ACCOUNT_LINK_SECRET` must be the same 32+ byte secret on both owned WordPress installs and must be distributed outside Git.
