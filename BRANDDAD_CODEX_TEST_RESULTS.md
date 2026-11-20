@@ -550,3 +550,11 @@ Updated: 2026-11-19
 - A final low-rate recheck returned HTTP 200 for Directory homepage, Directory REST index, Social homepage, and Social Services. No repair action preceded recovery.
 - A short follow-up observation collected three additional homepage and REST samples four seconds apart. All six requests returned HTTP 200; homepage response times were 551-788 ms and REST response times were 1,694-2,143 ms. This confirms immediate recovery but is not long enough to close the hosting-stability gate.
 - No database password, table, database, file, plugin, cache, customer record, or hosting setting was changed.
+
+## 2026-11-20 post-incident local regression
+
+- All 39 current Node contract files passed.
+- All 38 current PHP files under `deploy/` passed `php -l`.
+- All three PHP compatibility suites passed: customer hub, Featured rotation, and revenue sections.
+- The release checksum contract passed.
+- This proves local package consistency only; it does not close the hosting database, scheduler, Stripe reconnect, FormWise execution, or protected production-deployment gates.
