@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Sales Lead Pipeline
  * Description: Consent-aware, rate-limited BrandDad acquisition lead capture and verified lifecycle stages.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_SALES_LEAD_PIPELINE_VERSION', '0.1.0' );
+define( 'BDS_SALES_LEAD_PIPELINE_VERSION', '0.1.1' );
 
 function bds_lead_pipeline_enabled() {
 	return defined( 'BDS_LEAD_CAPTURE_ENABLED' ) && true === BDS_LEAD_CAPTURE_ENABLED;
@@ -496,17 +496,23 @@ function bds_lead_retire_follow_row( $lead_id, $preserve_suppression ) {
 
 /** Remove contact data from stale, unconverted records while retaining aggregate stage evidence. */
 function bds_lead_retention_run() {
+	$candidate_ids = apply_filters( 'bds_lead_retention_candidate_ids', array() );
+	$candidate_ids = is_array( $candidate_ids ) ? array_slice( array_values( array_unique( array_filter( array_map( 'absint', $candidate_ids ) ) ) ), 0, 100 ) : array();
+	$args = array(
+		'post_type'      => 'bds_sales_lead',
+		'post_status'    => 'private',
+		'posts_per_page' => 100,
+		'fields'         => 'ids',
+		'meta_query'     => array(
+			array( 'key' => '_bds_lead_last_activity_ts', 'value' => time() - ( bds_lead_retention_days() * DAY_IN_SECONDS ), 'compare' => '<', 'type' => 'NUMERIC' ),
+			array( 'key' => '_bds_lead_stage', 'value' => array( 'paid', 'onboarding', 'active', 'anonymized' ), 'compare' => 'NOT IN' ),
+		),
+	);
+	if ( $candidate_ids ) {
+		$args['post__in'] = $candidate_ids;
+	}
 	$ids = get_posts(
-		array(
-			'post_type'      => 'bds_sales_lead',
-			'post_status'    => 'private',
-			'posts_per_page' => 100,
-			'fields'         => 'ids',
-			'meta_query'     => array(
-				array( 'key' => '_bds_lead_last_activity_ts', 'value' => time() - ( bds_lead_retention_days() * DAY_IN_SECONDS ), 'compare' => '<', 'type' => 'NUMERIC' ),
-				array( 'key' => '_bds_lead_stage', 'value' => array( 'paid', 'onboarding', 'active', 'anonymized' ), 'compare' => 'NOT IN' ),
-			),
-		)
+		$args
 	);
 	foreach ( $ids as $lead_id ) {
 		$preserve_suppression = 'unsubscribed' === (string) get_post_meta( $lead_id, '_bds_lead_stage', true );

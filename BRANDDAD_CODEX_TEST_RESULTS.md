@@ -274,3 +274,15 @@ Updated: 2026-11-19
 - Hosted runtime acceptance: version 0.1.0, `complete=true`, 34/34 allowlisted checks true, no error codes.
 - Hosted cleanup evidence: fixture posts deleted, form metadata restored, and isolated rate counters restored all returned true.
 - Hosted smoke: staging homepage/product HTTP 200 with `noindex`; sales catalog HTTP 200; account status, value report, AI tools, onboarding, monitor configuration, inquiry form/inbox, analytics, and finance contribution returned HTTP 401 anonymously; the production acceptance route returned HTTP 404.
+
+## 2026-11-19 sales-lead staging acceptance preparation
+
+- `node tests/sales-lead-pipeline-contract.mjs`: passed 29 assertions, including the bounded restrict-only retention candidate-id seam.
+- `node tests/staging-sales-lead-acceptance-contract.mjs`: passed 50 assertions covering exact-host execution, fixture collision refusal, origins/body/rates, validation, verified/unverified consent, deduplication, private records, response privacy, recommendation ownership, account mismatch, lifecycle, unsubscribe suppression, fixture-only retention, exact-row consent restoration, narrow deletion, and absence of messaging/provider/payment surfaces.
+- Full suite: 28/28 Node contract files passed.
+- PHP compatibility: 3/3 passed.
+- PHP syntax: 28/28 deployment modules passed.
+- `git diff --check`: passed.
+- `rafter secrets .`: passed with no detected secrets.
+- `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
+- Hosted runtime acceptance: pending upload confirmation; do not treat local preparation as live evidence.

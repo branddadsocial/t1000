@@ -144,3 +144,15 @@ Hosted result: the product exists only on the isolated staging hostname, is hidd
 - Side effects: no email, WhatsApp, provider API, payment, order, subscription, public post, or production mutation is reachable from the helper.
 - Evidence: 56 helper contract assertions, the complete 27-file Node suite, 3 PHP compatibility tests, 27 PHP lints, and `git diff --check` passed. Local secrets scan passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus run was used.
 - Hosted result: 34/34 runtime checks passed, including narrowly marked fixture deletion, metadata/rate restoration, cross-tenant denial, replay, locks, reports, and retention. Production exposes no acceptance route. Real Cursor frontend nonce/copy/notification acceptance remains separate.
+
+## 2026-11-19 sales-lead staging acceptance review
+
+- Scope: public BrandDad lead input, private lead records, email-consent mirroring, lifecycle state, retention, and test-only hard deletion.
+- Access/resource controls: production capture remains default-off and requires owned HTTPS origin, 8 KiB body cap, HMAC-IP client rate, bounded global rate, required privacy acknowledgment, valid email, field/source allowlists, and signed-account email equality.
+- Consent/privacy: unverified requested email consent remains requested-only; only marker-owned verified fixture B enters the existing consent queue. Public response is checked for email/internal-id leakage. Test data uses `.invalid` addresses and RFC documentation IP space.
+- Integrity/isolation: email HMAC plus a stale-safe per-email lock deduplicates capture; lead stage is server-owned; Woo/trial/onboarding hooks remain authoritative. The helper refuses pre-existing fixture lead collisions.
+- Retention safety: the new internal candidate-id seam is normalized to at most 100 positive ids and can only add `post__in`. The helper passes exactly its two marked ids; unrelated staging leads cannot enter the test retention query.
+- Deletion/restoration: hard delete requires exact created id, private lead type, expected author, and `_bds_staging_lead_fixture=1`. Exact consent rows, isolated rate counters, server values, and current-user context are restored in `finally`.
+- Side effects: no email/message, provider call, outbound HTTP, user/order/subscription/payment creation, or production mutation exists in the helper.
+- Evidence: 50 helper contract assertions, 29 production lead assertions, full 28-file Node suite, 3 PHP compatibility tests, 28 PHP lints, and `git diff --check` passed. Local secrets scan passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus scan was used.
+- Residual gate: hosted runtime evidence must pass before staging acceptance; the real Cursor lead form, final consent copy, browser behavior, sender acceptance, and unsubscribe UI remain separate.

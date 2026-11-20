@@ -6,7 +6,7 @@ const follow = fs.readFileSync('deploy/bds-consent-followup-worker-mu.php', 'utf
 const lifecycle = fs.readFileSync('deploy/bds-lifecycle-events-mu.php', 'utf8');
 
 const checks = [
-  ['pipeline is versioned', /BDS_SALES_LEAD_PIPELINE_VERSION', '0\.1\.0'/.test(source)],
+  ['pipeline is versioned', /BDS_SALES_LEAD_PIPELINE_VERSION', '0\.1\.1'/.test(source)],
   ['public capture defaults off', /BDS_LEAD_CAPTURE_ENABLED[\s\S]*true === BDS_LEAD_CAPTURE_ENABLED/.test(source)],
   ['lead post type is private and excluded from REST', /register_post_type\([\s\S]*'public'\s*=>\s*false[\s\S]*'show_in_rest'\s*=>\s*false/.test(source)],
   ['browser origins are restricted to owned HTTPS hosts', /'https' === \$scheme[\s\S]*branddad\.social[\s\S]*directory\.branddad\.social/.test(source)],
@@ -30,6 +30,7 @@ const checks = [
   ['admin lead API requires Woo management capability', /function bds_lead_admin_permission[\s\S]*manage_woocommerce/.test(source)],
   ['admin list is paginated and bounded', /posts_per_page' => 50/.test(source) && /min\( 1000/.test(source)],
   ['retention is configurable but bounded', /BDS_LEAD_RETENTION_DAYS/.test(source) && /min\( 365, max\( 30/.test(source)],
+  ['retention candidate seam can only narrow to bounded integer ids', /bds_lead_retention_candidate_ids/.test(source) && /array_map\( 'absint'/.test(source) && /array_slice[\s\S]*0, 100/.test(source) && /\$args\['post__in'\] = \$candidate_ids/.test(source)],
   ['stale unconverted PII is removed in bounded batches', /posts_per_page' => 100/.test(source) && /delete_post_meta/.test(source) && /bds_lead_retention_continue/.test(source)],
   ['unsubscribe suppression survives contact anonymization', /\$preserve_suppression[\s\S]*_bds_lead_email_hash/.test(source)],
   ['lead lifecycle events are internal and idempotent', /bds_sales_lead_created/.test(lifecycle) && /lead-stage-' \. absint\( \$lead_id \)/.test(lifecycle)],

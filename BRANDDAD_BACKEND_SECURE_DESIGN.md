@@ -205,6 +205,17 @@ Inquiry records are private posts owned by the receiving WordPress user. Custome
 - The helper snapshots/restores both fixtures' form metadata and test rate counters. It hard-deletes only inquiry posts that it just created, marked, and verified as owned by fixture B; cleanup is in `finally` and never queries a broad deletion target.
 - No email, WhatsApp, provider execution, order, subscription, payment, public post, or production mutation occurs. Residual launch gates are the actual Cursor form/inbox, browser REST nonce acceptance, real consent copy, cron retention, and notification delivery.
 
+### Isolated staging sales-lead acceptance design
+
+`[fixed fake lead + owned origin] -> [production permission/validation/deduplication] -> [private marked lead] -> [verified lifecycle/consent/retention] -> [exact fixture cleanup]`
+
+- The helper is exact-host and one-time gated, enables capture only for its acceptance request, verifies both marker-owned non-admin fixture subscribers, and accepts no browser input.
+- Test contacts use reserved `.invalid` addresses and a documentation-range IP. Before mutation, the helper refuses to reuse any pre-existing lead for either fake address or fixture B.
+- It snapshots only the exact fake-email follow-up rows and isolated rate counters it may change. No broad consent option replacement is permitted; each touched row is restored or removed by its exact key.
+- Acceptance covers owned-origin/body/rate enforcement, required privacy, email/account matching, verified-versus-unverified consent, email-hash deduplication, private records, safe public responses, deterministic catalog recommendation, subscriber admin denial, monotonic lifecycle stages, unsubscribe suppression, retention anonymization, and cleanup. A production-side candidate-id hook is normalized to at most 100 positive integers and can only add `post__in`, so the helper narrows retention to its two exact marked leads without weakening the normal age/stage/type/status predicates.
+- Every created post receives `_bds_staging_lead_fixture=1`. Hard deletion is limited to exact created ids whose post type, marker, and expected fixture ownership match. Cleanup and server/user/rate/consent restoration run in `finally`.
+- The helper sends no email/message, makes no provider/network call, creates no user/order/subscription/payment, and does not enable production capture. Remaining release gates are the real Cursor form, final privacy/consent copy, browser behavior, approved sender delivery, and unsubscribe UI.
+
 ## STRIDE findings and controls
 
 - Spoofing: WordPress session + nonce, capability/ownership checks, signed single-use link tokens, separate service credentials.

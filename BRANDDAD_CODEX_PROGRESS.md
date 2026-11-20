@@ -198,6 +198,16 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 
 Not deployed. Follow-up delivery is compiled default-off. No purchase, subscription change, provider run, email, WhatsApp message, social post, listing publication, or customer billing modification was performed by this branch.
 
+## 2026-11-19 sales-lead acceptance preparation
+
+- Added a restrictive retention candidate-id seam to the production lead pipeline. Values are normalized to at most 100 positive integers and can only add a `post__in` restriction; normal private type/status, age, and stage predicates remain authoritative.
+- Added an exact-host, one-time staging acceptance helper covering owned-origin/body/rate controls, required privacy, account-email matching, verified/unverified consent, HMAC-email deduplication, private storage, safe response, deterministic recommendations, subscriber admin denial, lifecycle progression, unsubscribe suppression, retention, cleanup, and restoration.
+- The helper refuses any pre-existing fixture lead collision, uses only fixed `.invalid` test contacts and a documentation-range IP, and narrows retention to its two exact marked fixture ids.
+- It sends no email or message, invokes no provider/network call, creates no user/order/subscription/payment, and exposes only allowlisted boolean evidence.
+- Local validation passed: 28/28 Node contracts, 3/3 PHP compatibility tests, 28/28 deployment PHP syntax checks, and `git diff --check`.
+- `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
+- Hosted upload/runtime acceptance remains pending explicit action-time confirmation. Production remains unchanged.
+
 ## 2026-11-19 customer-inquiry acceptance preparation
 
 - Hardened the inquiry entitlement seam with an internal plan-candidate filter whose result is revalidated as an array, a paid access mode, and one of the fixed inquiry plan slugs.
