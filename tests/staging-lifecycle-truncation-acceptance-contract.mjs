@@ -4,14 +4,14 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-000-staging-lifecycle-truncation-acceptance-mu.php', 'utf8');
 const checks = [
   ['version and canonical host fixed', /BDS_STAGING_TRUNCATION_VERSION', '0\.1\.0'/.test(source) && /staging-branddad-social\.stackstaging\.com/.test(source)],
-  ['target and batch are fixed and bounded', /TRUNCATION_TARGET', 5000/.test(source) && /TRUNCATION_BATCH', 100/.test(source)],
+  ['target and batch are fixed and bounded', /TRUNCATION_TARGET', 5000/.test(source) && /TRUNCATION_BATCH', 20/.test(source)],
   ['host derives from canonical home URL', /wp_parse_url\( home_url\( '\/' \), PHP_URL_HOST \)/.test(source)],
   ['production aggregate is reused with a server period', /WP_REST_Request[\s\S]*set_param\( 'period'[\s\S]*bds_lifecycle_admin_summary/.test(source)],
   ['summary stores only bounded aggregate fields', /unique_customers_with_events[\s\S]*confirmed_gross_minor[\s\S]*refunds_minor[\s\S]*net_confirmed_minor[\s\S]*truncated/.test(source)],
   ['fixture is exact marker-owned non-admin', /bds_stage_acceptance_a[\s\S]*_bds_staging_auth_fixture[\s\S]*! user_can/.test(source)],
   ['baseline must be available and not truncated', /baseline_not_truncated[\s\S]*empty\( \$before\['truncated'\] \)[\s\S]*baseline_unavailable/.test(source)],
   ['persistent phases are create verify cleanup complete', /'phase' => 'create'[\s\S]*'verify'[\s\S]*'cleanup'[\s\S]*save_report/.test(source)],
-  ['stale-safe lock serializes batches', /truncation_lock_v1[\s\S]*time\(\) - 300[\s\S]*delete_option\( \$lock \)/.test(source)],
+  ['stale-safe lock serializes batches', /truncation_lock_v1[\s\S]*time\(\) - 90[\s\S]*delete_option\( \$lock \)/.test(source)],
   ['collision check precedes every production record', /event_id\( \$user_id, \$offset \)[\s\S]*event_collision[\s\S]*bds_lifecycle_record/.test(source)],
   ['events are private nonfinancial production-shape records', /bds_lifecycle_record\( 'ai_task_completed'[\s\S]*staging_truncation[\s\S]*website_audit/.test(source)],
   ['all events use one fixed monthly GMT date with local correspondence', /'fixed_gmt' => \$period \. '-15 12:00:00'/.test(source) && /get_date_from_gmt[\s\S]*post_date_gmt[\s\S]*post_date/.test(source)],

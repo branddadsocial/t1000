@@ -14,7 +14,7 @@ define( 'BDS_STAGING_TRUNCATION_REPORT', 'bds_staging_lifecycle_truncation_repor
 define( 'BDS_STAGING_TRUNCATION_STATE', 'bds_staging_lifecycle_truncation_state_v1' );
 define( 'BDS_STAGING_TRUNCATION_MARKER', 'bds-stage-truncation-v1' );
 define( 'BDS_STAGING_TRUNCATION_TARGET', 5000 );
-define( 'BDS_STAGING_TRUNCATION_BATCH', 100 );
+define( 'BDS_STAGING_TRUNCATION_BATCH', 20 );
 define( 'BDS_STAGING_TRUNCATION_OBJECT_BASE', 940000 );
 
 function bds_staging_truncation_is_host() {
@@ -168,7 +168,7 @@ function bds_staging_truncation_run() {
 	}
 	$lock = 'bds_staging_lifecycle_truncation_lock_v1';
 	if ( ! add_option( $lock, time(), '', false ) ) {
-		if ( absint( get_option( $lock, 0 ) ) >= time() - 300 ) {
+		if ( absint( get_option( $lock, 0 ) ) >= time() - 90 ) {
 			return;
 		}
 		delete_option( $lock );
