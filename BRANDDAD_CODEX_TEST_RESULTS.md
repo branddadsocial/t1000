@@ -1,5 +1,14 @@
 # BrandDad Codex test results
 
+## 2026-11-19 AI provider-failure acceptance preparation
+
+- `php -l deploy/bds-staging-ai-failure-acceptance-mu.php`: passed.
+- `tests/staging-ai-failure-acceptance-contract.mjs`: 25/25 assertions passed.
+- Full local suite: 22/22 Node contract files, three PHP compatibility suites, three PHP syntax checks, and `git diff --check` passed.
+- Local Rafter secret scans found no secrets. Manual review confirmed exact-host scope, marked non-admin owner, configured-provider refusal, boolean-only evidence, and no request input, exposed credential, user/admin/order/payment creation, direct network call, message, or deletion.
+- Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- No staging upload, provider run, credit spend, payment, message, or production mutation occurred in this preparation batch.
+
 ## 2026-11-19 authenticated staging acceptance
 
 - `php -l deploy/bds-staging-auth-acceptance-mu.php`: passed.

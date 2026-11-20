@@ -14,6 +14,16 @@ Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenizati
 - Execution is one-time with a non-autoloaded result and stale-recoverable lock. It performs no outbound request, payment, provider execution, message, deletion, or production mutation.
 - Fixture cleanup is intentionally separate because deletion requires its own target verification and approval. The fixtures are inert subscribers/private records and cannot authenticate because their random passwords are never disclosed.
 
+## Staging AI failure acceptance harness — 2026-11-19
+
+- Scope is the same exact configured staging home host; caller-controlled Host headers and request parameters are not trusted.
+- It reuses only the marker-owned, non-admin subscriber fixture created by the authenticated-ownership harness. It creates no user, administrator, order, subscription, or payment.
+- The harness refuses to run if a FormWise execution key is configured. This guarantees the test cannot spend provider credits or transmit data.
+- It reserves five credits in a fixture-only ledger, creates one private fixture job, invokes the production worker, and requires fail-closed `execution_not_configured` status.
+- Acceptance requires the pending reservation to be released, used credits to remain zero, and a second worker invocation to leave both values unchanged.
+- Public evidence is exact-host gated and boolean-only. No user id, job id, reservation token, inputs, credentials, or result content is returned.
+- The helper performs no direct outbound request, message, deletion, or production mutation. Its fixture records are isolated from real customers.
+
 ## Verified provider-cost ledger and profitability summary (2026-11-19)
 
 ### Data flow and trust boundaries

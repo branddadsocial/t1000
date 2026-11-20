@@ -2,6 +2,15 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 AI provider-failure acceptance preparation
+
+- Added an exact-host, one-time staging harness that reuses the marker-owned non-admin subscriber and refuses to run if a FormWise execution key is configured.
+- It reserves five fixture credits through the production ledger, creates one private pending AI job, invokes the production worker, and requires `execution_not_configured` to fail closed before any provider request.
+- Acceptance requires the reservation to be released, used credits to remain zero, and a second worker invocation to leave both values unchanged.
+- Added 25 security/behavior assertions. The complete local suite passes 22/22 Node contracts, three PHP compatibility suites, three PHP syntax checks, and `git diff --check`.
+- Local Rafter secret scans found no secrets; manual review found no input surface, credential exposure, user/admin/order/payment creation, direct network call, message, or deletion. Remote fast scan was attempted and remains quota-blocked at 16/16; paid Plus was not used.
+- The helper is local only. Uploading it will create one private job and a zero-used fixture ledger in isolated staging; production and FormWise remain unchanged until a separate confirmed upload.
+
 ## 2026-11-19 authenticated staging acceptance
 
 - Added an exact-host, one-time staging harness for authenticated authorization and ownership checks without exposing a login credential or creating an administrator.
