@@ -500,3 +500,10 @@ Updated: 2026-11-19
 - StartHost ticket `898665003` now contains a provider reply: StartHost says it cannot remove the false-positive flag and suggests ignoring it. No reply was sent. Since the exact scheduled task still returns `Cron failed to add`, this does not satisfy the scheduler launch gate.
 - Woo Stripe reports payments, payouts, and webhook configuration enabled, but the connection dialog marks the account `Incomplete`, sync disabled, and explains that stored account keys exist but their origin cannot be verified. The plugin requires reconnecting the account.
 - The configured endpoint is `https://branddad.social/?wc-api=wc_stripe`. A public GET returned HTTP 200 and an unsigned empty JSON POST returned HTTP 204, confirming edge/origin reachability without a valid Stripe event. No order, payment, subscription, setting, or customer record changed.
+
+## 2026-11-20 external cron fallback research
+
+- Reviewed current official 20i documentation confirming that the provider's Scheduled Tasks are the supported real-cron path for WordPress. This remains the preferred implementation.
+- Reviewed current official Cloudflare documentation: Cron Triggers are intended for periodic work; the free plan currently allows five Cron Triggers and 100,000 requests per day; trigger changes can take up to 15 minutes to propagate; recent Cron Events are available for review.
+- Reviewed current official GitHub documentation: scheduled workflows run from the default branch with a minimum five-minute interval, can be delayed or dropped during high load, and are disabled on public repositories after 60 days without activity. Standard GitHub-hosted Actions are free for public repositories. The existing `branddadsocial/t1000` repository is publicly reachable.
+- Produced a fail-closed fallback design using one exact HTTPS `wp-cron.php` request per interval, no query string or secret, no third-party dependency, no same-invocation retry, and no simultaneous runner. No workflow, Worker, scheduled request, queue mutation, payment, subscription change, message, or customer-data change occurred.

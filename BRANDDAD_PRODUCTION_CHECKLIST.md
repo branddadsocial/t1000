@@ -149,6 +149,8 @@ Nothing unchecked above may be described as fully operational.
 - [!] StartHost rejected the first approved save with `Cron failed to add` because the package remains malware-flagged; no task was created and no cron batch ran. Fresh scan `24662257` completed and reproduced six generated-cache false positives plus the historical quarantined file, so the restriction remains.
 - [x] Submit the exact false-positive evidence to StartHost/20i support. Ticket `898665003` is open with Web Hosting and requests non-destructive package clearance or a safe allowlist.
 - [~] StartHost replied that it cannot remove the false-positive flag and suggested ignoring the warning. That does not resolve `Cron failed to add`; request a specific scheduler unblock or provider-supported alternative before attempting the exact task again.
+- [x] Document a no-extra-cost, single-runner external fallback with official provider limits, threat model, prerequisites, first-run observation, stop conditions, and rollback; no runner was enabled.
+- [ ] If StartHost cannot supply a working runner, select Cloudflare Cron Trigger or temporary GitHub Actions and obtain exact action-time approval before its first production invocation.
 - [ ] Reauthenticate to StartHost after support confirms clearance, then re-enter and save the exact reviewed task once.
 - [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
 - [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
