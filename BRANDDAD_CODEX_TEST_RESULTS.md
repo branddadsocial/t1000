@@ -406,7 +406,9 @@ Updated: 2026-11-19
 - Social priority links: the Business Essentials trial, Lead Assistant, Social Growth, Local SEO, free website check, and Services destinations were present, visible, and correct. The broader same-ecosystem homepage link sweep checked 93 unique Social/Directory destinations; all 93 returned HTTP 200.
 - Directory location timing: after a single approximately 18-second cold `all-locations` response, warmed and parallel clean requests returned roughly 1.3-2.0 second TTFB and 1.65-2.1 second total time. The slow cold response was not reproducible.
 - Final local revalidation: all 38 current Node contract files passed, all 3 PHP compatibility tests passed, and all 43 deployment PHP files passed `php -l`. The prepared Directory `0.68.14` archive remained 91,143 bytes with SHA-256 `3FBA1E17727221EAA6D7FAFF17CDDBC6353852DD51CF5CBFEB3CA29461223158`.
-- Not yet evidenced: the final live `0.68.14` activation, the same mobile funnel specifically on that release, real Stripe payment, provisioning, renewal, refund, cancellation, or billing portal.
+- Live `0.68.14` activation: WordPress compared current `0.68.13` with uploaded `0.68.14`, replaced the current plugin after explicit confirmation, and reported success. Public assets subsequently advertised `0.68.14`; the live category script contained the corrected total-page loop and did not contain the legacy 100-item stop condition.
+- Post-release 390px acceptance: the restaurant picker resolved Mexico -> Quintana Roo -> Playa del Carmen -> All Restaurants, navigated to `in_cat=191`, `in_loc=13445`, and `directory_type=food-beverage`, showed 36 matching businesses, rendered Playa del Carmen card locations, retained one Directory Concierge launcher, and had no horizontal overflow.
+- Not yet evidenced: real Stripe payment, provisioning, renewal, refund, cancellation, or billing portal.
 
 ## 2026-11-19 hosted account-link cryptographic staging acceptance
 

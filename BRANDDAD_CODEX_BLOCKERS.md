@@ -30,7 +30,7 @@ Updated: 2026-11-20
 - Social publishing, WhatsApp, video rendering, and music distribution need verified provider credentials/permissions and cost ceilings. No unauthorized provider purchase was made.
 - Rafter fast scan quota is exhausted (16/16) until 2026-11-23. The required scan was attempted and blocked; local secret scanning and the full manual review completed. Paid Plus was not used.
 - The stale Directory homepage `noindex` cache is repaired and independently verified. The temporary MU repair plugin remains installed only because deleting the exact live file is a separate destructive browser action requiring action-time confirmation; remove only `wp-content/mu-plugins/bds-directory-home-cache-repair-mu.php`, then verify the admin repair menu disappears.
-- Directory Experience `0.68.14` is packaged, security-reviewed, uploaded into the live WordPress plugin installer, and ready at the final `Install Now` step. The public update cannot be applied until the required action-time confirmation for that specific live plugin replacement is received.
+- Directory Experience `0.68.14` is installed and independently verified on the public site; the former live-update approval blocker is resolved.
 - Live WordPress reports that 722 of 958 published Directory listings lack verified listing WhatsApp data. Message CTAs correctly remain hidden and new publishes are blocked for missing data; source-verified hydration is a separate data-quality campaign and must not be mass-invented.
 
 ## Test environment

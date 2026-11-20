@@ -111,12 +111,13 @@ Nothing unchecked above may be described as fully operational.
 - [x] Verify the homepage at 390px uses one contained Directory Concierge, light-on-dark logo, compact navigation, organized footer, and Playa del Carmen-first nearby listings without Dubai/Chicago contamination.
 - [x] Build, syntax-check, contract-test, manually security-review, secret-scan, package, hash, and re-extract Directory Experience `0.68.14`.
 - [x] Upload the reviewed `0.68.14` archive into the signed-in live plugin installer.
-- [ ] Receive the required action-time confirmation and click `Install Now` to replace live `0.68.13`.
-- [ ] Verify the installed asset advertises `0.68.14` and no longer contains the `items.length === 100` stop condition.
+- [x] Receive the required action-time confirmation and replace live `0.68.13` with `0.68.14`; WordPress reported success.
+- [x] Verify the installed assets advertise `0.68.14`, contain the corrected total-page loop, and no longer contain the `items.length === 100` stop condition.
 - [x] At 390px, complete Mexico -> Quintana Roo -> Playa del Carmen -> restaurant type and verify the resulting URL/listings stay location-scoped (36 matches; correct active filters).
 - [x] Run the approved exact-homepage cache repair and confirm the clean homepage returns one index/follow robots policy with no stale noindex.
 - [x] Check all 45 Directory homepage category destinations and the priority public/protected route behaviors.
 - [x] Check Directory responsive behavior at 320, 390, 768, 1024, and 1440 pixels with no horizontal overflow.
 - [x] Check Social responsive behavior at 320, 390, 768, 1024, and 1440 pixels with no horizontal overflow, no broken images, and one AI launcher.
 - [x] Check the six priority Social sales links and all 93 same-ecosystem homepage destinations; every destination returned HTTP 200.
+- [x] Repeat the location-first restaurant journey after the live update at 390px and verify 36 Playa del Carmen matches, one Concierge launcher, and no horizontal overflow.
 - [ ] After separate deletion confirmation, remove only `wp-content/mu-plugins/bds-directory-home-cache-repair-mu.php` and verify the admin repair menu disappears.
