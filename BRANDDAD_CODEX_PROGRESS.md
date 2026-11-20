@@ -198,6 +198,15 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 
 Not deployed. Follow-up delivery is compiled default-off. No purchase, subscription change, provider run, email, WhatsApp message, social post, listing publication, or customer billing modification was performed by this branch.
 
+## 2026-11-19 follow-up consent acceptance preparation
+
+- Added an exact-host, one-time staging helper for the existing default-off follow-up worker. It validates fresh/stale consent rules, source normalization, opaque token/hash handling, token lookup, safe unsubscribe URLs, compare-and-set updates, persisted opt-out, reactivation blocking, disabled-worker no-op behavior, and rate bounds.
+- The helper uses one exact fake `.invalid` consent row and one documentation-range IP rate key, refuses a fixture-key collision, and restores or removes only those exact test values in `finally`.
+- It never enables the worker, defines a sender, calls `wp_mail()`, invokes the public unsubscribe handler, creates a user/lead/order/payment, or calls an external provider.
+- Local validation passed: 29/29 Node contracts, 3/3 PHP compatibility tests, 29/29 deployment PHP syntax checks, and `git diff --check`.
+- `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
+- Hosted upload/runtime acceptance remains pending explicit action-time confirmation. Production remains unchanged.
+
 ## 2026-11-19 sales-lead acceptance preparation
 
 - Added a restrictive retention candidate-id seam to the production lead pipeline. Values are normalized to at most 100 positive integers and can only add a `post__in` restriction; normal private type/status, age, and stage predicates remain authoritative.

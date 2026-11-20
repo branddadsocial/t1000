@@ -216,6 +216,15 @@ Inquiry records are private posts owned by the receiving WordPress user. Custome
 - Every created post receives `_bds_staging_lead_fixture=1`. Hard deletion is limited to exact created ids whose post type, marker, and expected fixture ownership match. Cleanup and server/user/rate/consent restoration run in `finally`.
 - The helper sends no email/message, makes no provider/network call, creates no user/order/subscription/payment, and does not enable production capture. Remaining release gates are the real Cursor form, final privacy/consent copy, browser behavior, approved sender delivery, and unsubscribe UI.
 
+### Isolated staging follow-up consent acceptance design
+
+`[fixed fake .invalid consent row] -> [production eligibility/token/update primitives] -> [simulated opt-out state] -> [exact row/rate restoration]`
+
+- The helper runs once only on the canonical staging host, accepts no request input, and keeps the delivery worker disabled. It never defines a sender, calls `wp_mail()`, invokes the public admin-post handler, or transmits a message.
+- It snapshots one exact test-only consent key plus its isolated unsubscribe-rate transient. The row uses a reserved `.invalid` address, no customer/user id, no real content, and is restored or removed by exact key in `finally`.
+- Acceptance covers source normalization, fresh-consent eligibility, stale/no-consent/bad-status/bad-email rejection, 192-bit token generation, hash lookup, invalid token rejection, safe unsubscribe URL construction, compare-and-set updates, persisted opt-out state, opt-out reactivation blocking, disabled-worker no-op behavior, and the 30-per-hour unsubscribe bound.
+- No user, lead, order, subscription, payment, provider job, email, or production record is created or deleted. Real mail transport, public GET confirmation, RFC 8058 POST, and the customer-facing unsubscribe page remain separate launch gates.
+
 ## STRIDE findings and controls
 
 - Spoofing: WordPress session + nonce, capability/ownership checks, signed single-use link tokens, separate service credentials.

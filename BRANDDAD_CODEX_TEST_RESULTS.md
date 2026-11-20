@@ -289,3 +289,14 @@ Updated: 2026-11-19
 - Corrected hosted runtime: version 0.1.1, `complete=true`, 34/34 allowlisted checks true, no error codes.
 - Hosted cleanup/restoration: fixture post deletion, exact consent-row restoration, isolated rate-counter restoration, and original server/user context all returned true.
 - Hosted smoke: staging home/product HTTP 200 with `noindex`; catalog HTTP 200; protected lead/account/report/AI/onboarding/finance routes HTTP 401 anonymously; public capture returned to HTTP 503 `lead_capture_disabled`; production acceptance route HTTP 404.
+
+## 2026-11-19 follow-up consent staging preparation
+
+- `node tests/staging-followup-consent-acceptance-contract.mjs`: passed 40 assertions covering exact-host/one-time behavior, default-off worker, fixture collision refusal, eligibility, token/hash privacy, safe URLs, compare-and-set updates, opt-out persistence, reactivation blocking, disabled no-op, rate bounds, exact restoration, and no send/provider/payment surface.
+- Full suite: 29/29 Node contract files passed.
+- PHP compatibility: 3/3 passed.
+- PHP syntax: 29/29 deployment modules passed.
+- `git diff --check`: passed.
+- `rafter secrets .`: passed with no detected secrets.
+- `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
+- Hosted runtime acceptance: pending upload confirmation; real mail transport and the public unsubscribe HTTP page are deliberately outside this no-email test.

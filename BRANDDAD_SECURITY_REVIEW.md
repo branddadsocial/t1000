@@ -156,3 +156,14 @@ Hosted result: the product exists only on the isolated staging hostname, is hidd
 - Side effects: no email/message, provider call, outbound HTTP, user/order/subscription/payment creation, or production mutation exists in the helper.
 - Evidence: 50 helper contract assertions, 29 production lead assertions, full 28-file Node suite, 3 PHP compatibility tests, 28 PHP lints, and `git diff --check` passed. Local secrets scan passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus scan was used.
 - Hosted result: the initial collision guard failed closed before mutation on a pre-existing fixture-user lead. The corrected helper avoided that record and passed 34/34 checks using only two anonymous marked fixtures; cleanup and restoration passed. Public capture automatically returned to disabled. The real Cursor lead form, final consent copy, browser behavior, sender acceptance, and unsubscribe UI remain separate.
+
+## 2026-11-19 follow-up consent staging acceptance review
+
+- Scope: one fake consent row, unsubscribe token/hash state, compare-and-set updates, and one isolated rate transient. The delivery worker stays default-off.
+- Privacy/integrity: the fixed address uses `.invalid`; the raw 192-bit token exists only in request-local memory, while the option stores its SHA-256 hash. Valid lookup uses the production constant-time comparison path.
+- Consent safety: fresh consent is required; stale/no-consent/bad-status/bad-email rows fail. Opt-out persists `consent=0`, clears token fields, and cannot be reactivated by the ordinary row updater.
+- Resource controls: the production 30-per-hour HMAC-IP unsubscribe limit is exercised with RFC documentation IP space and restored afterward.
+- Restoration: the helper refuses any pre-existing exact fixture key, restores/removes only that key, restores only its isolated transient, and restores current-user/server context in `finally`.
+- Side effects: the helper neither defines the sender nor invokes `wp_mail()`, the public admin-post handler, a provider, an order, a payment, a user, or a lead.
+- Evidence: 40 helper contract assertions, full 29-file Node suite, 3 PHP compatibility tests, 29 PHP lints, and `git diff --check` passed. Local secrets scan passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus scan was used.
+- Residual gate: hosted runtime evidence remains pending. Real sender/mail acceptance, public GET confirmation, RFC 8058 POST, and the customer-facing unsubscribe page require a separately approved communications test.
