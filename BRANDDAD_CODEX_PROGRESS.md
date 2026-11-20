@@ -13,6 +13,8 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 - Added `bds-account-link-mu.php`: five-minute single-use HMAC account handoff between the two owned WordPress hosts, POST-only token transfer, replay protection, fail-closed source email verification, account reuse, and audit mapping.
 - Added `bds-sales-assistant-api-mu.php`: default-off public BrandDad salesperson proxy, verified agent UUID, deterministic catalog offers, model-link stripping, owned-origin checks, client-bound conversation state, and serialized per-client/global cost limits.
 - Completed the Rafter/OWASP manual security walk and local secret scan; the remote fast scan is recorded as quota-blocked.
+- Added a default-off consent follow-up worker that reuses Cursor's existing consent list/copy, rechecks fresh consent, stops converted contacts, avoids uncertain duplicate delivery, and provides durable opt-out.
+- Added a customer-owned onboarding REST API with strict profile fields, optimistic concurrency, paid/Directory-free access state, completed-job detection, and safe first-tool guidance.
 - Added security design, contracts, handoff, audit, entitlement, product, test, blocker, and production-checklist documentation.
 
 ## Implemented but not yet deployed
@@ -24,12 +26,12 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 
 ## Next unblocked backend work
 
-1. Add consent-based follow-up worker wired to the existing `bds_follow_consent_v1` list, with unsubscribe and stop conditions.
-2. Add onboarding state API and first-task orchestration after safe deployment of execution jobs.
-3. Add WordPress staging fixtures for REST permission/ownership, provider failure, idempotent replay, and HPOS subscription discovery.
-4. Add signed Stripe/Woo webhook reconciliation only if the installed gateway does not already provide authoritative Woo transitions.
-5. Implement Featured payment-event adapter after the four Woo SKUs exist.
+1. Add WordPress staging fixtures for REST permission/ownership, provider failure, idempotent replay, onboarding concurrency, unsubscribe, and HPOS subscription discovery.
+2. Add trial lifecycle/funnel events after verifying the exact installed Woo trial metadata and existing communications provider.
+3. Add signed Stripe/Woo webhook reconciliation only if the installed gateway does not already provide authoritative Woo transitions.
+4. Implement Featured payment-event adapter after the four Woo SKUs exist.
+5. Add customer value-report aggregation from actual completed jobs and publishing events.
 
 ## Production status
 
-Not deployed. No purchase, subscription change, provider run, email, WhatsApp message, social post, listing publication, or customer billing modification was performed by this branch.
+Not deployed. Follow-up delivery is compiled default-off. No purchase, subscription change, provider run, email, WhatsApp message, social post, listing publication, or customer billing modification was performed by this branch.

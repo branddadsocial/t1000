@@ -47,7 +47,10 @@
 
 ## Automation acceptance
 
-- [ ] Consent-based follow-up honors stop/unsubscribe and deduplicates.
+- [x] Implement default-off consent-based follow-up with stop/unsubscribe and uncertain-delivery deduplication.
+- [ ] Verify sender, mail acceptance, one-click unsubscribe, conversion stop, and retries in staging before enabling.
+- [x] Implement customer-owned onboarding state and first-task guidance API.
+- [ ] Exercise onboarding nonce, ownership, version conflict, and access states in WordPress staging.
 - [ ] Sales assistant recommends only verified products and links under cost caps.
 - [ ] SEO/social/WhatsApp/video/music adapters have provider-specific permissions, costs, retries, and proof.
 - [ ] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes.

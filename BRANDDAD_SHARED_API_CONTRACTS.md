@@ -39,6 +39,18 @@ Public, rate-limited BrandDad Sales Assistant proxy. Body: `{ "message": "...", 
 
 Response: `{ "reply", "offers", "session", "expires" }`. Model-supplied URLs are removed. Every clickable offer URL comes from the authoritative server catalog. Execution defaults off and has per-IP plus global daily cost limits.
 
+## GET `/onboarding`
+
+Authenticated customer-owned onboarding view model. Response includes `version`, allowlisted `profile`, access mode, step states, first completed job id, recommended allowlisted tool, and `complete`. It never returns provider ids, credentials, or another user's data.
+
+## POST `/onboarding`
+
+Authenticated optimistic update. Body: `{ "version": 0, "profile": { "business_name", "website_url", "industry", "service_area", "primary_goal", "brand_voice" } }`. Unknown fields are discarded. A stale version returns 409. The website field is stored as a reference only and is never fetched by this endpoint.
+
+## Consent follow-up worker
+
+This is a scheduled backend adapter, not a public send endpoint. It reads only Cursor's existing `bds_follow_consent_v1` option and `bds_follow_message()` copy. Delivery requires `BDS_FOLLOWUP_ENABLED === true` plus a verified `BDS_FOLLOWUP_FROM_EMAIL`; otherwise it sends nothing. It rechecks fresh consent immediately before a bounded send, stops converted/unsubscribed contacts, sends at most one message, retries definite local mail failures up to three times, and uses an opaque hashed unsubscribe token. A crash during an uncertain send enters `delivery_review` rather than sending a duplicate automatically.
+
 ## Account handoff
 
 Source POST `wp-admin/admin-post.php` action `bds_account_link_start` with WordPress nonce, verified source-email ownership, exact destination host, and allowlisted return path. Source returns an auto-submitted POST to destination action `bds_account_link_consume`. Token is HMAC-SHA256, purpose/issuer/audience/email-hash bound, five-minute, and single-use. It is never placed in a URL. The source registration system must explicitly connect its verified-email state through the fail-closed `bds_account_link_email_verified` filter.

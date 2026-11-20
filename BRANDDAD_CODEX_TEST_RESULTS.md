@@ -15,6 +15,11 @@ Updated: 2026-11-19
 - `node tests/ai-execution-contract.mjs`.
 - `node tests/account-link-contract.mjs`.
 - `node tests/sales-assistant-api-contract.mjs`.
+- PHP lint: `deploy/bds-consent-followup-worker-mu.php`.
+- PHP lint: `deploy/bds-onboarding-api-mu.php`.
+- `node tests/consent-followup-worker-contract.mjs`.
+- `node tests/onboarding-api-contract.mjs`.
+- Combined validation after this batch: 19 checks, 0 failures.
 - `rafter secrets .`: no hardcoded secrets detected (exit 0; Betterleaks output-version warning noted).
 
 ## Required security scan
@@ -39,3 +44,5 @@ Updated: 2026-11-19
 - Real trial purchase, provisioning, renewal, failed renewal, paid-through cancellation, refund, and billing portal.
 - Real Featured Woo purchase and placement handoff.
 - Follow-up sending, social publishing, WhatsApp, SEO publishing, music delivery, and video generation.
+- Real mail transport acceptance, one-click unsubscribe, retry, crash/uncertain-delivery review, and converted-customer stop behavior.
+- Onboarding REST nonce, cross-account denial, optimistic version conflict, Directory-free access, and completed-job detection in WordPress staging.

@@ -9,6 +9,7 @@ Updated: 2026-11-19
 - `BDS_ACCOUNT_LINK_SECRET` must be the same 32+ byte secret on both owned WordPress installs and must be distributed outside Git.
 - The existing registration/email-verification system must set the `bds_account_link_email_verified` filter to true only for a verified source email. Account handoff intentionally fails closed until this is connected.
 - Sales-assistant execution remains disabled until `BDS_SALES_ASSISTANT_ENABLED` is explicitly enabled after cost and abuse tests.
+- Follow-up sending remains disabled until the Cursor consent plugin is present on the target host, a BrandDad-domain sender is verified, mail acceptance/unsubscribe tests pass, and `BDS_FOLLOWUP_ENABLED` is deliberately enabled.
 - New Directory Featured SKUs (`bds-feat-local`, `bds-feat-regional`, `bds-feat-national`, `bds-feat-global`) do not exist; billing integration cannot be production-tested without them.
 - Complete AI packages and music products remain quote-only until delivery cost/licensing/fulfillment approval.
 - Make is reported over its free operation allowance until the provider reset; do not promise Make-backed execution.

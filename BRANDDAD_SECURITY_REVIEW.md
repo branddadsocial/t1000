@@ -1,7 +1,9 @@
 # BrandDad backend security review
 
 Updated: 2026-11-19
-Scope: the five MU plugins added to `codex/final-backend-20261119`.
+Scope: the backend MU plugins added to `codex/final-backend-20261119`.
+
+The follow-up worker and onboarding API added in the second batch use the same secure-design baseline. Follow-up has an explicit default-off kill switch, fresh consent checks before send, a one-message limit, bounded retry on definite local failure, an uncertain-delivery review state, conversion stop, hashed opaque unsubscribe tokens, opt-out persistence checks, and public unsubscribe rate limiting. Onboarding is authenticated, owner-scoped, field-allowlisted, body-bounded, optimistic-concurrency protected, and never fetches the stored website URL.
 
 ## Rafter gate
 

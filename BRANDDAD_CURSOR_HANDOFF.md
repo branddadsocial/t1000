@@ -14,6 +14,8 @@ Updated: 2026-11-19
 - Poll AI job: `GET /wp-json/branddad/v1/ai/jobs/{id}`.
 - Deterministic sales offers: `GET /wp-json/branddad/v1/sales/catalog`.
 - Public assistant: `POST /wp-json/branddad/v1/sales/chat`; render `offers[].url`, never infer a link from `reply`.
+- Onboarding state: `GET /wp-json/branddad/v1/onboarding`.
+- Save onboarding: `POST /wp-json/branddad/v1/onboarding` with the returned `version` and a `profile` object. On 409, reload before resubmitting.
 - Cross-site button: call `bds_account_link_form( 'directory.branddad.social', '/account-hub/' )` on Social, and the inverse host on Directory. The form appears only for signed-in users after the shared secret is configured and source email ownership is verified.
 
 ## Expected frontend states
@@ -33,6 +35,8 @@ Updated: 2026-11-19
 - `BDS_ACCOUNT_LINK_SECRET` identical on both hosts, 32+ random bytes, outside Git.
 - `BDS_SALES_ASSISTANT_ENABLED` remains false until abuse/cost test passes.
 - Optional `BDS_SALES_ASSISTANT_DAILY_LIMIT` (default 100 provider calls/day).
+- `BDS_FOLLOWUP_ENABLED` remains false until sender/domain/staging approval.
+- `BDS_FOLLOWUP_FROM_EMAIL` must be a verified BrandDad-domain sender.
 
 ## Required email-verification bridge
 
@@ -53,5 +57,7 @@ Replace the example meta key with the authoritative key from the existing regist
 - `deploy/bds-ai-execution-mu.php`
 - `deploy/bds-account-link-mu.php` on both hosts
 - `deploy/bds-sales-assistant-api-mu.php` on Social
+- `deploy/bds-onboarding-api-mu.php` on each dashboard host that exposes onboarding.
+- `deploy/bds-consent-followup-worker-mu.php` only beside Cursor's existing consent plugin and only after mail acceptance testing.
 
 Do not deploy this branch over newer Cursor public-page files. Merge only the backend files and documented helper calls.
