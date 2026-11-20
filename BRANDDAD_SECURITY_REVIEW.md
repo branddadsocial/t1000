@@ -105,3 +105,14 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - A10 SSRF: N/A; no outbound request or request-controlled URL exists.
 - Static contract evidence: `tests/staging-dependency-activator-contract.mjs` passed all 12 assertions covering host/plugin allowlists, validation order, one-time behavior, final-state verification, and absence of request, REST/admin endpoint, outbound HTTP, and deletion primitives.
 - Residual risk: standard plugin activation hooks may create or migrate staging tables. This is accepted only for the new isolated empty staging database and must be verified before any production decision.
+
+## 2026-11-19 Business Essentials product identity review
+
+- Scope: align the server-owned trial, consented membership, and analytics identities with the existing Woo/catalog slug `ai-business-essentials`.
+- Authorization remains order-derived: `bds_ai_plan_from_order()` reads the Woo line-item product and resolves its server-side `post_name` against the fixed catalog. No request field can choose the plan or create a trial/membership entitlement.
+- The old prefixed identity is not retained as an alias. This prevents ambiguous product recognition and keeps unknown identities fail-closed.
+- No price, trial length, allowance, FormWise plan UUID, payment method, gateway, product row, order, subscription, customer, or external destination changed.
+- Lifecycle analytics now records the same canonical product identity, preventing split reporting for one offer.
+- Cross-module static evidence: seven product-identity assertions pass, including the absence of `branddad-ai-business-essentials` from all affected deploy sources. The full 18-suite Node contract run and affected PHP syntax checks pass.
+- File-specific Rafter secret scans found no secrets. Required remote fast SAST/SCA was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
+- Remaining gate: deploy the corrected modules to hosted staging, create an approved staging-only product/subscription fixture, and prove trial/consent/payment lifecycle behavior before production.

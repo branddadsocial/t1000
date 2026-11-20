@@ -10,7 +10,7 @@ const onboarding = fs.readFileSync('deploy/bds-onboarding-api-mu.php', 'utf8');
 const featured = fs.readFileSync('deploy/bds-featured-billing-adapter-mu.php', 'utf8');
 
 const checks = [
-  ['ledger is versioned', /BDS_LIFECYCLE_EVENTS_VERSION', '0\.4\.0'/.test(lifecycle)],
+  ['ledger is versioned', /BDS_LIFECYCLE_EVENTS_VERSION', '0\.4\.1'/.test(lifecycle)],
   ['event writes use an HMAC idempotency key', /hash_hmac\( 'sha256'/.test(lifecycle) && /_bds_event_key/.test(lifecycle)],
   ['write lock has stale recovery', /bds_evt_lock_[\s\S]*time\(\) - 60/.test(lifecycle)],
   ['stored metadata is allowlisted and omits email IP and raw content', /\$allowed = array\(/.test(lifecycle) && !/_bds_event_(?:email|ip|message|content)/.test(lifecycle)],

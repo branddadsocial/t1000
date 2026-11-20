@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Trial
  * Description: Fail-closed seven-day AI Business Essentials trial lifecycle and customer status API.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_TRIAL_VERSION', '0.1.0' );
-define( 'BDS_AI_TRIAL_PRODUCT_SLUG', 'branddad-ai-business-essentials' );
+define( 'BDS_AI_TRIAL_VERSION', '0.1.1' );
+define( 'BDS_AI_TRIAL_PRODUCT_SLUG', 'ai-business-essentials' );
 define( 'BDS_AI_TRIAL_CREDITS', 25 );
 
 /** Require an authenticated cookie session and WordPress REST nonce. */

@@ -3,11 +3,11 @@ import process from 'node:process';
 
 const source = fs.readFileSync('deploy/bds-directory-membership-bridge-mu.php', 'utf8');
 const checks = [
-  ['bridge is versioned', /BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0\.1\.0'/.test(source)],
+  ['bridge is versioned', /BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0\.1\.1'/.test(source)],
   ['bridge requires the existing 32-byte shared secret', /strlen\( \$secret \) >= 32/.test(source)],
   ['membership signatures use a protocol-specific derived key', /branddad-directory-membership-v1/.test(source) && /bds_directory_membership_hmac_key\(\)/.test(source)],
   ['only explicit checkout consent is recorded', /bds_directory_membership_consent[\s\S]*array\( '1', 'yes', 'true', 'on' \)/.test(source)],
-  ['only Business Essentials is eligible', /branddad-ai-business-essentials/.test(source)],
+  ['only Business Essentials is eligible', /'ai-business-essentials' !== \( \$plan\['slug'\] \?\? '' \)/.test(source)],
   ['sender is pinned to BrandDad Social', /'branddad\.social' !== bds_directory_membership_host\(\)/.test(source)],
   ['receiver is pinned to the Directory host', /'directory\.branddad\.social' !== bds_directory_membership_host\(\)/.test(source)],
   ['remote endpoint is fixed and HTTPS', /https:\/\/directory\.branddad\.social\/wp-json\/branddad\/v1\/internal\/free-membership/.test(source)],

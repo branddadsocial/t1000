@@ -30,6 +30,7 @@ Updated: 2026-11-19
 - Onboarding state: `GET /wp-json/branddad/v1/onboarding`.
 - Save onboarding: `POST /wp-json/branddad/v1/onboarding` with the returned `version` and a `profile` object. On 409, reload before resubmitting.
 - Trial state: `GET /wp-json/branddad/v1/trial`; do not calculate trial dates in JavaScript.
+- Business Essentials product identity is exactly `ai-business-essentials`. Use that slug for product links and checkout presentation; do not use the obsolete/nonexistent `branddad-ai-business-essentials` alias.
 - Unified customer state: `GET /wp-json/branddad/v1/account/status`.
 - Monthly evidence report: `GET /wp-json/branddad/v1/reports/value?period=YYYY-MM`.
 - Admin lifecycle aggregate: `GET /wp-json/branddad/v1/admin/analytics/summary?period=YYYY-MM`; requires `manage_woocommerce`. Present its gross/refund/net fields as confirmed transaction events, never as MRR, profit, or settled cash.

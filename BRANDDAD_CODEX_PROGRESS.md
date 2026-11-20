@@ -2,6 +2,16 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 Business Essentials identity correction
+
+- Read-only HTTP evidence confirmed the real public Woo product is `/product/ai-business-essentials/` (HTTP 200); `/product/branddad-ai-business-essentials/` returns HTTP 404.
+- Corrected the trial recognizer, consented free-Directory membership bridge, and lifecycle analytics metadata to use the same authoritative `ai-business-essentials` slug as the commercial catalog and Woo order resolver.
+- Added a seven-assertion cross-module identity contract that also rejects the obsolete slug from deploy modules.
+- Bumped only the affected internal module versions: trial 0.1.1, Directory membership bridge 0.1.1, and lifecycle events 0.4.1. No price, product, order, subscription, customer record, or checkout state changed.
+- All 18 Node contract suites, three PHP compatibility suites, three affected PHP syntax checks, and `git diff --check` pass.
+- File-specific Rafter secret scans pass. Required remote fast SAST/SCA was attempted and remains blocked at 16/16 quota; paid Plus was not used.
+- This correction is local and reviewed; hosted staging and production still run the previously packaged modules until a separate approved deployment step.
+
 ## 2026-11-19 hosted staging commerce dependency batch
 
 - Copied the already installed WooCommerce, WooCommerce Stripe Gateway, and Subscriptions for WooCommerce plugin code from the Social host into the isolated hosted staging install. No production plugin, setting, order, subscription, or customer record was changed.

@@ -43,6 +43,7 @@
 
 ## Revenue acceptance
 
+- [x] Align the Business Essentials catalog, Woo order, trial, consented Directory bridge, and lifecycle identities on the exact `ai-business-essentials` slug; reject the obsolete prefixed identity.
 - [ ] AI Business Essentials product exists at $29.99/month with exact seven-day trial terms.
 - [x] Trial runtime uses authoritative WPS start/end/status fields, a separate 25-credit ledger, and blocks full paid provisioning before renewal.
 - [ ] Cursor checkout displays optional free Directory consent and the signed bridge succeeds/replays safely in staging.

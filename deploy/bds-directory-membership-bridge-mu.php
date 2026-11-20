@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Membership Bridge
  * Description: Consented, signed, idempotent free Directory account provisioning from BrandDad Social checkout.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0.1.0' );
+define( 'BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0.1.1' );
 
 function bds_directory_membership_secret() {
 	$secret = defined( 'BDS_ACCOUNT_LINK_SECRET' ) ? trim( (string) BDS_ACCOUNT_LINK_SECRET ) : '';
@@ -33,7 +33,7 @@ function bds_directory_membership_capture_consent( $order, $data ) {
 		return;
 	}
 	$plan = bds_ai_plan_from_order( $order );
-	if ( ! $plan || 'branddad-ai-business-essentials' !== ( $plan['slug'] ?? '' ) ) {
+	if ( ! $plan || 'ai-business-essentials' !== ( $plan['slug'] ?? '' ) ) {
 		return;
 	}
 	$value = isset( $_POST['bds_directory_membership_consent'] ) ? sanitize_key( wp_unslash( $_POST['bds_directory_membership_consent'] ) ) : '';

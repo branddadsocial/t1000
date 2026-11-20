@@ -171,3 +171,11 @@ Trust boundaries and controls:
 - The helper intentionally remains inert after its completed report is written. Removal is a separate cleanup action after staging evidence is captured.
 
 STRIDE findings: host spoofing is constrained by the exact canonical WordPress home host; path tampering is constrained by a literal allowlist plus `validate_plugin()`; repudiation is addressed by the bounded activation report; information disclosure is limited by omitting file-system paths and secrets; denial is bounded to one attempt; elevation is limited to WordPress's existing plugin activation primitive and a staging-only host. Residual risk is that a copied plugin may execute its normal activation migrations; this is accepted only on the isolated empty staging database and is verified before any production decision.
+
+## AI Business Essentials product identity correction
+
+The live WooCommerce product and the authoritative commercial catalog use the exact slug `ai-business-essentials`. Trial recognition and the consented free-Directory bridge previously checked the nonexistent slug `branddad-ai-business-essentials`, which fails closed but prevents legitimate fulfillment.
+
+Security invariant: product identity comes only from the server-owned Woo product attached to the authoritative order. The request cannot supply or override the slug. Trial, subscription, Directory-consent, and lifecycle modules must use the same literal catalog identity; unknown or legacy-looking aliases remain rejected.
+
+The correction changes no price, product, order, subscription, payment state, trial record, customer, or public checkout. It only aligns deterministic recognition code and analytics metadata with the existing product. Static contracts must assert the exact live slug and reject the obsolete identity across all deploy modules before staging acceptance.

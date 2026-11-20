@@ -52,6 +52,19 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 Business Essentials product identity verification
+
+- Read-only public product evidence: `https://branddad.social/product/ai-business-essentials/` returned HTTP 200; the obsolete prefixed slug returned HTTP 404.
+- Added `tests/business-essentials-product-identity-contract.mjs`; all seven assertions passed.
+- Updated trial, Directory membership bridge, and lifecycle contract version/identity assertions.
+- Full Node contract suite: 18/18 passed.
+- PHP compatibility suites: 3/3 passed.
+- Affected PHP syntax checks: 3/3 passed.
+- `git diff --check`: passed.
+- Rafter local secret scans for all three affected PHP modules: passed with no detected secrets.
+- Required `rafter run` fast: attempted and quota-blocked at 16/16. Paid Plus was not used.
+- No staging/production write, checkout, charge, subscription mutation, Directory account creation, or provider execution occurred in this correction batch.
+
 ## 2026-11-19 hosted staging commerce dependency verification
 
 - Hosted staging home: HTTP 200 over the valid StartHost temporary TLS hostname, with `noindex` present.

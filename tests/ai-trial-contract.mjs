@@ -6,8 +6,8 @@ const exec = fs.readFileSync('deploy/bds-ai-execution-mu.php', 'utf8');
 const onboarding = fs.readFileSync('deploy/bds-onboarding-api-mu.php', 'utf8');
 
 const checks = [
-  ['trial version is explicit', /BDS_AI_TRIAL_VERSION', '0\.1\.0'/.test(trial)],
-  ['only the approved Essentials product can create trial access', /BDS_AI_TRIAL_PRODUCT_SLUG', 'branddad-ai-business-essentials'/.test(trial)],
+  ['trial version is explicit', /BDS_AI_TRIAL_VERSION', '0\.1\.1'/.test(trial)],
+  ['only the approved Essentials product can create trial access', /BDS_AI_TRIAL_PRODUCT_SLUG', 'ai-business-essentials'/.test(trial)],
   ['trial has a bounded 25-credit allowance', /BDS_AI_TRIAL_CREDITS', 25/.test(trial)],
   ['trial uses the plugin authoritative misspelled end metadata', /wps_susbcription_trial_end/.test(trial)],
   ['trial requires exact seven-day terms copied to subscription', /7 === \$number && 'day' === \$interval/.test(trial)],
