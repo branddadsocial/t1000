@@ -494,3 +494,9 @@ Updated: 2026-11-19
 - Cleanup verifies exact ids, types, markers, owner, and product identity before deletion, then restores the isolated grant option, request globals, and current user. The public evidence route exposes only 28 allowlisted booleans and bounded error codes.
 - Local validation passed: all 39 Node contract files, all 44 deployment PHP syntax checks, all 3 PHP compatibility tests, the staging checksum contract, and `git diff --check`.
 - `rafter secrets .` found no secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used. The helper has not been uploaded or executed on hosted staging, and production remains unchanged.
+
+## 2026-11-20 external dependency diagnosis
+
+- StartHost ticket `898665003` now contains a provider reply: StartHost says it cannot remove the false-positive flag and suggests ignoring it. No reply was sent. Since the exact scheduled task still returns `Cron failed to add`, this does not satisfy the scheduler launch gate.
+- Woo Stripe reports payments, payouts, and webhook configuration enabled, but the connection dialog marks the account `Incomplete`, sync disabled, and explains that stored account keys exist but their origin cannot be verified. The plugin requires reconnecting the account.
+- The configured endpoint is `https://branddad.social/?wc-api=wc_stripe`. A public GET returned HTTP 200 and an unsigned empty JSON POST returned HTTP 204, confirming edge/origin reachability without a valid Stripe event. No order, payment, subscription, setting, or customer record changed.
