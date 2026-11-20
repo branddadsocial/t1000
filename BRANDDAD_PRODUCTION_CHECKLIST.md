@@ -168,7 +168,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Verify that the Directory database still exists and is below its storage allowance.
 - [x] Confirm that Social remained available and that Directory later recovered without a BrandDad-side change.
 - [ ] Obtain StartHost database telemetry for the incident window and a provider determination of the intermittent 200/500 pattern.
-- [x] Send the precise, non-destructive StartHost incident request; Gmail recorded reply `1a1fb1500b583bef` in ticket `898665003`.
+- [x] Send the precise, non-destructive StartHost incident request through the required authenticated support portal; ticket `898665003` confirms the combined update at 22:32:40 on 2026-11-20.
 - [~] Immediate recovery observation passed three homepage/REST rounds plus one seven-route homepage/REST/category/location/listing/submission sample with HTTP 200 throughout; continue the window and obtain provider telemetry before stable launch classification.
 - [ ] If a repair, restart, credential rotation, plugin disablement, or cache purge is proposed, back up and obtain separate approval before executing it.
 
@@ -186,6 +186,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Add the stale clean-URL evidence and broken Edge Caching UI error to ticket `898665003`; request only a hostname-bounded provider purge or supported control repair, with explicit no-content/no-database/no-broad-cache-deletion safeguards.
 - [x] Send StartHost a direct reply on ticket `898665003` with the exact PHP 8.4 cron command, all three confirmed specialty cache basenames, and explicit no-broad-purge/no-customer-data-deletion boundaries; Gmail recorded sent message `1a1fb065c1cb1df2` in the existing support thread.
 - [x] Clarify to StartHost that the temporary GitHub cron fallback must not coexist with an activated host cron; sent message `1a1fb0ad5e42fe7e` asks them to repair the control but wait for BrandDad to disable the fallback before activating the host task.
+- [x] Resubmit the cron, exact three-object cache, duplicate-runner, and database-telemetry requirements through StartHost's authenticated ticket UI after support stated that email replies are not accepted; portal confirmation is visible at 22:32:40 on 2026-11-20.
 - [~] GitHub reports workflow `425477211` (`BrandDad Social wp-cron`) as active on `main`, with a five-minute HTTPS call and read-only permissions, but the Actions API has not yet recorded a scheduled run. Do not call this operational until a real run succeeds.
 - [~] Post-incident stability sample passed 15/15 HTTP requests across Social home, Directory home, and Directory REST with zero database-error bodies; keep the host database incident open until provider telemetry or a longer observation window supports closure.
 - [x] Verify the four primary Social subscription pages return HTTP 200, display the approved launch price, and expose a real WooCommerce product-ID-backed add-to-cart control.
