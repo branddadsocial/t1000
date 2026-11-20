@@ -18,6 +18,9 @@ Updated: 2026-11-19
 - Admin lead list: `GET /wp-json/branddad/v1/admin/leads?page=1&stage=interested`; requires `manage_woocommerce`. Do not expose this response on a customer dashboard.
 - Website monitor state: `GET /wp-json/branddad/v1/monitor/site`. Configure with `POST` body `{ "enabled": true, "authorization_confirmed": true }`; the displayed destination must be the stored onboarding URL and the checkbox must clearly say the customer owns, manages, or has permission to monitor it. Do not add a separate arbitrary URL field.
 - Manual monitor run: `POST /wp-json/branddad/v1/monitor/site/check`; show 429 as “already requested this hour,” 422 as “add/authorize your website,” and `needs_reconnect` after the onboarding URL changes. Do not promise alerts until the sender adapter is verified.
+- Inquiry form control: `GET/POST /wp-json/branddad/v1/inquiries/form`. Use the returned opaque reference in a BrandDad-hosted public form; do not treat it as an account secret or expose the private inbox.
+- Public inquiry submit: `POST /wp-json/branddad/v1/inquiries/submit` with a new 16–64 character `Idempotency-Key` per submission (reuse it only for an exact retry), the documented honeypot, privacy acknowledgment, separate contact consent, bounded contact fields/message, and form reference. Do not claim the business was notified until a notification adapter is verified.
+- Customer inbox: `GET /wp-json/branddad/v1/inquiries?page=1&status=new`; update with `POST /wp-json/branddad/v1/inquiries/{id}` and the current `version`. On 409 reload; another customer's id intentionally looks like 404.
 - Onboarding state: `GET /wp-json/branddad/v1/onboarding`.
 - Save onboarding: `POST /wp-json/branddad/v1/onboarding` with the returned `version` and a `profile` object. On 409, reload before resubmitting.
 - Trial state: `GET /wp-json/branddad/v1/trial`; do not calculate trial dates in JavaScript.
@@ -51,6 +54,7 @@ Updated: 2026-11-19
 - `BDS_LEAD_CAPTURE_ENABLED` remains false until the public form/privacy copy and staging security/retention tests pass.
 - Optional `BDS_LEAD_CAPTURE_DAILY_LIMIT` (bounded to 100–10,000; default 2,000) and `BDS_LEAD_RETENTION_DAYS` (bounded to 30–365; default 180).
 - `BDS_WEBSITE_MONITORING_ENABLED` remains false until a real-host DNS/queue/fetch acceptance test passes.
+- `BDS_CUSTOMER_INQUIRIES_ENABLED` remains false until hosted-form, isolation, consent, spam/rate, retention, and report acceptance passes. Optional `BDS_CUSTOMER_INQUIRIES_DAILY_LIMIT` is bounded to 100–10,000 (default 2,000); `BDS_CUSTOMER_INQUIRY_RETENTION_DAYS` is bounded to 90–730 (default 365).
 
 ## Required email-verification bridge
 
@@ -90,5 +94,6 @@ Do not auto-activate an earlier anonymous consent request after a later registra
 - `deploy/bds-lifecycle-events-mu.php` on Social with the subscription/trial/execution/onboarding plugins; install on Directory too only if that host is expected to record local registration/link events. It stores private allowlisted events and exposes only the admin aggregate.
 - `deploy/bds-sales-lead-pipeline-mu.php` on Social beside the catalog, trial/subscription, onboarding, lifecycle, and follow-up plugins. Deploy disabled first; enable capture only after Cursor's privacy/consent form and staging acceptance.
 - `deploy/bds-website-monitoring-mu.php` on Social beside subscriptions, onboarding, customer status, and lifecycle. Deploy disabled first; enable only after real-host staging acceptance.
+- `deploy/bds-customer-inquiries-mu.php` on Social beside subscriptions, customer status, and lifecycle. Deploy disabled first; enable only after the hosted form and tenant-isolation staging acceptance.
 
 Do not deploy this branch over newer Cursor public-page files. Merge only the backend files and documented helper calls.

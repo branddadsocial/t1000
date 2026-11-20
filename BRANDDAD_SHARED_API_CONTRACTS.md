@@ -61,6 +61,18 @@ Every check resolves all available A/AAAA records and refuses local/private/rese
 
 Authenticated manual check request, limited to one per customer per hour. It queues the same locked worker used by the bounded daily batch. No alert is sent by this endpoint. Monitoring defaults off and requires `BDS_WEBSITE_MONITORING_ENABLED=true` only after staging acceptance.
 
+## GET/POST `/inquiries/form`
+
+Authenticated customer-owned inquiry form state. Enabling requires an active allowlisted paid plan and creates/reuses one opaque 32-character public form reference. The reference identifies the receiving business; it is not a customer authorization credential. Disabling preserves existing inquiries and stops new submissions.
+
+## POST `/inquiries/submit`
+
+Public BrandDad-hosted form submission. Header: a new 16–64 character `Idempotency-Key` per visitor submission, reused only when retrying that exact body. Body: `{ "form_reference", "name", "email", "phone", "message", "privacy_ack": true, "contact_consent": true, "company_website": "" }`. The honeypot must be blank, at least one contact method is required, and all fields/body/client/global rates are bounded. The backend rechecks that exactly one eligible paid owner has the enabled reference. Public callers cannot choose owner or status. The body-bound idempotency key and stale-safe lock prevent double creation. Response contains only `{ "status": "received", "reference" }`; it sends no email/WhatsApp action.
+
+## GET `/inquiries?page=1&status=new` and POST `/inquiries/{id}`
+
+Authenticated customer-owned inbox and optimistic status update. Lists at most 50 per page and always filters by the current `post_author`. Another customer's id returns 404. Update body: `{ "version", "status" }`, where status is `new`, `contacted`, `qualified`, `quoted`, `in_progress`, `won`, `lost`, or `closed`; stale versions return 409. Closed/lost contact/message PII is anonymized after a bounded retention period while aggregate evidence remains.
+
 ## GET `/onboarding`
 
 Authenticated customer-owned onboarding view model. Response includes `version`, allowlisted `profile`, access mode, step states, first completed job id, recommended allowlisted tool, and `complete`. It never returns provider ids, credentials, or another user's data.
@@ -79,7 +91,7 @@ Authenticated customer-owned summary containing access mode (`paid`, `trial`, `d
 
 ## GET `/reports/value?period=YYYY-MM`
 
-Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, committed customer credits, and—when the verified monitor plugin is present—actual availability checks. Failed AI work is not counted as completed value. Unconnected publishing, rankings, leads, and revenue are explicitly returned as unavailable rather than inferred. AI results are capped at 500 jobs with a `truncated` flag.
+Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, committed customer credits, and—when connected—actual availability checks and customer inquiries. Failed AI work is not counted as completed value. Unconnected publishing, rankings, and revenue are explicitly returned as unavailable rather than inferred. AI and inquiry results are independently capped at 500 with `truncated` flags.
 
 ## GET `/admin/analytics/summary?period=YYYY-MM`
 

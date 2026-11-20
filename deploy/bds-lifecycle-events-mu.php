@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Lifecycle Events
  * Description: Idempotent, privacy-limited customer lifecycle and confirmed-revenue event ledger.
- * Version: 0.3.0
+ * Version: 0.4.0
  * Author: BrandDad Social
  */
 
@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LIFECYCLE_EVENTS_VERSION', '0.3.0' );
+define( 'BDS_LIFECYCLE_EVENTS_VERSION', '0.4.0' );
 
 function bds_lifecycle_event_types() {
-	return array( 'registered', 'lead_created', 'lead_stage_changed', 'trial_started', 'payment_confirmed', 'payment_refunded', 'access_revoked', 'ai_task_completed', 'website_monitor_check', 'directory_member_linked', 'onboarding_completed' );
+	return array( 'registered', 'lead_created', 'lead_stage_changed', 'customer_inquiry_created', 'customer_inquiry_status', 'trial_started', 'payment_confirmed', 'payment_refunded', 'access_revoked', 'ai_task_completed', 'website_monitor_check', 'directory_member_linked', 'onboarding_completed' );
 }
 
 function bds_lifecycle_register_type() {
@@ -117,6 +117,16 @@ function bds_lifecycle_lead_stage_changed( $lead_id, $user_id, $stage, $version 
 	bds_lifecycle_record( 'lead_stage_changed', $user_id, 'sales_lead', $lead_id, array( 'stage' => sanitize_key( $stage ) ), 'lead-stage-' . absint( $lead_id ) . '-' . sanitize_key( $stage ) . '-' . absint( $version ) );
 }
 add_action( 'bds_sales_lead_stage_changed', 'bds_lifecycle_lead_stage_changed', 10, 4 );
+
+function bds_lifecycle_inquiry_created( $inquiry_id, $owner_id ) {
+	bds_lifecycle_record( 'customer_inquiry_created', $owner_id, 'customer_inquiry', $inquiry_id, array( 'stage' => 'new' ), 'inquiry-created-' . absint( $inquiry_id ) );
+}
+add_action( 'bds_customer_inquiry_created', 'bds_lifecycle_inquiry_created', 10, 2 );
+
+function bds_lifecycle_inquiry_status( $inquiry_id, $owner_id, $status, $version ) {
+	bds_lifecycle_record( 'customer_inquiry_status', $owner_id, 'customer_inquiry', $inquiry_id, array( 'stage' => sanitize_key( $status ) ), 'inquiry-stage-' . absint( $inquiry_id ) . '-' . absint( $version ) );
+}
+add_action( 'bds_customer_inquiry_status_changed', 'bds_lifecycle_inquiry_status', 10, 4 );
 
 function bds_lifecycle_trial_started( $user_id, $subscription_id ) {
 	bds_lifecycle_record( 'trial_started', $user_id, 'subscription', $subscription_id, array( 'product_slug' => 'branddad-ai-business-essentials', 'stage' => 'trial_started' ), 'trial-' . absint( $subscription_id ) );

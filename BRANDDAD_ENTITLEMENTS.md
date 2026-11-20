@@ -40,3 +40,7 @@ Each execution chooses exactly one source: `paid`, `trial`, or `directory_free`.
 ## Website monitoring
 
 Monitoring requires an active allowlisted paid plan and an explicitly authorized onboarding website. Trials and Directory-free access do not receive recurring monitoring. Plan loss or a changed onboarding URL disables future checks. The customer may request at most one manual check per hour; the daily worker remains bounded. Availability evidence does not represent SEO rankings, traffic, leads, or revenue.
+
+## Customer inquiries
+
+One hosted inquiry form is available only to active allowlisted paid plans. The public form reference identifies the receiving owner but grants no account access. Historical inquiries remain customer-readable after cancellation, while new public submissions fail when the entitlement/form is inactive. Inquiry status is customer-managed; a stored inquiry is not a confirmed sale. Closed/lost PII follows bounded retention.

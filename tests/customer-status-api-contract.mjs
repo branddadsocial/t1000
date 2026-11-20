@@ -5,7 +5,7 @@ const source = fs.readFileSync('deploy/bds-customer-status-api-mu.php', 'utf8');
 const exec = fs.readFileSync('deploy/bds-ai-execution-mu.php', 'utf8');
 
 const checks = [
-  ['API is versioned', /BDS_CUSTOMER_STATUS_API_VERSION', '0\.2\.0'/.test(source)],
+  ['API is versioned', /BDS_CUSTOMER_STATUS_API_VERSION', '0\.3\.0'/.test(source)],
   ['both routes require authenticated sessions', (source.match(/'permission_callback' => 'bds_customer_status_permission'/g) || []).length === 2],
   ['status is scoped to current user', /bds_customer_status_response\( get_current_user_id\(\) \)/.test(source)],
   ['provider ids and ledger keys are not returned', !/'plan_id'\s*=>/.test(source) && !/ledger_key/.test(source)],
@@ -18,6 +18,7 @@ const checks = [
   ['provider cost is not fabricated', /'provider_cost'\s*=>\s*'unavailable'/.test(source)],
   ['unmeasured outcomes are explicitly unavailable', /'revenue_generated'/.test(source) && /'search_rankings'/.test(source)],
   ['verified monitoring can extend the value report without fabrication', /bds_monitoring_customer_summary/.test(source) && /'status' => 'unavailable'/.test(source)],
+  ['actual customer inquiries replace unavailable lead counts when connected', /bds_inquiries_monthly_summary/.test(source) && /\$unavailable\[\] = 'leads_captured'/.test(source)],
 ];
 
 let failures = 0;

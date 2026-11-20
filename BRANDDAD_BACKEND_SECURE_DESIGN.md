@@ -88,6 +88,12 @@ Monitoring is available only to an authenticated customer with an active allowli
 
 The fetch uses WordPress safe HTTP, a short timeout, zero redirects, a small response cap, and a fixed user agent. It never sends cookies, authorization, customer text, or provider credentials. The response body is not retained; only status, bounded latency, response byte count, a content hash, and timestamps are stored in customer-owned user metadata. Manual checks are rate-limited and all checks use stale-recoverable per-customer locks. The scheduler processes bounded batches with a recoverable cursor. No failure email or external side effect is sent until a separate verified notification adapter exists.
 
+## Customer inquiry capture
+
+Each eligible paid owner receives one opaque public form reference; it is an identifier, not an authorization credential. A public submission is accepted only on an owned BrandDad form origin while the owner's entitlement and form-enabled state are rechecked. The request requires a privacy acknowledgment, separate consent for the business to respond, a blank honeypot, bounded contact/message fields, at least one contact method, and client/global rate limits using non-stored HMAC IP keys.
+
+Inquiry records are private posts owned by the receiving WordPress user. Customer list/read/update APIs always query or compare `post_author` to the authenticated user; another user's id returns 404. Public callers cannot set the owner or workflow status. Status updates require the current version to prevent lost writes. No submission sends email, WhatsApp, or another side effect. Customer value reports count actual stored inquiries only. Contact/message data is excluded from lifecycle aggregates and provider prompts unless a later separately approved workflow explicitly needs it.
+
 ## STRIDE findings and controls
 
 - Spoofing: WordPress session + nonce, capability/ownership checks, signed single-use link tokens, separate service credentials.
