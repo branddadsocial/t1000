@@ -35,13 +35,13 @@
 - [x] Run the reviewed synthetic subscription-lifecycle harness on isolated staging; 36/36 trial/grant/replay/renewal/revocation/cancellation/failure/cleanup checks pass.
 - [x] Create and verify hidden staging-only fixtures/mappings for AI Studio Starter, AI Local SEO, AI Lead Assistant, and AI Social Growth.
 - [ ] Install or safely clone Directorist on staging before Directory ownership/claim/free-AI acceptance testing.
-- [ ] Provision valid TLS for `staging.branddad.social` at the authoritative DNS/CDN provider, or use the valid StartHost temporary hostname for acceptance tests.
-- [ ] Restore reliable SSH or execute an approved protected File Manager deployment procedure.
+- [x] Use the valid-TLS StartHost temporary staging hostname for acceptance tests; custom-hostname TLS remains an optional DNS/CDN follow-up.
+- [x] Execute the approved protected File Manager staging deployment procedure with exact folder selection, reviewed local files, completed upload evidence, hosted acceptance, and production-route isolation. SSH remains a reliability improvement.
 - [x] Document exact per-host artifacts, fail-closed switches, checksums/rollback requirements, and acceptance evidence in `BRANDDAD_DEPLOYMENT_MANIFEST.md`.
 - [ ] Back up exact MU files and database tables/options before deployment.
 - [ ] Configure server-only provisioning key, execution key, and account-link secret.
 - [ ] Connect and test the fail-closed source email-verification filter on both hosts.
-- [ ] Deploy to staging/QA first; do not overwrite newer Cursor public files.
+- [x] Deploy reviewed backend changes to isolated staging/QA first without overwriting production or Cursor-owned public files.
 - [ ] Verify rollback by restoring prior MU files.
 - [x] Confirm current Social/Directory homepages and REST indexes return HTTP 200 with valid TLS before deployment.
 - [x] Confirm the intended `/branddad/v1` routes appear on hosted staging with the documented anonymous authorization behavior.
@@ -50,7 +50,7 @@
 ## Revenue acceptance
 
 - [x] Align the Business Essentials catalog, Woo order, trial, consented Directory bridge, and lifecycle identities on the exact `ai-business-essentials` slug; reject the obsolete prefixed identity.
-- [ ] AI Business Essentials product exists at $29.99/month with exact seven-day trial terms.
+- [x] AI Business Essentials product exists at $29.99/month with exact seven-day trial terms; live product and checkout UI verified without submitting payment.
 - [x] Trial runtime uses authoritative WPS start/end/status fields, a separate 25-credit ledger, and blocks full paid provisioning before renewal.
 - [ ] Cursor checkout displays optional free Directory consent and the signed bridge succeeds/replays safely in staging.
 - [ ] Safe checkout creates one order/subscription and no duplicate charge.
@@ -105,3 +105,14 @@
 - [ ] Exercise the 5,000-event truncation flag in a higher-capacity isolated WordPress environment or with WP-CLI/database-fixture tooling; the shared-host HTTP attempt was safely recovered at 1,560 rows without affecting customer or financial records.
 
 Nothing unchecked above may be described as fully operational.
+
+## 2026-11-20 live Directory release gate
+
+- [x] Verify the homepage at 390px uses one contained Directory Concierge, light-on-dark logo, compact navigation, organized footer, and Playa del Carmen-first nearby listings without Dubai/Chicago contamination.
+- [x] Build, syntax-check, contract-test, manually security-review, secret-scan, package, hash, and re-extract Directory Experience `0.68.14`.
+- [x] Upload the reviewed `0.68.14` archive into the signed-in live plugin installer.
+- [ ] Receive the required action-time confirmation and click `Install Now` to replace live `0.68.13`.
+- [ ] Verify the installed asset advertises `0.68.14` and no longer contains the `items.length === 100` stop condition.
+- [x] At 390px, complete Mexico -> Quintana Roo -> Playa del Carmen -> restaurant type and verify the resulting URL/listings stay location-scoped (36 matches; correct active filters).
+- [x] Run the approved exact-homepage cache repair and confirm the clean homepage returns one index/follow robots policy with no stale noindex.
+- [ ] After separate deletion confirmation, remove only `wp-content/mu-plugins/bds-directory-home-cache-repair-mu.php` and verify the admin repair menu disappears.

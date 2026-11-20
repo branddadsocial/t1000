@@ -1,6 +1,6 @@
 # BrandDad Codex blockers
 
-Updated: 2026-11-19
+Updated: 2026-11-20
 
 ## External or owner-controlled
 
@@ -9,7 +9,7 @@ Updated: 2026-11-19
 - StartHost cannot issue its free wildcard certificate while `branddad.social` uses external nameservers. The custom staging hostname needs a certificate at the authoritative DNS/CDN provider; the StartHost temporary hostname remains the safe TLS-capable fallback for staging HTTP tests.
 
 - Production SSH key exchange/authentication is not working from this PC. Previous File Manager deployment succeeded, but a reliable protected deployment path and rollback must be restored.
-- Both hosting File Manager tabs expired after a stalled upload on 2026-11-20. Commit `194d399` (evidence-stage monthly reporting) is locally complete but not confirmed on staging; the helper route is HTTP 404. Re-authenticate the panel or restore SSH before this isolated staging deployment can continue. The exact pending upload pair and hashes are now isolated in `STAGING_SHA256SUMS.txt`; the acceptance helper must never be copied to production.
+- The 2026-11-20 File Manager session blocker is resolved for the reporting-stage deployment: both checksum-verified files uploaded and hosted acceptance passed 10/10. SSH remains unavailable, so future protected deployments still depend on an authenticated File Manager session until a least-privilege SSH key is authorized. The acceptance helper remains staging-only and must never be copied to production.
 - A separate least-privilege `flows:execute`/`apps:execute` FormWise key must be present as `BDS_FORMWISE_EXECUTION_KEY` on the server. Do not reuse a broad key in browser code or repository files.
 - `BDS_ACCOUNT_LINK_SECRET` must be the same 32+ byte secret on both owned WordPress installs and must be distributed outside Git.
 - Cursor must add the optional, unselected `bds_directory_membership_consent` checkbox to Business Essentials checkout before automatic free Directory membership can run.
@@ -29,6 +29,9 @@ Updated: 2026-11-19
 - Make is reported over its free operation allowance until the provider reset; do not promise Make-backed execution.
 - Social publishing, WhatsApp, video rendering, and music distribution need verified provider credentials/permissions and cost ceilings. No unauthorized provider purchase was made.
 - Rafter fast scan quota is exhausted (16/16) until 2026-11-23. The required scan was attempted and blocked; local secret scanning and the full manual review completed. Paid Plus was not used.
+- The stale Directory homepage `noindex` cache is repaired and independently verified. The temporary MU repair plugin remains installed only because deleting the exact live file is a separate destructive browser action requiring action-time confirmation; remove only `wp-content/mu-plugins/bds-directory-home-cache-repair-mu.php`, then verify the admin repair menu disappears.
+- Directory Experience `0.68.14` is packaged, security-reviewed, uploaded into the live WordPress plugin installer, and ready at the final `Install Now` step. The public update cannot be applied until the required action-time confirmation for that specific live plugin replacement is received.
+- Live WordPress reports that 722 of 958 published Directory listings lack verified listing WhatsApp data. Message CTAs correctly remain hidden and new publishes are blocked for missing data; source-verified hydration is a separate data-quality campaign and must not be mass-invented.
 
 ## Test environment
 

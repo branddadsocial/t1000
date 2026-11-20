@@ -17,7 +17,9 @@ Updated: 2026-11-20
 - Existing job-status/tool/credit, monitoring, inquiry, cost, truncation, and unavailable-metric fields are preserved. The route, permissions, author scope, 24-month UTC window, and 500-job cap are unchanged.
 - Added an exact-host, read-only staging helper for the two marker-owned non-admin fixtures. It verifies per-fixture completed-count consistency, exact stage keys/semantics, and existing-field compatibility without creating or changing records.
 - Secure design and ASVS L2 web/API review are recorded. Focused contracts pass; the full local suite passes 37/37 Node contract files, 43/43 PHP syntax checks, and `git diff --check`. Local secret scanning is clean; remote Rafter remains quota-blocked at 16/16.
-- Hosting File Manager uploads stalled and both authenticated panel tabs expired when reloaded. The new acceptance route remains HTTP 404, so neither the updated module nor helper is claimed as deployed. Commit `194d399` is ready for the next authenticated staging deployment.
+- Re-authenticated StartHost File Manager, uploaded the exact checksum-verified customer-status module and staging-only acceptance helper to the isolated staging MU directory, and observed both uploads complete.
+- Hosted acceptance returned `complete=true` with all 10 checks true and no errors: dependencies/fixtures verified; report bounds; exact stage keys; generated/completed alignment and unit; unavailable/zero later stages; and preservation of existing fields.
+- Post-deployment smoke kept staging HTTP 200 with `noindex`, protected customer routes HTTP 401 anonymously, and the production acceptance route HTTP 404. Production remains unchanged.
 
 ## 2026-11-20 hosted lifecycle truncation stress attempt and recovery
 
@@ -324,3 +326,14 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
 - Uploaded the reviewed inquiry module and exact-host helper to isolated hosted staging after explicit confirmation. The one-time runtime report completed with 34/34 checks true and no error codes.
 - Hosted smoke passed on the homepage and Business Essentials product with `noindex`, public catalog HTTP 200, nine protected customer/admin routes HTTP 401 anonymously, and the production acceptance route HTTP 404. Production remains unchanged.
+
+## 2026-11-20 live launch-surface verification
+
+- Verified the live Social homepage, Services page, website-audit page, and the AI Business Essentials, Lead Assistant, Social Growth, and Local SEO product pages return HTTP 200. The four product pages expose real add-to-cart controls and product images.
+- Verified the live AI Business Essentials product is product `53760`, displays `$29.99/month`, and discloses a seven-day trial and automatic monthly renewal unless canceled.
+- Verified the signed-in live checkout UI carries AI Business Essentials, shows `$0.00` due today, a `$29.99` renewal subtotal, calculated tax/total for the active session, Stripe card entry, terms acceptance, and the Place order control. No payment was submitted; provisioning, renewal, refund, and cancellation remain unverified.
+- Verified the live Directory homepage at a 390-pixel mobile viewport uses the compact mobile header, location-first copy, Playa del Carmen-first nearby listings, one floating Directory Concierge, a contained popup dialog, a light logo on the dark launcher, and the organized footer. The local section did not mix Dubai or Chicago listings.
+- Diagnosed the category picker pagination assumption: Directorist caps the REST collection at 12 records even when `per_page=100` is requested. Built reviewed Directory Experience `0.68.14`, which follows the server-reported total through the existing five-page cap instead of stopping after a short first page. All Directory PHP/JavaScript/contract checks pass; package SHA-256 is `3FBA1E17727221EAA6D7FAFF17CDDBC6353852DD51CF5CBFEB3CA29461223158`.
+- Uploaded the reviewed `0.68.14` package to the signed-in WordPress plugin installer. The final live install/update action is deliberately waiting for the required action-time confirmation; no plugin change was activated in this step.
+- The confirmed exact-homepage cache repair completed despite the admin page timing out while returning. Independent clean-URL verification now shows HTTP 200, `x-bd-eco-cache: html-early`, one `index, follow` robots tag, one canonical to `https://directory.branddad.social/`, and no `noindex`. The temporary admin-only repair MU plugin remains installed pending separate deletion confirmation.
+- Completed the 390-pixel restaurant funnel on the live site: Mexico -> Quintana Roo -> Playa del Carmen -> All Restaurants opened `/search-result/?in_cat=191&in_loc=13445&directory_type=food-beverage`, displayed 36 matches, retained Food & Beverage / Playa del Carmen / Restaurants as active filters, and rendered Playa del Carmen businesses rather than a mixed worldwide list.

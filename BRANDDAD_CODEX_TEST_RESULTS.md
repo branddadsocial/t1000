@@ -16,7 +16,8 @@
 - Full local suite: 37/37 Node contract files, 43/43 deployment PHP syntax checks, and `git diff --check` passed.
 - Manual ASVS L2 web/API review: no new input/route/permission/query; existing authenticated author scope and period/row bounds; fixed server projection; no content/identifier disclosure; evidence labels prevent publication/business-impact overclaiming; additive compatibility only.
 - `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- Hosted status: not tested. File Manager stalled and the authenticated session expired; the new acceptance route returned HTTP 404. Do not describe this revision as deployed until the two reviewed files are uploaded and the 10/10 hosted report passes.
+- Hosted status: passed on 2026-11-20. The two files matched the reviewed staging upload set, the one-time report returned HTTP 200 with `complete=true`, all 10 allowlisted checks true, and no error codes.
+- Hosted isolation/smoke: staging homepage HTTP 200 with `noindex`; account status, value report, AI tools, onboarding, and inquiry routes deny anonymous callers with HTTP 401; production exposes no reporting-stage acceptance route (HTTP 404).
 
 ## 2026-11-20 hosted lifecycle truncation stress attempt and recovery
 
@@ -387,6 +388,19 @@ Updated: 2026-11-19
 - Hosted restoration: exact fake consent row, isolated unsubscribe-rate transient, server IP value, and current-user context all returned true.
 - Hosted smoke: staging home/product HTTP 200 with `noindex`; catalog HTTP 200; protected lead/account/report/AI routes HTTP 401 anonymously; lead capture HTTP 503 `lead_capture_disabled`; production acceptance route HTTP 404.
 - Real mail transport and the public unsubscribe HTTP page remain deliberately outside this no-email test.
+
+## 2026-11-20 live public/mobile and checkout evidence
+
+- Live Social HTTP smoke: homepage, Services, website audit, AI Business Essentials, AI Lead Assistant, AI Social Growth, and AI Local SEO returned HTTP 200.
+- Live product evidence: AI Business Essentials is product `53760` at `$29.99/month` with a disclosed seven-day trial; the four priority product pages expose product images and add-to-cart controls.
+- Live checkout UI: `$0.00` due today, subscription renewal line, Stripe card method, terms checkbox, and Place order control rendered. No order/payment was submitted, so this is checkout-interface evidence only.
+- Directory 390px mobile: compact header, mobile menu control, Playa del Carmen-first nearby listings, one non-overlapping Directory Concierge launcher, contained dialog, light-on-dark logo, and organized footer passed visual/DOM inspection.
+- Restaurant picker: after its bounded asynchronous load, country options included Mexico, United Arab Emirates, and United States and the initial business list remained hidden. The live `0.68.13` client still contains a false `items.length === 100` pagination assumption while the server enforces 12 records/page.
+- Directory Experience `0.68.14`: `php -l` passed; `node --check assets/category-results.js` passed; homepage conversion, navigation, and ticketing contract suites passed; `rafter secrets .` passed; manual OWASP/ASVS review found no release blocker. `rafter run` could not run for the remote-less source tree, and the shared fast-scan quota remains exhausted.
+- Package verification: 24 archive entries, 91,143 bytes, SHA-256 `3FBA1E17727221EAA6D7FAFF17CDDBC6353852DD51CF5CBFEB3CA29461223158`; re-extracted PHP/JavaScript syntax and behavior markers passed.
+- Clean-homepage cache repair: HTTP 200, `x-bd-eco-cache: html-early`, exactly one `index, follow` robots tag, exactly one clean homepage canonical, and no `noindex` passed after the confirmed repair.
+- Live 390px restaurant funnel: Mexico -> Quintana Roo -> Playa del Carmen -> All Restaurants navigated to `in_cat=191`, `in_loc=13445`, and `directory_type=food-beverage`; the results surface showed 36 matches and the correct Food & Beverage / Playa del Carmen / Restaurants active filters. The visible result cards were Playa del Carmen businesses.
+- Not yet evidenced: the final live `0.68.14` activation, the same mobile funnel specifically on that release, real Stripe payment, provisioning, renewal, refund, cancellation, or billing portal.
 
 ## 2026-11-19 hosted account-link cryptographic staging acceptance
 
