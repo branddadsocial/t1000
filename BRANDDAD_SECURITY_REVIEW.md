@@ -3,6 +3,21 @@
 Updated: 2026-11-19
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
+### Staging Woo refund-hook acceptance review
+
+- L2/V1 architecture and threat model: the data flow, trust boundaries, STRIDE abuse cases, cleanup rules, and residual acceptance boundary are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.
+- A01/API1/API5/V4: the evidence route returns no object and accepts no id; it is exact-home-host and GET-only (`deploy/bds-000-staging-woo-refund-acceptance-mu.php:25-31`, `:385-404`). The one-time runner selects only the marker-owned non-admin fixture and marker-owned product (`:198-231`). N/A for customer BOLA because no caller-selected object exists.
+- A02/V6/V8/V9: no secret, token, card, gateway, or outbound request is introduced. The synthetic order uses the fixed no-gateway method and both refunds set `refund_payment=false` (`:251-281`, `:299-321`). WordPress mail is suppressed only while the exact runner is active (`:16-22`, `:241-261`, `:343-346`).
+- A03/API3/V5: the helper accepts no caller payload. Fixed ids and amounts are normalized with WordPress/Woo primitives; the public report allowlists booleans and sanitizes and bounds error codes (`:34-85`). No HTML, SQL string, deserialization, or shell path exists in this diff.
+- A04/API4/API6/V11: exact host, stored one-time report, and stale-safe lock bound the flow to one order and two refunds (`:25-31`, `:161-174`). Replayed refund hooks are asserted idempotent (`:290-321`). Remaining risk is concurrent unrelated staging accounting activity causing a safe false-negative delta, not a false pass.
+- A05/API8/API9/V14: the helper is staging-only and production has no route. The public response excludes ids, email, amounts, notes, and internal metadata (`:34-85`, `:385-404`). No dependency or production configuration changes.
+- A06/A08/API10: N/A; no dependency, update channel, deserialization, or third-party API was added.
+- A07: N/A; no login, session, or authentication behavior is added. The route is deliberately public because it returns only one-time bounded evidence and cannot receive parameters.
+- A09/V7: bounded error codes contain no PII; private lifecycle records hold only allowlisted event metadata (`:67-84`). The synthetic fixture lead is snapshotted and compared unchanged (`:121-135`, `:233-234`, `:346-350`).
+- A10/API7: N/A; there is no outbound fetch or user-controlled URL.
+- Destructive-operation gate: event deletion requires exact id, user, type, object type, and object id; refund deletion requires refund class, exact parent, and exact marker; order deletion requires exact marker (`:138-158`, `:352-374`). A failed guard leaves the synthetic fixture for manual inspection instead of broadening deletion.
+- Verification: 41 refund contract assertions, all 32 Node contract files, 38 PHP lints, and `git diff --check` passed locally. Rafter results are recorded with the batch test evidence.
+
 ### Synthetic subscription-lifecycle acceptance review
 
 - L2/V1 architecture and threat model: the data flow, trust boundaries, STRIDE abuse cases, cleanup rules, and residual acceptance boundary are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.

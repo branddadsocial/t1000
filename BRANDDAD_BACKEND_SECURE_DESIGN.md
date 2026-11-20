@@ -4,6 +4,35 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Hosted Woo refund-hook acceptance — 2026-11-20
+
+### Scope, data flow, and trust boundaries
+
+`[Exact Stackstaging bootstrap after helper upload] -> [one-time runner] -> [existing marker-owned subscriber + staging product] -> [marked synthetic paid Woo order] -> [wc_create_refund(refund_payment=false)] -> [real woocommerce_order_refunded hook] -> [private lifecycle ledger + aggregate] -> [exact fixture cleanup] -> [public boolean-only report]`. Boundaries are the exact-host runner and isolated Woo/WordPress storage. There is no gateway, provider, network egress, card, webhook, delivered email, or production boundary.
+
+### Authorization, data, and API decisions
+
+- The route is GET-only, parameter-free, canonical-home-host gated, one-time report gated, and stale-lock protected. It returns only allowlisted booleans, bounded error codes, version, and time; no ids, email, amount, currency, notes, or internal metadata are returned.
+- Only existing `bds_stage_acceptance_a` with marker `a` and no Woo-management capability is eligible. The exact `ai-business-essentials` product must carry the staging-fixture marker and fixed $29.99 price.
+- The order/refunds contain only the existing `.invalid` fixture identity, fixed USD amounts, exact acceptance markers/reasons, and no PCI/real customer data. Existing database/backup encryption remains authoritative; no key or credential is introduced.
+- The helper first marks a pending synthetic order, transitions it to paid status without `payment_complete()`, and creates two Woo refunds with `refund_payment=false` and `restock_items=false`. It never calls a gateway. WordPress mail is suppressed only while the synthetic run is active. Duplicate hook delivery must reuse the private event rather than double count.
+
+### Deletion, integrity, and deployment controls
+
+- Created order/refund/event ids live only in request memory. Refund cleanup requires `WC_Order_Refund`, exact parent id, and the exact marker. Order cleanup requires `WC_Order` plus the exact marker. Each lifecycle-event cleanup requires the exact request-created id, fixture user, event type, object type, and object id.
+- Aggregate validation uses before/after deltas only: +2999 confirmed gross, +2999 refunds, and net delta 0. No pre-existing accounting row is modified or inferred.
+- The helper registers nowhere outside the canonical temporary staging host. No dependency or production file is changed; production must continue to return 404 for the evidence route.
+
+### STRIDE and abuse twins
+
+- Spoofing/elevation: caller cannot select user/product/order/refund/amount; all are server-fixed and marker checked. Tampering: Woo object types, parent relationships, totals, refund amounts, no-gateway flags, and ledger event keys are re-read after writes.
+- Repudiation: real Woo hooks and private lifecycle records provide bounded evidence, while the public report reveals no financial detail. Information disclosure: `.invalid` identity and internal ids never leave storage. Denial: one run, one order, two refunds, one lock, bounded queries. Elevation: no admin capability, role, account, gateway, or external credential is created.
+- Abuse twins: "test a refund" becomes "refund real money"—blocked by `refund_payment=false`, no transaction id, and no gateway call; "clean fixtures" becomes "delete customer accounting"—blocked by request-created ids plus exact marker/type/parent checks; "replay webhook" becomes "double count refunds"—blocked by existing lifecycle HMAC idempotency and asserted single-row reuse.
+
+### Residual acceptance boundary
+
+This proves hosted Woo refund object creation, real refund-hook delivery, lifecycle idempotency, aggregate deltas, and exact cleanup without financial transfer. It does not prove Stripe refund webhooks, bank settlement, live card refunds, UTC boundary behavior, 5,000-row truncation, or accounting reconciliation; those remain separate approval-gated tests.
+
 ## Hosted synthetic subscription-lifecycle acceptance — 2026-11-19
 
 ### Scope and data flow

@@ -1,6 +1,15 @@
 # BrandDad Codex progress
 
-Updated: 2026-11-19
+Updated: 2026-11-20
+
+## 2026-11-20 hosted Woo refund-hook acceptance preparation
+
+- Added a canonical-host, one-time staging harness for one synthetic $29.99 Woo order, a $5.00 partial refund, and a $24.99 remaining refund. Both refunds use WooCommerce's real `wc_create_refund()` and `woocommerce_order_refunded` path with `refund_payment=false` and `restock_items=false`; no gateway, card, transaction, provider, or production system is contacted.
+- The harness calls only the lifecycle listener for its synthetic payment evidence, avoiding the broader sales-lead fan-out. It snapshots the existing `.invalid` fixture lead and requires the complete metadata snapshot to remain unchanged.
+- The synthetic order is marker-owned before its completed transition. WordPress mail is suppressed only while the exact synthetic request is active. Hook replays must reuse the original private lifecycle rows, and aggregate evidence must change by exactly +2999 USD gross, +2999 refunds, and zero net.
+- Cleanup hard-deletes only the request-created events/refunds/order after exact user, type, object, parent, and marker checks. The public evidence route is parameter-free, exact-host, GET-only, and boolean-only.
+- Rafter secure design plus the ASVS L2 web/API manual review are recorded. Local secret scanning is clean. Required remote `rafter run` was attempted and is still quota-blocked at 16/16; paid Plus was not used.
+- Local validation passes the new 41-assertion refund contract, all 32 Node contract files, 38 PHP syntax checks, and `git diff --check`.
 
 ## 2026-11-19 synthetic subscription-lifecycle acceptance preparation
 

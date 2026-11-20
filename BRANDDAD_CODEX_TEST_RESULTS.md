@@ -1,5 +1,13 @@
 # BrandDad Codex test results
 
+## 2026-11-20 hosted Woo refund-hook acceptance preparation
+
+- `tests/staging-woo-refund-acceptance-contract.mjs`: 41/41 assertions passed.
+- Full local suite: 32/32 Node contract files, 38/38 deployment PHP syntax checks, and `git diff --check` passed.
+- Manual ASVS L2 web/API review: canonical-home-host and one-time controls; no caller input; fixed marker-owned fixture identity/product; pending order marked before completed transition; no-gateway payment method; real Woo refund objects with gateway refund/restock disabled; request-local email suppression; lifecycle key idempotency; exact aggregate deltas; boolean-only report; and exact guarded cleanup.
+- `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota. Paid Plus was not used.
+- Hosted evidence is pending upload and execution on the isolated Stackstaging host. This test cannot prove Stripe webhook delivery, bank settlement, real card refunds, UTC month boundaries, 5,000-row truncation, or accounting reconciliation.
+
 ## 2026-11-19 synthetic subscription-lifecycle acceptance preparation
 
 - `tests/staging-subscription-lifecycle-acceptance-contract.mjs`: 44/44 assertions passed.
