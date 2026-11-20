@@ -161,6 +161,7 @@ Nothing unchecked above may be described as fully operational.
 - [ ] Reauthenticate to StartHost after support confirms clearance, then re-enter and save the exact reviewed task once.
 - [~] Observe the first bounded interval: the manual fallback run reduced pending from 53 to 30 and past due from 52 to 12, kept historical failures at 4,166, and rescheduled the two WP Swings hooks. The 30 pending / 12 past-due state was unchanged eleven and twenty-one minutes later, and no `event=schedule` run appeared through 23:00:39 UTC; wait for a real scheduled event before calling recurrence operational.
 - [~] Recheck Site Health and Action Scheduler: the Action Scheduler queue failure cleared, while `wpseo-reindex` remains a separate scheduled-event warning. Public priority-route and checkout checks passed earlier; authoritative payment/subscription lifecycle testing remains outstanding.
+- [x] Recheck authoritative WooCommerce orders and WP Swings subscriptions after the manual cron run: no new or duplicate order exists after 2026-11-13, the one active subscription remains unchanged, and its next payment remains 2026-12-13. This proves absence of an immediate billing mutation from the observed run; it does not replace a full purchase/renewal/refund/cancellation lifecycle test.
 - [ ] Classify historical no-callback failures; any cleanup is a separate destructive action and must not be combined with scheduler recovery.
 
 ## 2026-11-20 Directory database stability gate
