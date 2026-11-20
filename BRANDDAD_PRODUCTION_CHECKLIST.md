@@ -77,6 +77,7 @@
 - [ ] Verify sender, mail acceptance, one-click unsubscribe, conversion stop, and retries in staging before enabling.
 - [x] Implement customer-owned onboarding state and first-task guidance API.
 - [x] Exercise onboarding ownership isolation and optimistic version conflict in WordPress staging.
+- [x] Exercise onboarding field/URL validation, active-lock denial, stale-lock recovery, and customer value-report tenant isolation in WordPress staging.
 - [ ] Exercise browser-session REST nonce and paid/Directory-free onboarding access states in WordPress staging.
 - [ ] Sales assistant recommends only verified products and links under cost caps.
 - [x] Implement private, deduplicated lead capture and verified lifecycle stage backend with separate email consent and bounded retention.

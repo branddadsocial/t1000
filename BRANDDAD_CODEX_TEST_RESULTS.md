@@ -1,13 +1,16 @@
 # BrandDad Codex test results
 
-## 2026-11-19 customer API acceptance preparation
+## 2026-11-19 hosted customer API acceptance
 
 - `php -l deploy/bds-staging-customer-api-acceptance-mu.php`: passed.
 - `tests/staging-customer-api-acceptance-contract.mjs`: 30/30 assertions passed.
 - Full local suite: 24/24 Node contract files, three PHP compatibility suites, four PHP syntax checks, and `git diff --check` passed.
 - Local Rafter secret scans found no secrets. Manual review confirmed exact-host scope, marker-owned non-admin fixtures, boolean-only evidence, stored-only public URL behavior, and no browser input, exposed credential, user/admin/order/subscription/payment creation, network call, message, provider run, or post/user deletion.
 - Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- No staging upload, test profile update, fixture job creation, payment, message, provider run, or production mutation occurred in this preparation batch.
+- Hosted report: `complete=true`; 17/17 checks true; no error codes.
+- Verified localhost/private-IP/oversized/unsupported/unknown-only rejection, active-lock conflict, stale-lock recovery, exact one-version advancement, profile isolation, completed/failed job deltas, completed-only credits, cross-account exclusion, safe status response, and invalid-period rejection.
+- Post-run staging smoke: homepage 200/noindex, sales catalog 200, product 200, and protected anonymous AI/account/value/onboarding routes 401.
+- Production evidence route returned HTTP 404. No real customer, payment, message, provider run, entitlement, or production mutation occurred.
 
 ## 2026-11-19 hosted lifecycle acceptance
 
@@ -225,7 +228,7 @@ Updated: 2026-11-19
 - Real Featured Woo purchase and placement handoff.
 - Follow-up sending, social publishing, WhatsApp, SEO publishing, music delivery, and video generation.
 - Real mail transport acceptance, one-click unsubscribe, retry, crash/uncertain-delivery review, and converted-customer stop behavior.
-- Browser-session REST nonce, Directory-free access, and normal completed-job detection remain untested. Internal hosted staging acceptance now proves cross-account denial and optimistic version conflict.
+- Browser-session REST nonce and Directory-free access remain untested. Hosted staging now proves cross-account denial, optimistic version conflict, active/stale lock behavior, safe status output, and completed/failed job reporting isolation.
 - Real Woo partial/full refund hooks, UTC month-boundary behavior, and bounded 5,000-event truncation remain untested. Hosted staging now proves event deduplication, privacy allowlisting, subscriber capability denial, and gross/refund/net aggregate deltas.
 - Lead capture owned-origin/rate behavior, concurrent deduplication, verified stage hook ordering, admin authorization, opt-out propagation, and scheduled anonymization in WordPress staging.
 - Website-monitor configuration authorization, public/private DNS cases, safe real fetch, redirect/timeout behavior, concurrent/manual scheduling, plan loss, profile URL change, batch cursor, and actual value-report counters on WordPress staging.
