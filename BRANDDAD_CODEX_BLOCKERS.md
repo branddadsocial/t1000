@@ -4,9 +4,9 @@ Updated: 2026-11-19
 
 ## External or owner-controlled
 
-- Read-only hosting inspection confirmed separate live WordPress roots and the MU-plugin target, but no isolated staging WordPress root was visible. A safe staging database/site still needs to be created or identified before activation testing.
-- The StartHost service overview exposes the live account summary and a temporary URL but no managed staging/clone control. A manual staging WordPress root plus separate database/user must therefore be created, or StartHost support must provide an isolated clone.
-- The hosting panel currently reports `6 infection(s) found`. These findings must be reviewed and resolved or positively classified before production is considered clean; do not delete or quarantine files without exact evidence and a recoverable backup.
+- `staging.branddad.social` now exists with an isolated document root/database and the reviewed Social MU package. The one-click WordPress installation wizard still needs an isolated administrator account before REST and hook acceptance tests can begin.
+- The owner positively classified the hosting panel's six detections as false positives. They were preserved and are no longer treated as an unresolved deletion/quarantine decision.
+- StartHost cannot issue its free wildcard certificate while `branddad.social` uses external nameservers. The custom staging hostname needs a certificate at the authoritative DNS/CDN provider; the StartHost temporary hostname remains the safe TLS-capable fallback for staging HTTP tests.
 
 - Production SSH key exchange/authentication is not working from this PC. Previous File Manager deployment succeeded, but a reliable protected deployment path and rollback must be restored.
 - A separate least-privilege `flows:execute`/`apps:execute` FormWise key must be present as `BDS_FORMWISE_EXECUTION_KEY` on the server. Do not reuse a broad key in browser code or repository files.
@@ -31,7 +31,7 @@ Updated: 2026-11-19
 
 ## Test environment
 
-- No isolated WordPress staging database with Woo/HPOS/Directorist/FormWise server constants is available in this worktree.
+- An isolated hosted WordPress root/database now exists, but installation must be completed and required Woo/HPOS/Directorist/FormWise staging dependencies/constants are not configured yet.
 - WP-CLI, Docker, Composer, and a local WordPress database are not installed on this machine; real WordPress hook/REST/queue tests cannot honestly be replaced with local mocks.
 - The lifecycle ledger is locally linted/contract-tested but still needs WordPress staging evidence for duplicate hooks, partial/full refunds, UTC period boundaries, capability denial, and the 5,000-event truncation flag.
 - The lead pipeline is locally linted/contract-tested but still needs WordPress staging evidence for public origin/rate behavior, concurrent email deduplication, Woo hook ordering, cross-account admin denial, consent-list compatibility, scheduled retention, and recovery after locks/timeouts.

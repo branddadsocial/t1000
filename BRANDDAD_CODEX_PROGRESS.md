@@ -6,10 +6,14 @@ Updated: 2026-11-19
 
 - Inspected the signed-in hosting File Manager read-only and verified separate WordPress roots for Social and Directory.
 - Verified Social's live backend target at `public_html/branddad.social/wp-content/mu-plugins/` and Directory's root at `public_html/directory.branddad.social/`.
-- Confirmed the host has an existing `_bds_deploy_backups/` area; no isolated staging WordPress root was visible.
-- Recorded the hosting panel's unresolved `6 infection(s) found` warning as a production-readiness issue rather than dismissing it.
+- Confirmed the host has an existing `_bds_deploy_backups/` area and started a fresh full files-and-databases control-panel backup before staging work.
+- The owner reviewed the hosting panel's six detections and positively classified them as false positives. The flagged files were preserved; nothing was deleted or quarantined.
+- Created `staging.branddad.social` with an isolated document root and a separate one-click WordPress database.
+- Uploaded the checksum-reviewed Social archive to staging and placed all 16 MU modules in the staging `wp-content/mu-plugins/` directory. No production file was overwritten.
+- The one-click installer laid down WordPress files but the WordPress installation wizard still needs its isolated admin account before REST activation tests can run.
+- StartHost cannot issue its free wildcard certificate because `branddad.social` uses external nameservers. The host temporary staging URL has valid TLS; the custom staging hostname needs a certificate from the authoritative DNS/CDN provider before browser acceptance.
 - Added `BRANDDAD_DEPLOYMENT_MANIFEST.md` with per-host module inventories, fail-closed switches, server-only configuration, staged deployment steps, rollback, and acceptance evidence.
-- No production file, billing state, provider switch, message, or customer record was changed during this inspection.
+- No production file, billing state, provider switch, message, or customer record was changed during this staging batch.
 
 ## 2026-11-19 provider-cost and preservation batch
 

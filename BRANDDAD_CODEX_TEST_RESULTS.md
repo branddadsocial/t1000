@@ -1,5 +1,16 @@
 # BrandDad Codex test results
 
+## 2026-11-19 hosted staging bootstrap
+
+- Created `staging.branddad.social` at `public_html/staging.branddad.social` with a separate one-click WordPress database.
+- Started a full StartHost files-and-databases recovery backup; the control panel still showed the backup job processing at the last observation.
+- Uploaded the reviewed Social release archive and verified all 16 expected MU modules are present directly in the staging `wp-content/mu-plugins/` directory.
+- `http://staging.branddad.social/` returned HTTP 200 and the WordPress installation wizard.
+- `https://staging.branddad.social/` failed certificate validation because StartHost cannot issue its free wildcard certificate while authoritative nameservers are external.
+- `https://staging-branddad-social.stackstaging.com/` returned HTTP 200 with valid TLS and the same WordPress installation wizard.
+- `/wp-json/` correctly remained unavailable before WordPress database installation was completed; no route activation claim is made yet.
+- Production Social and Directory files were not changed.
+
 ## 2026-11-19 release-package verification
 
 - 17/17 deploy PHP files passed `php -l`.
