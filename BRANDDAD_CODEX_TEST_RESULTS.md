@@ -571,3 +571,12 @@ Updated: 2026-11-19
 - Mobile DOM inspection confirmed that trial links resolve to the authoritative AI Business Essentials product, service-comparison links remain on Services, free-listing links resolve to Add Listing, and the claim journey exposes the `bdd_intent=claim` listing finder.
 - The music brief uses POST to WordPress's `admin-post.php`, contains the expected 13 controls, and requires package, customer name, email, and business description. No submission was made.
 - A fresh redirect-following request pass returned HTTP 200 for Business Essentials, Services, the website audit, unauthenticated Add Listing registration handoff, claim-intent listings, Directory plans, and Playa del Carmen location. Add Listing correctly ended at `/registration/?bds_form=1` for the anonymous audit session.
+
+## 2026-11-20 free website-audit mobile recheck
+
+- The live page returned HTTP 200 at a measured 390px CSS viewport with `clientWidth`, document scroll width, and body scroll width all equal to 390; no horizontal page overflow was present.
+- Public HTML contained no visible `FormWise` provider name, `builder.formwise.ai` reference, or old Basic $99 / Plus $199 / Custom Automation $499 pricing.
+- The main audit action and current subscription actions use BrandDad blue/white styling; no green primary action was observed. A generic `green` source token was not a visible primary-control color.
+- Live recommendation links resolve to Business Essentials, Lead Assistant, Local SEO, Social Growth, Services, Featured Advertising, and free Directory listing destinations.
+- The visible EN/ES switch remains on the page. The large floating translator widget was not present in the audited viewport. No translation preference was changed.
+- No audit, lead, email-consent, translation-vote, purchase, or Directory form was submitted.

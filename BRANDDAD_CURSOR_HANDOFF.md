@@ -6,7 +6,7 @@ The backend now includes `deploy/bds-provider-cost-ledger-mu.php` for Social. Cu
 
 Provider adapters must record costs server-side through the documented internal function/action; no browser form should call a cost-write route because none exists.
 
-Updated: 2026-11-19
+Updated: 2026-11-20
 
 ## Do not rebuild
 
@@ -104,3 +104,8 @@ Do not auto-activate an earlier anonymous consent request after a later registra
 - `deploy/bds-customer-inquiries-mu.php` on Social beside subscriptions, customer status, and lifecycle. Deploy disabled first; enable only after the hosted form and tenant-isolation staging acceptance.
 
 Do not deploy this branch over newer Cursor public-page files. Merge only the backend files and documented helper calls.
+# 2026-11-20 public audit-page presentation note
+
+- The free website-audit page is clean at 390px: no horizontal overflow, old pricing, provider branding, or green primary CTA remains.
+- The small EN/ES switch is still visible. The user previously requested removing translator clutter, while the current master requirements preserve multilingual support. Keep translation behavior but confirm whether the compact switch should remain or be visually relocated; do not restore a floating translator widget.
+- No frontend change was made in this Codex batch.
