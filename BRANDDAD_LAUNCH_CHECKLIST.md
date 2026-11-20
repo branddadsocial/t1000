@@ -22,7 +22,8 @@ Production readiness: not ready.
 - [ ] Confirm music license and cost before taking payment.
 - [~] Retest homepage, Services, Directory claim, and music brief on mobile: measured 320px, 390px, and 430px browser/device viewports passed document-width and control-presence checks with no horizontal overflow; final physical iOS/Android touch testing remains.
 - [x] Verify the critical mobile conversion destinations: trial, Services, website audit, Add Listing registration handoff, claim-intent finder, Directory plans, and Playa del Carmen location all resolve successfully; the music brief remains an unsubmitted private POST form.
-- [ ] Read the two Rafter warnings on each site before the next deploy.
+- [x] Verify the wider rendered CTA surface: 65 visible CTA/link instances across Social Home, Services, and Directory Home reduced to 34 unique public paths; all resolved successfully, and all five referenced in-page anchors exist.
+- [~] Read the two Rafter warnings on each site before the next deploy: current records confirm zero critical and two warning findings per site, but the Rafter Sites API/CLI returns counts only and does not expose the warning bodies. Do not close this gate until the detailed findings are available.
 
 ## Current release blockers
 

@@ -582,6 +582,14 @@ Updated: 2026-11-19
 - Post-audit local regression remained green: 39/39 Node contract files, 44/44 deployment PHP syntax checks, 3/3 PHP compatibility suites, the release checksum contract, and `git diff --check` passed.
 - A low-rate public availability sweep returned HTTP 200 for Social Home, Services, AI Business Essentials, the website audit, Directory Home, all categories, all listings, and Playa del Carmen. Measured completion times were 0.86-2.57 seconds in that sample.
 
+## 2026-11-20 rendered CTA and monitored-site follow-up
+
+- At a 390px rendered viewport, inventoried 65 visible CTA/link instances across Social Home, Social Services, and Directory Home. These reduced to 34 unique origin/path destinations after repeated query variants were consolidated.
+- All 34 unique public destinations returned HTTP 200 after redirect following. `all-locations` and the jobs listing path exceeded the bounded 12-second concurrent probe once, then returned HTTP 200 in 1.58 seconds and 0.73 seconds on immediate isolated retries.
+- Verified that `branddad-ai-solutions`, the Home and Services `branddad-ai-plans` targets, `branddad-service-paths`, and `bdd-current-plans` exist in the destination HTML. Anonymous Add Listing and registration CTAs correctly end at the `bds_form=1` registration handoff.
+- No button was clicked, no form was submitted, and no account, order, subscription, payment, message, or external provider execution was created.
+- Rafter's current monitored-site records remain: Social scan succeeded 22/22 on 2026-11-07 with 0 critical, 2 warning, and 2 informational findings; Directory scan succeeded 21/21 on 2026-09-22 with 0 critical, 2 warning, and 4 informational findings. The current Sites API/CLI exposes counts only, not warning bodies, so the detailed-warning review remains open.
+
 ## 2026-11-20 free website-audit mobile recheck
 
 - The live page returned HTTP 200 at a measured 390px CSS viewport with `clientWidth`, document scroll width, and body scroll width all equal to 390; no horizontal page overflow was present.
