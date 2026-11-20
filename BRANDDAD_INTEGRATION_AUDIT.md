@@ -48,6 +48,7 @@ Updated: 2026-11-19
 | Warpindex | Existing integration referenced | Authentication/current operation not reverified |
 | Vexp | Previously healthy on `branddad-seoestore`, repository limit reached | Development aid only |
 | Rafter | Existing scans; secure-design gate applied to this branch | Code review/scan required before release |
+| Make | 11 scenarios inventoried; all effectively paused/error; staging lead intake and video shell inspected | No production automation lane is currently proven active; execution-history connector returned `INVALID_ARGUMENT` |
 
 ## FormWise content and access reconciliation — 2026-11-20
 

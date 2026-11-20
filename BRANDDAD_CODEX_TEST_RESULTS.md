@@ -528,3 +528,14 @@ Updated: 2026-11-19
 - No end user, membership, plan, group grant, credit, agent/flow/app content, share setting, payment, order, or customer record changed.
 - Local `rafter secrets .` reported no secrets. Required remote `rafter run` was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
 - Live-reference smoke: Directory homepage, All Categories, All Listings, and Restaurants each returned HTTP 200 and contained only the Concierge UUID/owned tool URL; the older Directory Assistant UUID was absent. Social homepage and Services returned HTTP 200 and contained only the Sales Assistant UUID/owned tool URL.
+
+## 2026-11-20 Make automation audit
+
+- Connected environment resolved to one organization/team and returned 11 scenarios without a pagination warning.
+- Effective status read-back: nine paused scenarios, one error scenario, and no active-status scenario. All reported zero incomplete executions.
+- Video Autopost structural read: one custom-webhook module, no connection, no generation/render/publish module.
+- FormWise Lead Capture v2 structural read: custom webhook followed by a deduplicated datastore insert; no notification, qualification, follow-up, appointment, checkout, or CRM-delivery module was present.
+- LinkedIn structural reads: both paused; OpenAI/LinkedIn connections report healthy. One exposes a stale past next-run timestamp despite `isActive=true` in the list.
+- Facebook structural read: scenario status error; Facebook connection expiring; OpenAI connection healthy.
+- Execution-history requests returned `INVALID_ARGUMENT` for scenarios with historical usage, so no recent-runtime success claim was made.
+- No scenario was run, replayed, activated, deactivated, edited, created, or deleted; no webhook, connection, social post, message, lead, payment, or customer record changed.

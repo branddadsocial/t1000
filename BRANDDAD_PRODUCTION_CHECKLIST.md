@@ -137,6 +137,9 @@ Nothing unchecked above may be described as fully operational.
 - [ ] Reconcile the Sales Assistant knowledge with the verified launch-candidate catalog, correct the one-question instruction conflict and stale staging labels, then run controlled draft tests before publication.
 - [ ] Run one approved, controlled FormWise execution and measure result quality, metering, cost, and customer isolation before enabling public external execution.
 - [~] Monitor Directory `all-locations` cold performance. HTTP 200 is stable, but one 18-second cold cache-bypass response and later 1.3-6.6 second responses indicate a cache/bootstrap optimization opportunity.
+- [x] Inventory the connected Make organization/team/scenarios and document effective status, modules, connection health, duplicates, and missing revenue lanes without running or editing anything.
+- [ ] Complete and stage-test one consented lead-delivery scenario with notification/dedupe/runtime evidence before activation; preserve authoritative lead state in the reviewed backend.
+- [ ] Complete video generation/render/approval/publish modules before describing Video Autopost as operational; the present scenario is a webhook-only shell.
 
 ## 2026-11-20 Social scheduler recovery gate
 
