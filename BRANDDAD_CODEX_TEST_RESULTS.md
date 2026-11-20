@@ -1,22 +1,27 @@
 # BrandDad Codex test results
 
-## 2026-11-19 lifecycle acceptance preparation
+## 2026-11-19 hosted lifecycle acceptance
 
 - `php -l deploy/bds-staging-lifecycle-acceptance-mu.php`: passed.
 - `tests/staging-lifecycle-acceptance-contract.mjs`: 26/26 assertions passed.
 - Full local suite: 23/23 Node contract files, three PHP compatibility suites, five PHP syntax checks, and `git diff --check` passed.
 - Local Rafter secret scans found no secrets. Manual review confirmed exact-host scope, non-admin fixture reuse, boolean-only evidence, privacy-safe metadata assertions, and no user/admin/order/subscription/refund creation, network call, message, deletion, provider execution, or production mutation.
 - Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- No staging upload or lifecycle record was created in this preparation batch.
+- Hosted report: `complete=true`; 12/12 checks true; no error codes.
+- Verified subscriber analytics denial, unknown-event rejection, idempotent duplicate reuse with one private row, privacy stripping, exact bounded financial metadata, aggregate deltas of +2999 gross/+500 refunds/+2499 net, and invalid-period rejection.
+- Production evidence route returned HTTP 404. No real Woo order/payment/refund, message, provider execution, or production mutation occurred.
 
-## 2026-11-19 AI provider-failure acceptance preparation
+## 2026-11-19 hosted AI provider-failure acceptance
 
 - `php -l deploy/bds-staging-ai-failure-acceptance-mu.php`: passed.
 - `tests/staging-ai-failure-acceptance-contract.mjs`: 25/25 assertions passed.
 - Full local suite: 22/22 Node contract files, three PHP compatibility suites, three PHP syntax checks, and `git diff --check` passed.
 - Local Rafter secret scans found no secrets. Manual review confirmed exact-host scope, marked non-admin owner, configured-provider refusal, boolean-only evidence, and no request input, exposed credential, user/admin/order/payment creation, direct network call, message, or deletion.
 - Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- No staging upload, provider run, credit spend, payment, message, or production mutation occurred in this preparation batch.
+- Hosted report: `complete=true`; 9/9 checks true; no error codes.
+- Verified a five-credit reservation exists before the worker, missing configuration fails closed as `execution_not_configured`, the reservation is released, used credits remain zero, and replay does not double-deduct.
+- Post-run staging smoke: homepage 200/noindex, sales catalog 200, product 200, and protected anonymous AI/account/onboarding/admin routes 401.
+- Production evidence route returned HTTP 404. No FormWise request/credit spend, payment, message, or production mutation occurred.
 
 ## 2026-11-19 authenticated staging acceptance
 
@@ -212,7 +217,7 @@ Updated: 2026-11-19
 - Follow-up sending, social publishing, WhatsApp, SEO publishing, music delivery, and video generation.
 - Real mail transport acceptance, one-click unsubscribe, retry, crash/uncertain-delivery review, and converted-customer stop behavior.
 - Browser-session REST nonce, Directory-free access, and normal completed-job detection remain untested. Internal hosted staging acceptance now proves cross-account denial and optimistic version conflict.
-- Lifecycle event deduplication under duplicate hooks, partial/full refund aggregation, admin-capability denial, month-boundary behavior, and bounded truncation in WordPress staging.
+- Real Woo partial/full refund hooks, UTC month-boundary behavior, and bounded 5,000-event truncation remain untested. Hosted staging now proves event deduplication, privacy allowlisting, subscriber capability denial, and gross/refund/net aggregate deltas.
 - Lead capture owned-origin/rate behavior, concurrent deduplication, verified stage hook ordering, admin authorization, opt-out propagation, and scheduled anonymization in WordPress staging.
 - Website-monitor configuration authorization, public/private DNS cases, safe real fetch, redirect/timeout behavior, concurrent/manual scheduling, plan loss, profile URL change, batch cursor, and actual value-report counters on WordPress staging.
 - Customer inquiry public form, spam/rate behavior, owner reference uniqueness, cross-account denial, nonce protection, concurrent version conflict, status workflow, retention anonymization, and real value-report counts on WordPress staging.

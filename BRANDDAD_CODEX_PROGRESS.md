@@ -2,22 +2,27 @@
 
 Updated: 2026-11-19
 
-## 2026-11-19 lifecycle acceptance preparation
+## 2026-11-19 hosted lifecycle acceptance
 
 - Added an exact-host, one-time lifecycle harness that reuses the marked non-admin staging subscriber and creates no user, administrator, Woo order, subscription, payment, or refund object.
 - It proves subscriber analytics denial, unknown-event rejection, duplicate-event id reuse with one stored row, privacy stripping of unallowlisted email/message keys, exact stored financial metadata, gross/refund/net aggregate deltas, and invalid-period rejection.
 - Added 26 security/behavior assertions. The complete local suite passes 23/23 Node contracts, three PHP compatibility suites, five PHP syntax checks, and `git diff --check`.
 - Local Rafter secret scans found no secrets; manual review found no exposed ids/amounts/metadata, input surface, network call, message, deletion, provider execution, or production mutation. Remote fast scan remains quota-blocked at 16/16; paid Plus was not used.
-- This helper is local only. It can be uploaded together with the reviewed AI provider-failure helper in one confirmed staging batch.
+- After explicit action-time confirmation, uploaded the helper with the provider-failure harness and triggered its one-time run on isolated staging.
+- Hosted evidence returned `complete=true` with all 12 checks true and no error codes: dependencies, marked non-admin owner, analytics denial, unknown-type rejection, duplicate reuse/single-row storage, metadata privacy, exact financial fields, gross/refund/net deltas, and invalid-period rejection.
+- The production lifecycle-evidence route returned HTTP 404. No real order, payment, refund object, message, provider execution, customer record, or production mutation was created.
 
-## 2026-11-19 AI provider-failure acceptance preparation
+## 2026-11-19 hosted AI provider-failure acceptance
 
 - Added an exact-host, one-time staging harness that reuses the marker-owned non-admin subscriber and refuses to run if a FormWise execution key is configured.
 - It reserves five fixture credits through the production ledger, creates one private pending AI job, invokes the production worker, and requires `execution_not_configured` to fail closed before any provider request.
 - Acceptance requires the reservation to be released, used credits to remain zero, and a second worker invocation to leave both values unchanged.
 - Added 25 security/behavior assertions. The complete local suite passes 22/22 Node contracts, three PHP compatibility suites, three PHP syntax checks, and `git diff --check`.
 - Local Rafter secret scans found no secrets; manual review found no input surface, credential exposure, user/admin/order/payment creation, direct network call, message, or deletion. Remote fast scan was attempted and remains quota-blocked at 16/16; paid Plus was not used.
-- The helper is local only. Uploading it will create one private job and a zero-used fixture ledger in isolated staging; production and FormWise remain unchanged until a separate confirmed upload.
+- Uploaded in the same confirmed staging batch and triggered one time.
+- Hosted evidence returned `complete=true` with all nine checks true and no errors: provider absent, credit reserved, fail-closed status/code, reservation released, used credits unchanged, and replay without double deduction.
+- Post-run staging smoke kept the homepage at HTTP 200/noindex, catalog and product at HTTP 200, and anonymous AI/account/onboarding/admin routes at HTTP 401. The production evidence route returned HTTP 404.
+- No FormWise request or credit spend, real payment, message, administrator, customer entitlement, or production mutation occurred.
 
 ## 2026-11-19 authenticated staging acceptance
 
@@ -66,7 +71,7 @@ Updated: 2026-11-19
 - Bumped only the affected internal module versions: trial 0.1.1, Directory membership bridge 0.1.1, and lifecycle events 0.4.1. No price, product, order, subscription, customer record, or checkout state changed.
 - All 18 Node contract suites, three PHP compatibility suites, three affected PHP syntax checks, and `git diff --check` pass.
 - File-specific Rafter secret scans pass. Required remote fast SAST/SCA was attempted and remains blocked at 16/16 quota; paid Plus was not used.
-- This correction is local and reviewed; hosted staging and production still run the previously packaged modules until a separate approved deployment step.
+- The corrected modules were subsequently uploaded and smoke-tested on hosted staging. Production remains unchanged pending full acceptance.
 
 ## 2026-11-19 hosted staging commerce dependency batch
 
@@ -145,7 +150,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 
 ## Next unblocked backend work
 
-1. Add WordPress staging fixtures for provider failure, idempotent replay, trial conversion, Directory bridge replay, browser-session nonce/onboarding concurrency, lifecycle-event deduplication/refunds, unsubscribe, and HPOS subscription discovery.
+1. Add WordPress staging fixtures for request-idempotent replay, trial conversion, Directory bridge replay, browser-session nonce/onboarding concurrency, real Woo refund lifecycle, unsubscribe, and HPOS subscription discovery.
 2. Connect Cursor's lead form to the new capture contract and exercise privacy acknowledgment, optional consent, deduplication, stage progression, unsubscribe, and retention in staging; enable capture only after acceptance.
 3. Exercise one authorized public website through configure, async/manual check, DNS/redirect/error, plan-loss, URL-change, daily batch, and value-report paths on WordPress staging; then enable monitoring server-side.
 4. Add trial reminder and monitor-alert delivery only after a verified communications provider and sender are available.
