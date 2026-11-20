@@ -3,7 +3,8 @@ import process from 'node:process';
 
 const source = fs.readFileSync('deploy/bds-000-staging-featured-billing-acceptance-mu.php', 'utf8');
 const checks = [
-  ['helper is versioned', /BDS_STAGING_FEATURED_ACCEPTANCE_VERSION', '0\.1\.0'/.test(source)],
+  ['helper is versioned', /BDS_STAGING_FEATURED_ACCEPTANCE_VERSION', '0\.1\.1'/.test(source)],
+  ['dependency-correction rerun uses a fresh immutable report key', /BDS_STAGING_FEATURED_ACCEPTANCE_REPORT', 'bds_staging_featured_billing_report_v2'/.test(source)],
   ['helper is bound to the exact staging home host', /staging-branddad-social\.stackstaging\.com[\s\S]*wp_parse_url\( home_url/.test(source)],
   ['helper has no request-controlled inputs', !/\$_(?:REQUEST|COOKIE|FILES|SERVER)\b|wp_unslash\s*\(\s*\$_(?:GET|POST)/.test(source)],
   ['one-time report and stale lock bound execution', /BDS_STAGING_FEATURED_ACCEPTANCE_REPORT[\s\S]*time\(\) - 600/.test(source)],

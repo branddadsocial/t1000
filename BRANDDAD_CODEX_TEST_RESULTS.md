@@ -493,7 +493,10 @@ Updated: 2026-11-19
 - Acceptance covers all four approved SKU/price/level mappings, wrong-price and wrong-interval denial, exact owner and geography enforcement, first activation, replay idempotency, renewal of the same grant, failed-renewal pause, paid-through cancellation, expiry, refund revocation, and capacity denial.
 - Cleanup verifies exact ids, types, markers, owner, and product identity before deletion, then restores the isolated grant option, request globals, and current user. The public evidence route exposes only 28 allowlisted booleans and bounded error codes.
 - Local validation passed: all 39 Node contract files, all 44 deployment PHP syntax checks, all 3 PHP compatibility tests, the staging checksum contract, and `git diff --check`.
-- `rafter secrets .` found no secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used. The helper has not been uploaded or executed on hosted staging, and production remains unchanged.
+- `rafter secrets .` found no secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
+- Hosted `v1` failed closed before fixtures because the production Featured adapter was missing: `production_dependencies_loaded=false`, bounded error `featured_acceptance_dependencies_unavailable`, and all four cleanup/restoration checks true.
+- Uploaded the exact reviewed adapter plus dependency-corrected helper `0.1.1` with a fresh immutable `v2` report key. Hosted `v2` returned HTTP 200, `complete=true`, all 28 checks true, and no error codes. It proved exact four-lane price/level readiness, wrong price/interval denial, ownership/geography, no-gateway order state, activation/replay/renewal/failure/cancellation/expiry/refund/capacity behavior, and fixture/state/context cleanup.
+- A second read returned the stored complete report rather than rerunning. Staging home and Business Essentials returned HTTP 200; the production acceptance route returned HTTP 404. No gateway, provider, email, webhook, real payment, production record, or customer record was touched.
 
 ## 2026-11-20 external dependency diagnosis
 

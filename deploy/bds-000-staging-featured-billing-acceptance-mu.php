@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_STAGING_FEATURED_ACCEPTANCE_VERSION', '0.1.0' );
-define( 'BDS_STAGING_FEATURED_ACCEPTANCE_REPORT', 'bds_staging_featured_billing_report_v1' );
+define( 'BDS_STAGING_FEATURED_ACCEPTANCE_VERSION', '0.1.1' );
+define( 'BDS_STAGING_FEATURED_ACCEPTANCE_REPORT', 'bds_staging_featured_billing_report_v2' );
 define( 'BDS_STAGING_FEATURED_ACCEPTANCE_MARKER', 'bds-stage-featured-billing-v1' );
 
 function bds_staging_featured_acceptance_is_host() {

@@ -306,4 +306,18 @@ Hosted result: the product exists only on the isolated staging hostname, is hidd
 - Integrity and cleanup: unmarked SKU/record collisions abort. Products, orders, subscriptions, listing, and grants are marked and isolated. Cleanup requires exact created ids plus type/marker/owner checks, and restores request/user/option state in `finally`.
 - Disclosure and resource controls: the route is exact-host, GET-only, request-input-free, stale-lock bounded, and exposes 28 allowlisted booleans plus bounded codes—no ids, emails, totals, grant ids, or paths.
 - Evidence: all 39 Node contracts, 44 PHP lints, 3 PHP compatibility tests, staging checksums, and `git diff --check` passed. Local Rafter secrets scan found no secrets. `rafter run` was attempted but rejected at the 16/16 fast-scan quota; paid Plus was not used.
-- Review disposition: no local release-blocking finding. Hosted execution remains pending; real Directory inventory, Stripe test payment, and production deployment remain separate gates.
+- Review disposition: no local release-blocking finding. Hosted `v1` failed closed on the missing adapter; hosted dependency-corrected `v2` then passed 28/28 checks with verified cleanup and no error codes. Real Directory inventory, Stripe test payment, and production deployment remain separate gates.
+
+### Featured acceptance dependency-correction rerun
+
+The hosted `v1` request failed closed because `bds-featured-billing-adapter-mu.php` was absent from isolated Social staging. The correction changes only the helper version to `0.1.1` and its immutable report option to `bds_staging_featured_billing_report_v2`; it uploads the already-reviewed production adapter separately. The route, exact-host gate, no-input contract, stale lock, fixed fixtures, no-gateway orders, marker-verified cleanup, and boolean-only DTO are unchanged (`deploy/bds-000-staging-featured-billing-acceptance-mu.php:13-15`, `:182-226`, `:389-446`).
+
+- OWASP A01/API1/API5: no object id or function choice enters from the caller; the public GET is intentionally anonymous, exact-host-only, and exposes a fixed report. The change adds no authorization path.
+- A02/A03/API3/API8: no secret, crypto, SQL, shell, deserialization, HTML rendering, or request binding is introduced. Only a server-owned option key changes; the response remains an allowlisted boolean DTO with bounded sanitized error codes.
+- A04/API4/API6: the fresh key permits exactly one dependency-corrected staging run behind the existing stale-safe lock. Fixed record counts, hidden marked products, no gateway, no outbound call, and full `finally` cleanup continue bounding resource and business-flow abuse.
+- A05/A07/API2/API9: the helper remains restricted to the canonical temporary staging `home_url()` host, keeps the same versioned route, accepts no credential, and shares no production data or secret. The prior `v1` failure report remains non-sensitive audit evidence.
+- A06/A08/API10: no dependency, package, auto-update, third-party Action, or external API is added. The separately uploaded adapter is the exact already-reviewed repository source.
+- A09: `v1` and `v2` report versions distinguish the failed dependency attempt from the corrected run without exposing record ids, email, order data, or internal paths.
+- A10/API7: the helper contains no outbound fetch primitive or caller-controlled URL, so SSRF is not present.
+
+Focused contract and both PHP syntax checks pass; `git diff --check` passes. `rafter secrets .` found no secrets (Betterleaks-version warning only). Required `rafter run` fast was attempted on the same branch and remains blocked by the 16/16 billing-period quota; no paid Plus scan was used.
