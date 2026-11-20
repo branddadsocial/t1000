@@ -45,6 +45,10 @@ Updated: 2026-11-20
 - Customer inquiries are locally linted/contract-tested but still need real WordPress REST nonce/ownership, public form, concurrent update, retention cron, and customer report evidence.
 - Provider contract tests are static/local; no new FormWise execution was spent in this pass.
 - A complete live AI Business Essentials trial/purchase/cancel test still requires the intended billing identity and a safe transaction window. The exact installed WP Swings trial fields are now verified in official source and implemented locally.
+- Live Stripe is connected and enabled for payments, payouts, and webhooks, but the account reports no live webhook received since monitoring began on 2026-11-08. Test mode cannot be enabled until a test Stripe account is connected. A real or test purchase, provisioning, renewal, refund, cancellation, and billing-portal lifecycle still requires a safe payment identity plus action-time financial confirmation.
+- Stripe Optimized Checkout Suite is unavailable on the connected account. Existing selected payment methods remain visible, but this optional optimization cannot be treated as active until the connection/provider issue is resolved.
+- The FormWise organization inventory is present and publish-ready, but tier-plan API access is disabled, Video Director is unpublished, and no credit-spending end-to-end execution was run in the final pass. Real execution quality, cost, and external provisioning therefore remain blocked on an approved controlled run and supported credentials/entitlements.
+- Directory `all-locations` returned HTTP 200 throughout the final pass, but one cold cache-bypass request took about 18 seconds and later clean/warm requests ranged from about 1.3 to 6.6 seconds. Treat this as a performance watch item; it was not a reproducible availability failure.
 
 ## Not blockers to local development
 

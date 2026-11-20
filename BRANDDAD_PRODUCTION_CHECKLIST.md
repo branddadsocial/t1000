@@ -64,7 +64,7 @@
 
 ## Directory acceptance
 
-- [ ] Free registration/basic listing has no payment dependency.
+- [~] Public registration/plan copy and deployed policy confirm one free basic listing with no mandatory activation payment; focused tests pass. A fresh non-admin registration, verification, submission, moderation, and edit journey still requires action-time account-creation confirmation.
 - [ ] Cross-site handoff reuses/creates the correct account and rejects replay/wrong host.
 - [x] Complete one-host hosted account-link acceptance for fixed hosts, signature/claims, replay, existing-user resolution, conflicting sessions, form safety, audit privacy, exact restoration, and production isolation.
 - [ ] Complete real two-host account-link POST/consume/cookie/session acceptance after isolated Directory staging and a shared production-like secret are available.
@@ -121,3 +121,14 @@ Nothing unchecked above may be described as fully operational.
 - [x] Check the six priority Social sales links and all 93 same-ecosystem homepage destinations; every destination returned HTTP 200.
 - [x] Repeat the location-first restaurant journey after the live update at 390px and verify 36 Playa del Carmen matches, one Concierge launcher, and no horizontal overflow.
 - [ ] After separate deletion confirmation, remove only `wp-content/mu-plugins/bds-directory-home-cache-repair-mu.php` and verify the admin repair menu disappears.
+
+## 2026-11-20 final launch-readiness audit
+
+- [x] Recheck priority Social and Directory public routes; all returned HTTP 200.
+- [x] Verify the installed Directory Experience assets and location-scoped restaurant result after release `0.68.14`.
+- [x] Audit live Stripe settings read-only: gateway, payments, payouts, and webhook show enabled; no settings were changed.
+- [ ] Connect a safe Stripe test account and prove purchase, provisioning, renewal, refund, cancellation, and billing portal without altering existing customer billing.
+- [ ] Investigate why no live Stripe webhook has been recorded since monitoring began on 2026-11-08 before relying on webhook-driven fulfillment.
+- [x] Refresh FormWise agents, app, flows, portals, and tier plans without spending credits.
+- [ ] Run one approved, controlled FormWise execution and measure result quality, metering, cost, and customer isolation before enabling public external execution.
+- [~] Monitor Directory `all-locations` cold performance. HTTP 200 is stable, but one 18-second cold cache-bypass response and later 1.3-6.6 second responses indicate a cache/bootstrap optimization opportunity.

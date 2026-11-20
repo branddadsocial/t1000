@@ -426,3 +426,11 @@ Updated: 2026-11-19
 - Post-run staging smoke: homepage and Business Essentials product HTTP 200 with `noindex`; public sales catalog HTTP 200; account status, value report, AI tools, onboarding, monitoring, inquiry form/inbox, analytics, and finance routes HTTP 401 anonymously.
 - Production acceptance route returned HTTP 404. No account, auth cookie, user metadata, redirect, message, provider call, order, subscription, payment, or production mutation occurred.
 - Real cross-host consume/cookie/session remains a later two-host test requiring isolated Directory staging and a shared production-like secret.
+
+## 2026-11-20 final five-batch verification
+
+- Live route smoke: priority Social and Directory public routes returned HTTP 200. The clean Playa del Carmen category result completed in under one second during the final pass. The location index also returned HTTP 200, with variable generation time from roughly 1.3 seconds warm to 18 seconds on one cold cache-bypass request.
+- Live Stripe read-only audit: gateway enabled; live account connected; payments enabled; payouts enabled; webhook enabled; test mode off and unavailable until a test account is connected; no live webhook received since monitoring began on 2026-11-08; no transaction submitted.
+- Stripe methods read-only audit: card, Klarna, Afterpay, Cash App Pay, Apple Pay/Google Pay, Link, and Amazon Pay selected; saved cards enabled; delayed capture disabled; debug logging disabled. Optimized Checkout Suite is unavailable and recommends reconnecting the account or contacting Stripe support.
+- FormWise inventory audit: runs are available; three published BrandDad sales/directory agents, one published AI Studio app, 13 published operational flows, two restricted portals, and eight approved tier plans are present. Video Director is unpublished. No credit-spending execution was run.
+- Safety result: no payment, account creation, message, social post, provider run, settings mutation, or customer-data mutation occurred. The temporary homepage repair file was not deleted because deletion requires a separate action-time confirmation.
