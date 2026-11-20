@@ -2,6 +2,16 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 hosted staging Business Essentials fixture activation
+
+- Uploaded the reviewed exact-host fixture helper to the isolated staging MU directory after explicit action-time confirmation.
+- Triggered staging WordPress and verified the public catalog now returns the single canonical `ai-business-essentials` offer at $29.99 with a staging-only product URL and `for_sale=true`.
+- Verified the direct product URL returns HTTP 200, remains `noindex`, contains the staging-only/not-production disclaimer, displays $29.99, uses `Subscribe monthly`, and is catalog-hidden/virtual/sold-individually in the Woo Store API.
+- Added the product to a disposable anonymous staging cart and verified product id 15, quantity maximum 1, price 2999 minor units, no shipping requirement, and no available payment method. No checkout, order, account, subscription, payment intent, charge, email, or provider execution was created.
+- Verified home/REST/catalog remain HTTP 200 and anonymous AI tools, account status, trial, onboarding, and admin analytics remain HTTP 401.
+- The helper writes the exact one-month/seven-day metadata and reads every field back before its internal completion state. Independent phpMyAdmin row evidence was not captured because the hosting SSO did not open the selected database session; do not call the trial lifecycle independently database-proven yet.
+- Production remains unchanged.
+
 ## 2026-11-19 staging Business Essentials fixture preparation
 
 - Added a staging-only, exact-host-pinned Woo fixture helper for one hidden `ai-business-essentials` product at $29.99/month with a seven-day free trial, zero signup fee, and 75-credit customer metadata.

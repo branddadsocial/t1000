@@ -28,7 +28,9 @@
 - [x] Verify public catalog access and anonymous denial on private customer/admin routes.
 - [x] Safely clone and activate WooCommerce, WooCommerce Stripe Gateway, and Subscriptions for WooCommerce on isolated staging.
 - [x] Prepare and review an exact-host staging-only Business Essentials product fixture with fixed price/trial metadata and no payment/customer mutation.
-- [ ] Create approved staging-only Woo product/subscription fixtures and authoritative product mappings before payment lifecycle acceptance testing.
+- [x] Create the approved staging-only Business Essentials Woo product fixture and verify its canonical catalog mapping, hidden visibility, disposable cart behavior, and absence of payment methods.
+- [ ] Capture authenticated checkout/database evidence for exact seven-day trial metadata, then configure Stripe test mode before payment lifecycle acceptance testing.
+- [ ] Create any additional approved staging-only product fixtures/mappings required for the launch catalog.
 - [ ] Install or safely clone Directorist on staging before Directory ownership/claim/free-AI acceptance testing.
 - [ ] Provision valid TLS for `staging.branddad.social` at the authoritative DNS/CDN provider, or use the valid StartHost temporary hostname for acceptance tests.
 - [ ] Restore reliable SSH or execute an approved protected File Manager deployment procedure.

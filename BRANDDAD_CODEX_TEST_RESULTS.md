@@ -52,6 +52,17 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 hosted staging Business Essentials fixture verification
+
+- Staging sales catalog: HTTP 200; canonical offer slug `ai-business-essentials`, monthly `29.99`, staging URL present, `for_sale=true`.
+- Staging product: HTTP 200, `noindex`, $29.99, staging/not-production disclosure, `Subscribe monthly` action.
+- Woo Store API disposable cart: product id 15, simple/virtual item, hidden catalog visibility, sold individually, quantity maximum 1, 2999 minor-unit price, no shipping, no errors.
+- Woo Store API payment methods: empty. Stripe checkout-session extension remained `uninitialized`; no payment was attempted.
+- Protected anonymous REST checks: HTTP 401 for AI tools, account status, trial, onboarding, and admin analytics.
+- Staging home and public REST/catalog checks: HTTP 200.
+- Helper behavior statically and locally verifies exact monthly/trial/BrandDad metadata by read-back before completion. Independent database-row inspection remains unverified because the hosting phpMyAdmin SSO did not open the selected staging database session.
+- No order, customer account, subscription, payment, message, FormWise execution, or production mutation occurred.
+
 ## 2026-11-19 staging Business Essentials fixture preparation
 
 - `php -l deploy/bds-staging-business-essentials-fixture-mu.php`: passed.
