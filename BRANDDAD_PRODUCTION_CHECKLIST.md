@@ -139,6 +139,7 @@ Nothing unchecked above may be described as fully operational.
 - [~] Approved controlled FormWise executions now prove real provider output and the configured 5-credit-per-run model cost. Customer-isolation and server-proxy acceptance still remain before enabling the separate BrandDad-hosted external execution route.
 - [~] Monitor Directory `all-locations` cold performance. HTTP 200 is stable, but one 18-second cold cache-bypass response and later 1.3-6.6 second responses indicate a cache/bootstrap optimization opportunity.
 - [x] Inventory the connected Make organization/team/scenarios and document effective status, modules, connection health, duplicates, and missing revenue lanes without running or editing anything.
+- [~] Harden Make lead-capture v2 with a verified fail-closed staging/consent/email filter while keeping it paused and leaving queued payloads untouched; authenticated ingress, retention cleanup, approved notification delivery, and controlled runtime acceptance remain open.
 - [ ] Complete and stage-test one consented lead-delivery scenario with notification/dedupe/runtime evidence before activation; preserve authoritative lead state in the reviewed backend.
 - [ ] Complete video generation/render/approval/publish modules before describing Video Autopost as operational; the present scenario is a webhook-only shell.
 

@@ -356,6 +356,16 @@ Updated: 2026-11-19
 - `git diff --check`: passed.
 - `rafter secrets .`: passed with no detected secrets.
 - `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
+
+## 2026-11-20 Make lead-capture staging filter
+
+- Pre-edit provider read: scenario `5029212` was `paused`, unlocked, had zero incomplete executions, and contained only the custom webhook followed by the staging datastore module.
+- Atomic Make edit: `filter_set` succeeded on datastore module `2` with two OR branches. Each branch requires the exact `staging` environment and an existing trimmed email; one accepts normalized consent `true`, the other accepts normalized consent `yes`.
+- Post-edit provider read: the filter name and all six conditions match the intended contract; scenario status remains `paused`; no connection or activation was added.
+- Negative side-effect check: no webhook call, queued-payload inspection, datastore write, notification, external follow-up, payment, order, subscription, customer, or production WordPress change occurred.
+- Manual OWASP API review: input is still untrusted; explicit policy gating now fails closed, but authentication, schema/length limits, rate limiting, replay protection, retention cleanup, and approved notification delivery remain blockers.
+- `git diff --check` passed. `rafter secrets .` found no secrets. Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan allowance; paid Plus was not used.
+- Scheduler recurrence recheck: workflow `425477211` remains active on default branch `main`, but GitHub still lists only manual run `44830790644`; no automatic `event=schedule` run exists yet.
 - Hosted runtime acceptance: version 0.1.0, `complete=true`, 34/34 allowlisted checks true, no error codes.
 - Hosted cleanup evidence: fixture posts deleted, form metadata restored, and isolated rate counters restored all returned true.
 - Hosted smoke: staging homepage/product HTTP 200 with `noindex`; sales catalog HTTP 200; account status, value report, AI tools, onboarding, monitor configuration, inquiry form/inbox, analytics, and finance contribution returned HTTP 401 anonymously; the production acceptance route returned HTTP 404.

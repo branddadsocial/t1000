@@ -424,3 +424,13 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Replaced the stale legacy-first FormWise catalog page with the verified November 20 current offers, allowances, trial language, limitations, product URLs, quote paths, and legacy-customer handling.
 - Final targeted quality gates passed for trial accuracy, current pricing, and prompt-injection resistance. Published Sales Assistant production version `6993354e-ab96-4ad2-9a54-479263de8b40` (`Current launch catalog and trial safeguards`).
 - Provider read-back confirms production version 8, the owned `ai.branddad.social` public link, and permission to embed on `branddad.social`. No payment, order, subscription, refund, customer record, external message, or social post was created or changed.
+
+## 2026-11-20 Make lead-capture staging hardening
+
+- Applied the required secure-design gate to `BrandDad FormWise Lead Capture — STAGING v2` before changing the connected Make scenario.
+- Added a fail-closed filter before datastore storage. A payload now reaches storage only when normalized follow-up consent is exactly `true` or `yes`, normalized environment is exactly `staging`, and a trimmed email value exists.
+- Provider read-back confirms the saved filter and effective scenario status `paused`. The existing webhook, datastore mapping, MD5 grouping key, and two queued payloads were not changed, inspected, processed, replayed, or deleted.
+- No notification destination was inferred from the previously supplied Stripe email, and no email, WhatsApp message, webhook request, or lead follow-up was sent.
+- The workflow remains intentionally non-production until authenticated ingress, schema/size/rate/replay controls, retention cleanup, an approved notification destination, and controlled accepted/rejected/duplicate/failure tests exist.
+- Local secret scanning found no secrets. The required remote Rafter fast scan was attempted and remains blocked at the account's 16/16 quota; paid Plus was not used.
+- A later GitHub Actions read still showed only the successful manual cron run and no `schedule` event. The temporary scheduler remains partially verified, not fully operational.
