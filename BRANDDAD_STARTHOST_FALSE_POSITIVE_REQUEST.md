@@ -4,7 +4,7 @@ Status: prepared, not submitted. Sending the request is an external representati
 
 ## Form selections
 
-- Department: General Enquiries (or the closest Hosting/Technical Support option exposed by the form)
+- Department: Web Hosting
 - Service: `branddad.social`
 - Subject: `False-positive malware flag is blocking scheduled tasks`
 
