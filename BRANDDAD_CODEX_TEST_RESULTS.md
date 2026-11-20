@@ -6,7 +6,10 @@
 - Full local suite: 32/32 Node contract files, 38/38 deployment PHP syntax checks, and `git diff --check` passed.
 - Manual ASVS L2 web/API review: canonical-home-host and one-time controls; no caller input; fixed marker-owned fixture identity/product; pending order marked before completed transition; no-gateway payment method; real Woo refund objects with gateway refund/restock disabled; request-local email suppression; lifecycle key idempotency; exact aggregate deltas; boolean-only report; and exact guarded cleanup.
 - `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota. Paid Plus was not used.
-- Hosted evidence is pending upload and execution on the isolated Stackstaging host. This test cannot prove Stripe webhook delivery, bank settlement, real card refunds, UTC month boundaries, 5,000-row truncation, or accounting reconciliation.
+- Acceptance boundary: this synthetic test cannot prove Stripe webhook delivery, bank settlement, real card refunds, UTC month boundaries, 5,000-row truncation, or accounting reconciliation.
+- Hosted report: HTTP 200, `complete=true`, 30/30 checks true, no error codes. Woo created a $5.00 partial refund and $24.99 remaining refund, emitted the real refund hook, reused each event on replay, reached refunded order status, produced exact +2999 gross/+2999 refunds/zero net aggregate deltas, suppressed mail, left the fixture lead unchanged, and removed all request-created event/refund/order records.
+- Post-run smoke: staging homepage/product/sales catalog HTTP 200, homepage `noindex` retained, account and finance routes HTTP 401 anonymously, and production evidence route HTTP 404.
+- No real card, gateway transaction, Stripe webhook, provider execution, message, customer record, or production mutation occurred.
 
 ## 2026-11-19 synthetic subscription-lifecycle acceptance preparation
 

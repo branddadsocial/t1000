@@ -100,6 +100,7 @@
 - [x] Monthly AI report counts actual job states/completions and explicitly labels currently unavailable outcome metrics.
 - [x] Implement a private idempotent lifecycle ledger and admin-only gross/refund/net event aggregate.
 - [x] Exercise lifecycle duplicate reuse, subscriber admin-capability denial, privacy allowlisting, and gross/refund/net aggregate deltas in WordPress staging.
-- [ ] Exercise real Woo partial/full refund hooks, UTC month boundaries, and 5,000-event truncation in WordPress staging.
+- [x] Exercise real Woo partial/full refund hooks in WordPress staging with exact lifecycle/aggregate evidence and cleanup.
+- [ ] Exercise UTC month boundaries and the 5,000-event truncation flag in WordPress staging.
 
 Nothing unchecked above may be described as fully operational.

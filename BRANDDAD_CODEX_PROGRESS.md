@@ -10,6 +10,9 @@ Updated: 2026-11-20
 - Cleanup hard-deletes only the request-created events/refunds/order after exact user, type, object, parent, and marker checks. The public evidence route is parameter-free, exact-host, GET-only, and boolean-only.
 - Rafter secure design plus the ASVS L2 web/API manual review are recorded. Local secret scanning is clean. Required remote `rafter run` was attempted and is still quota-blocked at 16/16; paid Plus was not used.
 - Local validation passes the new 41-assertion refund contract, all 32 Node contract files, 38 PHP syntax checks, and `git diff --check`.
+- Uploaded the reviewed helper to isolated staging. Hosted evidence returned `complete=true` with all 30 runtime checks true and no error codes: real partial/full Woo refund hooks, exact 500/2499 minor-unit rows, duplicate hook idempotency, fully refunded order state, +2999 gross/+2999 refunds/zero net deltas, no gateway or email delivery, unchanged fixture lead, and exact event/refund/order cleanup.
+- Post-run smoke kept the staging homepage and Business Essentials product at HTTP 200 with `noindex`; the sales catalog remained HTTP 200; account and finance routes denied anonymous access with HTTP 401; production exposed no acceptance route (HTTP 404).
+- This closes the hosted Woo partial/full refund-hook gate. Stripe refund webhooks, bank settlement, live card refunds, UTC month boundaries, the 5,000-event truncation flag, and accounting reconciliation remain outside this synthetic test.
 
 ## 2026-11-19 synthetic subscription-lifecycle acceptance preparation
 
