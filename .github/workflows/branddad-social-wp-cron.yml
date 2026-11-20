@@ -5,6 +5,7 @@ name: BrandDad Social wp-cron
 on:
   schedule:
     - cron: "*/5 * * * *"
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
