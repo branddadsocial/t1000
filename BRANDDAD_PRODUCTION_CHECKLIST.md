@@ -65,7 +65,8 @@
 
 - [ ] Free registration/basic listing has no payment dependency.
 - [ ] Cross-site handoff reuses/creates the correct account and rejects replay/wrong host.
-- [~] Prepare one-host cryptographic account-link acceptance for fixed hosts, signature/claims, replay, existing-user resolution, conflicting sessions, form safety, and audit privacy; hosted runtime remains pending, while real two-host cookie/session acceptance still requires Directory staging.
+- [x] Complete one-host hosted account-link acceptance for fixed hosts, signature/claims, replay, existing-user resolution, conflicting sessions, form safety, audit privacy, exact restoration, and production isolation.
+- [ ] Complete real two-host account-link POST/consume/cookie/session acceptance after isolated Directory staging and a shared production-like secret are available.
 - [ ] Verified listing receives only its own free-AI ledger.
 - [ ] Featured Woo SKUs exist and only paid orders activate placements.
 - [x] Featured adapter rechecks claimed ownership, paid subscription linkage, geography, capacity, renewal, failure, cancellation, expiry, and refund.

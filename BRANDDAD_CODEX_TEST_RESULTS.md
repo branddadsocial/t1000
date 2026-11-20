@@ -304,7 +304,7 @@ Updated: 2026-11-19
 - Hosted smoke: staging home/product HTTP 200 with `noindex`; catalog HTTP 200; protected lead/account/report/AI routes HTTP 401 anonymously; lead capture HTTP 503 `lead_capture_disabled`; production acceptance route HTTP 404.
 - Real mail transport and the public unsubscribe HTTP page remain deliberately outside this no-email test.
 
-## 2026-11-19 account-link cryptographic staging preparation
+## 2026-11-19 hosted account-link cryptographic staging acceptance
 
 - `node tests/account-link-contract.mjs`: passed 22 assertions, including normalization and fixed-host revalidation of the internal test seam.
 - `node tests/staging-account-link-acceptance-contract.mjs`: passed 43 assertions covering exact-host/one-time behavior, acceptance-only secret, fixture verification, signed claims, five-minute lifetime, audience, tamper/time/purpose/email/issuer failures, malformed/oversized input, atomic replay, existing-user resolution, conflicting-session detection, safe form output, audit privacy/restoration, and absence of cookie/account/network/payment surfaces.
@@ -314,4 +314,8 @@ Updated: 2026-11-19
 - `git diff --check`: passed.
 - `rafter secrets .`: passed with no detected secrets.
 - `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
-- Hosted runtime acceptance: pending upload confirmation. Real cross-host consume/cookie/session remains a later two-host test.
+- Hosted runtime acceptance: version 0.1.0, `complete=true`, 30/30 allowlisted checks true, and no error codes.
+- Hosted restoration: replay claim cleanup, prior audit option restoration, and original user/server context restoration all returned true; the helper made no cross-host request.
+- Post-run staging smoke: homepage and Business Essentials product HTTP 200 with `noindex`; public sales catalog HTTP 200; account status, value report, AI tools, onboarding, monitoring, inquiry form/inbox, analytics, and finance routes HTTP 401 anonymously.
+- Production acceptance route returned HTTP 404. No account, auth cookie, user metadata, redirect, message, provider call, order, subscription, payment, or production mutation occurred.
+- Real cross-host consume/cookie/session remains a later two-host test requiring isolated Directory staging and a shared production-like secret.

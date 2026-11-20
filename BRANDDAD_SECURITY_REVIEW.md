@@ -178,4 +178,5 @@ Hosted result: the product exists only on the isolated staging hostname, is hidd
 - Identity safety: only marker-owned non-admin fixture A is considered verified. Fixture B is denied. Existing-email resolution and conflicting-session detection are checked without invoking account creation, cookie, metadata, or redirect functions.
 - Side effects: no cross-host request, account/user mutation, auth cookie, message, provider call, order, subscription, or payment occurs.
 - Evidence: 43 helper assertions, 22 production contract assertions, full 30-file Node suite, 3 PHP compatibility tests, 30 PHP lints, and `git diff --check` passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus scan was used.
-- Residual gate: hosted runtime evidence is pending; real Social-to-Directory POST, consume, cookie, and session behavior requires an isolated Directory staging host plus shared production-like secret configuration.
+- Hosted evidence: the one-time report completed with all 30 checks true, including replay/audit/context restoration and `no_cross_host_request`; post-run private-route authorization and production isolation smokes passed.
+- Residual gate: real Social-to-Directory POST, consume, cookie, and session behavior requires an isolated Directory staging host plus shared production-like secret configuration.

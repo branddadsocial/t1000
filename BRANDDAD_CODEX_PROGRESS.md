@@ -198,7 +198,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 
 Not deployed. Follow-up delivery is compiled default-off. No purchase, subscription change, provider run, email, WhatsApp message, social post, listing publication, or customer billing modification was performed by this branch.
 
-## 2026-11-19 account-link cryptographic acceptance preparation
+## 2026-11-19 hosted account-link cryptographic acceptance
 
 - Added a normalized, fixed-owned-host-revalidated current-host candidate seam so the Social-to-Directory protocol can be cryptographically exercised on one isolated staging host without broadening production hosts.
 - Added an exact-host, one-time helper using a deterministic acceptance-only secret for one request. It validates email-verification scoping, token shape/claims/lifetime, audience switching, tamper/expiry/future/purpose/email-hash/issuer rejection, malformed/oversized rejection, replay claims, existing-account resolution, conflicting sessions, safe start forms, and privacy-bounded audit rows.
@@ -206,7 +206,10 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Replay and audit acceptance use exact option keys and restore/delete only their own values in `finally`; the test secret is unavailable after the report exists and is never exposed.
 - Local validation passed: 30/30 Node contracts, 3/3 PHP compatibility tests, 30/30 deployment PHP syntax checks, and `git diff --check`.
 - `rafter secrets .` passed with no detected secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
-- Hosted upload/runtime acceptance remains pending explicit action-time confirmation. Real two-host POST/cookie/session acceptance remains blocked by staging Directory availability and production secrets.
+- After explicit action-time confirmation, uploaded the revised account-link module and exact-host helper to isolated staging and triggered the one-time report.
+- Hosted evidence returned `complete=true` with all 30 checks true and no error codes: dependencies/fixtures; acceptance-secret and email-verification scoping; fixed-host revalidation; signed bounded claims and five-minute expiry; audience/tamper/time/purpose/email/issuer rejection; malformed/oversized rejection; atomic replay; existing-account resolution; conflicting-session detection; form safety; audit privacy; exact replay/audit/context restoration; and no cross-host request.
+- Post-run smoke kept the staging homepage and Business Essentials product at HTTP 200 with `noindex`, the public sales catalog at HTTP 200, and nine private customer/admin routes at HTTP 401 anonymously. The production acceptance route returned HTTP 404.
+- No account was created, no cookie/user metadata/redirect/network request/message/provider call/order/subscription/payment occurred, and production remained unchanged. Real two-host POST/cookie/session acceptance remains blocked by isolated Directory staging availability and a shared production-like secret.
 
 ## 2026-11-19 follow-up consent acceptance preparation
 
