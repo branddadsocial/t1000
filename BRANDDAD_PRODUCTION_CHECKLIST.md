@@ -132,3 +132,16 @@ Nothing unchecked above may be described as fully operational.
 - [x] Refresh FormWise agents, app, flows, portals, and tier plans without spending credits.
 - [ ] Run one approved, controlled FormWise execution and measure result quality, metering, cost, and customer isolation before enabling public external execution.
 - [~] Monitor Directory `all-locations` cold performance. HTTP 200 is stable, but one 18-second cold cache-bypass response and later 1.3-6.6 second responses indicate a cache/bootstrap optimization opportunity.
+
+## 2026-11-20 Social scheduler recovery gate
+
+- [x] Audit WooCommerce Action Scheduler counts, past-due hooks, and Site Health without changing state.
+- [x] Verify the deployed MU guards disable request-driven cron/async execution and bound real cron/CLI batches.
+- [x] Audit StartHost Scheduled Tasks and confirm that no task currently exists.
+- [x] Verify active PHP 8.4, `/usr/bin/php84`, and the exact Social WordPress root.
+- [x] Document the threat model, allowlisted command, five-minute cadence, acceptance criteria, and rollback in `BRANDDAD_SCHEDULER_RECOVERY_DESIGN.md`.
+- [ ] Verify or create a recoverable production database/files backup before enabling queue execution.
+- [ ] Receive exact action-time confirmation and save `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
+- [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
+- [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
+- [ ] Classify historical no-callback failures; any cleanup is a separate destructive action and must not be combined with scheduler recovery.

@@ -434,3 +434,12 @@ Updated: 2026-11-19
 - Stripe methods read-only audit: card, Klarna, Afterpay, Cash App Pay, Apple Pay/Google Pay, Link, and Amazon Pay selected; saved cards enabled; delayed capture disabled; debug logging disabled. Optimized Checkout Suite is unavailable and recommends reconnecting the account or contacting Stripe support.
 - FormWise inventory audit: runs are available; three published BrandDad sales/directory agents, one published AI Studio app, 13 published operational flows, two restricted portals, and eight approved tier plans are present. Video Director is unpublished. No credit-spending execution was run.
 - Safety result: no payment, account creation, message, social post, provider run, settings mutation, or customer-data mutation occurred. The temporary homepage repair file was not deleted because deletion requires a separate action-time confirmation.
+
+## 2026-11-20 live scheduler evidence
+
+- WooCommerce Action Scheduler inventory: 4,990 total, 771 complete, 4,166 failed, 53 pending, and 52 past due.
+- The Action Scheduler UI reports that no additional queues will begin and WordPress Site Health reports `action_scheduler_run_queue` as a failed scheduled event.
+- Past-due pages were reviewed without mutation. They include WooCommerce cache/session/log/sales/import maintenance, Stripe cache cleanup, recurring Action Scheduler maintenance, and WP Swings subscription renewal/expiration hooks.
+- The authenticated StartHost Scheduled Tasks page reports: `You currently don't have any scheduled tasks.`
+- StartHost's active PHP selection is PHP 8.4 and its interpreter list maps PHP 8.4 to `/usr/bin/php84`.
+- The exact proposed command and five-minute schedule are documented in `BRANDDAD_SCHEDULER_RECOVERY_DESIGN.md`. No command was tested or saved, no cron batch was triggered, and no payment/subscription/customer data was changed.
