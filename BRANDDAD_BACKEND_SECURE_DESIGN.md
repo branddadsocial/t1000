@@ -171,7 +171,21 @@ Unconverted records have bounded retention and are anonymized rather than silent
 
 Monitoring is available only to an authenticated customer with an active allowlisted paid entitlement. The browser cannot submit a destination URL to the monitoring endpoint; configuration reads the URL already stored in that customer's onboarding profile. Each configuration and scheduled check revalidates scheme, userinfo, port, hostname, and every available A/AAAA address. Local names, IP literals in private/reserved ranges, DNS failures, and any non-public address fail closed.
 
+An internal plan-candidate filter supports integration and isolated acceptance, but its output is untrusted: the monitor converts non-arrays to empty, re-sanitizes the slug/access mode, and still requires `paid` plus the fixed monitoring-plan allowlist. The browser cannot set or influence this filter.
+
 The fetch uses WordPress safe HTTP, a short timeout, zero redirects, a small response cap, and a fixed user agent. It never sends cookies, authorization, customer text, or provider credentials. The response body is not retained; only status, bounded latency, response byte count, a content hash, and timestamps are stored in customer-owned user metadata. Manual checks are rate-limited and all checks use stale-recoverable per-customer locks. The scheduler processes bounded batches with a recoverable cursor. No failure email or external side effect is sent until a separate verified notification adapter exists.
+
+### Isolated staging acceptance design
+
+`[exact-host helper + marked fixture] -> [revalidated plan candidate] -> [production monitor] -> [BrandDad staging HTTPS]`
+
+The helper exists only to prove the production monitor on the canonical Stackstaging hostname. It enables monitoring for one request only while no persisted report exists, suppresses the recurring scheduler, and grants a synthetic plan only to the marker-owned non-admin fixture. It snapshots and restores the fixture's onboarding/monitor metadata even on failure.
+
+- Real fetches target only BrandDad's own public staging hostname. Private/local/IP-literal/credentialed/nonstandard-port destinations are rejected by production validation before any fetch.
+- The production fetcher re-resolves public DNS under the per-customer lock, uses safe HTTP, follows zero redirects, caps time and bytes, stores only measurements plus a SHA-256 content hash, and sends no cookie, authorization, customer content, email, or message.
+- Acceptance covers anonymous denial, authorization attestation, active/stale locks, a synthetic network failure, visible 3xx without following it, URL-change shutdown, plan-loss shutdown, manual rate limiting, customer-report deltas, and cross-account isolation.
+- The public evidence route is exact-host, GET-only, request-input-free, and boolean-only. No user id, URL, response measurement, content hash, plan id, or customer metadata is exposed.
+- Residual risk: two bounded requests reach the owned staging host and private lifecycle evidence records their outcomes. Actual timeout behavior, queue/cron execution, notification delivery, and real paid-subscription lifecycle acceptance remain separate launch gates.
 
 ## Customer inquiry capture
 

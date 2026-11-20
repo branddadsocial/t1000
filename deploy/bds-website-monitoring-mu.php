@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Website Monitoring
  * Description: Entitlement-checked, SSRF-resistant daily website availability checks for BrandDad customers.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_WEBSITE_MONITORING_VERSION', '0.1.0' );
+define( 'BDS_WEBSITE_MONITORING_VERSION', '0.1.1' );
 
 function bds_monitoring_enabled() {
 	return defined( 'BDS_WEBSITE_MONITORING_ENABLED' ) && true === BDS_WEBSITE_MONITORING_ENABLED;
@@ -18,6 +18,8 @@ function bds_monitoring_enabled() {
 
 function bds_monitoring_plan( $user_id ) {
 	$plan = function_exists( 'bds_ai_exec_active_plan' ) ? bds_ai_exec_active_plan( absint( $user_id ) ) : array();
+	$plan = apply_filters( 'bds_monitoring_plan_candidate', is_array( $plan ) ? $plan : array(), absint( $user_id ) );
+	$plan = is_array( $plan ) ? $plan : array();
 	$slug = sanitize_key( (string) ( $plan['slug'] ?? '' ) );
 	$mode = sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
 	$allowed = array( 'ai-business-monitoring', 'ai-business-essentials', 'ai-business-essentials-pro', 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro' );

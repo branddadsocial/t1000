@@ -87,6 +87,7 @@
 - [ ] SEO/social/WhatsApp/video/music adapters have provider-specific permissions, costs, retries, and proof.
 - [x] Implement paid-entitlement website availability checks with customer authorization, SSRF controls, bounded queues, actual counters, and no unverified alerts.
 - [ ] Run authorized real-host monitor acceptance across DNS/private-IP rejection/redirect/timeout/manual/daily/plan-loss/URL-change/report cases before enabling.
+- [ ] Exercise the isolated exact-host monitoring harness for SSRF rejection, bounded owned-host fetch, locks, network failure, redirect, plan/URL shutdown, reporting, restoration, and tenant isolation.
 - [x] Implement owner-scoped customer inquiry capture/inbox/status with explicit contact consent, spam/rate bounds, actual reports, and closed/lost retention.
 - [ ] Connect/test the hosted inquiry form and owner inbox across tenant denial, versions, rates, consent, retention, and reports before enabling.
 - [ ] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes.

@@ -6,9 +6,10 @@ const report = fs.readFileSync('deploy/bds-customer-status-api-mu.php', 'utf8');
 const lifecycle = fs.readFileSync('deploy/bds-lifecycle-events-mu.php', 'utf8');
 
 const checks = [
-  ['monitor is versioned', /BDS_WEBSITE_MONITORING_VERSION', '0\.1\.0'/.test(source)],
+  ['monitor is versioned', /BDS_WEBSITE_MONITORING_VERSION', '0\.1\.1'/.test(source)],
   ['execution defaults off', /BDS_WEBSITE_MONITORING_ENABLED[\s\S]*true === BDS_WEBSITE_MONITORING_ENABLED/.test(source)],
   ['monitoring requires an active paid allowlisted plan', /ai-business-essentials/.test(source) && /'paid' === \$mode[\s\S]*in_array\( \$slug, \$allowed/.test(source)],
+  ['internal plan candidates are revalidated', /apply_filters\( 'bds_monitoring_plan_candidate'[\s\S]*is_array\( \$plan \)[\s\S]*'paid' === \$mode[\s\S]*in_array\( \$slug, \$allowed/.test(source)],
   ['destination comes only from customer onboarding state', /bds_onboarding_state/.test(source) && !/get_param\( 'url'/.test(source)],
   ['customer must attest ownership or permission before monitoring', /authorization_confirmed[\s\S]*authorization_required[\s\S]*own, manage, or have permission/.test(source)],
   ['URL credentials IP literals and nonstandard ports are rejected', /isset\( \$parts\['user'\] \)[\s\S]*isset\( \$parts\['pass'\] \)/.test(source) && /filter_var\( \$host, FILTER_VALIDATE_IP \)/.test(source) && /443 !== \$port[\s\S]*80 !== \$port/.test(source)],
