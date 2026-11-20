@@ -109,3 +109,10 @@ Do not deploy this branch over newer Cursor public-page files. Merge only the ba
 - The free website-audit page is clean at 320px, 390px, and 430px: no horizontal overflow remains, and the 390px content audit found no old pricing, provider branding, or green primary CTA.
 - The small EN/ES switch is still visible. The user previously requested removing translator clutter, while the current master requirements preserve multilingual support. Keep translation behavior but confirm whether the compact switch should remain or be visually relocated; do not restore a floating translator widget.
 - No frontend change was made in this Codex batch.
+
+## 2026-11-20 Directory homepage accessibility/legacy-DOM cleanup
+
+- At a measured 390px viewport, Social Home, Services, Business Essentials, the website-audit page, and the Directory claim page each expose one visible H1. Their visible images have `alt` attributes, and the visible form controls sampled have associated labels/ARIA naming.
+- Directory Home contains an H1 (`Find a business. See what it offers. Contact it.`), but it is inside a zero-size legacy block at 390px. The current visible page begins with `Start With Your Location` as an H2. Promote the current visible hero/area heading to the single visible H1, or otherwise expose one meaningful visible H1 without duplicating headings.
+- The zero-size legacy DOM still contains older homepage sections, including `Brand gift cards under face value`, even though that section is not visible. Remove the legacy gift-card/homepage block from the public DOM while preserving any legitimate backend records and secondary access, as required by the master prompt.
+- Do not re-enable the hidden legacy sections merely to expose their H1. Remove/consolidate the obsolete markup and keep the current local-first visible journey.

@@ -24,6 +24,7 @@ Production readiness: not ready.
 - [x] Verify the critical mobile conversion destinations: trial, Services, website audit, Add Listing registration handoff, claim-intent finder, Directory plans, and Playa del Carmen location all resolve successfully; the music brief remains an unsubmitted private POST form.
 - [x] Verify the wider rendered CTA surface: 65 visible CTA/link instances across Social Home, Services, and Directory Home reduced to 34 unique public paths; all resolved successfully, and all five referenced in-page anchors exist.
 - [~] Read the two Rafter warnings on each site before the next deploy: current records confirm zero critical and two warning findings per site, but the Rafter Sites API/CLI returns counts only and does not expose the warning bodies. Do not close this gate until the detailed findings are available.
+- [ ] Frontend cleanup: give the current Directory mobile homepage one visible H1 and remove the hidden legacy gift-card/homepage markup from the public DOM without restoring the obsolete section.
 
 ## Current release blockers
 

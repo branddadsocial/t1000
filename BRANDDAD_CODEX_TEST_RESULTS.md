@@ -590,6 +590,13 @@ Updated: 2026-11-19
 - No button was clicked, no form was submitted, and no account, order, subscription, payment, message, or external provider execution was created.
 - Rafter's current monitored-site records remain: Social scan succeeded 22/22 on 2026-11-07 with 0 critical, 2 warning, and 2 informational findings; Directory scan succeeded 21/21 on 2026-09-22 with 0 critical, 2 warning, and 4 informational findings. The current Sites API/CLI exposes counts only, not warning bodies, so the detailed-warning review remains open.
 
+## 2026-11-20 rendered accessibility baseline
+
+- At 390px, Social Home, Services, Business Essentials, the website audit, and the Directory claim page each had one visible H1. The sampled visible images had `alt` attributes, and the sampled visible form controls had associated label/ARIA naming.
+- Directory Home's only H1 exists in the DOM but has a zero-by-zero rendered box inside a hidden legacy block. The visible current local-first page starts with `Start With Your Location` as an H2.
+- The same zero-size legacy DOM includes the old `Brand gift cards under face value` homepage heading. It is not visually displayed, but it remains public markup and should be removed/consolidated by the Cursor-owned frontend rather than re-enabled.
+- This is a focused structure/name/label baseline, not a complete WCAG 2.2 AA audit; automated contrast, keyboard-only, screen-reader, zoom, and physical-device testing remain separate.
+
 ## 2026-11-20 free website-audit mobile recheck
 
 - The live page returned HTTP 200 at a measured 390px CSS viewport with `clientWidth`, document scroll width, and body scroll width all equal to 390; no horizontal page overflow was present.

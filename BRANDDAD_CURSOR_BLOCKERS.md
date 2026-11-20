@@ -51,3 +51,4 @@
 - Live checkout of new staged/quote-only offers, a completed claim-form pass on a listing, Partnero balance display, and a phone-sized viewport pass. Existing launch-candidate products such as AI Social Growth already have Subscribe monthly at the listed price; that checkout was opened, not purchased.
 - SSH restore from this machine. File-manager uploads of the Cursor MU set are done, including Directory `bds-directory-free-ai-mu.php`.
 - Codex still owns FormWise, billing lifecycle, metered AI execution, SEO publishing, WhatsApp, and video generation. The studio screens do not call those systems.
+- Directory Home at 390px has no visible H1: its only H1 is inside a zero-size legacy block, while the current local-first content begins at H2. That hidden legacy DOM also still contains the old gift-card homepage section. Cursor should consolidate/remove the obsolete markup and give the visible current journey one meaningful H1; Codex did not edit the public frontend.
