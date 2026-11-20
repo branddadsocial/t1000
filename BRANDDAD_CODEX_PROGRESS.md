@@ -2,6 +2,14 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 customer API acceptance preparation
+
+- Added one exact-host harness covering onboarding validation/locking and customer value-report tenant isolation in a single batch.
+- It tests localhost/private-IP rejection, 121-character field rejection, unsupported enum rejection, unknown-only updates, active-lock conflict, stale-lock recovery, one-version advancement, profile isolation, completed/failed job deltas, completed-only credit counting, cross-account job exclusion, safe status output, and invalid reporting periods.
+- Added 30 security/behavior assertions. The complete local suite passes 24/24 Node contracts, three PHP compatibility suites, four PHP syntax checks, and `git diff --check`.
+- Local Rafter secret scans found no secrets; manual review found no exposed ids/profile/totals, browser input, credential, user/admin/order/subscription/payment creation, fetch, message, provider run, or post/user deletion. Remote fast scan remains quota-blocked at 16/16; paid Plus was not used.
+- The helper is local only. Uploading it would create three private fixture jobs and update the marked staging subscriber's test-only onboarding profile; production remains unchanged pending confirmation.
+
 ## 2026-11-19 hosted lifecycle acceptance
 
 - Added an exact-host, one-time lifecycle harness that reuses the marked non-admin staging subscriber and creates no user, administrator, Woo order, subscription, payment, or refund object.

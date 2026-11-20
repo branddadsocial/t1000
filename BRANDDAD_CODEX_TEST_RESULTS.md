@@ -1,5 +1,14 @@
 # BrandDad Codex test results
 
+## 2026-11-19 customer API acceptance preparation
+
+- `php -l deploy/bds-staging-customer-api-acceptance-mu.php`: passed.
+- `tests/staging-customer-api-acceptance-contract.mjs`: 30/30 assertions passed.
+- Full local suite: 24/24 Node contract files, three PHP compatibility suites, four PHP syntax checks, and `git diff --check` passed.
+- Local Rafter secret scans found no secrets. Manual review confirmed exact-host scope, marker-owned non-admin fixtures, boolean-only evidence, stored-only public URL behavior, and no browser input, exposed credential, user/admin/order/subscription/payment creation, network call, message, provider run, or post/user deletion.
+- Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- No staging upload, test profile update, fixture job creation, payment, message, provider run, or production mutation occurred in this preparation batch.
+
 ## 2026-11-19 hosted lifecycle acceptance
 
 - `php -l deploy/bds-staging-lifecycle-acceptance-mu.php`: passed.

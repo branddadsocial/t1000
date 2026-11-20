@@ -34,6 +34,16 @@ Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenizati
 - Public evidence is exact-host gated and boolean-only; ids, currency, amounts, metadata, and submitted values are not returned.
 - The harness performs no outbound request, message, deletion, provider execution, or production mutation.
 
+## Staging customer API acceptance harness — 2026-11-19
+
+- The helper is pinned to the configured staging home host and reuses the two marker-owned, non-admin subscribers. It accepts no browser request input.
+- Onboarding acceptance covers localhost/private-IP URL rejection, field-length and enum enforcement, unknown-field rejection, active-lock conflict, stale-lock recovery, exact version advancement, and tenant profile isolation.
+- The accepted public URL is stored only; neither the helper nor onboarding performs a fetch.
+- Value-report acceptance snapshots one customer's current totals, creates one completed and one failed private fixture job for that customer plus one completed job for the other fixture customer, and asserts deltas. Only the customer-owned completed job may add five committed credits.
+- Status acceptance requires the authenticated customer's own id, no entitlement on this fixture, and absence of FormWise ids, reservation tokens, or ledger keys.
+- Public evidence is exact-host gated and boolean-only. The helper exposes no user/job id, profile, URL, internal totals, credential, or job content.
+- It creates no user, administrator, order, subscription, payment, network call, message, provider execution, or production mutation.
+
 ## Verified provider-cost ledger and profitability summary (2026-11-19)
 
 ### Data flow and trust boundaries
