@@ -26,6 +26,7 @@ Production readiness: not ready.
 - [~] Read the two Rafter warnings on each site before the next deploy: current records confirm zero critical and two warning findings per site, but the Rafter Sites API/CLI returns counts only and does not expose the warning bodies. Do not close this gate until the detailed findings are available.
 - [ ] Frontend cleanup: give the current Directory mobile homepage one visible H1 and remove the hidden legacy gift-card/homepage markup from the public DOM without restoring the obsolete section.
 - [ ] Frontend contrast cleanup: darken Social primary CTA backgrounds from `#0878ED` (4.27:1 with white) to an approved blue at 4.5:1 or better; existing Directory `#0668D8` passes at 5.28:1. Recheck interaction states.
+- [x] Recheck public HTTPS/indexing plumbing: both HTTP hosts 301 to their HTTPS equivalents, TLS verification succeeds, audited production pages have matching canonicals and no `noindex`, and both robots/sitemap endpoints return HTTP 200.
 
 ## Current release blockers
 

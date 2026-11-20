@@ -605,6 +605,14 @@ Updated: 2026-11-19
 - Directory primary buttons and the Concierge use white on `#0668D8` (approximately 5.28:1), and Directory secondary buttons use `#10243A` on white (approximately 15.72:1); both pass.
 - Hover, focus, active, disabled, forced-colors, and actual screen-reader/keyboard behavior were not changed or fully audited in this read-only batch.
 
+## 2026-11-20 public HTTPS and indexing recheck
+
+- Plain HTTP for both `branddad.social` and `directory.branddad.social` returns HTTP 301 to the matching HTTPS origin. Redirect-following requests completed with TLS verification result `0` and HTTP 200.
+- HSTS and `X-Frame-Options` headers were present on the audited final HTTPS responses.
+- Social Home, Services, AI Business Essentials, Directory Home, all categories, and all listings each returned HTTP 200, exposed a canonical URL matching the audited clean path, and did not expose a production `noindex` robots meta directive.
+- Both `/robots.txt` endpoints returned HTTP 200 as `text/plain`, and both `/wp-sitemap.xml` endpoints returned HTTP 200 as XML.
+- This bounded check confirms public redirect/canonical/indexing plumbing only; it does not replace a complete structured-data, hreflang, sitemap-child, CDN, certificate-expiry, or search-engine coverage audit.
+
 ## 2026-11-20 free website-audit mobile recheck
 
 - The live page returned HTTP 200 at a measured 390px CSS viewport with `clientWidth`, document scroll width, and body scroll width all equal to 390; no horizontal page overflow was present.
