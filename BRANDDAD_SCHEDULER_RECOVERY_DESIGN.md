@@ -34,6 +34,7 @@ The command is derived from the hosting panel's verified PHP interpreter list, a
 - Use the authenticated StartHost account only; do not expose a public repair endpoint.
 - Do not put credentials, tokens, customer data, or query parameters in the command.
 - Keep the existing hard connection guard active so cron batches remain limited to five actions, one concurrent batch, and a 20-second execution limit.
+- Source review confirms the emergency guard returns before its zero-batch filters during `DOING_CRON`/WP-CLI, while the hard guard then supplies the five-action/one-worker/20-second limits at priority 99. Direct execution of `wp-cron.php` is therefore the intended bounded path even though `DISABLE_WP_CRON` prevents visitor-triggered spawning.
 - Do not use the hosting panel's **Test Command** button before the production queue risk is accepted; it would immediately execute cron.
 - Do not manually invoke renewal hooks, fabricate dates, or edit subscription records.
 - Do not mass-run, mass-cancel, or mass-delete failed/pending actions.
