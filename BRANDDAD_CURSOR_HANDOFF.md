@@ -122,3 +122,10 @@ Do not deploy this branch over newer Cursor public-page files. Merge only the ba
 - Computed mobile styles show no blue-on-blue or dark-on-dark key CTA combination. Directory primary buttons and the Concierge use white on `#0668D8`, which measures approximately 5.28:1 and passes the 4.5:1 WCAG AA normal-text threshold.
 - Social `.bdai-button` and `.bds-rev-button` use 16px/800 white text on `#0878ED`, which measures approximately 4.27:1 and misses that threshold. The light, ghost, and navy variants pass comfortably.
 - Use the existing Directory blue `#0668D8` (or another approved BrandDad blue at 4.5:1 or better) for the Social primary CTA background. Preserve white text and the current light-on-dark rule. Recheck default, hover, focus, active, and disabled states after the frontend change.
+
+## 2026-11-20 local source fixes ready for deployment review
+
+- The contrast correction is implemented locally in the existing dirty `branddad-cursor-revenue` worktree: launch pages `0.5.24`, revenue sections `0.2.21`, customer surfaces `0.2.5`, Directory Featured `0.2.13`, and the local Codex bridge `0.1.1` use `#0668D8`. The focused source/test suite passes. Do not overwrite unrelated uncommitted Cursor work when selecting these changes.
+- The Directory H1 repair is implemented locally in `branddad-seoestore/deploy/bds-directory-qa-repair-mu.php` `1.0.20`. It keeps `#bdd-title` as the preferred H1, demotes the retired WhatsApp heading, and hides only the retired wrapper when that wrapper does not contain the current hero. The Directory behavior contract passes.
+- The existing gift-slider source already fails closed outside `/gift-card-marketplace/`; after deploying the corrected QA repair and current front-compose sources, purge the generated Directory HTML cache so stale hidden homepage gift markup cannot remain in public DOM.
+- These changes are locally verified, not deployed. After deployment, verify one visible H1, zero legacy gift-homepage text, one Concierge launcher, white-on-`#0668D8` primary actions, focus/hover/active states, and no overflow at 320/390/430px before closing the frontend gates.

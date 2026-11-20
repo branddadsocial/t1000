@@ -622,3 +622,13 @@ Updated: 2026-11-19
 - Live recommendation links resolve to Business Essentials, Lead Assistant, Local SEO, Social Growth, Services, Featured Advertising, and free Directory listing destinations.
 - The visible EN/ES switch remains on the page. The large floating translator widget was not present in the audited viewport. No translation preference was changed.
 - No audit, lead, email-consent, translation-vote, purchase, or Directory form was submitted.
+
+## 2026-11-20 local frontend launch-fix verification
+
+- Contrast sources now consistently use `#0668D8` for white-text primary actions in launch pages `0.5.24`, revenue sections `0.2.21`, customer surfaces `0.2.5`, Directory Featured `0.2.13`, and the local Codex bridge `0.1.1`. The new source contract rejects the former `#0878ED` token in those five files.
+- `php -l` passed for all five affected source modules and the contrast contract. `brand-contrast-test.php`, `launch-funnel-test.php`, `lang-switch-test.php`, `launch-heading-test.php`, `revenue-sections-test.php`, `featured-rotation-test.php`, `customer-hub-test.php`, and `codex-bridge-test.php` passed.
+- Directory QA repair `1.0.20` passed PHP syntax and `directory-contact-test.php`. The behavior fixture retains `<h1 id="bdd-title">Find What You Need Near You—Fast.</h1>`, demotes the retired `bds-wah__title` heading, emits the `1.0.20` marker, and verifies that the gift slider refuses non-marketplace routes and documents the homepage exclusion.
+- `launch-heading-test.php`, `brand-contrast-test.php`, and the targeted `git diff --check` passed. The only diff-check message was Git's expected LF-to-CRLF working-copy warning.
+- Manual OWASP review found no new access-control, injection, credential, network, payment, storage, or deletion path. Fixed selectors and a six-H1 scan cap bound the changed rewrite; the client fallback will not hide an ancestor containing the current hero.
+- `rafter secrets deploy/bds-directory-qa-repair-mu.php` found no secrets. Required remote `rafter run` was attempted but blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- These are local source results in dirty pre-existing Cursor/recovery worktrees. They are not evidence that production changed. Deployment, cache purge, and live 320/390/430px validation remain required.
