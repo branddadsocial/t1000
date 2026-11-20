@@ -187,3 +187,5 @@ Nothing unchecked above may be described as fully operational.
 - [x] Verify the four primary Social subscription pages return HTTP 200, display the approved launch price, and expose a real WooCommerce product-ID-backed add-to-cart control.
 - [x] Verify the free website check, Directory browse/location/plan/claim routes, anonymous Add Listing registration handoffs, and protected Dashboard sign-in handoff.
 - [x] Distinguish the non-rendered `bds-sales-help` analytics selector from an actual duplicate `#bds-sales-help` widget during production acceptance.
+- [x] Design, implement, PHP-lint, contract-test, manually review, and secret-scan a recoverable four-object cache refresh; preserve unrelated cache files and fixed `.bak` rollback objects.
+- [!] Do not upload the targeted refresh until mandatory `rafter run --mode fast` succeeds; the current free-scan quota remains 16/16 and paid Plus is not approved.
