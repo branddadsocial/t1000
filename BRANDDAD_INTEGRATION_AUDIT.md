@@ -1,5 +1,19 @@
 # BrandDad integration audit
 
+## Existing Partnero bridge preserved
+
+- Reused system: `bds-partnero-ref-bridge-mu.php` version 1.2.1.
+- Matching reviewed source hashes were found in the prior SEO/store and Rafter worktrees: `9C1BA3C8E3D42F432ADDD9B56398733E7AE10FB7C0145DA577740B46D9D23CE9`.
+- Existing deployment evidence records the bridge on Directory, Social, BrandDad.co, and HostTech, with live HTML markers/ref propagation verified at the time of that deployment.
+- This bridge preserves referral attribution only. It does not prove Partnero commission creation, recurring conversion events, refund adjustments, cancellation adjustments, payout terms, or current API authentication. Those lifecycle items remain blocked pending verified Partnero contract/API access and safe tests.
+- Decision: preserve the existing bridge; do not create a duplicate referral-cookie system.
+
+## Provider cost accounting
+
+- Added a private, append-only verified-cost ledger and admin-only contribution aggregate.
+- No provider cost is fabricated from customer credits. Adapters must supply a provider/processor-reported, invoice-reconciled, or contract-unit-reconciled amount.
+- Until adapters are connected and invoices reconciled, the API reports incomplete coverage rather than claiming profit.
+
 Updated: 2026-11-19
 
 | System | Verified state | Status |

@@ -1,5 +1,11 @@
 # BrandDad Cursor handoff
 
+## Admin contribution reporting
+
+The backend now includes `deploy/bds-provider-cost-ledger-mu.php` for Social. Cursor may render `GET /wp-json/branddad/v1/admin/finance/contribution?period=YYYY-MM` only inside a `manage_woocommerce` administration surface. Preserve the response labels: this is recorded contribution from confirmed revenue and verified stored variable costs, not final profit. Do not infer missing provider costs or show a green margin as complete when `cost_coverage_state` is `partial_unless_reconciled` or `no_verified_costs`.
+
+Provider adapters must record costs server-side through the documented internal function/action; no browser form should call a cost-write route because none exists.
+
 Updated: 2026-11-19
 
 ## Do not rebuild

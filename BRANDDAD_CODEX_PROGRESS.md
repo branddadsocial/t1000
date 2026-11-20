@@ -10,6 +10,14 @@ Updated: 2026-11-19
 - Recorded the hosting panel's unresolved `6 infection(s) found` warning as a production-readiness issue rather than dismissing it.
 - Added `BRANDDAD_DEPLOYMENT_MANIFEST.md` with per-host module inventories, fail-closed switches, server-only configuration, staged deployment steps, rollback, and acceptance evidence.
 - No production file, billing state, provider switch, message, or customer record was changed during this inspection.
+
+## 2026-11-19 provider-cost and preservation batch
+
+- Audited the existing Partnero referral bridge and its prior deployment/verification evidence; preserved it instead of building a duplicate cookie/referral layer.
+- Added `bds-provider-cost-ledger-mu.php`, a private append-only verified provider-cost ledger with HMAC idempotency and strict provider/basis/catalog/currency/amount/date validation.
+- Added an admin-only contribution API that combines confirmed Woo lifecycle revenue/refunds with verified stored variable costs while explicitly marking incomplete cost coverage.
+- Added a static contract suite covering private storage, authorization, no public write route, verified-only bases, catalog enforcement, bounds, idempotency, reporting caps, and non-misleading wording.
+- No provider invoice, expense, profit, commission, or margin was invented.
 Branch: `codex/final-backend-20261119`
 Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 

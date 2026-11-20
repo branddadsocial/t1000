@@ -16,8 +16,6 @@ No isolated staging WordPress root was visible in the hosting File Manager. The 
 
 Prepared archive: `release/2026-11-19/branddad-social-backend-2026-11-19.zip`
 
-Archive SHA-256: `B8D4F1CB838F902661CA4E42301C10AB3E549BE70E00DD8CB5398733D639AB22`
-
 Install only after exact-file backups and database backup verification:
 
 - `bds-account-link-mu.php`
@@ -32,6 +30,7 @@ Install only after exact-file backups and database backup verification:
 - `bds-directory-membership-bridge-mu.php`
 - `bds-lifecycle-events-mu.php`
 - `bds-onboarding-api-mu.php`
+- `bds-provider-cost-ledger-mu.php`
 - `bds-sales-assistant-api-mu.php`
 - `bds-sales-lead-pipeline-mu.php`
 - `bds-website-monitoring-mu.php`
@@ -39,8 +38,6 @@ Install only after exact-file backups and database backup verification:
 ## Directory package
 
 Prepared archive: `release/2026-11-19/branddad-directory-backend-2026-11-19.zip`
-
-Archive SHA-256: `9A53316F17DF0AA5F5FDC1CF124CD96C18C5C36BE5E2D228114D92E788464271`
 
 Install only after exact-file backups and database backup verification:
 

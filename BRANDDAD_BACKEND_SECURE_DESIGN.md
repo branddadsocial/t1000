@@ -4,6 +4,40 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Verified provider-cost ledger and profitability summary (2026-11-19)
+
+### Data flow and trust boundaries
+
+`[approved server adapter] -> [internal WordPress action] -> [private cost CPT]`
+
+`[authenticated Woo admin] -> [WordPress REST permission] -> [bounded aggregate] -> [admin response]`
+
+The recorder is not a public REST write endpoint. A server adapter supplies a fixed provider, authoritative catalog product slug, three-letter currency, nonnegative minor-unit amount, verified basis, occurrence timestamp, and an idempotency reference. WordPress validates and stores only a privacy-limited cost event. The read route exposes aggregates only to `manage_woocommerce`.
+
+### Authorization and API decisions
+
+- No customer write or read route exists. Provider adapters call an internal PHP function/action after they have a verified cost value.
+- The aggregate route is GET-only and requires `manage_woocommerce`; it accepts only a bounded `YYYY-MM` period within the lifecycle ledger's 24-month reporting window.
+- The response contains totals and product/provider groupings, never customer ids, job prompts/results, emails, provider request bodies, credentials, or invoice references.
+- Unknown providers, bases, currencies, products, negative values, future/old dates, and malformed idempotency references fail closed.
+- The recorder uses an HMAC idempotency key plus a stale-recoverable option lock to prevent duplicate cost recognition.
+
+### Storage classification and retention
+
+- Stored fields are accounting/audit metadata: provider key, catalog product slug, verified basis, currency, minor-unit cost, occurrence month, and HMAC reference. No credential, PII, prompt, conversation, or raw provider payload is stored.
+- Records are private WordPress posts and are not exposed through the default REST API.
+- No deletion endpoint is provided. Retention follows the business's accounting retention policy; customer deletion does not require removing these non-PII aggregate cost records.
+- WordPress/database backup encryption and access controls remain hosting responsibilities. Secrets stay in server configuration, outside this ledger and Git.
+
+### STRIDE and abuse cases
+
+- Spoofing/elevation: only installed server code records costs; only Woo admins read aggregates. No request-supplied role or customer id is trusted.
+- Tampering/repudiation: normalized fields, HMAC idempotency, source-reference hashing, and append-only events make accidental replay detectable; production still needs append-only external log shipping for stronger tamper evidence.
+- Disclosure: raw references and customer data are never stored or returned.
+- Denial/cost abuse: there is no provider call; queries are capped at 5,000 records per store and 24 months.
+- Abuse twin: a compromised adapter attempts to inflate cost or add arbitrary products. Mitigation: fixed provider/basis allowlists, authoritative catalog membership, bounded amounts, and admin-visible grouped totals. Residual risk is that compromised privileged server code can still submit false verified costs; reconciliation against provider invoices remains required.
+- Incorrect-margin abuse: estimated or unknown costs are rejected. Reports explicitly label absent cost coverage and never present incomplete data as final profit.
+
 ## Existing systems retained
 
 - Human identity remains the existing WordPress account and secure cookie session. No second password database or homegrown token format is introduced.

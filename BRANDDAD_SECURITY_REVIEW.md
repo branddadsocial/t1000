@@ -5,6 +5,17 @@ Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
 Release packaging verification: the Social and Directory archives were built from the reviewed `deploy/` sources, and every packaged PHP file matched its source SHA-256. The packaging batch added documentation and archives only; it did not alter backend execution code or relax any default-off gate.
 
+### Verified provider-cost ledger batch
+
+- Web/API access control: storage is private and excluded from default REST (`deploy/bds-provider-cost-ledger-mu.php:19-20`); the only route is GET-only and requires `manage_woocommerce` (`:134`, `:244`). There is no browser/customer cost-write route.
+- Input/integrity: the internal recorder requires a fixed provider, authoritative catalog product, verified basis, three-letter currency, positive capped integer minor units, bounded timestamp, and bounded idempotency reference (`:59-83`). Unknown or estimated data fails closed.
+- Replay/tampering: event identity and stored source reference use HMAC-SHA256 with the WordPress auth salt, and writes use a stale-recoverable lock plus existing-record lookup (`:47`, `:84-100`, `:121`). Raw references are not stored.
+- Privacy/tenancy: cost records contain no customer id, PII, prompt/result, credential, or provider body. The aggregate returns only grouped accounting data to Woo administrators.
+- Resource consumption: cost and lifecycle queries are capped at 5,000 records and the period is limited to the current 24-month reporting window (`:139-154`, `:168`, `:185`). There is no outbound provider call or customer-controlled URL.
+- Misrepresentation control: the response explicitly reports incomplete cost coverage and states that recorded contribution is not final profit, settlement, or tax reporting (`:236-238`).
+- LLM categories are N/A for this plugin: it does not send prompts, retrieve RAG context, execute model output, or invoke tools.
+- Residual risk: compromised privileged server code can call the internal action with false but syntactically valid costs. Accounting/provider invoice reconciliation and append-only external log shipping remain production controls.
+
 The follow-up worker and onboarding API added in the second batch use the same secure-design baseline. Follow-up has an explicit default-off kill switch, fresh consent checks before send, a one-message limit, bounded retry on definite local failure, an uncertain-delivery review state, conversion stop, hashed opaque unsubscribe tokens, opt-out persistence checks, public unsubscribe rate limiting, and opt-out propagation into the lead pipeline. Onboarding is authenticated, owner-scoped, field-allowlisted, body-bounded, optimistic-concurrency protected, and never fetches the stored website URL. The third batch adds a separate bounded trial ledger, exact subscription-derived expiry, a signed/idempotent consent-only cross-host membership event, and customer-owned status/reporting DTOs. The acquisition pipeline is default-off, origin/rate/body/field bounded, deduplicated by HMAC email, private, stage-authoritative, and retention-limited.
 
 ## Rafter gate
@@ -12,6 +23,7 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - `rafter secrets .`: passed; no hardcoded secrets detected. The CLI reported a Betterleaks output-version warning, but completed with exit 0.
 - `rafter run`: attempted in required fast mode; blocked because the account has used 16/16 fast scans until 2026-11-23. Paid Plus was not run because it requires explicit approval.
 - Project-specific Rafter docs: none configured.
+- The exact provider-cost batch was scanned again: local and MCP secret scans returned clean; remote fast SAST/SCA remains blocked by the same 16/16 quota.
 
 ## Findings corrected during review
 

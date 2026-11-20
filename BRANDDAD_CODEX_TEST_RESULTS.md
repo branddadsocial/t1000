@@ -13,6 +13,20 @@
 - `rafter run --mode fast` was attempted again and remains blocked by the 16/16 account quota until reset. No paid Plus scan was used.
 - No live provider execution, payment, email, public-post edit, or production file change occurred during this verification.
 
+## 2026-11-19 provider-cost batch
+
+- 18/18 deploy PHP files passed `php -l`.
+- 16/16 Node contract suites passed, including 17 provider-cost ledger security/behavior assertions.
+- 3/3 compatibility PHP suites passed.
+- 37/37 local validation commands passed; zero failures.
+- Social release archive now contains 16 MU modules plus manifest/checksum files; Directory contains 7 MU modules plus manifest/checksum files.
+- Every packaged PHP file matches its reviewed `deploy/` source SHA-256.
+- Social archive SHA-256: `BB40EB4C379EAA9235E8D0DE3991773FD208FB0562206F28D619B404C7FE82A1`.
+- Directory archive SHA-256: `1951A5F97522E0F407EE4C18E569279752E534B75966F5A9F2C92C87DE91F193`.
+- Local `rafter secrets .` passed and MCP Rafter secret scan returned no findings.
+- Required `rafter run --mode fast` was attempted and remains blocked by the 16/16 quota; paid Plus was not used.
+- WordPress staging still must prove admin denial, replay, lock recovery, period boundaries, truncation, malformed stored rows, refunds, multi-currency totals, and incomplete-coverage labeling before production activation.
+
 Updated: 2026-11-19
 
 ## Passed locally

@@ -1,5 +1,17 @@
 # BrandDad shared API contracts
 
+## Verified provider-cost contribution summary
+
+- Route: `GET /wp-json/branddad/v1/admin/finance/contribution`
+- Authentication: WordPress cookie authentication plus REST nonce.
+- Permission: `manage_woocommerce` only.
+- Query: optional `period=YYYY-MM`, restricted to the current 24-month window.
+- Response: confirmed gross/refunds/net from the private lifecycle ledger, verified variable costs grouped by provider/product/currency, recorded contribution, explicit cost-coverage state, and truncation marker.
+- Privacy: no customer ids, emails, prompts/results, raw provider bodies, credentials, invoice references, or source idempotency values.
+- Important: recorded contribution is not final profit, a bank settlement, or tax reporting. Unrecorded labor, affiliate, hosting, messaging, and provider costs remain outside the number.
+
+Server adapters record a cost through `bds_provider_cost_record( $event )` or the internal `bds_verified_provider_cost` action only after obtaining a verified provider/processor/invoice/contract-unit amount. The event must include an authoritative catalog product slug and an idempotency reference. There is deliberately no public REST write route.
+
 Base namespace: `/wp-json/branddad/v1`
 Authentication: existing WordPress cookie session. Authenticated write calls require the normal WordPress REST nonce (`X-WP-Nonce`).
 

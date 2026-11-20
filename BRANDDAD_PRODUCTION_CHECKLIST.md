@@ -16,6 +16,8 @@
 - [x] Complete Rafter code-review walk, local secret scan, and document fast-scan quota blocker.
 - [ ] Run `rafter run` fast after quota resets and reconcile findings.
 - [ ] Test cross-account denial, CSRF/nonce, replay, rate-limit, and provider-outage cases in WordPress.
+- [x] Add a verified-only provider-cost ledger with no public write route and explicit incomplete-coverage reporting.
+- [ ] Reconcile provider/processor/invoice costs and prove contribution totals against accounting records before displaying a margin as complete.
 
 ## Deployment
 
@@ -51,6 +53,8 @@
 - [x] Featured adapter rechecks claimed ownership, paid subscription linkage, geography, capacity, renewal, failure, cancellation, expiry, and refund.
 - [ ] Cursor passes selected listing + authoritative geography and staging proves all four lanes.
 - [ ] Partnero free-to-paid attribution/refund/cancellation events reconcile.
+- [x] Preserve the existing deployed Partnero ref bridge; do not create a duplicate attribution cookie layer.
+- [ ] Verify current Partnero API/event terms before emitting commission lifecycle events.
 
 ## Automation acceptance
 
