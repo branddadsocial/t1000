@@ -1,13 +1,17 @@
 # BrandDad Codex test results
 
-## 2026-11-19 authenticated staging acceptance preparation
+## 2026-11-19 authenticated staging acceptance
 
 - `php -l deploy/bds-staging-auth-acceptance-mu.php`: passed.
 - `tests/staging-auth-acceptance-contract.mjs`: 23/23 assertions passed.
 - Full local suite: 21/21 Node contract files, three PHP compatibility suites, two PHP syntax checks, and `git diff --check` passed.
 - Local Rafter secret scans of the helper and contract found no secrets. Manual authorization review found no public credential, administrator role, request parameter, outbound request, payment/provider/message side effect, or deletion path.
 - Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- No staging or production mutation occurred in this preparation batch. Hosted results remain unverified until the reviewed helper is explicitly approved and uploaded to the isolated staging MU directory.
+- Hosted one-time report: `complete=true`; all nine allowlisted checks true; no error codes.
+- Verified two fixture identities have subscriber-only capabilities, anonymous permission callbacks deny access, and authenticated subscriber callbacks allow access.
+- Verified onboarding owner update, stale-version conflict, cross-account profile isolation, AI-job owner read, and cross-account `not_found`/HTTP 404 behavior.
+- Post-run staging smoke: homepage 200/noindex, sales catalog 200, Business Essentials product 200, and anonymous AI/account/onboarding/value routes 401.
+- Production probe of the staging-only evidence route returned HTTP 404. No payment, provider execution, message, administrator, or production mutation occurred.
 
 ## 2026-11-19 FormWise published-contract audit
 
@@ -189,7 +193,7 @@ Updated: 2026-11-19
 - Real Featured Woo purchase and placement handoff.
 - Follow-up sending, social publishing, WhatsApp, SEO publishing, music delivery, and video generation.
 - Real mail transport acceptance, one-click unsubscribe, retry, crash/uncertain-delivery review, and converted-customer stop behavior.
-- Onboarding REST nonce, cross-account denial, optimistic version conflict, Directory-free access, and completed-job detection in WordPress staging.
+- Browser-session REST nonce, Directory-free access, and normal completed-job detection remain untested. Internal hosted staging acceptance now proves cross-account denial and optimistic version conflict.
 - Lifecycle event deduplication under duplicate hooks, partial/full refund aggregation, admin-capability denial, month-boundary behavior, and bounded truncation in WordPress staging.
 - Lead capture owned-origin/rate behavior, concurrent deduplication, verified stage hook ordering, admin authorization, opt-out propagation, and scheduled anonymization in WordPress staging.
 - Website-monitor configuration authorization, public/private DNS cases, safe real fetch, redirect/timeout behavior, concurrent/manual scheduling, plan loss, profile URL change, batch cursor, and actual value-report counters on WordPress staging.

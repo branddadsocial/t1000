@@ -2,14 +2,17 @@
 
 Updated: 2026-11-19
 
-## 2026-11-19 authenticated staging acceptance preparation
+## 2026-11-19 authenticated staging acceptance
 
 - Added an exact-host, one-time staging harness for authenticated authorization and ownership checks without exposing a login credential or creating an administrator.
 - The harness creates at most two marker-owned subscriber fixtures with random undisclosed passwords, verifies anonymous denial and authenticated permission acceptance, exercises onboarding optimistic concurrency and tenant isolation, and verifies AI-job owner access plus cross-account 404 behavior.
 - Its evidence endpoint is available only on the configured staging home host and exposes allowlisted booleans and bounded error codes—never user ids, email, password, cookie, nonce, profile data, or job content.
 - Added 23 static security/behavior assertions. The complete local suite passes 21/21 Node contracts, three PHP compatibility suites, two PHP syntax checks, and `git diff --check`.
 - Local Rafter secret scans found no secrets. Manual review found no privilege elevation, caller-controlled input, credential disclosure, outbound request, payment, provider execution, message, or deletion. Required remote fast scan was attempted and remains quota-blocked at 16/16; paid Plus was not used.
-- The harness is local only. Uploading it would create two inert subscriber fixtures and one private AI-job fixture in the isolated staging database, so deployment remains an explicit action-time-confirmed step. Production is unchanged.
+- After explicit action-time confirmation, uploaded the reviewed helper to the isolated staging MU directory and triggered its one-time run.
+- Hosted evidence returned `complete=true` with all nine checks true and no error codes: dependencies, non-admin roles, anonymous denial, authenticated access, onboarding owner update, stale-version denial, tenant isolation, owner job read, and cross-account 404.
+- Post-run smoke tests kept the staging homepage, sales catalog, and Business Essentials product at HTTP 200; anonymous AI tools, account status, onboarding, and value-report routes remained HTTP 401.
+- The production staging-evidence route returned HTTP 404, confirming the helper was not deployed there. No payment, message, FormWise execution, administrator, production mutation, or exposed credential was created.
 
 ## 2026-11-19 FormWise published-contract audit
 
@@ -57,7 +60,7 @@ Updated: 2026-11-19
 - Verified the public BrandDad sales catalog returns HTTP 200 but remains safely non-purchasable: its single fallback offer has no purchase URL because the clean staging database has no approved Woo product fixture or product mapping yet.
 - Added a 12-assertion static contract for the staging activator, then ran all 17 Node contract suites, all three PHP compatibility suites, the helper PHP syntax check, and `git diff --check`; all passed.
 - Completed the file-specific local Rafter secret scan and manual OWASP review. The required remote fast scan was attempted but could not run because the account remains at its 16/16 quota; no paid Plus scan was used.
-- Directorist, test product/subscription fixtures, FormWise server configuration, authenticated staging fixtures, and real payment lifecycle acceptance remain outstanding. Production remains unchanged.
+- Directorist, subscription/payment fixtures, FormWise server configuration, browser-session nonce acceptance, and real payment lifecycle acceptance remain outstanding. Production remains unchanged.
 
 ## 2026-11-19 deployment preparation batch
 
@@ -125,7 +128,7 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 
 ## Next unblocked backend work
 
-1. Add WordPress staging fixtures for REST permission/ownership, provider failure, idempotent replay, trial conversion, Directory bridge replay, onboarding concurrency, lifecycle-event deduplication/refunds, unsubscribe, and HPOS subscription discovery.
+1. Add WordPress staging fixtures for provider failure, idempotent replay, trial conversion, Directory bridge replay, browser-session nonce/onboarding concurrency, lifecycle-event deduplication/refunds, unsubscribe, and HPOS subscription discovery.
 2. Connect Cursor's lead form to the new capture contract and exercise privacy acknowledgment, optional consent, deduplication, stage progression, unsubscribe, and retention in staging; enable capture only after acceptance.
 3. Exercise one authorized public website through configure, async/manual check, DNS/redirect/error, plan-loss, URL-change, daily batch, and value-report paths on WordPress staging; then enable monitoring server-side.
 4. Add trial reminder and monitor-alert delivery only after a verified communications provider and sender are available.

@@ -76,7 +76,8 @@
 - [x] Implement default-off consent-based follow-up with stop/unsubscribe and uncertain-delivery deduplication.
 - [ ] Verify sender, mail acceptance, one-click unsubscribe, conversion stop, and retries in staging before enabling.
 - [x] Implement customer-owned onboarding state and first-task guidance API.
-- [ ] Exercise onboarding nonce, ownership, version conflict, and access states in WordPress staging.
+- [x] Exercise onboarding ownership isolation and optimistic version conflict in WordPress staging.
+- [ ] Exercise browser-session REST nonce and paid/Directory-free onboarding access states in WordPress staging.
 - [ ] Sales assistant recommends only verified products and links under cost caps.
 - [x] Implement private, deduplicated lead capture and verified lifecycle stage backend with separate email consent and bounded retention.
 - [ ] Connect Cursor's form with mandatory privacy acknowledgment and optional unselected email consent; test origin/rates/deduplication/admin denial/unsubscribe/retention before enabling.
