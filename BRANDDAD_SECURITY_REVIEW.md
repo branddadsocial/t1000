@@ -321,3 +321,13 @@ The hosted `v1` request failed closed because `bds-featured-billing-adapter-mu.p
 - A10/API7: the helper contains no outbound fetch primitive or caller-controlled URL, so SSRF is not present.
 
 Focused contract and both PHP syntax checks pass; `git diff --check` passes. `rafter secrets .` found no secrets (Betterleaks-version warning only). Required `rafter run` fast was attempted on the same branch and remains blocked by the 16/16 billing-period quota; no paid Plus scan was used.
+## FormWise customer-portal admission repair — 2026-11-20
+
+- **Scope:** four idempotent group-to-portal admissions in the existing FormWise organization; no application code, endpoint, authentication primitive, customer membership, group grant, plan, credit, or execution changed.
+- **OWASP API1/API5:** no caller-controlled resource id or public handler exists. Exact portal/group ids were copied from authenticated provider inventory, the operation used the owner-scoped provider API, and only the four named paid-plan groups were admitted.
+- **OWASP API3:** the mutation accepts only the exact provider ids; it exposes no user, email, token, portal-entry key, or private configuration in customer output.
+- **OWASP API4/API6:** the provider operation is idempotent and was performed once per group. It creates no AI run or recurring work and cannot consume customer credits by itself.
+- **OWASP API8/API10:** the portal remains `loginRequired=true`, `door=restricted`, and without a storefront. Immediate provider read-back verified the expected nine-group admission list. The existing grants and subscription-controlled membership remain separate authorization layers.
+- **ASVS L2 V1/V4/V7/V13:** the threat model and rollback are in `BRANDDAD_BACKEND_SECURE_DESIGN.md`; RBAC remains deny-by-membership and deny-by-grant; the exact mutations and read-back are recorded; no new BrandDad API surface exists.
+- **Rollback:** remove only the four exact admissions and read the portal back; no deletion or customer-data restoration is necessary.
+- `rafter secrets .` reported no secrets. Required `rafter run` was attempted and remains blocked at the account's 16/16 fast-scan quota; paid Plus was not used.

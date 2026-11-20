@@ -48,6 +48,13 @@ Updated: 2026-11-19
 | Warpindex | Existing integration referenced | Authentication/current operation not reverified |
 | Vexp | Previously healthy on `branddad-seoestore`, repository limit reached | Development aid only |
 | Rafter | Existing scans; secure-design gate applied to this branch | Code review/scan required before release |
+
+## FormWise content and access reconciliation — 2026-11-20
+
+- The restricted customer portal now admits the existing Business Essentials, AI Lead Assistant, AI Local SEO, and AI Social Growth groups in addition to the previously admitted customer and AI Studio groups. The four repaired groups already had scoped grants; the repair added only the portal door.
+- The public Directory should converge on one canonical assistant: keep the Finder-enabled Directory Concierge and retire or restrict the older no-flow Directory Assistant after checking UUID references.
+- The three public agents currently allow direct links and embedding anywhere. Domain restriction remains an external configuration gate for the stated BrandDad-only white-label policy.
+- The Sales Assistant knowledge remains usable but legacy-first; the failed Services crawl means its approved manual pages, not the website source, currently provide grounding. Update and semantic acceptance must precede any new publication.
 | MyMarky/social publishers | No verified production authorization in this pass | Not operationally claimed |
 | WhatsApp | Public 312 number/links exist; official Business API automation not verified | Manual contact only |
 | Video providers | Staged planning work only | Not production-ready |

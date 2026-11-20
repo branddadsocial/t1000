@@ -132,6 +132,9 @@ Nothing unchecked above may be described as fully operational.
 - [ ] Connect a safe Stripe test account and prove purchase, provisioning, renewal, refund, cancellation, and billing portal without altering existing customer billing.
 - [~] Diagnosed the missing live-webhook evidence: Woo marks the live account `Incomplete` because stored Stripe keys exist but their origin cannot be verified; sync is disabled and the plugin requires an authorized reconnect. The configured webhook endpoint is publicly reachable, but reconnect and a signed test event remain pending.
 - [x] Refresh FormWise agents, app, flows, portals, and tier plans without spending credits.
+- [x] Admit Business Essentials, AI Lead Assistant, AI Local SEO, and AI Social Growth groups to the existing restricted customer portal and verify provider read-back without adding members or spending credits.
+- [ ] Restrict the public Directory Concierge and Social Sales Assistant to BrandDad-owned domains, disable direct-link access where supported, and retire/restrict the older duplicate Directory Assistant after confirming no page references it.
+- [ ] Reconcile the Sales Assistant knowledge with the verified launch-candidate catalog, correct the one-question instruction conflict and stale staging labels, then run controlled draft tests before publication.
 - [ ] Run one approved, controlled FormWise execution and measure result quality, metering, cost, and customer isolation before enabling public external execution.
 - [~] Monitor Directory `all-locations` cold performance. HTTP 200 is stable, but one 18-second cold cache-bypass response and later 1.3-6.6 second responses indicate a cache/bootstrap optimization opportunity.
 

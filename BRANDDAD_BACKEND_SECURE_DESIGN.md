@@ -482,3 +482,33 @@ Controls:
 - The staging site remains `noindex`; checkout still requires the existing account rule and the AI gateway filter. No payment acceptance is claimed until an explicit Stripe test-mode lifecycle is separately authorized and verified.
 
 STRIDE: spoofing/tampering are constrained by the exact host and literal values; repudiation is addressed by the local fixture report and deterministic marker; disclosure is limited to non-sensitive catalog test data; denial is bounded to one product/one pass; elevation is limited to Woo's normal product API in the isolated staging database. Residual risk is public discovery of the temporary product URL, mitigated by hidden catalog visibility, staging noindex, absent production credentials, and the existing fail-closed gateway/entitlement controls.
+## FormWise customer-portal admission repair — 2026-11-20
+
+### Authorization design
+
+- Identity remains FormWise end-user authentication at the existing login-required `BrandDad Customer AI` portal. No new authentication primitive, token, session, password flow, or storefront is introduced.
+- Authorization remains group-based RBAC. Subscription provisioning may add a customer only to the exact paid-plan group; that group grants only its existing approved app/flow targets. Portal admission opens the login door but does not add members, credits, plans, or tool grants.
+- The only proposed write is idempotent admission of the existing `Business Essentials`, `AI Lead Assistant`, `AI Local SEO`, and `AI Social Growth` groups to the existing restricted customer portal. The internal-team and QA groups are not changed.
+- FormWise is the policy-enforcement point for portal admission and group grants. WordPress subscription provisioning remains the source of membership state; browser-supplied group or tenant identifiers are never trusted.
+- Revocation remains two-layered: subscription lifecycle removes group membership, while a portal admission can be removed separately if the whole plan lane must be disabled. Existing customer sessions and platform logout behavior remain provider-controlled.
+
+### Data flow and trust boundaries
+
+`Woo/WordPress verified subscription -> server-side FormWise provisioning -> exact paid-plan group -> login-required customer portal -> existing allowlisted tool grants`.
+
+Trust boundaries are WordPress-to-FormWise service authentication and end-user-to-FormWise portal login. This repair changes only the group-to-portal relationship; it sends no customer data and creates no end user, membership, plan, credit, or execution.
+
+### STRIDE and abuse review
+
+- **Spoofing/elevation:** ids are copied from read-back provider records, not caller input; no public route is added; the portal remains login-required and restricted.
+- **Tampering:** admission is made through the authenticated organization-owner API and immediately read back. No generic customer group, internal group, or QA group is admitted by this repair.
+- **Repudiation:** record the exact four group ids, provider responses, and post-write portal read-back in the integration audit and progress log.
+- **Information disclosure:** admission alone exposes no tool or customer data. Tool access still requires the group's existing grants and membership. No emails, member data, keys, tokens, or portal entry keys are added to customer-facing output.
+- **Denial/cost abuse:** no execution runs, credits are spent, or members are added. Existing plan credits and server-side usage checks remain the cost boundary.
+- **Abuse twin:** an attacker attempts to obtain portal access by naming a paid group in a request. There is no public admission or membership endpoint in this change; only the authenticated organization-owner operation is used, and membership stays subscription-controlled.
+
+### Residual risks and rollback
+
+- A future provisioning defect could place a customer in the wrong paid group; that pre-existing risk must be controlled by subscription-event idempotency and membership reconciliation.
+- Direct public share links and permissive embed settings on the public assistants are a separate exposure and are not broadened by this portal repair.
+- Rollback is `remove_admission` for the exact affected group and portal, followed by provider read-back. No deletion is required.

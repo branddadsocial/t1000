@@ -516,3 +516,14 @@ Updated: 2026-11-19
 - Verified against Partnero's current official REST API, transaction, authentication, and webhook documentation: program-scoped server Bearer authentication; unique transaction keys; create/delete/archive/restore semantics; commission calculation from program rules; HMAC-SHA256 `Signature` over the raw webhook body; five-second acknowledgement guidance; and retried delivery requiring idempotency.
 - Official documentation identifies permanent transaction deletion as the commission-reversal path for full refunds/chargebacks and archive/restore as the reversible affiliate-program alternative. No documented partial-amount transaction update was found, so partial refunds remain reconciliation-only rather than an automated full reversal.
 - This was read-only provider research. No Partnero login, API key, webhook, customer, transaction, commission, referral, payout, or program setting was created, read from the account, or changed.
+
+## 2026-11-20 FormWise content and portal-access audit
+
+- Read-back covered the organization identity/scopes, six authored agents, 15 authored flows, the AI Studio app, two portals, eight tier plans, ten user groups and their grants, four public share configurations, three knowledgebases, the complete Social sales knowledge pages, and the failed Services website source.
+- No agent, flow, app, draft, test case, or website crawl was run; provider search reported `chargedCredits: 0` and no FormWise execution credit was spent.
+- The Directory Concierge is correctly Directory-only and attached to the live Finder; the older Directory Assistant remains separately published without a flow. All three public agents use `ai.branddad.social`, but their share records permit direct opening and embedding anywhere. The AI Studio app is correctly restricted to `https://branddad.social` and refuses direct opening.
+- The Sales knowledge is factual for the three preserved live-legacy Woo offers but was last verified November 9 and does not lead with the seven current launch candidates or AI Business Essentials. The Services source is `failed`, `searchable=false`, with `RAG processing failed`.
+- Secure-design review documented RBAC boundaries, exact-provider-id selection, no public mutation path, no member/credit/execution change, idempotency, read-back, and exact admission rollback.
+- Idempotent portal admission returned `created=true` for Business Essentials, AI Lead Assistant, AI Local SEO, and AI Social Growth. Post-write read-back reports `loginRequired=true`, `door=restricted`, `storefrontId=null`, and nine admitted groups including all four exact new plan groups.
+- No end user, membership, plan, group grant, credit, agent/flow/app content, share setting, payment, order, or customer record changed.
+- Local `rafter secrets .` reported no secrets. Required remote `rafter run` was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
