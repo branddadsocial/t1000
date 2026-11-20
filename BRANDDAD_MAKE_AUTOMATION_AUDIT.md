@@ -174,3 +174,46 @@ This is a useful staging hardening step, not production approval.
 The reviewed WordPress `bds-sales-lead-pipeline-mu.php` is the intended authoritative lead store and lifecycle engine. Its current contract covers default-off activation, owned HTTPS origins, an 8 KB request cap, per-client/global rate limits, required privacy acknowledgment, HMAC email deduplication, private storage, bounded retention, unsubscribe suppression, and authoritative trial/checkout/payment/onboarding hooks. The focused contract and PHP syntax checks pass.
 
 Make should therefore receive only a minimal, authenticated, idempotent downstream event after the BrandDad backend has accepted and stored a lead. It must not become a second customer-facing lead database or independently infer consent, paid state, or lifecycle stage. The present direct public webhook-to-datastore prototype does not yet meet that boundary.
+
+## Direct-Make intake retirement design — 2026-11-20
+
+Decision: retire both direct public Make intake prototypes and keep WordPress as the sole authoritative lead ingress and retention system. This removes the unsafe duplicate data path instead of trying to retrofit authentication into a generic public webhook that cannot validate an HMAC natively.
+
+### Identity and authorization
+
+- Human visitors submit only to the default-off `branddad/v1/sales/leads` WordPress route. That route accepts only owned HTTPS origins, requires privacy acknowledgment, rate-limits callers, validates an allowlisted schema, and never accepts a caller-selected lifecycle stage.
+- WordPress admin access to captured leads remains protected by `manage_woocommerce`; Make is not an authorization authority.
+- No shared bearer token, signing secret, customer credential, or Make URL is added to browser code, the repository, logs, or notification content.
+
+### Data flow and storage
+
+Target flow: visitor -> BrandDad WordPress validation -> private WordPress lead record -> admin-only BrandDad inbox. A future Make lane may receive a minimal authenticated/idempotent event only after a supported verification mechanism exists.
+
+- Email is an identifier/PII field; business type and need are customer content; consent and lifecycle stage are policy/audit fields.
+- WordPress retention is bounded to 30–365 days (180 by default), removes stale unconverted contact data in batches, and preserves unsubscribe suppression without retaining the address.
+- The Make datastore is empty and will not become a second PII store. No email notification address is inferred from a Stripe or billing address; the verified destination is the existing admin-only BrandDad lead inbox.
+
+### Retiring the exposed hooks
+
+- Exact targets: scenarios `5029212` and `5028724`, trigger modules `1`, current hook ids `2868332` and `2868258`.
+- Provider read-back shows both scenarios paused, zero incomplete executions, empty delivery history, and five total queued payloads (two on v2, three on the older prototype). Their contents remain uninspected and unauthenticated.
+- Replace each old exposed webhook/data-store flow with a no-input on-demand starter, rename the scenario as retired, and keep it paused. This invalidates the old public URLs and intentionally discards their five unverified queued payloads rather than processing or copying possible PII.
+- Preserve the empty datastore and scenario records for audit/recovery; do not activate, execute, notify, or send follow-up.
+
+### Threat model and residual risk
+
+- Spoofing/tampering/replay: old generic URLs accept unauthenticated Internet traffic, so rotation removes them from service rather than trusting their queues.
+- Disclosure: no queued body is opened; no data is copied to email, documentation, or WordPress; provider-side deletion behavior is verified by post-rotation inspection.
+- Denial/cost: retired scenarios remain paused and no execution credits are consumed.
+- Elevation/repudiation: Make cannot set authoritative lifecycle or consent; WordPress records remain the audited source.
+- Worst-case compromise of an unshared replacement URL can only queue data on a paused retired prototype. It cannot write WordPress, send mail, publish, bill, or activate a customer.
+- Residual risk is limited to Make retaining provider-level metadata according to its own retention policy; no production customer flow depends on it.
+
+### Retirement verification
+
+- Scenario `5029212` is now `RETIRED — BrandDad FormWise Lead Capture STAGING v2`; scenario `5028724` is now `RETIRED — BrandDad FormWise Lead Capture STAGING`.
+- Each contains exactly one `scenario-service:StartSubscenario` module labeled `Retired direct intake — no public trigger`, reports `kind=on-demand`, `scheduling.type=on-demand`, `status=paused`, zero connections, and zero incomplete executions.
+- Webhook trigger inspection now returns `INVALID_ARGUMENT` for both because neither scenario has a webhook trigger. The previous hook URLs are no longer present in scenario read-back.
+- Data store `99354` still contains zero records. No queued body was read, copied, executed, or delivered.
+- The first attempted generic hook-rotation patch was rejected atomically with `INVALID_ARGUMENT`; the first schedule correction was rate-limited and also made no change. The supported on-demand replacement and later schedule saves then succeeded and were verified by provider read-back.
+- No Make execution credit, customer message, provider notification, payment, WordPress record, or production content changed.
