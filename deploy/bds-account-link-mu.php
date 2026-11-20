@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Cross-Site Account Link
  * Description: Single-use signed account handoff between BrandDad Social and BrandDad Directory.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ACCOUNT_LINK_VERSION', '0.1.1' );
+define( 'BDS_ACCOUNT_LINK_VERSION', '0.1.2' );
 
 function bds_account_link_hosts() {
 	return array(
@@ -20,7 +20,10 @@ function bds_account_link_hosts() {
 }
 
 function bds_account_link_current_host() {
-	return strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
+	$actual    = strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
+	$candidate = strtolower( sanitize_text_field( (string) apply_filters( 'bds_account_link_current_host_candidate', $actual ) ) );
+	$hosts     = bds_account_link_hosts();
+	return isset( $hosts[ $candidate ] ) ? $candidate : $actual;
 }
 
 function bds_account_link_secret_ready() {

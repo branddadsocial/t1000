@@ -303,3 +303,15 @@ Updated: 2026-11-19
 - Hosted restoration: exact fake consent row, isolated unsubscribe-rate transient, server IP value, and current-user context all returned true.
 - Hosted smoke: staging home/product HTTP 200 with `noindex`; catalog HTTP 200; protected lead/account/report/AI routes HTTP 401 anonymously; lead capture HTTP 503 `lead_capture_disabled`; production acceptance route HTTP 404.
 - Real mail transport and the public unsubscribe HTTP page remain deliberately outside this no-email test.
+
+## 2026-11-19 account-link cryptographic staging preparation
+
+- `node tests/account-link-contract.mjs`: passed 22 assertions, including normalization and fixed-host revalidation of the internal test seam.
+- `node tests/staging-account-link-acceptance-contract.mjs`: passed 43 assertions covering exact-host/one-time behavior, acceptance-only secret, fixture verification, signed claims, five-minute lifetime, audience, tamper/time/purpose/email/issuer failures, malformed/oversized input, atomic replay, existing-user resolution, conflicting-session detection, safe form output, audit privacy/restoration, and absence of cookie/account/network/payment surfaces.
+- Full suite: 30/30 Node contract files passed.
+- PHP compatibility: 3/3 passed.
+- PHP syntax: 30/30 deployment modules passed.
+- `git diff --check`: passed.
+- `rafter secrets .`: passed with no detected secrets.
+- `rafter run` fast: attempted and quota-blocked at 16/16; no paid Plus scan was used.
+- Hosted runtime acceptance: pending upload confirmation. Real cross-host consume/cookie/session remains a later two-host test.

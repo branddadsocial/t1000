@@ -225,6 +225,16 @@ Inquiry records are private posts owned by the receiving WordPress user. Custome
 - Acceptance covers source normalization, fresh-consent eligibility, stale/no-consent/bad-status/bad-email rejection, 192-bit token generation, hash lookup, invalid token rejection, safe unsubscribe URL construction, compare-and-set updates, persisted opt-out state, opt-out reactivation blocking, disabled-worker no-op behavior, and the 30-per-hour unsubscribe bound.
 - No user, lead, order, subscription, payment, provider job, email, or production record is created or deleted. Real mail transport, public GET confirmation, RFC 8058 POST, and the customer-facing unsubscribe page remain separate launch gates.
 
+### Isolated staging account-link cryptographic acceptance design
+
+`[fixture A + request-local test secret] -> [production token creation] -> [owned-host claim switching] -> [production verification] -> [replay/audit primitives] -> [exact option/context restoration]`
+
+- Production receives an internal current-host candidate hook solely to make the fixed Social-to-Directory protocol testable on one isolated host. The candidate is normalized and accepted only when it is one of the two compiled BrandDad host keys; arbitrary or staging host values cannot become protocol issuers/audiences.
+- The staging helper defines a deterministic acceptance-only secret at runtime only on the exact canonical staging host while no report exists. It is not a production credential, is never returned, and becomes unavailable on later requests.
+- Only marker-owned non-admin fixture A is treated as email-verified. The helper creates no user and never invokes the cookie-setting/redirecting consume handler. It verifies signature, purpose, issuer/audience, timestamps, UUID, email hash, tamper rejection, malformed/oversized rejection, and safe start-form construction through production primitives.
+- Replay acceptance atomically claims one derived option twice, proves the second claim fails, then removes only that exact option. Audit acceptance snapshots the audit option, writes one privacy-bounded row, checks that no email/token is stored, then restores the exact prior value.
+- No authentication cookie, user metadata, password, account, order, payment, message, provider call, cross-host request, or production record is created. Real two-host POST/cookie/session acceptance remains blocked on staging Directory availability and production secrets.
+
 ## STRIDE findings and controls
 
 - Spoofing: WordPress session + nonce, capability/ownership checks, signed single-use link tokens, separate service credentials.

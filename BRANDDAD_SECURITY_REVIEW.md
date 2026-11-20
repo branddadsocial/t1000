@@ -167,3 +167,15 @@ Hosted result: the product exists only on the isolated staging hostname, is hidd
 - Side effects: the helper neither defines the sender nor invokes `wp_mail()`, the public admin-post handler, a provider, an order, a payment, a user, or a lead.
 - Evidence: 40 helper contract assertions, full 29-file Node suite, 3 PHP compatibility tests, 29 PHP lints, and `git diff --check` passed. Local secrets scan passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus scan was used.
 - Hosted result: 26/26 runtime checks passed with exact row/rate/context restoration and no errors. Worker and public lead capture remained disabled; production exposed no acceptance route. Real sender/mail acceptance, public GET confirmation, RFC 8058 POST, and the customer-facing unsubscribe page require a separately approved communications test.
+
+## 2026-11-19 account-link cryptographic staging acceptance review
+
+- Scope: signed account-handoff tokens, owned-host claims, replay option, safe start form, existing-account resolution, conflicting-session logic, and privacy-bounded audit rows.
+- Trust boundary: a new internal current-host candidate hook is normalized and accepted only when it equals one of the two compiled BrandDad hosts. Invalid candidates fall back to the actual configured host and cannot become protocol claims.
+- Secret handling: the helper's deterministic acceptance-only secret exists only on exact staging while the one-time report is absent. It is not a production credential, is not returned, and local Rafter found no credential material.
+- Cryptography: production HMAC-SHA256 signing/constant-time verification is used. Acceptance covers purpose, UUID, issuer/audience, 300-second lifetime, email hash, tamper, expired/future, wrong-purpose/hash/issuer, malformed body, and size bound.
+- Replay/privacy: one exact JTI-derived option is claimed twice to prove denial, then deleted. One audit row is checked for the exact action/user/source/time keys and absence of email/token, then the prior audit option is restored.
+- Identity safety: only marker-owned non-admin fixture A is considered verified. Fixture B is denied. Existing-email resolution and conflicting-session detection are checked without invoking account creation, cookie, metadata, or redirect functions.
+- Side effects: no cross-host request, account/user mutation, auth cookie, message, provider call, order, subscription, or payment occurs.
+- Evidence: 43 helper assertions, 22 production contract assertions, full 30-file Node suite, 3 PHP compatibility tests, 30 PHP lints, and `git diff --check` passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus scan was used.
+- Residual gate: hosted runtime evidence is pending; real Social-to-Directory POST, consume, cookie, and session behavior requires an isolated Directory staging host plus shared production-like secret configuration.

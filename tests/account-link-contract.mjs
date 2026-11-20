@@ -4,7 +4,8 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-account-link-mu.php', 'utf8');
 
 const checks = [
-  ['version is pinned', /BDS_ACCOUNT_LINK_VERSION', '0\.1\.1'/],
+  ['version is pinned', /BDS_ACCOUNT_LINK_VERSION', '0\.1\.2'/],
+  ['current-host test seam is normalized and revalidated against fixed owned hosts', /strtolower\( sanitize_text_field[\s\S]*bds_account_link_current_host_candidate[\s\S]*\$hosts\s*=\s*bds_account_link_hosts\(\)[\s\S]*isset\( \$hosts\[ \$candidate \] \)[\s\S]*\? \$candidate : \$actual/],
   ['only the two owned hosts are allowlisted', /'branddad\.social'[\s\S]*'directory\.branddad\.social'/],
   ['secret must be server configured and at least 32 bytes', /defined\( 'BDS_ACCOUNT_LINK_SECRET' \)[\s\S]*strlen\( BDS_ACCOUNT_LINK_SECRET \) >= 32/],
   ['token is HMAC SHA-256 signed', /hash_hmac\( 'sha256', \$body, BDS_ACCOUNT_LINK_SECRET, true \)/],
