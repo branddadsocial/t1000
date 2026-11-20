@@ -24,6 +24,16 @@ Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenizati
 - Public evidence is exact-host gated and boolean-only. No user id, job id, reservation token, inputs, credentials, or result content is returned.
 - The helper performs no direct outbound request, message, deletion, or production mutation. Its fixture records are isolated from real customers.
 
+## Staging lifecycle acceptance harness — 2026-11-19
+
+- Scope is exact-host staging and the pre-existing marker-owned subscriber; it creates no user, administrator, order, subscription, payment, or refund object.
+- It verifies that a subscriber cannot access the admin analytics route and that unknown event types are rejected.
+- Duplicate lifecycle writes use the same HMAC identity and must return the same private event id with exactly one stored row.
+- Test-only payment/refund lifecycle events use `staging_fixture` object types and assert aggregate deltas rather than absolute totals, so pre-existing staging events cannot hide a failure.
+- Privacy acceptance submits deliberately untrusted email/message keys and requires them to be absent from stored metadata. Only the production recorder's allowlisted fields may persist.
+- Public evidence is exact-host gated and boolean-only; ids, currency, amounts, metadata, and submitted values are not returned.
+- The harness performs no outbound request, message, deletion, provider execution, or production mutation.
+
 ## Verified provider-cost ledger and profitability summary (2026-11-19)
 
 ### Data flow and trust boundaries

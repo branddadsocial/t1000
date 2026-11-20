@@ -1,5 +1,14 @@
 # BrandDad Codex test results
 
+## 2026-11-19 lifecycle acceptance preparation
+
+- `php -l deploy/bds-staging-lifecycle-acceptance-mu.php`: passed.
+- `tests/staging-lifecycle-acceptance-contract.mjs`: 26/26 assertions passed.
+- Full local suite: 23/23 Node contract files, three PHP compatibility suites, five PHP syntax checks, and `git diff --check` passed.
+- Local Rafter secret scans found no secrets. Manual review confirmed exact-host scope, non-admin fixture reuse, boolean-only evidence, privacy-safe metadata assertions, and no user/admin/order/subscription/refund creation, network call, message, deletion, provider execution, or production mutation.
+- Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- No staging upload or lifecycle record was created in this preparation batch.
+
 ## 2026-11-19 AI provider-failure acceptance preparation
 
 - `php -l deploy/bds-staging-ai-failure-acceptance-mu.php`: passed.

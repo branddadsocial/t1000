@@ -2,6 +2,14 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 lifecycle acceptance preparation
+
+- Added an exact-host, one-time lifecycle harness that reuses the marked non-admin staging subscriber and creates no user, administrator, Woo order, subscription, payment, or refund object.
+- It proves subscriber analytics denial, unknown-event rejection, duplicate-event id reuse with one stored row, privacy stripping of unallowlisted email/message keys, exact stored financial metadata, gross/refund/net aggregate deltas, and invalid-period rejection.
+- Added 26 security/behavior assertions. The complete local suite passes 23/23 Node contracts, three PHP compatibility suites, five PHP syntax checks, and `git diff --check`.
+- Local Rafter secret scans found no secrets; manual review found no exposed ids/amounts/metadata, input surface, network call, message, deletion, provider execution, or production mutation. Remote fast scan remains quota-blocked at 16/16; paid Plus was not used.
+- This helper is local only. It can be uploaded together with the reviewed AI provider-failure helper in one confirmed staging batch.
+
 ## 2026-11-19 AI provider-failure acceptance preparation
 
 - Added an exact-host, one-time staging harness that reuses the marker-owned non-admin subscriber and refuses to run if a FormWise execution key is configured.
