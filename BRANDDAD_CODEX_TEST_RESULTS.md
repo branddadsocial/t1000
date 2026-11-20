@@ -6,7 +6,9 @@
 - Full local suite: 34/34 Node contract files, 40/40 PHP syntax checks, and `git diff --check` passed.
 - Manual ASVS L2 web/API review: canonical staging isolation; literal four-product scope; authoritative launch-state/price/credit cross-check; all-slug preflight; exact marker/type collision denial; ownership marker saved with creation; hidden/virtual/monthly/zero-setup/zero-trial state; full read-back verification; bounded report; no external call, user, order, subscription, payment, message, or deletion.
 - `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- Hosted fixture creation and link verification are pending upload to the isolated Stackstaging database.
+- Hosted report: HTTP 200, `complete=true`, 4/4 product checks true, no error codes.
+- Product smoke: AI Studio Starter, AI Local SEO, AI Lead Assistant, and AI Social Growth pages each return HTTP 200, display an approved launch price, and retain `noindex`. Production fixture route is HTTP 404; staging sales chat remains default-off at HTTP 503.
+- No real gateway, order, subscription, customer, provider call, message, production product, or customer agreement was created or changed.
 
 ## 2026-11-20 sales-assistant grounding/cost acceptance preparation
 

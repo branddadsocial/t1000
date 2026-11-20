@@ -8,6 +8,8 @@ Updated: 2026-11-20
 - The helper cross-checks every price, allowance, and `launch_candidate` state against the authoritative catalog and preflights all four slugs before the first write. Only exact marked simple-product fixtures can be reused; any unmarked collision aborts the run.
 - Products are catalog-hidden, virtual, sold individually, monthly, no-expiry, zero-setup, zero-trial staging records. The helper creates no customer/order/subscription/payment/message/provider call and contains no deletion primitive.
 - Secure design and ASVS L2 web/API review are recorded. The fixture contract passes 22 assertions; the full local suite passes 34/34 Node contract files, 40/40 PHP syntax checks, and `git diff --check`. Local secret scanning is clean; required remote `rafter run` remains quota-blocked at 16/16 and paid Plus was not used.
+- Uploaded the reviewed fixture helper to isolated staging. Hosted evidence returned `complete=true` with all 4 product checks true and no errors. Each product page returns HTTP 200 with the expected price and `noindex`; production exposes no fixture route (HTTP 404), and public sales chat remains default-off (HTTP 503).
+- The four launch-candidate slugs now resolve to deterministic hidden staging products for link/checkout integration testing. No gateway, order, subscription, customer, provider, message, production product, or existing agreement changed.
 
 ## 2026-11-20 sales-assistant grounding/cost acceptance preparation
 
