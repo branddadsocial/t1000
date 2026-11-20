@@ -116,3 +116,15 @@ The follow-up worker and onboarding API added in the second batch use the same s
 - Cross-module static evidence: seven product-identity assertions pass, including the absence of `branddad-ai-business-essentials` from all affected deploy sources. The full 18-suite Node contract run and affected PHP syntax checks pass.
 - File-specific Rafter secret scans found no secrets. Required remote fast SAST/SCA was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
 - Remaining gate: deploy the corrected modules to hosted staging, create an approved staging-only product/subscription fixture, and prove trial/consent/payment lifecycle behavior before production.
+
+## 2026-11-19 staging Business Essentials fixture review
+
+- Scope: `deploy/bds-staging-business-essentials-fixture-mu.php`, a one-time helper for the isolated empty staging database only.
+- Access/configuration: there is no callable route or form. The helper runs only when canonical `home_url()` exactly matches `staging-branddad-social.stackstaging.com`, and it becomes inert after its verified completion report.
+- Integrity: every product value is literal. A same-slug product is mutable only when it already has `_bds_staging_fixture=yes`; an unmarked collision fails closed. Woo's product API creates/repairs one simple product.
+- Payment safety: the helper creates no order, customer, subscription, payment intent, Stripe configuration, gateway configuration, FormWise execution, message, or external request. It does not enable any existing default-off capability.
+- Test visibility: the fixture is published only so Woo/subscription checkout mechanics can be exercised, but is catalog-hidden, virtual, sold individually, and hosted on the noindex isolated staging site.
+- Verification: after save, the helper reads back product identity/status/visibility/price/settings and every WPS/BrandDad metadata field. Any mismatch leaves the report incomplete.
+- Static contract evidence: 19 assertions pass for host/value allowlists, collision behavior, exact monthly/trial terms, read-back, absence of input/network/payment/deletion surfaces, and non-autoloaded reporting.
+- Local Rafter secret scan passed. Required remote fast SAST/SCA was attempted and remains quota-blocked at 16/16; paid Plus was not used.
+- Residual risk: the temporary product URL can be guessed. Hidden visibility, staging noindex, no cloned payment credentials/settings, account-required AI checkout, and fail-closed gateway/entitlement code limit impact. A real Stripe test-mode transaction remains a separately authorized acceptance step.

@@ -179,3 +179,20 @@ The live WooCommerce product and the authoritative commercial catalog use the ex
 Security invariant: product identity comes only from the server-owned Woo product attached to the authoritative order. The request cannot supply or override the slug. Trial, subscription, Directory-consent, and lifecycle modules must use the same literal catalog identity; unknown or legacy-looking aliases remain rejected.
 
 The correction changes no price, product, order, subscription, payment state, trial record, customer, or public checkout. It only aligns deterministic recognition code and analytics metadata with the existing product. Static contracts must assert the exact live slug and reject the obsolete identity across all deploy modules before staging acceptance.
+
+## Hosted-staging Business Essentials product fixture
+
+Purpose: create one deterministic WooCommerce product in the isolated empty staging database so the exact seven-day trial and subscription metadata can be exercised. This is test data, not a production catalog mutation.
+
+Data flow: `staging WordPress bootstrap -> exact-host MU fixture -> Woo product API -> one hidden catalog product -> fixed WPS subscription metadata -> bounded local fixture report`.
+
+Controls:
+
+- Exact canonical host `staging-branddad-social.stackstaging.com`; production and the custom hostname fail closed.
+- No request input, REST/admin endpoint, credential, outbound request, order, customer, subscription, payment, email, or deletion.
+- Fixed product slug, name, price, monthly interval, seven-day trial, zero signup fee, 75-credit internal metadata, hidden catalog visibility, and sold-individually/virtual settings.
+- An existing product with the same slug is updated only when it already carries the staging-fixture marker. Any unmarked collision fails closed without mutation.
+- The helper creates or repairs one fixture, records a bounded local result, and then becomes inert. It never changes gateway settings or enables AI/provider switches.
+- The staging site remains `noindex`; checkout still requires the existing account rule and the AI gateway filter. No payment acceptance is claimed until an explicit Stripe test-mode lifecycle is separately authorized and verified.
+
+STRIDE: spoofing/tampering are constrained by the exact host and literal values; repudiation is addressed by the local fixture report and deterministic marker; disclosure is limited to non-sensitive catalog test data; denial is bounded to one product/one pass; elevation is limited to Woo's normal product API in the isolated staging database. Residual risk is public discovery of the temporary product URL, mitigated by hidden catalog visibility, staging noindex, absent production credentials, and the existing fail-closed gateway/entitlement controls.

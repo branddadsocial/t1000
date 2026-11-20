@@ -2,6 +2,15 @@
 
 Updated: 2026-11-19
 
+## 2026-11-19 staging Business Essentials fixture preparation
+
+- Added a staging-only, exact-host-pinned Woo fixture helper for one hidden `ai-business-essentials` product at $29.99/month with a seven-day free trial, zero signup fee, and 75-credit customer metadata.
+- The helper accepts no request input, creates no order/customer/subscription/payment, changes no gateway/provider setting, performs no network request, and refuses to modify any same-slug product that lacks its staging marker.
+- Added post-save read-back verification for the product identity, status, hidden visibility, price, virtual/sold-individually settings, and every metadata field before the helper can mark itself complete.
+- Added 19 static security/behavior assertions. The full local suite now passes 19/19 Node contract files plus all three PHP compatibility suites.
+- PHP syntax, local Rafter secret scan, and `git diff --check` pass. Required remote fast Rafter scan was attempted and remains quota-blocked at 16/16; paid Plus was not used.
+- The helper is prepared locally only. Uploading it will create a hidden product in the isolated staging database and therefore remains a separate action-time-confirmed step. Production is unchanged.
+
 ## 2026-11-19 Business Essentials identity correction
 
 - Read-only HTTP evidence confirmed the real public Woo product is `/product/ai-business-essentials/` (HTTP 200); `/product/branddad-ai-business-essentials/` returns HTTP 404.

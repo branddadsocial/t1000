@@ -27,6 +27,7 @@
 - [x] Complete the isolated WordPress administrator setup and verify staging REST activation.
 - [x] Verify public catalog access and anonymous denial on private customer/admin routes.
 - [x] Safely clone and activate WooCommerce, WooCommerce Stripe Gateway, and Subscriptions for WooCommerce on isolated staging.
+- [x] Prepare and review an exact-host staging-only Business Essentials product fixture with fixed price/trial metadata and no payment/customer mutation.
 - [ ] Create approved staging-only Woo product/subscription fixtures and authoritative product mappings before payment lifecycle acceptance testing.
 - [ ] Install or safely clone Directorist on staging before Directory ownership/claim/free-AI acceptance testing.
 - [ ] Provision valid TLS for `staging.branddad.social` at the authoritative DNS/CDN provider, or use the valid StartHost temporary hostname for acceptance tests.
