@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-000-staging-lifecycle-truncation-acceptance-mu.php', 'utf8');
 const checks = [
   ['version and canonical host fixed', /BDS_STAGING_TRUNCATION_VERSION', '0\.1\.0'/.test(source) && /staging-branddad-social\.stackstaging\.com/.test(source)],
-  ['target and batch are fixed and bounded', /TRUNCATION_TARGET', 5000/.test(source) && /TRUNCATION_BATCH', 20/.test(source)],
+  ['target and batch are fixed and bounded', /TRUNCATION_TARGET', 5000/.test(source) && /TRUNCATION_BATCH', 50/.test(source)],
   ['host derives from canonical home URL', /wp_parse_url\( home_url\( '\/' \), PHP_URL_HOST \)/.test(source)],
   ['production aggregate is reused with a server period', /WP_REST_Request[\s\S]*set_param\( 'period'[\s\S]*bds_lifecycle_admin_summary/.test(source)],
   ['summary stores only bounded aggregate fields', /unique_customers_with_events[\s\S]*confirmed_gross_minor[\s\S]*refunds_minor[\s\S]*net_confirmed_minor[\s\S]*truncated/.test(source)],
@@ -12,8 +12,8 @@ const checks = [
   ['baseline must be available and not truncated', /baseline_not_truncated[\s\S]*empty\( \$before\['truncated'\] \)[\s\S]*baseline_unavailable/.test(source)],
   ['persistent phases are create verify cleanup complete', /'phase' => 'create'[\s\S]*'verify'[\s\S]*'cleanup'[\s\S]*save_report/.test(source)],
   ['stale-safe lock serializes batches', /truncation_lock_v1[\s\S]*time\(\) - 90[\s\S]*delete_option\( \$lock \)/.test(source)],
-  ['collision check precedes every production record', /event_id\( \$user_id, \$offset \)[\s\S]*event_collision[\s\S]*bds_lifecycle_record/.test(source)],
-  ['events are private nonfinancial production-shape records', /bds_lifecycle_record\( 'ai_task_completed'[\s\S]*staging_truncation[\s\S]*website_audit/.test(source)],
+  ['collision check precedes every production-shape record', /event_id\( \$user_id, \$offset \)[\s\S]*event_collision[\s\S]*bds_staging_truncation_create_event/.test(source)],
+  ['events are private nonfinancial production-shape records', /truncation_create_event[\s\S]*'post_type'\s*=> 'bds_lifecycle_evt'[\s\S]*'post_status'\s*=> 'private'[\s\S]*_bds_event_type[\s\S]*ai_task_completed[\s\S]*staging_truncation[\s\S]*website_audit/.test(source)],
   ['all events use one fixed monthly GMT date with local correspondence', /'fixed_gmt' => \$period \. '-15 12:00:00'/.test(source) && /get_date_from_gmt[\s\S]*post_date_gmt[\s\S]*post_date/.test(source)],
   ['event ownership requires post user type object and HMAC key', /truncation_event_owned[\s\S]*post_author[\s\S]*_bds_event_user[\s\S]*_bds_event_type[\s\S]*_bds_event_object_type[\s\S]*_bds_event_object_id[\s\S]*hash_equals/.test(source)],
   ['verification requires exactly 5000 unique tracked ids', /target_created[\s\S]*count\( \$state\['ids'\] \)[\s\S]*ids_unique[\s\S]*array_unique/.test(source)],
@@ -24,6 +24,7 @@ const checks = [
   ['state removal is verified before final report', /delete_option\( BDS_STAGING_TRUNCATION_STATE \)[\s\S]*state_removed[\s\S]*save_report/.test(source)],
   ['errors block safely and remain resumable evidence', /catch \( Throwable \$exception \)[\s\S]*'phase'\] = 'blocked'[\s\S]*update_option\( BDS_STAGING_TRUNCATION_STATE/.test(source)],
   ['report contains counts booleans and bounded errors but no ids', /created[\s\S]*remaining[\s\S]*safe_checks[\s\S]*safe_errors/.test(source) && !/'ids' => \$state\['ids'\]/.test(source)],
+  ['only the exact report callback advances the runner', /function bds_staging_truncation_report\(\) \{[\s\S]*bds_staging_truncation_run\(\)/.test(source) && !/add_action\( 'init', 'bds_staging_truncation_run'/.test(source)],
   ['route is exact-host GET-only', /truncation_is_host[\s\S]*lifecycle-truncation-acceptance[\s\S]*'methods' => 'GET'/.test(source)],
   ['no request input external call payment customer or mail surface', !/WP_REST_Request \$request|\$_(?:GET|POST|REQUEST|COOKIE|FILES|SERVER)|wp_remote_|wp_mail\(|wc_create_order|wc_create_refund|wp_insert_user|wp_create_user/.test(source)],
 ];

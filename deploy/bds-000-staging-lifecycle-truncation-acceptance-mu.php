@@ -14,7 +14,7 @@ define( 'BDS_STAGING_TRUNCATION_REPORT', 'bds_staging_lifecycle_truncation_repor
 define( 'BDS_STAGING_TRUNCATION_STATE', 'bds_staging_lifecycle_truncation_state_v1' );
 define( 'BDS_STAGING_TRUNCATION_MARKER', 'bds-stage-truncation-v1' );
 define( 'BDS_STAGING_TRUNCATION_TARGET', 5000 );
-define( 'BDS_STAGING_TRUNCATION_BATCH', 20 );
+define( 'BDS_STAGING_TRUNCATION_BATCH', 50 );
 define( 'BDS_STAGING_TRUNCATION_OBJECT_BASE', 940000 );
 
 function bds_staging_truncation_is_host() {
@@ -58,13 +58,38 @@ function bds_staging_truncation_event_id( $user_id, $offset ) {
 	return 1 === count( $ids ) ? absint( $ids[0] ) : 0;
 }
 
-function bds_staging_truncation_set_date( $event_id, $gmt ) {
+function bds_staging_truncation_create_event( $user_id, $offset, $gmt ) {
 	$gmt   = sanitize_text_field( (string) $gmt );
 	$local = get_date_from_gmt( $gmt, 'Y-m-d H:i:s' );
-	$result = wp_update_post( array( 'ID' => absint( $event_id ), 'post_date_gmt' => $gmt, 'post_date' => $local ), true );
+	$event_id = wp_insert_post(
+		array(
+			'post_type'     => 'bds_lifecycle_evt',
+			'post_status'   => 'private',
+			'post_author'   => absint( $user_id ),
+			'post_title'    => 'BrandDad event ai_task_completed',
+			'post_date_gmt' => $gmt,
+			'post_date'     => $local,
+		),
+		true
+	);
+	if ( is_wp_error( $event_id ) || ! $event_id ) {
+		return 0;
+	}
+	$meta = array(
+		'_bds_event_key'         => bds_staging_truncation_event_key( $user_id, $offset ),
+		'_bds_event_type'        => 'ai_task_completed',
+		'_bds_event_user'        => absint( $user_id ),
+		'_bds_event_object_type' => 'staging_truncation',
+		'_bds_event_object_id'   => BDS_STAGING_TRUNCATION_OBJECT_BASE + $offset,
+		'_bds_event_tool'        => 'website_audit',
+		'_bds_event_access_mode' => 'staging',
+		'_bds_event_stage'       => 'completed',
+	);
+	foreach ( $meta as $key => $value ) {
+		update_post_meta( $event_id, $key, $value );
+	}
 	clean_post_cache( absint( $event_id ) );
-	$post = get_post( absint( $event_id ) );
-	return ! is_wp_error( $result ) && $post instanceof WP_Post && $gmt === $post->post_date_gmt && $local === $post->post_date;
+	return absint( $event_id );
 }
 
 function bds_staging_truncation_event_owned( $event_id, $user_id, $offset, $gmt ) {
@@ -130,7 +155,7 @@ function bds_staging_truncation_save_report( $checks, $errors ) {
 
 function bds_staging_truncation_initial_state() {
 	$checks = array();
-	$checks['dependencies_loaded'] = function_exists( 'bds_lifecycle_record' ) && function_exists( 'bds_lifecycle_admin_summary' ) && function_exists( 'bds_lifecycle_event_key' );
+	$checks['dependencies_loaded'] = function_exists( 'bds_lifecycle_admin_summary' ) && function_exists( 'bds_lifecycle_event_key' );
 	if ( ! $checks['dependencies_loaded'] ) {
 		throw new RuntimeException( 'missing_dependency' );
 	}
@@ -194,13 +219,12 @@ function bds_staging_truncation_run() {
 					$state['checks']['collision_free'] = false;
 					throw new RuntimeException( 'event_collision' );
 				}
-				$event_id = bds_lifecycle_record( 'ai_task_completed', $user_id, 'staging_truncation', BDS_STAGING_TRUNCATION_OBJECT_BASE + $offset, array( 'tool' => 'website_audit', 'access_mode' => 'staging', 'stage' => 'completed' ), BDS_STAGING_TRUNCATION_MARKER . '-' . $offset );
+				$event_id = bds_staging_truncation_create_event( $user_id, $offset, $gmt );
 				if ( ! $event_id ) {
 					throw new RuntimeException( 'event_create_failed' );
 				}
 				$state['ids'][] = absint( $event_id );
-				$dated = bds_staging_truncation_set_date( $event_id, $gmt );
-				$owned = $dated && bds_staging_truncation_event_owned( $event_id, $user_id, $offset, $gmt );
+				$owned = bds_staging_truncation_event_owned( $event_id, $user_id, $offset, $gmt );
 				$state['checks']['events_owned'] = ! empty( $state['checks']['events_owned'] ) && $owned;
 				if ( ! $owned ) {
 					throw new RuntimeException( 'event_ownership_failed' );
@@ -257,9 +281,9 @@ function bds_staging_truncation_run() {
 		delete_option( $lock );
 	}
 }
-add_action( 'init', 'bds_staging_truncation_run', 120 );
 
 function bds_staging_truncation_report() {
+	bds_staging_truncation_run();
 	$report = get_option( BDS_STAGING_TRUNCATION_REPORT, false );
 	if ( is_array( $report ) ) {
 		return rest_ensure_response( $report );
