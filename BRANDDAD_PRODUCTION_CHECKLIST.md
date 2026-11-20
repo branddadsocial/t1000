@@ -76,7 +76,7 @@
 - [ ] Cursor passes selected listing + authoritative geography and staging proves all four lanes.
 - [ ] Partnero free-to-paid attribution/refund/cancellation events reconcile.
 - [x] Preserve the existing deployed Partnero ref bridge; do not create a duplicate attribution cookie layer.
-- [ ] Verify current Partnero API/event terms before emitting commission lifecycle events.
+- [x] Verify current Partnero API/event terms before emitting commission lifecycle events; `BRANDDAD_PARTNERO_INTEGRATION_AUDIT.md` documents program-scoped Bearer auth, unique transaction keys, create/delete/archive/restore semantics, signed/retried webhooks, and BrandDad's fail-closed event policy.
 
 ## Automation acceptance
 

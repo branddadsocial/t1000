@@ -5,7 +5,7 @@
 - Reused system: `bds-partnero-ref-bridge-mu.php` version 1.2.1.
 - Matching reviewed source hashes were found in the prior SEO/store and Rafter worktrees: `9C1BA3C8E3D42F432ADDD9B56398733E7AE10FB7C0145DA577740B46D9D23CE9`.
 - Existing deployment evidence records the bridge on Directory, Social, BrandDad.co, and HostTech, with live HTML markers/ref propagation verified at the time of that deployment.
-- This bridge preserves referral attribution only. It does not prove Partnero commission creation, recurring conversion events, refund adjustments, cancellation adjustments, payout terms, or current API authentication. Those lifecycle items remain blocked pending verified Partnero contract/API access and safe tests.
+- This bridge preserves referral attribution only. Current official API/event capabilities are now documented, but the bridge does not prove BrandDad's actual Partnero program configuration, API authentication, commission creation, recurring conversion events, refund/cancellation adjustments, or payout terms. Those lifecycle items remain blocked pending authenticated account evidence and safe staging tests.
 - Decision: preserve the existing bridge; do not create a duplicate referral-cookie system.
 
 ## Provider cost accounting
@@ -42,7 +42,7 @@ Updated: 2026-11-19
 | BrandDad acquisition leads | Private deduplicated lead records, verified lifecycle hooks, separate consent, retention | Implemented default-off; Cursor form/privacy and WordPress staging acceptance remain |
 | Website monitoring | Paid-entitlement worker, public-DNS/SSRF controls, safe HTTP, queues, actual counters | Implemented default-off; real-host DNS/queue/fetch and notification acceptance remain |
 | Customer inquiries | Paid owner form reference, private inbox/status, tenant isolation, actual counts | Implemented default-off; Cursor hosted form/inbox and WordPress staging acceptance remain |
-| Partnero | Existing affiliate portal retained | Event adapter/balance API not verified in this pass |
+| Partnero | Existing affiliate portal retained; current official API/event capabilities verified in `BRANDDAD_PARTNERO_INTEGRATION_AUDIT.md` | Actual program settings, keys, one emission path, signed webhook, and staging lifecycle remain unverified |
 | Make | Prior documentation reports free-plan operations exhausted until reset | Blocked for new automation runs |
 | AutoTranslator | Present historically; latest Directory direction removed public translator clutter | Needs dedicated production verification |
 | Warpindex | Existing integration referenced | Authentication/current operation not reverified |
