@@ -27,6 +27,15 @@
 - Required `rafter run --mode fast` was attempted and remains blocked by the 16/16 quota; paid Plus was not used.
 - WordPress staging still must prove admin denial, replay, lock recovery, period boundaries, truncation, malformed stored rows, refunds, multi-currency totals, and incomplete-coverage labeling before production activation.
 
+## 2026-11-19 read-only live health smoke
+
+- `https://branddad.social/`: HTTP 200, TLS verification result 0.
+- `https://branddad.social/services/`: HTTP 200, TLS verification result 0.
+- `https://branddad.social/wp-json/`: HTTP 200, TLS verification result 0.
+- `https://directory.branddad.social/`: HTTP 200, TLS verification result 0.
+- `https://directory.branddad.social/wp-json/`: HTTP 200, TLS verification result 0.
+- Neither public REST index currently advertises a `/branddad/v1` route. This is positive evidence that the new backend package has not been deployed; local readiness must not be described as live functionality.
+
 Updated: 2026-11-19
 
 ## Passed locally

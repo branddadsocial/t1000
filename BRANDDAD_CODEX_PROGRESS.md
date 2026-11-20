@@ -18,6 +18,8 @@ Updated: 2026-11-19
 - Added an admin-only contribution API that combines confirmed Woo lifecycle revenue/refunds with verified stored variable costs while explicitly marking incomplete cost coverage.
 - Added a static contract suite covering private storage, authorization, no public write route, verified-only bases, catalog enforcement, bounds, idempotency, reporting caps, and non-misleading wording.
 - No provider invoice, expense, profit, commission, or margin was invented.
+- Completed a read-only live smoke: both homepages and REST indexes returned HTTP 200 with successful TLS verification; the Social Services page also returned 200.
+- Confirmed the new `/branddad/v1` backend routes are not yet present in either live REST index. The package is reviewed and prepared, not deployed.
 Branch: `codex/final-backend-20261119`
 Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 

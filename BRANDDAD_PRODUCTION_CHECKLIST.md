@@ -29,6 +29,8 @@
 - [ ] Connect and test the fail-closed source email-verification filter on both hosts.
 - [ ] Deploy to staging/QA first; do not overwrite newer Cursor public files.
 - [ ] Verify rollback by restoring prior MU files.
+- [x] Confirm current Social/Directory homepages and REST indexes return HTTP 200 with valid TLS before deployment.
+- [ ] After staging and approved deployment, confirm the intended `/branddad/v1` routes appear with the documented authorization behavior.
 
 ## Revenue acceptance
 
