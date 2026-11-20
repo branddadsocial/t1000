@@ -20,6 +20,7 @@ Updated: 2026-11-19
 - No provider invoice, expense, profit, commission, or margin was invented.
 - Completed a read-only live smoke: both homepages and REST indexes returned HTTP 200 with successful TLS verification; the Social Services page also returned 200.
 - Confirmed the new `/branddad/v1` backend routes are not yet present in either live REST index. The package is reviewed and prepared, not deployed.
+- Inspected the StartHost service overview read-only. It has no visible managed staging/clone feature, so validation cannot safely use the live document roots as a substitute for staging.
 Branch: `codex/final-backend-20261119`
 Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 

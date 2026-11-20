@@ -5,6 +5,7 @@ Updated: 2026-11-19
 ## External or owner-controlled
 
 - Read-only hosting inspection confirmed separate live WordPress roots and the MU-plugin target, but no isolated staging WordPress root was visible. A safe staging database/site still needs to be created or identified before activation testing.
+- The StartHost service overview exposes the live account summary and a temporary URL but no managed staging/clone control. A manual staging WordPress root plus separate database/user must therefore be created, or StartHost support must provide an isolated clone.
 - The hosting panel currently reports `6 infection(s) found`. These findings must be reviewed and resolved or positively classified before production is considered clean; do not delete or quarantine files without exact evidence and a recoverable backup.
 
 - Production SSH key exchange/authentication is not working from this PC. Previous File Manager deployment succeeded, but a reliable protected deployment path and rollback must be restored.
