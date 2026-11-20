@@ -28,11 +28,15 @@ Both `BrandDad Directory Concierge` and the older `BrandDad Directory Assistant`
 
 Recommended disposition: keep the Concierge as the sole public Directory assistant; retire or restrict the older Assistant after confirming no remaining page references its UUID.
 
+Public-reference follow-up: raw HTML from the live Directory homepage, All Categories, All Listings, and the Restaurants category surface contained only the Concierge UUID and the owned `ai.branddad.social` tool URL. The older Directory Assistant UUID was absent from all four pages. The live Social homepage and Services page contained only the Sales Assistant UUID. This substantially narrows retirement risk, although a provider-side unpublish/restriction should still be followed by the same route smoke tests.
+
 ### 2. Public-agent share settings are broader than BrandDad's white-label requirement
 
 The Concierge, older Directory Assistant, and Social Sales Assistant are each configured as `embedding=anywhere` with direct links enabled. That is inconsistent with the requirement that customer-facing assistants connect only through BrandDad-controlled sites.
 
 Recommended disposition: restrict the Directory Concierge to `https://directory.branddad.social`, restrict the Sales Assistant to `https://branddad.social`, disable direct-link opening where supported, and retire/restrict the older Directory Assistant. This requires a provider configuration change and post-change embed acceptance.
+
+Current official FormWise documentation confirms that share access can be `anywhere`, `listed_sites`, or `off`, and that domain restriction can refuse direct opening outside an authorized embed. The connected MCP exposes these settings read-only, so the actual permission change must be made in the provider interface and is separately action-time confirmation-gated.
 
 ### 3. Sales knowledge contains a legacy catalog
 

@@ -527,3 +527,4 @@ Updated: 2026-11-19
 - Idempotent portal admission returned `created=true` for Business Essentials, AI Lead Assistant, AI Local SEO, and AI Social Growth. Post-write read-back reports `loginRequired=true`, `door=restricted`, `storefrontId=null`, and nine admitted groups including all four exact new plan groups.
 - No end user, membership, plan, group grant, credit, agent/flow/app content, share setting, payment, order, or customer record changed.
 - Local `rafter secrets .` reported no secrets. Required remote `rafter run` was attempted and remains quota-blocked at 16/16; no paid Plus scan was used.
+- Live-reference smoke: Directory homepage, All Categories, All Listings, and Restaurants each returned HTTP 200 and contained only the Concierge UUID/owned tool URL; the older Directory Assistant UUID was absent. Social homepage and Services returned HTTP 200 and contained only the Sales Assistant UUID/owned tool URL.
