@@ -4,7 +4,7 @@ Updated: 2026-11-19
 
 ## External or owner-controlled
 
-- `staging.branddad.social` now exists with an isolated document root/database and the reviewed Social MU package. The one-click WordPress installation wizard still needs an isolated administrator account before REST and hook acceptance tests can begin.
+- `staging.branddad.social` now exists with an isolated document root/database, staging-only administrator, and the reviewed Social MU package. Basic REST activation and anonymous-denial tests pass.
 - The owner positively classified the hosting panel's six detections as false positives. They were preserved and are no longer treated as an unresolved deletion/quarantine decision.
 - StartHost cannot issue its free wildcard certificate while `branddad.social` uses external nameservers. The custom staging hostname needs a certificate at the authoritative DNS/CDN provider; the StartHost temporary hostname remains the safe TLS-capable fallback for staging HTTP tests.
 
@@ -31,7 +31,7 @@ Updated: 2026-11-19
 
 ## Test environment
 
-- An isolated hosted WordPress root/database now exists, but installation must be completed and required Woo/HPOS/Directorist/FormWise staging dependencies/constants are not configured yet.
+- An isolated hosted WordPress root/database is operational, but required WooCommerce/WPS Subscriptions/HPOS/Directorist staging dependencies and FormWise/account-link server constants are not configured yet. Payment, entitlement, Directory bridge, authenticated ownership, queue, and provider execution tests remain blocked until those dependencies are cloned or installed safely.
 - WP-CLI, Docker, Composer, and a local WordPress database are not installed on this machine; real WordPress hook/REST/queue tests cannot honestly be replaced with local mocks.
 - The lifecycle ledger is locally linted/contract-tested but still needs WordPress staging evidence for duplicate hooks, partial/full refunds, UTC period boundaries, capability denial, and the 5,000-event truncation flag.
 - The lead pipeline is locally linted/contract-tested but still needs WordPress staging evidence for public origin/rate behavior, concurrent email deduplication, Woo hook ordering, cross-account admin denial, consent-list compatibility, scheduled retention, and recovery after locks/timeouts.

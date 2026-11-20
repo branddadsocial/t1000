@@ -3,12 +3,15 @@
 ## 2026-11-19 hosted staging bootstrap
 
 - Created `staging.branddad.social` at `public_html/staging.branddad.social` with a separate one-click WordPress database.
+- Completed the WordPress installation with a staging-only administrator and indexing discouraged; the public HTML contains a `noindex` directive.
 - Started a full StartHost files-and-databases recovery backup; the control panel still showed the backup job processing at the last observation.
 - Uploaded the reviewed Social release archive and verified all 16 expected MU modules are present directly in the staging `wp-content/mu-plugins/` directory.
-- `http://staging.branddad.social/` returned HTTP 200 and the WordPress installation wizard.
+- `http://staging.branddad.social/` returned HTTP 200; the valid-TLS temporary hostname now serves the installed WordPress site.
 - `https://staging.branddad.social/` failed certificate validation because StartHost cannot issue its free wildcard certificate while authoritative nameservers are external.
-- `https://staging-branddad-social.stackstaging.com/` returned HTTP 200 with valid TLS and the same WordPress installation wizard.
-- `/wp-json/` correctly remained unavailable before WordPress database installation was completed; no route activation claim is made yet.
+- `https://staging-branddad-social.stackstaging.com/` and `/wp-json/` returned HTTP 200 with valid TLS.
+- The REST index advertises `branddad/v1`; its namespace contains 21 expected routes.
+- `/sales/catalog` returned HTTP 200 with the fail-safe Business Essentials fallback. Its purchase URL remains empty because WooCommerce/product dependencies are intentionally absent from the clean staging copy.
+- Anonymous requests to AI tools, customer status, value reports, onboarding, monitoring, inquiry inbox, analytics, finance, and trial endpoints returned HTTP 401.
 - Production Social and Directory files were not changed.
 
 ## 2026-11-19 release-package verification

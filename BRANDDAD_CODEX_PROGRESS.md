@@ -10,7 +10,9 @@ Updated: 2026-11-19
 - The owner reviewed the hosting panel's six detections and positively classified them as false positives. The flagged files were preserved; nothing was deleted or quarantined.
 - Created `staging.branddad.social` with an isolated document root and a separate one-click WordPress database.
 - Uploaded the checksum-reviewed Social archive to staging and placed all 16 MU modules in the staging `wp-content/mu-plugins/` directory. No production file was overwritten.
-- The one-click installer laid down WordPress files but the WordPress installation wizard still needs its isolated admin account before REST activation tests can run.
+- Completed the isolated WordPress installation with a staging-only administrator and search-engine indexing discouraged.
+- Verified the reviewed Social package activates cleanly on hosted WordPress: the `branddad/v1` namespace exposes 21 expected routes over the valid StartHost staging hostname.
+- Verified anonymous access fails closed with HTTP 401 for AI tools, customer status, value reports, onboarding, monitoring, inquiry inbox, analytics, and finance endpoints. The public sales catalog returns HTTP 200.
 - StartHost cannot issue its free wildcard certificate because `branddad.social` uses external nameservers. The host temporary staging URL has valid TLS; the custom staging hostname needs a certificate from the authoritative DNS/CDN provider before browser acceptance.
 - Added `BRANDDAD_DEPLOYMENT_MANIFEST.md` with per-host module inventories, fail-closed switches, server-only configuration, staged deployment steps, rollback, and acceptance evidence.
 - No production file, billing state, provider switch, message, or customer record was changed during this staging batch.

@@ -24,7 +24,9 @@
 - [x] Verify the protected File Manager path and both live WordPress roots read-only.
 - [x] Create an isolated hosted staging document root and separate database.
 - [x] Upload the checksum-reviewed Social package to staging without changing production files.
-- [ ] Complete the isolated WordPress administrator setup and verify staging REST activation.
+- [x] Complete the isolated WordPress administrator setup and verify staging REST activation.
+- [x] Verify public catalog access and anonymous denial on private customer/admin routes.
+- [ ] Install or safely clone the WooCommerce/WPS Subscriptions/HPOS/Directorist staging dependencies before lifecycle acceptance testing.
 - [ ] Provision valid TLS for `staging.branddad.social` at the authoritative DNS/CDN provider, or use the valid StartHost temporary hostname for acceptance tests.
 - [ ] Restore reliable SSH or execute an approved protected File Manager deployment procedure.
 - [x] Document exact per-host artifacts, fail-closed switches, checksums/rollback requirements, and acceptance evidence in `BRANDDAD_DEPLOYMENT_MANIFEST.md`.
