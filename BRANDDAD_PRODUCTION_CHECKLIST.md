@@ -85,7 +85,7 @@
 - [x] Exercise onboarding ownership isolation and optimistic version conflict in WordPress staging.
 - [x] Exercise onboarding field/URL validation, active-lock denial, stale-lock recovery, and customer value-report tenant isolation in WordPress staging.
 - [ ] Exercise browser-session REST nonce and paid/Directory-free onboarding access states in WordPress staging.
-- [ ] Sales assistant recommends only verified products and links under cost caps.
+- [x] Sales assistant recommends only verified products and server-owned links under per-client/global cost caps in isolated hosted acceptance.
 - [x] Implement private, deduplicated lead capture and verified lifecycle stage backend with separate email consent and bounded retention.
 - [x] Exercise the exact-host sales-lead acceptance harness for origin/rates, validation, deduplication, consent, lifecycle, unsubscribe suppression, fixture-only retention, cleanup, state restoration, and automatic return to disabled (34/34 runtime checks passed).
 - [ ] Connect Cursor's form with mandatory privacy acknowledgment and optional unselected email consent; test origin/rates/deduplication/admin denial/unsubscribe/retention before enabling.

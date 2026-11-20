@@ -6,7 +6,10 @@
 - Full local suite: 33/33 Node contract files, 39/39 PHP syntax checks, and `git diff --check` passed.
 - Manual ASVS L2 web/API and OWASP LLM review: exact staging/report gating; dummy request-only key; complete provider interception; owned-origin/body/message controls; HMAC client-bound session; fixed agent/HTTPS egress; safe HTTP bounds; server-owned offer links; hostile HTML/URL stripping; no tools/actions; per-client/global caps; exact state cleanup; boolean-only report; and production default-off.
 - `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
-- Hosted execution is pending. It will use only fixed synthetic questions and a local provider-shaped response; no FormWise credit, real customer, lead, order, payment, email, or production data is involved.
+- Acceptance boundary: fixed synthetic questions and a local provider-shaped response are used, so no FormWise credit, real customer, lead, order, payment, email, or production data is involved.
+- Hosted report: HTTP 200, `complete=true`, 31/31 checks true, no error codes. It proved exact provider request bounds, catalog-owned links/prices, fail-closed unavailable offers, hostile HTML/URL removal, HMAC session controls, server-side continuation, three-call daily cap, client-minute cap, zero unexpected provider requests, and complete fixture-state cleanup.
+- Post-run staging smoke: homepage/product/catalog HTTP 200, homepage `noindex` retained, and public chat returned to HTTP 503 default-off. Production acceptance route returned HTTP 404.
+- No real FormWise request/credit, user, lead, job, order, payment, email, or production mutation occurred. Real provider cost, semantic answer quality, frontend rendering, human escalation, and production enablement remain outside this local-provider-shaped test.
 
 ## 2026-11-20 hosted Woo refund-hook acceptance preparation
 
