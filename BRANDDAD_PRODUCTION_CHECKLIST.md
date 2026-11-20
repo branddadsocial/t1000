@@ -146,8 +146,8 @@ Nothing unchecked above may be described as fully operational.
 - [x] Receive exact action-time confirmation for `/usr/bin/php84 -f /home/sites/41a/c/c0a8249376/public_html/branddad.social/wp-cron.php` every five minutes.
 - [!] StartHost rejected the first approved save with `Cron failed to add` because the package remains malware-flagged; no task was created and no cron batch ran. Fresh scan `24662257` completed and reproduced six generated-cache false positives plus the historical quarantined file, so the restriction remains.
 - [x] Submit the exact false-positive evidence to StartHost/20i support. Ticket `898665003` is open with Web Hosting and requests non-destructive package clearance or a safe allowlist.
-- [ ] Obtain StartHost package clearance or a safe allowlist for the generated Directory cache path/signature.
-- [ ] After StartHost clears the package restriction, re-enter and save the exact reviewed task.
+- [~] The visible package malware banner cleared, but a second exact approved save still returned `Cron failed to add`; obtain StartHost confirmation that the residual scheduled-task restriction has been released.
+- [ ] Reauthenticate to StartHost after support confirms clearance, then re-enter and save the exact reviewed task once.
 - [ ] Observe the first bounded interval; confirm pending/past-due counts decrease without duplicate financial/customer effects or site degradation.
 - [ ] Recheck Site Health, Action Scheduler, public priority routes, checkout, and authoritative subscription/payment records.
 - [ ] Classify historical no-callback failures; any cleanup is a separate destructive action and must not be combined with scheduler recovery.
