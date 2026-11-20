@@ -469,3 +469,10 @@ Updated: 2026-11-19
 - Built `branddad-directory-backend-2026-11-20.zip` with 7 production MU plugins; archive SHA-256 `2DC0C499C0C6276B269B045437CDF5DCBA48F5B1F2C69056CFE4384D07394B93`.
 - Expanded both archives into isolated temporary verification folders. All package-local checksums matched, all 23 packaged PHP files passed syntax checks, and neither archive contained a staging helper, acceptance helper, or temporary repair utility.
 - The tracked production-source checksum contract passed, `git diff --check` passed, and `rafter secrets .` found no secrets. The Betterleaks-version warning remains informational and does not report a secret.
+
+## 2026-11-20 live saleable-catalog reconciliation
+
+- Checked all seven `launch_candidate` product slugs from the authoritative catalog: AI Studio Starter, Growth, and Pro; AI Local SEO; AI Lead Assistant; AI Social Growth; and AI Business Essentials.
+- Checked all three preserved `live_legacy` product slugs: AI Sales Assistant Basic, AI Sales Assistant Plus, and Custom Business Automation.
+- All ten canonical product URLs returned HTTP 200 without a cross-product redirect. Each page displayed the catalog price, a product image, and its primary add-to-cart/subscribe control. AI Business Essentials displayed its seven-day trial disclosure.
+- This is public catalog/presentation evidence only. It does not prove gateway charging, subscription provisioning, renewal, refund, cancellation, or provider delivery.
