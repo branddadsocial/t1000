@@ -611,7 +611,8 @@ Updated: 2026-11-19
 - HSTS and `X-Frame-Options` headers were present on the audited final HTTPS responses.
 - Social Home, Services, AI Business Essentials, Directory Home, all categories, and all listings each returned HTTP 200, exposed a canonical URL matching the audited clean path, and did not expose a production `noindex` robots meta directive.
 - Both `/robots.txt` endpoints returned HTTP 200 as `text/plain`, and both `/wp-sitemap.xml` endpoints returned HTTP 200 as XML.
-- This bounded check confirms public redirect/canonical/indexing plumbing only; it does not replace a complete structured-data, hreflang, sitemap-child, CDN, certificate-expiry, or search-engine coverage audit.
+- A direct TLS handshake on both hosts returned the same currently valid Google Trust Services `WE1` certificate for `CN=branddad.social`, valid from 2026-10-16 02:42:52 UTC through 2027-01-14 03:40:44 UTC. Hostname verification also passed through the redirect-following HTTP checks.
+- This bounded check confirms public redirect/certificate/canonical/indexing plumbing only; it does not replace a complete structured-data, hreflang, sitemap-child, CDN, automatic-renewal, or search-engine coverage audit.
 
 ## 2026-11-20 free website-audit mobile recheck
 
