@@ -486,3 +486,11 @@ Updated: 2026-11-19
 - Isolated Social staging returned HTTP 401 `rest_forbidden` for every customer/admin route when anonymous and HTTP 200 for the intentionally public sales catalog. Production staging-only acceptance routes are absent from live Social.
 - Sixteen of seventeen isolated staging acceptance reports currently return `complete=true`, including auth, account-link, AI failure, customer API, customer inquiries, consent, product fixtures, lifecycle, provider cost, sales assistant, sales lead, subscription lifecycle, Woo refund, monitoring, reporting-stage, and lifecycle-boundary acceptance.
 - The only incomplete staging report is the documented 5,000-event lifecycle truncation stress test. It reports `host_execution_ceiling`, confirms cleanup/summary restoration/state removal, and is not evidence of a customer or financial failure.
+
+## 2026-11-20 Directory Featured billing acceptance preparation
+
+- Added an exact-host, one-time staging helper that exercises the production Featured billing adapter with marked synthetic Woo products, orders, a WPS subscription, an isolated listing, and an isolated grant option. It invokes no gateway, provider, email, webhook, or external request.
+- Acceptance covers all four approved SKU/price/level mappings, wrong-price and wrong-interval denial, exact owner and geography enforcement, first activation, replay idempotency, renewal of the same grant, failed-renewal pause, paid-through cancellation, expiry, refund revocation, and capacity denial.
+- Cleanup verifies exact ids, types, markers, owner, and product identity before deletion, then restores the isolated grant option, request globals, and current user. The public evidence route exposes only 28 allowlisted booleans and bounded error codes.
+- Local validation passed: all 39 Node contract files, all 44 deployment PHP syntax checks, all 3 PHP compatibility tests, the staging checksum contract, and `git diff --check`.
+- `rafter secrets .` found no secrets. Required `rafter run` fast was attempted and remains quota-blocked at 16/16; no paid Plus scan was used. The helper has not been uploaded or executed on hosted staging, and production remains unchanged.

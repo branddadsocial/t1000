@@ -392,6 +392,20 @@ Inquiry records are private posts owned by the receiving WordPress user. Custome
 - Replay acceptance atomically claims one derived option twice, proves the second claim fails, then removes only that exact option. Audit acceptance snapshots the audit option, writes one privacy-bounded row, checks that no email/token is stored, then restores the exact prior value.
 - No authentication cookie, user metadata, password, account, order, payment, message, provider call, cross-host request, or production record is created. Real two-host POST/cookie/session acceptance remains blocked on staging Directory availability and production secrets.
 
+### Isolated staging Directory Featured billing acceptance design
+
+`[anonymous GET, no inputs] -> [exact staging host + one-time lock] -> [marked non-admin owner/product/listing fixtures] -> [production Featured adapter] -> [isolated synthetic grant store] -> [boolean-only report + verified cleanup]`
+
+- The helper is loaded only on the canonical Social staging hostname derived from `home_url()`. It accepts no request parameters or body, creates no checkout session, and never invokes a gateway, provider, email, webhook, or external network request.
+- The only acting identity is the existing marker-owned non-admin staging fixture user. Ownership and geography seams are request-scoped, return true/data only for the exact marked fixture listing and owner during the active run, and are defined only when the Directory-owned functions are absent.
+- Four hidden Woo product fixtures use literal approved SKUs, prices, monthly metadata, and an acceptance marker. An unmarked slug/SKU collision aborts before mutation. The wrong-price and wrong-interval checks restore the newly created marked product to the exact approved values before lifecycle testing.
+- Synthetic Woo orders and the WPS subscription post are marked before use, use a no-gateway payment-method identifier, and contain no card, token, address, real email, or customer business data. Lifecycle checks call production adapter functions for activation, replay, renewal, failure, cancellation, expiry, refund, capacity, ownership, geography, and price enforcement.
+- Cursor-owned grant functions are replaced only when absent and write to one isolated acceptance option. The helper snapshots that exact option and restores it in `finally`; no production Featured inventory option is read or overwritten.
+- Cleanup hard-deletes only ids created in the same run after verifying exact type, marker, fixture owner, and SKU. It restores the original user, request globals, product price/metadata, and isolated options even after failure. Any mismatch fails closed and leaves evidence rather than widening a deletion target.
+- The public evidence route is exact-host, GET-only, and returns only allowlisted booleans plus bounded error codes. It exposes no ids, usernames, emails, order totals, grant ids, or internal paths. The report is retained as staging evidence; all synthetic transaction records are removed.
+
+STRIDE: spoofing is constrained by exact host, marker-owned fixture identity, and server-fixed ids; tampering by literal SKU/price/interval values plus marker/collision checks; repudiation by a bounded one-time report; disclosure by boolean-only output and fake data; denial by a stale-recoverable lock and one bounded lifecycle; elevation by non-admin execution and exact ownership seams. Abuse twin: a normal paid renewal extends one placement, while an attacker replaying or swapping order/listing/customer values is rejected or updates no second grant. Residual launch gates are real Directory inventory integration, a Stripe test-mode purchase, real two-site identity/ownership, and protected production deployment.
+
 ## STRIDE findings and controls
 
 - Spoofing: WordPress session + nonce, capability/ownership checks, signed single-use link tokens, separate service credentials.

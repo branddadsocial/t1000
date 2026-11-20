@@ -297,3 +297,13 @@ Hosted result: the product exists only on the isolated staging hostname, is hidd
 - Evidence: 43 helper assertions, 22 production contract assertions, full 30-file Node suite, 3 PHP compatibility tests, 30 PHP lints, and `git diff --check` passed. Remote fast SAST/SCA remains quota-blocked at 16/16; no paid Plus scan was used.
 - Hosted evidence: the one-time report completed with all 30 checks true, including replay/audit/context restoration and `no_cross_host_request`; post-run private-route authorization and production isolation smokes passed.
 - Residual gate: real Social-to-Directory POST, consume, cookie, and session behavior requires an isolated Directory staging host plus shared production-like secret configuration.
+
+## 2026-11-20 Directory Featured billing staging-helper review
+
+- Surface: Woo product/order/subscription fixtures, listing ownership, geographic placement, grant state, lifecycle callbacks, hard deletion of synthetic records, and one public staging evidence endpoint. Required secure-design and code-review gates were applied.
+- Authorization and tenant isolation: the helper is exact-host and one-time gated, accepts no request identity/input, and uses only the existing marker-owned non-admin `.invalid` fixture. Ownership returns true only for the exact fixture listing/user pair while the run is active.
+- Payment safety: orders use a literal no-gateway method and never invoke checkout, `payment_complete()`, a gateway, Stripe, a provider, mail, or outbound HTTP. The production adapter still requires paid order state, exact recurring metadata, owner match, geography, capacity, and authoritative next-payment date.
+- Integrity and cleanup: unmarked SKU/record collisions abort. Products, orders, subscriptions, listing, and grants are marked and isolated. Cleanup requires exact created ids plus type/marker/owner checks, and restores request/user/option state in `finally`.
+- Disclosure and resource controls: the route is exact-host, GET-only, request-input-free, stale-lock bounded, and exposes 28 allowlisted booleans plus bounded codes—no ids, emails, totals, grant ids, or paths.
+- Evidence: all 39 Node contracts, 44 PHP lints, 3 PHP compatibility tests, staging checksums, and `git diff --check` passed. Local Rafter secrets scan found no secrets. `rafter run` was attempted but rejected at the 16/16 fast-scan quota; paid Plus was not used.
+- Review disposition: no local release-blocking finding. Hosted execution remains pending; real Directory inventory, Stripe test payment, and production deployment remain separate gates.
