@@ -20,7 +20,7 @@ Production readiness: not ready.
 - [x] Keep Complete AI entitlements quote-only and absent from self-service checkout until real provider, allowance, labor, and cost evidence exists.
 - [ ] Confirm a real Woo order before any paid featured grant is activated.
 - [ ] Confirm music license and cost before taking payment.
-- [ ] Retest homepage, services, Directory claim, and music brief on a phone.
+- [~] Retest homepage, Services, Directory claim, and music brief on mobile: a 390 x 844 browser/device viewport passed document-width and control-presence checks with no horizontal overflow; final physical iOS/Android touch testing remains.
 - [ ] Read the two Rafter warnings on each site before the next deploy.
 
 ## Current release blockers

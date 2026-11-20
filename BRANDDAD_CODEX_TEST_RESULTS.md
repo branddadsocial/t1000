@@ -560,3 +560,11 @@ Updated: 2026-11-19
 - All three PHP compatibility suites passed: customer hub, Featured rotation, and revenue sections.
 - The release checksum contract passed.
 - This proves local package consistency only; it does not close the hosting database, scheduler, Stripe reconnect, FormWise execution, or protected production-deployment gates.
+
+## 2026-11-20 mobile launch-path recheck
+
+- Rechecked Social Home, Social Services, the canonical Directory claim page, and the homepage music-brief section at a real 390 x 844 CSS-pixel browser viewport.
+- Social Home, Social Services, and the Directory claim page each reported `innerWidth=390`, `clientWidth=390`, `documentElement.scrollWidth=390`, and `body.scrollWidth=390`; no horizontal page overflow was present.
+- The only negative-position Social elements were intentional honeypot fields and the translation helper's off-canvas internals. The Directory's negative-position navigation nodes were the intentionally closed mobile drawer and did not widen the document.
+- The homepage music brief was present with `display:block`, a 350px section width, and 13 form controls. It did not widen the 390px document.
+- Headless screenshots initially appeared visually cropped, but DOM geometry disproved page overflow; no production CSS change was made from a screenshot-only false signal.
