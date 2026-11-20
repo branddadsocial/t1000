@@ -4,6 +4,19 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Hosted lifecycle UTC-boundary acceptance — 2026-11-20
+
+Data flow: `[exact Stackstaging bootstrap] -> [existing marker-owned .invalid subscriber] -> [four private synthetic lifecycle events] -> [exact UTC timestamps: start/end/prior-second/next-second] -> [production monthly aggregate] -> [exact guarded cleanup] -> [boolean-only report]`. No request data, gateway, order, subscription, payment, provider, message, or production host is involved.
+
+- The helper uses the current UTC month and `DateTimeImmutable` with `DateTimeZone('UTC')`. It creates four uniquely keyed private `ai_task_completed` events, then writes both WordPress local and GMT dates so the production query's `post_date_gmt` boundary is exercised rather than inferred.
+- Baseline and result use the production `bds_lifecycle_admin_summary()` with the current `YYYY-MM`. Exactly the start `00:00:00` and end `23:59:59` records must count; the immediately prior and next seconds must not. Existing revenue/refund/net aggregates must remain byte-for-byte unchanged.
+- Cleanup requires each request-created event id plus exact fixture user, event type, object type, object id, and deterministic event key. All four private events are deleted in `finally`; a failed guard leaves a narrow synthetic record for inspection instead of broadening deletion.
+- The route is canonical-home-host, GET-only, one-time, stale-lock protected, parameter-free, and returns only allowlisted booleans plus bounded error codes/version/time. Production cannot register it.
+
+STRIDE: spoofing/elevation are constrained by the exact fixture marker and non-admin role; tampering by UTC construction, read-back timestamps, deterministic HMAC event keys, and exact aggregate deltas; repudiation by private events plus bounded report; disclosure by `.invalid` fixture and boolean-only output; denial by four posts/one query pair/one lock. Abuse twin “test reporting dates” -> “rewrite customer accounting” is blocked by request-created ids, fixture-only ownership, non-financial event type, exact cleanup, and no update to pre-existing records.
+
+Residual boundary: this proves UTC inclusivity for the current month only. It does not prove DST behavior for local presentation, arbitrary historical periods, 5,000-event truncation, accounting reconciliation, or Stripe settlement.
+
 ## Hosted launch-catalog staging fixtures — 2026-11-20
 
 Data flow: `[exact Stackstaging bootstrap] -> [literal four-product catalog] -> [preflight every slug/collision/type] -> [Woo product writes] -> [fixed subscription/allowance metadata] -> [read-back verification] -> [boolean-only report]`. The only trust boundary is the reviewed helper entering the isolated staging WordPress/Woo database. No browser input, customer, order, subscription, gateway, provider, email, production host, or external network is involved.

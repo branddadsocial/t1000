@@ -3,6 +3,19 @@
 Updated: 2026-11-19
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
+### Staging lifecycle UTC-boundary acceptance review
+
+- L2/V1 design and threat model: the exact-host data flow, trust boundary, cleanup ownership, UTC decisions, STRIDE abuse case, and limits of the evidence are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.
+- A01/API1/API5/V4: the runner accepts no caller-selected object and only uses the exact marker-owned, non-admin `.invalid` fixture. The public route registers only on the canonical staging home host and returns no resource identifier or mutation control (`deploy/bds-000-staging-lifecycle-boundary-acceptance-mu.php:16-32`, `:82-94`, `:153-162`).
+- A02/A07/V2/V3/V6: no password, credential, token, cookie, login, or session primitive is introduced. The lifecycle event key reuses the production HMAC construction and is checked with `hash_equals()` before cleanup (`deploy/bds-000-staging-lifecycle-boundary-acceptance-mu.php:45-68`).
+- A03/API3/V5: there is no request input. Period, timestamps, event type, fixture username, object ids, and idempotency values are constructed server-side. Storage uses WordPress APIs; no raw SQL, HTML rendering, deserialization, shell, or caller-controlled path exists.
+- A04/API4/API6/V11: one stored completion report and a stale-safe ten-minute lock bound the run. Four private non-financial events and two bounded production-aggregate calls are the maximum normal workload (`deploy/bds-000-staging-lifecycle-boundary-acceptance-mu.php:74-93`, `:99-134`).
+- A05/API8/API9/V14: completion exposes only fifteen allowlisted booleans, bounded sanitized error codes, version, and timestamp. Production cannot register the route; reports contain no user id, post id, event key, amount, email, or internal path (`deploy/bds-000-staging-lifecycle-boundary-acceptance-mu.php:20-39`, `:153-162`).
+- A06/A08/API10: N/A; no dependency, package, external provider, gateway, outbound request, or serialization format is added.
+- A09/V7: the runner uses the production monthly summary rather than duplicating accounting logic. It requires an exact two-event delta, unchanged currency aggregates, and a byte-equivalent summary after cleanup (including unique-customer count) before completion (`deploy/bds-000-staging-lifecycle-boundary-acceptance-mu.php:120-145`).
+- A10/API7: N/A; no URL or outbound fetch is accepted or performed.
+- Data and cleanup safety: all four event keys are collision-checked before the first write. Deletion is limited to ids created by this request and requires exact user, event type, object type, object id, and HMAC-derived key. Cleanup runs in `finally`; the original user context is restored. No order, subscription, customer, payment, refund, gateway, email, provider execution, or production mutation is involved.
+
 ### Staging launch-catalog product fixture review
 
 - L2/V1 design and threat model: the fixed catalog, host/database boundary, full-preflight rule, idempotent retry, no-delete policy, STRIDE abuse case, and production/checkout residual boundary are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md`.
