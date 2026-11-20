@@ -2,6 +2,15 @@
 
 Updated: 2026-11-20
 
+## 2026-11-20 hosted lifecycle truncation stress attempt and recovery
+
+- Added a canonical-host, route-driven, persistent state machine intended to seed 5,000 private non-financial lifecycle-schema rows, verify the production aggregate's truncation flag, and delete only its exact rows in reverse batches.
+- Local secure design and ASVS L2 web/API review cover fixed server scope, HMAC ownership, collision denial, route-only execution, resumability, bounded output, exact cleanup, and recovery after hard PHP timeout. The focused contract now passes 28 assertions.
+- The shared host exceeded its safe request window before target. Creation was disabled rather than continuing load. Recovery queried only the dedicated `staging_truncation` object type, capped discovery at 5,001, verified exact fixture author/user/type/object/date/HMAC key and contiguous offsets, and found 1,560 rows—including rows written before a timed-out request could persist its state.
+- All 1,560 synthetic rows were removed in guarded 20-row batches. Hosted final evidence reports `cleanup_complete=true`, `summary_restored=true`, and `state_removed=true`; the staging homepage remains HTTP 200 with `noindex`, and production has no route (HTTP 404).
+- The final report intentionally remains `complete=false` with `host_execution_ceiling`; `target_created` and `truncation_flag_true` are false. No customer, payment, order, subscription, provider, message, production record, or pre-existing lifecycle row was created, changed, or deleted.
+- The 5,000-row truncation proof now requires a higher-capacity isolated environment or WP-CLI/database-fixture tooling. It is not a production-readiness pass and remains unchecked.
+
 ## 2026-11-20 hosted lifecycle UTC-boundary acceptance
 
 - Added a canonical-host, one-time staging harness that creates four private, non-financial lifecycle events for the existing marker-owned non-admin fixture at the exact prior-second, month-start, month-end, and next-second UTC timestamps.

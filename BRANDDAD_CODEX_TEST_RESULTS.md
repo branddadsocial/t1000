@@ -1,5 +1,15 @@
 # BrandDad Codex test results
 
+## 2026-11-20 hosted lifecycle truncation stress attempt and recovery
+
+- `tests/staging-lifecycle-truncation-acceptance-contract.mjs`: 28/28 assertions passed after the hosted recovery hardening.
+- Manual ASVS L2 web/API review: route-only mutation; fixed 5,000 ceiling; bounded batches/lock; exact non-admin fixture; private non-financial schema; production aggregate reuse; persistent state; collision denial; bounded public progress; fixed object-type recovery; over-target/range/duplicate/gap denial; full author/user/type/object/date/HMAC verification; guarded hard delete; and fail-closed incomplete reporting.
+- `rafter secrets .`: no secrets detected. Required remote `rafter run` remains blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- Hosted stress did not reach 5,000 because shared-host request execution exceeded the safe window. Creation was disabled and the helper reconciled 1,560 exact rows, including timeout-orphaned rows not yet present in persisted progress.
+- Hosted recovery final report: HTTP 200, `complete=false`, `error_codes=["host_execution_ceiling"]`, with `cleanup_complete=true`, `summary_restored=true`, and `state_removed=true`. No synthetic row remains according to the exact restored production aggregate evidence.
+- Post-recovery smoke: staging homepage HTTP 200 with `noindex`; production evidence route HTTP 404.
+- Result: safe recovery passed; the 5,000-event `truncated=true` assertion did not run and must not be described as passed.
+
 ## 2026-11-20 hosted lifecycle UTC-boundary acceptance
 
 - `tests/staging-lifecycle-boundary-acceptance-contract.mjs`: 17/17 assertions passed.
