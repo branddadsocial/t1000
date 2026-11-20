@@ -168,3 +168,9 @@ Security review disposition:
 - `rafter secrets .` found no repository secrets. The paired remote `rafter run` could not execute because the account's fast-scan allowance is exhausted (`16/16`); no paid Plus scan was used.
 
 This is a useful staging hardening step, not production approval.
+
+### Authoritative lead-system boundary
+
+The reviewed WordPress `bds-sales-lead-pipeline-mu.php` is the intended authoritative lead store and lifecycle engine. Its current contract covers default-off activation, owned HTTPS origins, an 8 KB request cap, per-client/global rate limits, required privacy acknowledgment, HMAC email deduplication, private storage, bounded retention, unsubscribe suppression, and authoritative trial/checkout/payment/onboarding hooks. The focused contract and PHP syntax checks pass.
+
+Make should therefore receive only a minimal, authenticated, idempotent downstream event after the BrandDad backend has accepted and stored a lead. It must not become a second customer-facing lead database or independently infer consent, paid state, or lifecycle stage. The present direct public webhook-to-datastore prototype does not yet meet that boundary.

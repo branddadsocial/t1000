@@ -366,6 +366,7 @@ Updated: 2026-11-19
 - Manual OWASP API review: input is still untrusted; explicit policy gating now fails closed, but authentication, schema/length limits, rate limiting, replay protection, retention cleanup, and approved notification delivery remain blockers.
 - `git diff --check` passed. `rafter secrets .` found no secrets. Required remote `rafter run` was attempted and blocked by the 16/16 fast-scan allowance; paid Plus was not used.
 - Scheduler recurrence recheck: workflow `425477211` remains active on default branch `main`, but GitHub still lists only manual run `44830790644`; no automatic `event=schedule` run exists yet.
+- Existing authoritative-system check: `node tests/sales-lead-pipeline-contract.mjs` passed all 29 security/lifecycle assertions and `php -l deploy/bds-sales-lead-pipeline-mu.php` reported no syntax errors. This supports keeping WordPress as the lead source of truth and Make as a future downstream lane only.
 - Hosted runtime acceptance: version 0.1.0, `complete=true`, 34/34 allowlisted checks true, no error codes.
 - Hosted cleanup evidence: fixture posts deleted, form metadata restored, and isolated rate counters restored all returned true.
 - Hosted smoke: staging homepage/product HTTP 200 with `noindex`; sales catalog HTTP 200; account status, value report, AI tools, onboarding, monitor configuration, inquiry form/inbox, analytics, and finance contribution returned HTTP 401 anonymously; the production acceptance route returned HTTP 404.
