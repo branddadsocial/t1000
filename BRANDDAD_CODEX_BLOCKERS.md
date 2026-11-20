@@ -9,6 +9,7 @@ Updated: 2026-11-19
 - StartHost cannot issue its free wildcard certificate while `branddad.social` uses external nameservers. The custom staging hostname needs a certificate at the authoritative DNS/CDN provider; the StartHost temporary hostname remains the safe TLS-capable fallback for staging HTTP tests.
 
 - Production SSH key exchange/authentication is not working from this PC. Previous File Manager deployment succeeded, but a reliable protected deployment path and rollback must be restored.
+- Both hosting File Manager tabs expired after a stalled upload on 2026-11-20. Commit `194d399` (evidence-stage monthly reporting) is locally complete but not confirmed on staging; the helper route is HTTP 404. Re-authenticate the panel or restore SSH before this isolated staging deployment can continue.
 - A separate least-privilege `flows:execute`/`apps:execute` FormWise key must be present as `BDS_FORMWISE_EXECUTION_KEY` on the server. Do not reuse a broad key in browser code or repository files.
 - `BDS_ACCOUNT_LINK_SECRET` must be the same 32+ byte secret on both owned WordPress installs and must be distributed outside Git.
 - Cursor must add the optional, unselected `bds_directory_membership_consent` checkbox to Business Essentials checkout before automatic free Directory membership can run.

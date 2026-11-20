@@ -2,6 +2,15 @@
 
 Updated: 2026-11-20
 
+## 2026-11-20 evidence-stage monthly customer reporting
+
+- Added backward-compatible `delivery_outcomes` to the authenticated monthly value report with stable `generated`, `approved`, `submitted`, `published`, and `measured` stages.
+- `generated` counts only customer-owned AI jobs already committed as `completed` and labels the unit `completed_ai_jobs`. Approval, submission, publication, and outcome measurement remain zero/`unavailable` until authoritative customer/provider/analytics events exist.
+- Existing job-status/tool/credit, monitoring, inquiry, cost, truncation, and unavailable-metric fields are preserved. The route, permissions, author scope, 24-month UTC window, and 500-job cap are unchanged.
+- Added an exact-host, read-only staging helper for the two marker-owned non-admin fixtures. It verifies per-fixture completed-count consistency, exact stage keys/semantics, and existing-field compatibility without creating or changing records.
+- Secure design and ASVS L2 web/API review are recorded. Focused contracts pass; the full local suite passes 37/37 Node contract files, 43/43 PHP syntax checks, and `git diff --check`. Local secret scanning is clean; remote Rafter remains quota-blocked at 16/16.
+- Hosting File Manager uploads stalled and both authenticated panel tabs expired when reloaded. The new acceptance route remains HTTP 404, so neither the updated module nor helper is claimed as deployed. Commit `194d399` is ready for the next authenticated staging deployment.
+
 ## 2026-11-20 hosted lifecycle truncation stress attempt and recovery
 
 - Added a canonical-host, route-driven, persistent state machine intended to seed 5,000 private non-financial lifecycle-schema rows, verify the production aggregate's truncation flag, and delete only its exact rows in reverse batches.

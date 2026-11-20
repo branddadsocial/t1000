@@ -1,5 +1,14 @@
 # BrandDad Codex test results
 
+## 2026-11-20 evidence-stage monthly customer reporting
+
+- `tests/customer-status-api-contract.mjs`: passed all 17 assertions, including exact stage keys, completed-job-only generation, and unavailable later stages.
+- `tests/staging-report-stages-acceptance-contract.mjs`: 12/12 assertions passed for exact-host/read-only fixture verification and bounded boolean evidence.
+- Full local suite: 37/37 Node contract files, 43/43 deployment PHP syntax checks, and `git diff --check` passed.
+- Manual ASVS L2 web/API review: no new input/route/permission/query; existing authenticated author scope and period/row bounds; fixed server projection; no content/identifier disclosure; evidence labels prevent publication/business-impact overclaiming; additive compatibility only.
+- `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- Hosted status: not tested. File Manager stalled and the authenticated session expired; the new acceptance route returned HTTP 404. Do not describe this revision as deployed until the two reviewed files are uploaded and the 10/10 hosted report passes.
+
 ## 2026-11-20 hosted lifecycle truncation stress attempt and recovery
 
 - `tests/staging-lifecycle-truncation-acceptance-contract.mjs`: 28/28 assertions passed after the hosted recovery hardening.
