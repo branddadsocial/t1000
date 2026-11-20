@@ -24,7 +24,6 @@ mkdir( $cache, 0750, true );
 $_SERVER['HTTP_HOST'] = 'directory.branddad.social';
 
 $expected = array(
-	'0c909b5d9e8254b5786c5d9cc9ab26379041978219341b04a087d2490b8c6d88.html',
 	'96bb172455b147b9efb76f0614dd83a536ffec45109657f947801161fc529ca1.html',
 	'7f5574c62b542f39889fc4fa77404b0e8cf856136ec7769783a0427bb4a3cc18.html',
 	'e494c1a4c485d5230cfc3d47acaec1df5067c6ff11c370ba2439a11f0c3d23f4.html',
@@ -39,7 +38,7 @@ require dirname( __DIR__ ) . '/deploy/000-bds-directory-targeted-cache-refresh-m
 $result = $GLOBALS['bds_targeted_cache_refresh_result'];
 bds_test_assert( true === $result['complete'], 'first run completes' );
 bds_test_assert( $expected === bds_targeted_cache_refresh_targets(), 'fixed targets stay exact' );
-bds_test_assert( 4 === count( $result['moved'] ), 'exactly four cache objects move' );
+bds_test_assert( 3 === count( $result['moved'] ), 'exactly three cache objects move' );
 bds_test_assert( is_file( $cache . '/unrelated.html' ), 'unrelated cache object is preserved' );
 
 $backup = $cache . '/' . BDS_TARGETED_CACHE_REFRESH_BACKUP;

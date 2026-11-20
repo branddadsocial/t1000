@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name: BrandDad Directory Targeted Cache Refresh
- * Description: Recoverably retires four fixed stale Directory HTML cache objects once.
- * Version: 0.1.0
+ * Description: Recoverably retires three fixed stale Directory HTML cache objects once.
+ * Version: 0.1.1
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_TARGETED_CACHE_REFRESH_VERSION', '0.1.0' );
+define( 'BDS_TARGETED_CACHE_REFRESH_VERSION', '0.1.1' );
 define( 'BDS_TARGETED_CACHE_REFRESH_BACKUP', '.bds-targeted-refresh-20261120-v1' );
 
 /**
@@ -26,7 +26,6 @@ function bds_targeted_cache_refresh_normalize_path( $path ) {
  */
 function bds_targeted_cache_refresh_targets() {
 	return array(
-		'0c909b5d9e8254b5786c5d9cc9ab26379041978219341b04a087d2490b8c6d88.html',
 		'96bb172455b147b9efb76f0614dd83a536ffec45109657f947801161fc529ca1.html',
 		'7f5574c62b542f39889fc4fa77404b0e8cf856136ec7769783a0427bb4a3cc18.html',
 		'e494c1a4c485d5230cfc3d47acaec1df5067c6ff11c370ba2439a11f0c3d23f4.html',

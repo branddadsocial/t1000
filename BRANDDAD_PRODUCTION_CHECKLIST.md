@@ -184,10 +184,11 @@ Nothing unchecked above may be described as fully operational.
 - [ ] Complete a provider-supported edge/origin purge or authenticated bounded refresh, then repeat the clean-URL acceptance without `nocache=1`.
 - [ ] Receive StartHost's response on ticket `898665003`, save the already reviewed five-minute scheduler if they unblock it, and observe the first bounded run before launch classification.
 - [x] Add the stale clean-URL evidence and broken Edge Caching UI error to ticket `898665003`; request only a hostname-bounded provider purge or supported control repair, with explicit no-content/no-database/no-broad-cache-deletion safeguards.
+- [x] Send StartHost a direct reply on ticket `898665003` with the exact PHP 8.4 cron command, all three confirmed specialty cache basenames, and explicit no-broad-purge/no-customer-data-deletion boundaries; Gmail recorded sent message `1a1fb065c1cb1df2` in the existing support thread.
 - [x] Verify the four primary Social subscription pages return HTTP 200, display the approved launch price, and expose a real WooCommerce product-ID-backed add-to-cart control.
 - [x] Verify the free website check, Directory browse/location/plan/claim routes, anonymous Add Listing registration handoffs, and protected Dashboard sign-in handoff.
 - [x] Distinguish the non-rendered `bds-sales-help` analytics selector from an actual duplicate `#bds-sales-help` widget during production acceptance.
-- [x] Design, implement, PHP-lint, contract-test, manually review, and secret-scan a recoverable four-object cache refresh; preserve unrelated cache files and fixed `.bak` rollback objects.
+- [x] Design, implement, PHP-lint, contract-test, manually review, and secret-scan a recoverable three-object specialty cache refresh; preserve unrelated cache files and fixed `.bak` rollback objects, and exclude the already-healthy homepage.
 - [!] Do not upload the targeted refresh until mandatory `rafter run --mode fast` succeeds; the current free-scan quota remains 16/16 and paid Plus is not approved.
 - [x] Push the clean Codex branch without merging and verify local/remote commit identity so the mandatory remote scan will cover the exact helper; quota resets 2026-11-23 20:03:31 UTC.
 - [x] Re-run the full local branch regression after adding the helper: 39 Node contracts, 39 top-level deployment PHP lints, and 4 standalone PHP tests all pass.
