@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Consent Follow-up Worker
  * Description: Default-off, consent-checked email delivery for the existing BrandDad follow-up list.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_CONSENT_FOLLOWUP_VERSION', '0.1.0' );
+define( 'BDS_CONSENT_FOLLOWUP_VERSION', '0.1.1' );
 
 /** Delivery is deliberately unavailable until a verified sender and kill switch are configured. */
 function bds_follow_worker_ready() {
@@ -286,6 +286,7 @@ function bds_follow_worker_unsubscribe() {
 		if ( ! $updated ) {
 			wp_die( esc_html__( 'Your unsubscribe request could not be saved. Please try again.', 'branddad' ), '', array( 'response' => 503 ) );
 		}
+		do_action( 'bds_follow_unsubscribed', absint( $all[ $key ]['lead_id'] ?? 0 ) );
 		wp_die( esc_html__( 'You are unsubscribed from BrandDad follow-up emails.', 'branddad' ), '', array( 'response' => 200 ) );
 	}
 	nocache_headers();

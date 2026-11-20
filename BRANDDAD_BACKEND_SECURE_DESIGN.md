@@ -74,6 +74,14 @@ Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenizati
 
 Trust boundaries are browser/edge, edge/WordPress, WordPress/database, WordPress/FormWise, Woo/gateway, and Social/Directory.
 
+## BrandDad acquisition lead pipeline
+
+The public lead-capture boundary accepts only an email address plus small allowlisted business/need/source fields. It requires an explicit privacy acknowledgment, records marketing consent separately, restricts browser origins to owned BrandDad hosts, caps the raw request and each field, and applies both client and global rate limits before storage. Client IP addresses are used only as HMAC rate-limit keys and are never stored on the lead. A signed-in visitor cannot submit another account's email. Marketing consent is not activated or mirrored to the sender queue unless the existing verified-email workflow explicitly proves ownership through the fail-closed `bds_lead_email_verified` filter; an unverified request is stored only as a pending request and sends nothing.
+
+Lead records are private, non-public, excluded from REST and search, keyed for deduplication with an HMAC of normalized email, and readable through the API only by `manage_woocommerce`. Public responses use an opaque random reference rather than a post id or email. Automatic stage updates may only come from verified registration, trial, checkout, paid provisioning, onboarding, or access-revocation hooks. Browser requests cannot self-declare a paid or active stage.
+
+Unconverted records have bounded retention and are anonymized rather than silently retained forever. Follow-up consent can be withdrawn, and no outbound message is sent by the lead API. The separate follow-up worker remains default-off and must recheck fresh consent immediately before delivery. Payment/order data remains authoritative in WooCommerce; the lead pipeline is not a billing source.
+
 ## STRIDE findings and controls
 
 - Spoofing: WordPress session + nonce, capability/ownership checks, signed single-use link tokens, separate service credentials.

@@ -16,6 +16,7 @@ Updated: 2026-11-19
 | Directorist | Existing listing ownership/publication source | Operational; Cursor owns listing/search UX |
 | Directory Featured billing | Cursor owns grant inventory/rotation; four intended SKUs are absent | Codex lifecycle adapter implemented fail-closed; Cursor selection/geography + SKUs + staging payment remain |
 | Lifecycle analytics | Private WordPress event ledger with admin-only aggregate | Implemented locally; duplicate/refund/capability staging tests remain |
+| BrandDad acquisition leads | Private deduplicated lead records, verified lifecycle hooks, separate consent, retention | Implemented default-off; Cursor form/privacy and WordPress staging acceptance remain |
 | Partnero | Existing affiliate portal retained | Event adapter/balance API not verified in this pass |
 | Make | Prior documentation reports free-plan operations exhausted until reset | Blocked for new automation runs |
 | AutoTranslator | Present historically; latest Directory direction removed public translator clutter | Needs dedicated production verification |

@@ -41,6 +41,16 @@ Public, rate-limited BrandDad Sales Assistant proxy. Body: `{ "message": "...", 
 
 Response: `{ "reply", "offers", "session", "expires" }`. Model-supplied URLs are removed. Every clickable offer URL comes from the authoritative server catalog. Execution defaults off and has per-IP plus global daily cost limits.
 
+## POST `/sales/leads`
+
+Default-off public capture for forms hosted only on BrandDad's owned HTTPS origins. Body: `{ "email", "business_type", "primary_need", "source", "privacy_ack", "email_consent" }`. `source` is one of `help`, `trial`, `listing`, `audit`, or `sales_chat`. Privacy acknowledgment is mandatory; email marketing consent is separate, optional, and must not be preselected. The raw request, fields, client rate, and global daily rate are bounded.
+
+Response: `{ "status", "reference", "recommendation", "email_followup", "email_confirmation_required" }`. The recommendation and checkout URL come only from the authoritative product catalog. The response never returns an internal post id, stored email, IP address, or provider identifier. Browser callers cannot choose a lifecycle stage. A signed-in request must use the account email. Email marketing consent fails closed unless the server's verified-email workflow returns true through `bds_lead_email_verified`; unverified requests never enter the sender queue. After verification, ask for the optional consent again rather than assuming the earlier unverified request. Enable only with server constant `BDS_LEAD_CAPTURE_ENABLED=true` after staging/privacy acceptance.
+
+## GET `/admin/leads?page=1&stage=interested`
+
+Admin-only (`manage_woocommerce`) paginated lead records, 50 per page. The optional stage must be server-allowlisted. Registration, trial, checkout, paid provisioning, onboarding, and revocation stages are updated only by verified backend hooks. Public capture cannot mark a lead paid or active. Stale unconverted contact data is anonymized after a bounded retention period; customer/account records and suppression evidence follow their separate retention obligations.
+
 ## GET `/onboarding`
 
 Authenticated customer-owned onboarding view model. Response includes `version`, allowlisted `profile`, access mode, step states, first completed job id, recommended allowlisted tool, and `complete`. It never returns provider ids, credentials, or another user's data.
@@ -65,7 +75,7 @@ Authenticated evidence-based monthly report for the current customer. The option
 
 Admin-only (`manage_woocommerce`) monthly aggregate over the current or preceding 23 UTC months. It returns allowlisted lifecycle event counts, the number of unique customers with events, confirmed gross Woo transaction events, recorded refund events, and net confirmed events by ISO currency. The query is capped at 5,000 private events and exposes `truncated`. It returns no emails, IP addresses, conversation text, provider bodies, or customer-level rows. The monetary fields are event-ledger amounts, not MRR, profit, or a gateway/bank settlement report.
 
-The ledger is written internally only after authoritative success: persisted trial history, successful FormWise plan provisioning for a paid order, committed AI metering, replay-safe Directory membership persistence, completed onboarding state, successful access removal, or an actual Woo refund id. Stable HMAC idempotency keys prevent duplicate hook delivery from double-counting.
+The ledger is written internally only after authoritative success: lead creation/stage changes, persisted trial history, successful FormWise plan provisioning for a paid order, committed AI metering, replay-safe Directory membership persistence, completed onboarding state, successful access removal, or an actual Woo refund id. Stable HMAC idempotency keys prevent duplicate hook delivery from double-counting.
 
 ## POST `/internal/free-membership`
 

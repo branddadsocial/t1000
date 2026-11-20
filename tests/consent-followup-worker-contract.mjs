@@ -3,7 +3,7 @@ import process from 'node:process';
 
 const source = fs.readFileSync('deploy/bds-consent-followup-worker-mu.php', 'utf8');
 const checks = [
-  ['version is pinned', /BDS_CONSENT_FOLLOWUP_VERSION', '0\.1\.0'/],
+  ['version is pinned', /BDS_CONSENT_FOLLOWUP_VERSION', '0\.1\.1'/],
   ['delivery defaults off', /defined\( 'BDS_FOLLOWUP_ENABLED' \)[\s\S]*true === BDS_FOLLOWUP_ENABLED/],
   ['verified sender is required', /defined\( 'BDS_FOLLOWUP_FROM_EMAIL' \)[\s\S]*is_email\( BDS_FOLLOWUP_FROM_EMAIL \)/],
   ['existing consent list is the only source', /get_option\( 'bds_follow_consent_v1'/],

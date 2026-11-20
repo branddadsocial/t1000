@@ -9,7 +9,7 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 | AI Studio Growth | $29.99/mo, 150 credits | FormWise plan verified; launch candidate after lifecycle test |
 | AI Studio Pro | $49.99/mo, 400 credits | FormWise plan verified; launch candidate after lifecycle test |
 | AI Local SEO | $19.99/mo, 60 credits | Plan and SEO action flow verified; recommendation workflow only, not automatic site changes |
-| AI Lead Assistant | $19.99/mo, 80 credits | Plan verified; full lead delivery/follow-up worker not yet production-ready |
+| AI Lead Assistant | $19.99/mo, 80 credits | Plan verified; private BrandDad acquisition lead pipeline now implemented, but the customer-facing lead form/delivery and verified follow-up sender remain staging-blocked |
 | AI Social Growth | $29.99/mo, 150 credits | Plan and draft flow verified; publishing adapter not yet production-ready |
 | AI Review Assistant | $9.99/mo | Draft workflow available; standalone plan mapping remains staged |
 | AI Business Monitoring | $9.99/mo | Monitoring worker/cost ceiling not yet implemented |
