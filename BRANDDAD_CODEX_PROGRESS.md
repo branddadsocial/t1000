@@ -2,6 +2,16 @@
 
 Updated: 2026-11-20
 
+## 2026-11-20 hosted lifecycle UTC-boundary acceptance
+
+- Added a canonical-host, one-time staging harness that creates four private, non-financial lifecycle events for the existing marker-owned non-admin fixture at the exact prior-second, month-start, month-end, and next-second UTC timestamps.
+- The harness reuses the production `bds_lifecycle_admin_summary()` instead of duplicating its query. It requires exactly the start/end events to increase the current-month count by two, while gross, refund, and net currency aggregates remain unchanged.
+- Every GMT/local date is read back. All event keys are collision-checked before mutation, and cleanup requires the request-created id plus the exact fixture user, type, object identity, and HMAC-derived key. The original lifecycle summary and current-user context must be restored before completion.
+- Secure design and ASVS L2 web/API review are recorded. The new contract passes 17 assertions; the full local suite passes 35/35 Node contract files, 41/41 PHP syntax checks, and `git diff --check`. Local secret scanning is clean; required remote `rafter run` remains quota-blocked at 16/16 and paid Plus was not used.
+- Uploaded the reviewed helper to isolated staging. Hosted evidence returned HTTP 200, `complete=true`, all 15 runtime checks true, and no errors. The staging homepage remained HTTP 200 with `noindex`; production exposed no acceptance route (HTTP 404).
+- The four synthetic events were deleted and the complete original monthly event/customer/financial summary was restored. No customer, order, subscription, payment, refund, gateway, email, provider call, or production record was created or changed.
+- This closes inclusive current-month UTC boundary acceptance. The separate 5,000-event truncation stress gate, Stripe settlement/webhook evidence, and accounting reconciliation remain open.
+
 ## 2026-11-20 staging launch-catalog fixtures preparation
 
 - Added an exact-host, fail-closed staging fixture for AI Studio Starter ($14.99/50 credits), AI Local SEO ($19.99/60), AI Lead Assistant ($19.99/80), and AI Social Growth ($29.99/150).

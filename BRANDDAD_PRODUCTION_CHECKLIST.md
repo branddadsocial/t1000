@@ -101,6 +101,7 @@
 - [x] Implement a private idempotent lifecycle ledger and admin-only gross/refund/net event aggregate.
 - [x] Exercise lifecycle duplicate reuse, subscriber admin-capability denial, privacy allowlisting, and gross/refund/net aggregate deltas in WordPress staging.
 - [x] Exercise real Woo partial/full refund hooks in WordPress staging with exact lifecycle/aggregate evidence and cleanup.
-- [ ] Exercise UTC month boundaries and the 5,000-event truncation flag in WordPress staging.
+- [x] Exercise inclusive current-month UTC start/end boundaries in WordPress staging with exact cleanup and unchanged financial aggregates.
+- [ ] Exercise the 5,000-event truncation flag in WordPress staging without affecting customer or financial records.
 
 Nothing unchecked above may be described as fully operational.

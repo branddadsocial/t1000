@@ -1,5 +1,15 @@
 # BrandDad Codex test results
 
+## 2026-11-20 hosted lifecycle UTC-boundary acceptance
+
+- `tests/staging-lifecycle-boundary-acceptance-contract.mjs`: 17/17 assertions passed.
+- Full local suite: 35/35 Node contract files, 41/41 deployment PHP syntax checks, and `git diff --check` passed.
+- Manual ASVS L2 web/API review: canonical-host and one-time controls; no caller input; exact marker-owned non-admin fixture; current UTC immutable timestamps; four private non-financial events; production aggregate reuse; exact +2 monthly delta; unchanged financial aggregates; HMAC-bound exact cleanup; restored summary/current-user context; bounded boolean-only report; no network, payment, provider, message, or production surface.
+- `rafter secrets .`: no secrets detected. Required `rafter run` was attempted and blocked by the 16/16 fast-scan quota; paid Plus was not used.
+- Hosted report: HTTP 200, `complete=true`, 15/15 checks true, no error codes. Start `00:00:00` and end `23:59:59` UTC events counted; the immediately prior and next seconds did not; financial aggregates remained identical; all four events were removed; the complete summary was restored.
+- Post-run smoke: staging homepage HTTP 200 with `noindex`; production acceptance route HTTP 404.
+- Acceptance boundary: this proves current-month UTC inclusivity, not local-time presentation/DST, arbitrary historical periods, the separate 5,000-row truncation flag, Stripe settlement/webhooks, or accounting reconciliation.
+
 ## 2026-11-20 staging launch-catalog fixtures preparation
 
 - `tests/staging-launch-products-fixture-contract.mjs`: 22/22 assertions passed.
