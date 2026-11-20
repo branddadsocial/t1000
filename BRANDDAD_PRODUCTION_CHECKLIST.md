@@ -96,7 +96,7 @@
 - [x] Implement owner-scoped customer inquiry capture/inbox/status with explicit contact consent, spam/rate bounds, actual reports, and closed/lost retention.
 - [x] Exercise the exact-host hosted inquiry acceptance harness for tenant denial, versions, rates, consent, replay, retention, reports, narrowly marked fixture cleanup, and state restoration (34/34 runtime checks passed).
 - [ ] Connect Cursor's real hosted inquiry form/inbox, validate browser REST nonce and customer-facing consent copy, and verify any approved notification delivery before enabling production capture.
-- [ ] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes.
+- [x] Monthly reports distinguish generated, approved, submitted, published, and measured outcomes; only completed AI jobs count as generated, and later stages remain explicitly unavailable until authoritative events exist.
 - [x] Monthly AI report counts actual job states/completions and explicitly labels currently unavailable outcome metrics.
 - [x] Implement a private idempotent lifecycle ledger and admin-only gross/refund/net event aggregate.
 - [x] Exercise lifecycle duplicate reuse, subscriber admin-capability denial, privacy allowlisting, and gross/refund/net aggregate deltas in WordPress staging.

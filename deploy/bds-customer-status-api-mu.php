@@ -128,6 +128,34 @@ function bds_customer_value_report( $user_id, $period ) {
 			'credits_committed' => $credits,
 			'truncated'         => count( $ids ) >= 500,
 		),
+		'delivery_outcomes' => array(
+			'generated' => array(
+				'status' => 'measured',
+				'count'  => absint( $statuses['completed'] ),
+				'unit'   => 'completed_ai_jobs',
+				'note'   => 'Completed AI outputs in this report period; this does not mean they were approved, submitted, or published.',
+			),
+			'approved' => array(
+				'status' => 'unavailable',
+				'count'  => 0,
+				'note'   => 'Customer approval events are not connected yet.',
+			),
+			'submitted' => array(
+				'status' => 'unavailable',
+				'count'  => 0,
+				'note'   => 'Provider submission confirmations are not connected yet.',
+			),
+			'published' => array(
+				'status' => 'unavailable',
+				'count'  => 0,
+				'note'   => 'Provider publication confirmations are not connected yet.',
+			),
+			'measured' => array(
+				'status' => 'unavailable',
+				'count'  => 0,
+				'note'   => 'Outcome analytics are not connected yet.',
+			),
+		),
 		'cost_tracking' => array(
 			'provider_units' => $credits,
 			'provider_cost'  => 'unavailable',

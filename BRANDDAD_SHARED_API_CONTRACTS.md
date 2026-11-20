@@ -103,7 +103,7 @@ Authenticated customer-owned summary containing access mode (`paid`, `trial`, `d
 
 ## GET `/reports/value?period=YYYY-MM`
 
-Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, committed customer credits, and—when connected—actual availability checks and customer inquiries. Failed AI work is not counted as completed value. Unconnected publishing, rankings, and revenue are explicitly returned as unavailable rather than inferred. AI and inquiry results are independently capped at 500 with `truncated` flags.
+Authenticated evidence-based monthly report for the current customer. The optional period is limited to the current or preceding 23 UTC months. It counts actual AI job states, completed tools, committed customer credits, and—when connected—actual availability checks and customer inquiries. Failed AI work is not counted as completed value. `delivery_outcomes` always separates `generated`, `approved`, `submitted`, `published`, and `measured`: only `generated.count` is currently measured, strictly from completed customer-owned AI jobs and labeled `completed_ai_jobs`; the later four stages remain `unavailable` until authoritative approval, provider, or analytics events are connected. Unconnected publishing, rankings, and revenue are explicitly returned as unavailable rather than inferred. AI and inquiry results are independently capped at 500 with `truncated` flags.
 
 ## GET `/admin/analytics/summary?period=YYYY-MM`
 

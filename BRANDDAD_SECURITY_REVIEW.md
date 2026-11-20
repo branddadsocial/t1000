@@ -3,6 +3,16 @@
 Updated: 2026-11-19
 Scope: the backend MU plugins added to `codex/final-backend-20261119`.
 
+### Evidence-stage monthly reporting review
+
+- L2/V1 design: the authenticated data flow, evidence semantics, compatibility boundary, STRIDE abuse case, and residual provider/analytics dependency are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md` before implementation.
+- A01/API1/API5/V4: no route, permission, id, or query changes. The existing customer report permission and author-scoped private-job query remain authoritative; the additive projection receives only the already derived status counts (`deploy/bds-customer-status-api-mu.php:76-145`).
+- A03/API3/V5: no new input reaches storage or a query. Stage names, units, statuses, and notes are fixed server literals; counts use `absint()` over the existing completed-status bucket. There is no HTML, SQL, shell, path, or deserialization surface.
+- A04/API4/API6/V11: the existing 500-job and 24-month caps are unchanged. Five constant-size stage objects add no data-dependent workload.
+- A05/API8/API9/V14: output adds no customer identifier, content, provider body, credential, or internal record id. `generated` is labeled `completed_ai_jobs`; later stages are zero/unavailable and state the missing evidence, preventing an operational metric from being misrepresented as publication or business impact.
+- A06/A08/A10/API7/API10: N/A; no dependency, external request, URL, provider action, or serializer is introduced.
+- Backward compatibility: all existing `ai_work`, cost, monitoring, inquiry, and unavailable-metric fields remain intact. Consumers may adopt `delivery_outcomes` additively.
+
 ### Staging lifecycle 5,000-record truncation acceptance review
 
 - L2/V1 design and threat model: the bounded state machine, exact-host boundary, persistent restart state, cleanup ownership, STRIDE abuse case, temporary resource cost, and limits of the evidence are recorded in `BRANDDAD_BACKEND_SECURE_DESIGN.md` before implementation.

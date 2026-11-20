@@ -17,6 +17,9 @@ const checks = [
   ['credits count completed work only', /if \( 'completed' !== \$status \)[\s\S]*continue[\s\S]*\$credits \+=/.test(source)],
   ['provider cost is not fabricated', /'provider_cost'\s*=>\s*'unavailable'/.test(source)],
   ['unmeasured outcomes are explicitly unavailable', /'revenue_generated'/.test(source) && /'search_rankings'/.test(source)],
+  ['delivery stages are explicit and stable', /'delivery_outcomes'[\s\S]*'generated'[\s\S]*'approved'[\s\S]*'submitted'[\s\S]*'published'[\s\S]*'measured'/.test(source)],
+  ['generated stage counts only completed AI jobs', /'generated'[\s\S]*'status'\s*=>\s*'measured'[\s\S]*absint\( \$statuses\['completed'\] \)[\s\S]*completed_ai_jobs/.test(source)],
+  ['later stages remain unavailable without authoritative evidence', (source.match(/'status'\s*=>\s*'unavailable'/g) || []).length >= 5 && /approval events are not connected[\s\S]*submission confirmations are not connected[\s\S]*publication confirmations are not connected[\s\S]*Outcome analytics are not connected/.test(source)],
   ['verified monitoring can extend the value report without fabrication', /bds_monitoring_customer_summary/.test(source) && /'status' => 'unavailable'/.test(source)],
   ['actual customer inquiries replace unavailable lead counts when connected', /bds_inquiries_monthly_summary/.test(source) && /\$unavailable\[\] = 'leads_captured'/.test(source)],
 ];

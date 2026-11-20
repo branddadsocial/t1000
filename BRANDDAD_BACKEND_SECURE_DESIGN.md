@@ -4,6 +4,19 @@ Date: 2026-11-19
 Scope: WordPress/WooCommerce subscription provisioning, FormWise execution, Directory free-AI allowances, cross-site account linking, sales events, and background jobs.
 Baseline: OWASP ASVS L2, NIST SSDF, PCI scope minimized by Stripe/Woo tokenization, GDPR/CCPA data-minimization and deletion obligations.
 
+## Evidence-stage monthly customer reporting — 2026-11-20
+
+Data flow: `[authenticated WordPress customer] -> [existing author-scoped, UTC-period-bounded private AI-job query] -> [existing status/tool/credit counts] -> [additive delivery_outcomes stage projection] -> [customer-only REST response]`. There is no new input, record, provider call, payment action, or cross-customer query.
+
+- `generated` is measured only as the number of that customer's AI jobs with committed `completed` status in the selected period and is labeled `completed_ai_jobs`; it is not claimed as a published post, lead, ranking, or revenue result.
+- `approved`, `submitted`, `published`, and `measured` are separate stable response keys with `status=unavailable`, zero count, and plain-language evidence requirements until authoritative provider/approval/analytics events are connected. No stage is inferred from generation.
+- The change is backward-compatible and additive. Existing task/tool/credit, monitoring, inquiry, cost, truncation, and unavailable-metric fields remain unchanged. The same authenticated permission callback, author filter, 24-month UTC window, and 500-job cap apply.
+- Hosted acceptance is read-only and exact-host: it resolves only the two existing marker-owned `.invalid` non-admin fixtures, calls the production report function for the current UTC period, verifies fixed stage semantics and per-fixture count consistency, and returns allowlisted booleans. It creates, updates, or deletes no job, user, credit, provider, order, message, or payment record.
+
+STRIDE: spoofing/elevation remain controlled by the existing WordPress session and author-scoped query; tampering by server-derived status counts and fixed stage keys; repudiation by explicit source/evidence notes; disclosure adds no identifiers or content; denial adds constant-time projection only. Abuse twin “show monthly value” -> “claim customer business outcomes” is blocked by unavailable later stages and precise generated-unit labeling.
+
+Residual boundary: this reports backend workflow evidence, not business impact. Real approval, provider submission/publication confirmation, and analytics measurement require separate authoritative integrations before their status can change.
+
 ## Hosted lifecycle 5,000-record truncation acceptance — 2026-11-20
 
 Planned data flow: `[exact Stackstaging acceptance route] -> [existing marker-owned .invalid subscriber] -> [server-owned persistent state machine] -> [creation now disabled after host ceiling] -> [fixed owned-row reconciliation] -> [20 exact guarded deletions per request] -> [restored baseline] -> [bounded incomplete report]`. No request parameter, unrelated staging request, gateway, customer, order, subscription, payment, provider, message, or production host is permitted.
