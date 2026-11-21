@@ -106,7 +106,8 @@ rev_expect( true === bds_rev_path_needs_guide( 'refund_returns' ), 'refund retur
 rev_expect( home_url( '/privacy-policy/' ) === bds_rev_alias_dest( 'cookie-policy' ), 'cookie leftover URLs open privacy' );
 rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'sitemap' ), 'dead sitemap URLs open the services catalog' );
 rev_expect( home_url( '/#bdai-faq-title' ) === bds_rev_alias_dest( 'faqs' ), 'dead Social faqs URLs open the homepage FAQ' );
-rev_expect( home_url( '/#bdai-faq-title' ) === bds_rev_alias_dest( 'faq' ), 'dead Social faq URLs open the homepage FAQ' );
+rev_expect( '' === bds_rev_alias_dest( 'faq' ), 'the live Social /faq/ contact redirect is not stolen' );
+rev_expect( '' === bds_rev_alias_dest( 'work-with-us' ), 'the live Social /work-with-us/ hire page is not stolen' );
 rev_expect( home_url( '/contact-us/' ) === bds_rev_alias_dest( 'careers' ), 'dead Social careers URLs open contact' );
 rev_expect( home_url( '/#bdai-faq-title' ) === bds_rev_alias_dest( 'how-it-works' ), 'dead Social how-it-works URLs open the homepage FAQ' );
 rev_expect( home_url( '/contact-us/' ) === bds_rev_alias_dest( 'support' ), 'dead Social support URLs open contact' );
@@ -296,7 +297,7 @@ $dup_out = bds_rev_strip_theme_entry_title_h1( $dup );
 rev_expect( false === strpos( $dup_out, '<h1 class="entry-title">About Us</h1>' ), 'theme About Us is not a second H1' );
 rev_expect( false !== strpos( $dup_out, '<h1>Practical growth systems, clearly explained.</h1>' ), 'the real about heading stays' );
 $rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.38' ), 'revenue MU stamps 0.2.38' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.39' ), 'revenue MU stamps 0.2.39' );
 rev_expect( false !== strpos( $rev_src, 'bds_rev_allowed_redirect_hosts' ), 'Social leftover doors may open Directory' );
 rev_expect( false === strpos( $rev_src, 'wp_get_referer' ), 'music brief redirect stays on Social home' );
 rev_expect( false !== strpos( $rev_src, "home_url( '/?bds_music=saved' )" ), 'a saved brief returns to Social home' );
