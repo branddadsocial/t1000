@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~3:25pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~3:30pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -37,7 +37,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Directory membership HMAC **0.1.3** is fail-closed: empty key disables, timestamp >300s and body tamper refuse, `hash_equals`. Consent checkbox must be checked (`1`/`yes`/`true`/`on`); unchecked never provisions. Tests use a dummy local HMAC, not a Stripe or FormWise secret. Shop-manager Tools **Billing inspect** counts active Woo webhooks as a boolean. Stripe Dashboard delivery is owner inspect. |
 | Account-link | Local **0.1.3**. Empty or short `BDS_ACCOUNT_LINK_SECRET` keeps `secret_ready` false. `create_token` is `link_unavailable`; start maps that to HTTP **503**. The handoff form is hidden. Tests do not invent a secret. |
 | Lifecycle is_paid | Local **0.4.2**. `payment_confirmed` records only when Woo `is_paid()` is true. Featured also needs an allowlisted lane. Refunds record only after a matching `payment_confirmed`. Trial stays `trial_started`, not paid. No `wp_mail`. Tests do not charge. |
-| Onboarding website SSRF | Local **0.1.1**. Stored `website_url` is http/https only, no credentials, ports 80/443, no localhost/.local/.internal, no literal IPs. The function never fetches. Invalid URLs are 422. |
+| Onboarding website SSRF | Local **0.1.2**. Stored `website_url` is http/https only, no credentials, ports 80/443, no localhost/.local/.internal, no literal IPs. The function never fetches. Invalid URLs are 422. Recommended first tool matches the current access mode: trial cannot open `listing_studio`; Directory free AI cannot open tools without a `free_key`. |
 | Subscription order map | Local **0.5.2**. `bds_ai_order_matches_subscription` requires the parent order or an authoritative renewal for that subscription. Unpaid or mismatched ids return 0 from `bds_ai_paid_order_id_or_zero`. Tests do not charge. |
 | Customer status API | Local **0.3.1**. Status/value use the signed-in session user, never a request user id. Email verification defaults false. Credits are not converted into a provider dollar amount. Revenue, rankings, and unpublished outcomes stay `unavailable`. |
 | Provider-cost ledger | Local **0.1.2**. Internal record API only (no REST POST). Guessed providers, products missing from the catalog, estimated bases, zero amounts, and timestamps outside the 7-year window return 0. Admin contribution is `manage_woocommerce` GET. Tests do not charge. |
@@ -139,6 +139,12 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - Sales chat: FormWise is not called when the key is missing; first line of chat is 503. Output URLs are stripped.
 - Airbnb one-review: unpublished product has no buy URL. Catalog does not list the slug.
 
+## Secure design (onboarding recommended tool)
+
+- Identity: the signed-in onboarding customer. Access mode is paid/trial from plan facts, else directory_free only with an eligible listing, else none.
+- AuthZ: `recommended_tool` is function-level. Trial tools require the execution catalog `trial` flag. Directory free AI requires a `free_key`. Paid may recommend listing_studio. A listing goal on trial or free access remaps to `assistant_request` instead of a 403 tool.
+- Secrets: no FormWise key. The helper does not call the provider.
+
 ## Secure design (onboarding website URL)
 
 - Identity: a signed-in customer storing a website URL on their onboarding profile. The URL is stored only.
@@ -199,8 +205,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No Subscribe now rewrites piled. No StartHost cron added. Live classifieds/faq still wait on FM; not stalled.
-- Track B: execution **0.2.4** re-allowlists stored job inputs before FormWise. Extra `remote_id` / `origin` / `credit_cost` dropped. Forced fields win. Trial cannot call listing_studio or linkedin_profile. Public tools omit provider ids.
+- Track B: onboarding **0.1.2** recommends only a tool the current access mode can call. Trial listing goal remaps off `listing_studio`. Directory free AI remaps off tools without a `free_key`. Website goal stays `website_plan` on trial.
 - GitHub wp-cron remains **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
-- Suites: formwise-followup-failclosed; execution-access-bola. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
-- Deploy when FM signs in (including featured lib country match and gift type map): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Execution 0.2.4 is Codex backend on Social; upload with the conversion set only if that file is in the signed-in FM tree.
+- Suites: onboarding-subscription-failclosed; formwise-followup-failclosed. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2 and execution 0.2.4 are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
 - Flags off. No charge. Not pushed.

@@ -74,8 +74,13 @@ function esc_url_raw( $url, $protocols = null ) {
 	return $url;
 }
 
+if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
+	define( 'MINUTE_IN_SECONDS', 60 );
+}
+
 require dirname( __DIR__ ) . '/deploy/cursor/backend/bds-onboarding-api-mu.php';
 require dirname( __DIR__ ) . '/deploy/cursor/backend/bds-ai-subscriptions-mu.php';
+require dirname( __DIR__ ) . '/deploy/cursor/backend/bds-ai-execution-mu.php';
 
 $failed = 0;
 function onboard_expect( $cond, $message ) {
@@ -106,9 +111,18 @@ onboard_expect( is_array( $ok ) && 'https://branddad.social/' === $ok['website_u
 $empty = bds_onboarding_validate_profile( array( 'website_url' => '' ) );
 onboard_expect( is_array( $empty ) && '' === $empty['website_url'], 'an empty website is allowed' );
 
+onboard_expect( 'listing_studio' === bds_onboarding_recommended_tool( 'listing' ), 'a listing goal still maps to listing_studio' );
+onboard_expect( 'listing_studio' === bds_onboarding_recommended_for_access( 'listing', 'paid' ), 'paid access may recommend listing_studio' );
+onboard_expect( 'assistant_request' === bds_onboarding_recommended_for_access( 'listing', 'trial' ), 'trial does not recommend listing_studio' );
+onboard_expect( 'assistant_request' === bds_onboarding_recommended_for_access( 'listing', 'directory_free' ), 'Directory free AI does not recommend listing_studio' );
+onboard_expect( 'website_plan' === bds_onboarding_recommended_for_access( 'website', 'trial' ), 'trial may recommend website_plan' );
+onboard_expect( 'assistant_request' === bds_onboarding_recommended_for_access( 'website', 'directory_free' ), 'Directory free AI does not recommend website_plan' );
+onboard_expect( 'social_draft' === bds_onboarding_recommended_for_access( 'social', 'trial' ), 'trial may recommend social_draft' );
+
 $onb_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-onboarding-api-mu.php' );
 onboard_expect( false === strpos( $onb_src, 'wp_remote' ) && false === strpos( $onb_src, 'wp_safe_remote' ), 'onboarding does not fetch the website URL' );
-onboard_expect( '0.1.1' === BDS_ONBOARDING_API_VERSION, 'onboarding stamps 0.1.1' );
+onboard_expect( '0.1.2' === BDS_ONBOARDING_API_VERSION, 'onboarding stamps 0.1.2' );
+onboard_expect( false !== strpos( $onb_src, 'bds_onboarding_recommended_for_access' ), 'onboarding recommends only tools the access mode can call' );
 
 onboard_expect( false === bds_ai_order_matches_subscription_ids( 0, 9, 100, '', 0 ), 'a missing order id does not match' );
 onboard_expect( false === bds_ai_order_matches_subscription_ids( 100, 0, 100, '', 0 ), 'a missing subscription id does not match' );

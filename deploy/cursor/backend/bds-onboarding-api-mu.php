@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Onboarding API
  * Description: Customer-owned onboarding state and first-task guidance for BrandDad dashboards.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ONBOARDING_API_VERSION', '0.1.1' );
+define( 'BDS_ONBOARDING_API_VERSION', '0.1.2' );
 
 function bds_onboarding_permission() {
 	if ( isset( $_SERVER['CONTENT_LENGTH'] ) && absint( $_SERVER['CONTENT_LENGTH'] ) > 16384 ) {
@@ -126,6 +126,33 @@ function bds_onboarding_recommended_tool( $goal ) {
 	return (string) ( $map[ sanitize_key( $goal ) ] ?? 'assistant_request' );
 }
 
+/**
+ * Recommend only a tool the current access mode can actually call.
+ * Trial cannot open listing_studio or linkedin_profile. Directory free AI
+ * cannot open tools that lack a free_key.
+ *
+ * @param mixed $goal         Profile primary_goal.
+ * @param mixed $access_mode  paid|trial|directory_free|none.
+ * @return string Catalog tool key.
+ */
+function bds_onboarding_recommended_for_access( $goal, $access_mode ) {
+	$recommended = bds_onboarding_recommended_tool( $goal );
+	$mode        = sanitize_key( (string) $access_mode );
+	if ( 'directory_free' === $mode ) {
+		$ok = function_exists( 'bds_ai_exec_tool_allows_directory_free' )
+			? bds_ai_exec_tool_allows_directory_free( $recommended )
+			: in_array( $recommended, array( 'social_draft', 'local_seo_report', 'review_response', 'assistant_request' ), true );
+		return $ok ? $recommended : 'assistant_request';
+	}
+	if ( 'trial' === $mode ) {
+		$ok = function_exists( 'bds_ai_exec_tool_allows_trial' )
+			? bds_ai_exec_tool_allows_trial( $recommended )
+			: in_array( $recommended, array( 'social_draft', 'review_response', 'local_seo_report', 'website_plan', 'assistant_request' ), true );
+		return $ok ? $recommended : 'assistant_request';
+	}
+	return $recommended;
+}
+
 function bds_onboarding_directory_access( $user_id ) {
 	if ( ! function_exists( 'bds_dir_free_ai_listing_eligible' ) ) {
 		return 0;
@@ -173,11 +200,7 @@ function bds_onboarding_response( $user_id ) {
 	$first_job   = bds_onboarding_first_completed_job( $user_id );
 	$profile_ok  = '' !== (string) $profile['business_name'] && '' !== (string) $profile['industry'] && '' !== (string) $profile['primary_goal'];
 	$access_mode = $paid_plan ? sanitize_key( (string) ( $paid_plan['access_mode'] ?? 'paid' ) ) : ( $listing_id ? 'directory_free' : 'none' );
-	$recommended = bds_onboarding_recommended_tool( $profile['primary_goal'] );
-	$free_tools  = array( 'social_draft', 'local_seo_report', 'review_response', 'assistant_request' );
-	if ( 'directory_free' === $access_mode && ! in_array( $recommended, $free_tools, true ) ) {
-		$recommended = 'assistant_request';
-	}
+	$recommended = bds_onboarding_recommended_for_access( $profile['primary_goal'], $access_mode );
 	return array(
 		'version'          => absint( $state['version'] ),
 		'profile'          => $profile,
