@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~6:10pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~6:20pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -205,7 +205,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Follow-up worker **0.1.3** stays off. No StartHost cron. No new live-copy plugin. No charge.
-- Social `/help/` is a live SEO article. Revenue **0.2.35** sends leftover FAQ/how-it-works URLs to the homepage FAQ (`#bdai-faq-title`) and leftover `/support/` `/help-center/` to contact, not `/help/`. FM still login. Featured stamp stays **0.2.27**. GitHub wp-cron still two success runs. Do not add StartHost cron.
+- Rechecked live conversion pages (`/services/`, `/account-hub/`, `/featured-advertising/`, `/add-listing/`, `/registration/`, Directory `/help/`, `/select-your-plan/`). Leftovers still on live (`Subscribe now`, `See plans`, `#bd-lc-root`, sales-help on account-hub) are already in git (revenue **0.2.35**, featured **0.2.27**, hub **0.2.10**, lang **0.1.5**, sales-help **0.1.7**). Header/footer linked URLs stay 200. No new unblocked local defect.
 - Live still waits on the owner actions below. Cursor cannot upload, invent FormWise keys, reconnect Stripe, or charge.
 - GitHub wp-cron remains **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
 - Suites: revenue-sections, featured-rotation. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
