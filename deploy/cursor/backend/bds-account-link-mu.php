@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Cross-Site Account Link
  * Description: Single-use signed account handoff between BrandDad Social and BrandDad Directory.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ACCOUNT_LINK_VERSION', '0.1.2' );
+define( 'BDS_ACCOUNT_LINK_VERSION', '0.1.3' );
 
 function bds_account_link_hosts() {
 	return array(
@@ -28,6 +28,11 @@ function bds_account_link_current_host() {
 
 function bds_account_link_secret_ready() {
 	return defined( 'BDS_ACCOUNT_LINK_SECRET' ) && is_string( BDS_ACCOUNT_LINK_SECRET ) && strlen( BDS_ACCOUNT_LINK_SECRET ) >= 32;
+}
+
+/** Empty or short secrets keep handoff closed. Callers map this to HTTP 503. */
+function bds_account_link_token_http_status( $token ) {
+	return is_wp_error( $token ) ? 503 : 200;
 }
 
 /**
@@ -144,7 +149,7 @@ function bds_account_link_start() {
 	}
 	$token = bds_account_link_create_token( get_current_user_id(), $destination );
 	if ( is_wp_error( $token ) ) {
-		wp_die( esc_html( $token->get_error_message() ), '', array( 'response' => 503 ) );
+		wp_die( esc_html( $token->get_error_message() ), '', array( 'response' => bds_account_link_token_http_status( $token ) ) );
 	}
 	$return_path = sanitize_text_field( wp_unslash( $_POST['return_path'] ?? '/account-hub/' ) );
 	if ( ! in_array( $return_path, array( '/account-hub/', '/my-account/', '/add-listing/' ), true ) ) {

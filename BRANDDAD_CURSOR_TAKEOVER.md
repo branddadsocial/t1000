@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~10:12am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~10:16am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -35,6 +35,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Follow-up worker **0.1.2** stays off (`BDS_FOLLOWUP_ENABLED` unset): no `wp_mail`, no hourly schedule. Flags not flipped here. |
 | Featured checkout | Products live. Adapter live. Local **0.2.21** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias, faq/sitemap → help. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
 | Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Directory membership HMAC **0.1.3** is fail-closed: empty key disables, timestamp >300s and body tamper refuse, `hash_equals`. Consent checkbox must be checked (`1`/`yes`/`true`/`on`); unchecked never provisions. Tests use a dummy local HMAC, not a Stripe or FormWise secret. Shop-manager Tools **Billing inspect** counts active Woo webhooks as a boolean. Stripe Dashboard delivery is owner inspect. |
+| Account-link | Local **0.1.3**. Empty or short `BDS_ACCOUNT_LINK_SECRET` keeps `secret_ready` false. `create_token` is `link_unavailable`; start maps that to HTTP **503**. The handoff form is hidden. Tests do not invent a secret. |
+| Lifecycle is_paid | Local **0.4.2**. `payment_confirmed` records only when Woo `is_paid()` is true. Featured also needs an allowlisted lane. Refunds record only after a matching `payment_confirmed`. Trial stays `trial_started`, not paid. No `wp_mail`. Tests do not charge. |
 | Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.2**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
 | Featured grant | Adapter **0.1.2**. Allowlisted SKUs only. `product_ready` requires the catalog monthly, `_wps_sfw_product=yes`, and interval 1 month. `is_paid()` false, inactive sub, unlinked order, unowned listing, missing geo, or a stale next-payment date cannot activate. Legacy `bds_feat_activate_paid_order` hooks stay removed. Tests do not charge. |
 | Sales catalog contract | Local catalog **0.3.4**. Live Social catalog **0.4.0** — do not upload local over live. Anonymous `/sales/catalog` contract: Essentials $29.99 for_sale when published. Staged/quote-only (complete packages, DFY, music) have no checkout URL. Assistant stays closed without FormWise keys. |
@@ -90,6 +92,20 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - Featured geo: missing ISO country fails non-global billing; local/regional also need a real lat/lng.
 - Catalog: staged/quote_only have no checkout URL. Anonymous sales catalog is Essentials. Local 0.3.4 must not overwrite live 0.4.0.
 
+## Secure design (account-link empty secret)
+
+- Identity: a signed-in WordPress user with a verified email, handing off between `branddad.social` and `directory.branddad.social` only.
+- AuthN: HMAC over a five-minute purpose-bound token. Empty or short `BDS_ACCOUNT_LINK_SECRET` disables minting (`link_unavailable` → HTTP 503) and verification. Email verification filter defaults false.
+- AuthZ: issuer and audience must be the allowlisted host pair and must differ. Replay id is single-use. Destination return paths are allowlisted.
+- Secrets: tests do not define the secret. Form is not printed when the secret is missing.
+
+## Secure design (lifecycle is_paid mapping)
+
+- Identity: Woo customer on the paid order; refunds attach to that order after a confirmed payment event.
+- AuthN: payment truth is Woo `is_paid()`, not a browser event or client total.
+- AuthZ: unpaid orders do not write `payment_confirmed`. Featured needs an allowlisted lane. Refunds require a prior confirmed payment and a `WC_Order_Refund`. Trial is `trial_started` only.
+- Secrets: no Stripe or FormWise keys. No mail.
+
 ## Secure design (Featured SKU / is_paid grant)
 
 - Identity: signed-in Directory listing owner at add-to-cart; grant customer_id is that owner, not a client-supplied user id.
@@ -121,7 +137,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No extra live-copy MU. No StartHost cron added.
-- Track B: FormWise `process_job` is `execution_not_configured` without a key (execution **0.2.2**). Follow-up worker **0.1.2** stays off: no `wp_mail`, no hourly schedule. Next fail-closed: subscription readiness/revocation stay closed without the provisioning key (subscriptions **0.5.1**, tests only).
-- Suites: formwise-followup-failclosed, trial-entitlement. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
+- Track B: account-link empty secret is HTTP **503** (account-link **0.1.3**). Lifecycle **0.4.2** records `payment_confirmed` only after Woo `is_paid()`; Featured needs an allowlisted lane; refunds need a prior confirmed payment.
+- Suites: account-link-lifecycle. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
 - Deploy when FM signs in (conversion MUs, unchanged): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.

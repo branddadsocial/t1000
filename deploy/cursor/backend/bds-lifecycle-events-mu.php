@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Lifecycle Events
  * Description: Idempotent, privacy-limited customer lifecycle and confirmed-revenue event ledger.
- * Version: 0.4.1
+ * Version: 0.4.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LIFECYCLE_EVENTS_VERSION', '0.4.1' );
+define( 'BDS_LIFECYCLE_EVENTS_VERSION', '0.4.2' );
 
 function bds_lifecycle_event_types() {
 	return array( 'registered', 'lead_created', 'lead_stage_changed', 'customer_inquiry_created', 'customer_inquiry_status', 'trial_started', 'payment_confirmed', 'payment_refunded', 'access_revoked', 'ai_task_completed', 'website_monitor_check', 'directory_member_linked', 'onboarding_completed' );
@@ -103,6 +103,21 @@ function bds_lifecycle_minor_units( $amount ) {
 	return max( 0, (int) round( (float) $decimal * 100 ) );
 }
 
+/** Confirmed-revenue events require Woo is_paid(). Unpaid orders are not recorded. */
+function bds_lifecycle_paid_order_may_confirm( $is_paid ) {
+	return true === $is_paid;
+}
+
+/** Featured confirmed-revenue also needs an allowlisted lane. */
+function bds_lifecycle_featured_paid_may_confirm( $is_paid, $level ) {
+	return bds_lifecycle_paid_order_may_confirm( $is_paid ) && in_array( sanitize_key( (string) $level ), array( 'local', 'regional', 'national', 'global' ), true );
+}
+
+/** A refund row is stored only after a matching payment_confirmed event exists. */
+function bds_lifecycle_refund_may_record( $has_confirmed_payment, $is_refund ) {
+	return true === $has_confirmed_payment && true === $is_refund;
+}
+
 function bds_lifecycle_user_registered( $user_id ) {
 	bds_lifecycle_record( 'registered', $user_id, 'user', $user_id, array( 'stage' => 'registered' ), 'user-register-' . absint( $user_id ) );
 }
@@ -135,7 +150,7 @@ add_action( 'bds_ai_trial_activated', 'bds_lifecycle_trial_started', 10, 2 );
 
 function bds_lifecycle_access_provisioned( $order_id, $subscription_id, $plan ) {
 	$order = wc_get_order( absint( $order_id ) );
-	if ( ! $order || ! $order->is_paid() ) {
+	if ( ! $order || ! bds_lifecycle_paid_order_may_confirm( (bool) $order->is_paid() ) ) {
 		return;
 	}
 	$amount_minor = bds_lifecycle_minor_units( $order->get_total() );
@@ -146,7 +161,7 @@ add_action( 'bds_ai_access_provisioned', 'bds_lifecycle_access_provisioned', 10,
 function bds_lifecycle_featured_provisioned( $order_id, $subscription_id, $context ) {
 	$order = wc_get_order( absint( $order_id ) );
 	$level = sanitize_key( (string) ( is_array( $context ) ? ( $context['level'] ?? '' ) : '' ) );
-	if ( ! $order || ! $order->is_paid() || ! in_array( $level, array( 'local', 'regional', 'national', 'global' ), true ) ) {
+	if ( ! $order || ! bds_lifecycle_featured_paid_may_confirm( (bool) $order->is_paid(), $level ) ) {
 		return;
 	}
 	bds_lifecycle_record(
@@ -169,10 +184,12 @@ add_action( 'bds_featured_access_provisioned', 'bds_lifecycle_featured_provision
 function bds_lifecycle_payment_refunded( $order_id, $refund_id ) {
 	$order  = wc_get_order( absint( $order_id ) );
 	$refund = wc_get_order( absint( $refund_id ) );
-	if ( ! $order || ! $refund || ! is_a( $refund, 'WC_Order_Refund' ) ) {
+	$is_refund = $refund && is_a( $refund, 'WC_Order_Refund' );
+	if ( ! $order || ! $is_refund ) {
 		return;
 	}
-	if ( ! bds_lifecycle_has_event( 'payment_confirmed', $order->get_user_id(), 'order', $order->get_id(), 'paid-order-' . $order->get_id() ) ) {
+	$has_confirmed = bds_lifecycle_has_event( 'payment_confirmed', $order->get_user_id(), 'order', $order->get_id(), 'paid-order-' . $order->get_id() );
+	if ( ! bds_lifecycle_refund_may_record( $has_confirmed, true ) ) {
 		return;
 	}
 	$amount = method_exists( $refund, 'get_amount' ) ? $refund->get_amount() : abs( (float) $refund->get_total() );
