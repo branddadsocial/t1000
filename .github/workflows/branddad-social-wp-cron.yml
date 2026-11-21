@@ -1,11 +1,11 @@
-# Re-registered 2026-11-21T0336Z so GitHub honors the 5-minute schedule.
 # BrandDad Social external cron fallback.
 # One runner only. Do not enable StartHost Scheduled Tasks while this workflow is active.
 # Target is the standard WordPress cron entry point with no query string and no secrets.
+# Schedule minutes offset from */5 so GitHub re-registers the trigger.
 name: BrandDad Social wp-cron
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "2,7,12,17,22,27,32,37,42,47,52,57 * * * *"
   workflow_dispatch:
 permissions:
   contents: read
