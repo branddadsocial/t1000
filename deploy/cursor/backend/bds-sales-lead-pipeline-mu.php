@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Sales Lead Pipeline
  * Description: Consent-aware, rate-limited BrandDad acquisition lead capture and verified lifecycle stages.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_SALES_LEAD_PIPELINE_VERSION', '0.1.1' );
+define( 'BDS_SALES_LEAD_PIPELINE_VERSION', '0.1.2' );
 
 function bds_lead_pipeline_enabled() {
 	return defined( 'BDS_LEAD_CAPTURE_ENABLED' ) && true === BDS_LEAD_CAPTURE_ENABLED;
@@ -79,6 +79,11 @@ function bds_lead_find_by_user( $user_id ) {
 
 function bds_lead_find( $user_id, $email = '' ) {
 	return bds_lead_find_by_user( $user_id ) ?: bds_lead_find_by_email( $email );
+}
+
+/** Follow-up mail is stored only after explicit consent and a verified email. */
+function bds_lead_email_followup_granted( $email_consent, $email_verified ) {
+	return true === $email_consent && true === $email_verified;
 }
 
 function bds_lead_origin_allowed( WP_REST_Request $request ) {
@@ -352,7 +357,7 @@ function bds_lead_capture( WP_REST_Request $request ) {
 			'business_type'          => $business,
 			'primary_need'           => $need,
 			'privacy_ack'            => true,
-			'email_consent'          => $email_consent && $email_verified,
+			'email_consent'          => bds_lead_email_followup_granted( $email_consent, $email_verified ),
 			'email_consent_requested'=> $email_consent,
 		),
 		$stage,

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Inquiries
  * Description: Private, owner-scoped inquiry capture for eligible BrandDad customers.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_CUSTOMER_INQUIRIES_VERSION', '0.1.1' );
+define( 'BDS_CUSTOMER_INQUIRIES_VERSION', '0.1.2' );
 
 function bds_inquiries_enabled() {
 	return defined( 'BDS_CUSTOMER_INQUIRIES_ENABLED' ) && true === BDS_CUSTOMER_INQUIRIES_ENABLED;
@@ -146,8 +146,18 @@ function bds_inquiries_lock( $scope, $stale_after = 60 ) {
 	return '';
 }
 
+/** Honeypot website field. A filled value is rejected and never fetched. */
+function bds_inquiries_honeypot_tripped( $website ) {
+	return '' !== trim( sanitize_text_field( (string) $website ) );
+}
+
+/** Public inquiry requires privacy ack and contact consent. */
+function bds_inquiries_consent_ok( $privacy, $contact ) {
+	return true === $privacy && true === $contact;
+}
+
 function bds_inquiries_submit( WP_REST_Request $request ) {
-	if ( '' !== trim( sanitize_text_field( (string) $request->get_param( 'company_website' ) ) ) ) {
+	if ( bds_inquiries_honeypot_tripped( $request->get_param( 'company_website' ) ) ) {
 		return new WP_Error( 'invalid_inquiry', 'The inquiry could not be accepted.', array( 'status' => 422 ) );
 	}
 	$owner_id = bds_inquiries_owner_from_ref( $request->get_param( 'form_reference' ) );
@@ -161,7 +171,7 @@ function bds_inquiries_submit( WP_REST_Request $request ) {
 	$message = sanitize_textarea_field( (string) $request->get_param( 'message' ) );
 	$privacy = rest_sanitize_boolean( $request->get_param( 'privacy_ack' ) );
 	$contact = rest_sanitize_boolean( $request->get_param( 'contact_consent' ) );
-	if ( ! $privacy || ! $contact || strlen( $name ) > 120 || strlen( $phone ) > 40 || strlen( $message ) < 5 || strlen( $message ) > 2000 || ( ! is_email( $email ) && '' === $phone ) ) {
+	if ( ! bds_inquiries_consent_ok( $privacy, $contact ) || strlen( $name ) > 120 || strlen( $phone ) > 40 || strlen( $message ) < 5 || strlen( $message ) > 2000 || ( ! is_email( $email ) && '' === $phone ) ) {
 		return new WP_Error( 'invalid_inquiry', 'Provide contact details, a short message, and accept the privacy notice.', array( 'status' => 422 ) );
 	}
 	$idempotency = sanitize_text_field( (string) $request->get_header( 'Idempotency-Key' ) );
