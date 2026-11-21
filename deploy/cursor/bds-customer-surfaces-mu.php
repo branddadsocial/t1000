@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Surfaces
  * Description: Account hub, membership status, free-AI allowance display, studio boards, and the Partnero affiliate door. Does not charge, invent balances, or publish.
- * Version: 0.2.0
+ * Version: 0.2.7
  * Author: BrandDad
  *
  * Secure design: every account block uses the current WordPress user. Music briefs are limited to that user's posts. Affiliate money stays in Partnero. Studio buttons do not call providers.
@@ -23,7 +23,7 @@ function bds_hub_styles() {
 	if ( ! bds_hub_is_allowed_host() ) {
 		return;
 	}
-	echo '<style id="bds-hub-css">.bds-hub{max-width:980px;margin:24px auto;padding:8px 16px;color:#0b172a}.bds-hub h2{font-size:clamp(26px,4vw,36px);line-height:1.15}.bds-hub section{margin:28px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-hub a,.bds-hub button{display:inline-flex;align-items:center;min-height:44px;margin:8px 8px 0 0;padding:0 14px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-hub button[disabled]{background:#e8eef5;color:#526070;border:0}.bds-hub li{margin:6px 0}</style>';
+	echo '<style id="bds-hub-css">.bds-hub{max-width:980px;margin:24px auto;padding:8px 16px;color:#0b172a}.bds-hub h2{font-size:clamp(26px,4vw,36px);line-height:1.15}.bds-hub section{margin:28px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-hub a,.bds-hub button{display:inline-flex;align-items:center;min-height:44px;margin:8px 8px 0 0;padding:0 14px;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}.bds-hub button[disabled]{background:#e8eef5;color:#526070;border:0}.bds-hub li{margin:6px 0}</style>';
 }
 add_action( 'wp_head', 'bds_hub_styles', 40 );
 
@@ -33,25 +33,53 @@ function bds_hub_membership_html() {
 	}
 	if ( ! is_user_logged_in() ) {
 		$register = function_exists( 'bds_mt_upgrade_url' ) ? bds_mt_upgrade_url() : home_url( '/registration/' );
-		return '<section id="bds-membership-status"><h2>Directory membership</h2><p>Sign in to see the plan already on your account.</p><a href="' . esc_url( wp_login_url( get_permalink() ) ) . '">Sign in</a> <a href="' . esc_url( $register ) . '">See plans</a></section>';
+		$list     = 'https://directory.branddad.social/add-listing/';
+		if ( function_exists( 'bds_po_url' ) ) {
+			$out = bds_po_url( $list );
+			if ( is_string( $out ) && '' !== $out ) {
+				$list = $out;
+			}
+		}
+		$sw   = function_exists( 'bds_lang_swap_attrs' );
+		$html = '<section id="bds-membership-status"><h2' . ( $sw ? bds_lang_swap_attrs( 'Directory membership', 'Membresía del directorio' ) : '' ) . '>Directory membership</h2>';
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( 'A basic listing is free for one business. Sign in to see the plan already on your account. The free listing does not include the 10% member price.', 'Un listado básico es gratis para un negocio. Entre para ver el plan de su cuenta. El listado gratis no incluye el 10% de miembro.' );
+		} else {
+			$html .= '<p>A basic listing is free for one business. Sign in to see the plan already on your account. The free listing does not include the 10% member price.</p>';
+		}
+		$html .= '<a href="' . esc_url( wp_login_url( get_permalink() ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Sign in', 'Entrar' ) : '' ) . '>Sign in</a> <a href="' . esc_url( $list ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>List my business free</a> <a href="' . esc_url( $register ) . '"' . ( $sw ? bds_lang_swap_attrs( 'See plans', 'Ver planes' ) : '' ) . '>See plans</a></section>';
+		return $html;
 	}
 	$tier = function_exists( 'bds_mt_user_tier' ) ? (string) bds_mt_user_tier() : 'free';
 	$caps = function_exists( 'bds_mt_caps_for' ) ? bds_mt_caps_for( $tier ) : array();
 	$view = bds_hub_membership_view( $tier, is_array( $caps ) ? $caps : array() );
-	$html = '<section id="bds-membership-status"><h2>Directory membership</h2><p>Current record: ' . esc_html( $view['label'] ) . '.</p>';
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section id="bds-membership-status"><h2' . ( $sw ? bds_lang_swap_attrs( 'Directory membership', 'Membresía del directorio' ) : '' ) . '>Directory membership</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'Current record: ' . $view['label'] . '.', 'Registro actual: ' . $view['label'] . '.' );
+	} else {
+		$html .= '<p>Current record: ' . esc_html( $view['label'] ) . '.</p>';
+	}
 	if ( $view['included'] ) {
 		$html .= '<ul>';
 		foreach ( $view['included'] as $line ) {
 			$html .= '<li>' . esc_html( $line ) . '</li>';
 		}
 		$html .= '</ul>';
+	} elseif ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'This tier record does not list extra publishing or discount tools.', 'Este plan no lista herramientas extra de publicación o descuento.' );
 	} else {
 		$html .= '<p>This tier record does not list extra publishing or discount tools.</p>';
 	}
 	if ( $view['upgrade'] && function_exists( 'bds_mt_upgrade_url' ) ) {
-		$html .= '<a href="' . esc_url( bds_mt_upgrade_url() ) . '">Review upgrade options</a>';
+		$html .= '<a href="' . esc_url( bds_mt_upgrade_url() ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Review upgrade options', 'Ver opciones de mejora' ) : '' ) . '>Review upgrade options</a>';
 	}
-	$html .= '<p>Cancellation and card changes stay in the existing billing account. This screen does not change them.</p></section>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'Cancellation and card changes stay in the existing billing account. This screen does not change them.', 'Cancelaciones y cambios de tarjeta siguen en la cuenta de cobro existente. Esta pantalla no las cambia.' );
+	} else {
+		$html .= '<p>Cancellation and card changes stay in the existing billing account. This screen does not change them.</p>';
+	}
+	$html .= '</section>';
 	return $html;
 }
 
@@ -63,7 +91,14 @@ function bds_hub_compare_html() {
 	if ( ! $rows ) {
 		return '';
 	}
-	$html = '<section id="bds-membership-compare"><h2>Plan comparison</h2><p>These rows come from the existing tier record. This screen does not change a price.</p><ul>';
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section id="bds-membership-compare"><h2' . ( $sw ? bds_lang_swap_attrs( 'Plan comparison', 'Comparación de planes' ) : '' ) . '>Plan comparison</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'These rows come from the existing tier record. This screen does not change a price.', 'Estas filas salen del registro de planes existente. Esta pantalla no cambia un precio.' );
+	} else {
+		$html .= '<p>These rows come from the existing tier record. This screen does not change a price.</p>';
+	}
+	$html .= '<ul>';
 	foreach ( $rows as $row ) {
 		$detail = $row['included'] ? implode( ', ', $row['included'] ) : 'no extra tools in this tier record';
 		$html  .= '<li><strong>' . esc_html( $row['label'] ) . '</strong>: ' . esc_html( $detail ) . '</li>';
@@ -80,13 +115,25 @@ function bds_hub_saved_html() {
 	if ( ! bds_hub_is_allowed_host() ) {
 		return '';
 	}
+	$sw = function_exists( 'bds_lang_swap_attrs' );
 	if ( ! is_user_logged_in() ) {
-		return '<section id="bds-saved"><h2>Saved businesses</h2><p>Sign in to save a business to this account. Guests do not get a saved list.</p></section>';
+		$html = '<section id="bds-saved"><h2' . ( $sw ? bds_lang_swap_attrs( 'Saved businesses', 'Negocios guardados' ) : '' ) . '>Saved businesses</h2>';
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( 'Sign in to save a business to this account. Guests do not get a saved list.', 'Entre para guardar un negocio en esta cuenta. Los invitados no tienen lista guardada.' );
+		} else {
+			$html .= '<p>Sign in to save a business to this account. Guests do not get a saved list.</p>';
+		}
+		return $html . '</section>';
 	}
-	$html = '<section id="bds-saved"><h2>Saved businesses</h2>';
+	$html = '<section id="bds-saved"><h2' . ( $sw ? bds_lang_swap_attrs( 'Saved businesses', 'Negocios guardados' ) : '' ) . '>Saved businesses</h2>';
 	$ids  = bds_hub_saved_ids();
 	if ( ! $ids ) {
-		return $html . '<p>No businesses are saved on this account.</p></section>';
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( 'No businesses are saved on this account.', 'No hay negocios guardados en esta cuenta.' );
+		} else {
+			$html .= '<p>No businesses are saved on this account.</p>';
+		}
+		return $html . '</section>';
 	}
 	$html .= '<ul>';
 	foreach ( $ids as $listing_id ) {
@@ -103,8 +150,15 @@ function bds_hub_free_ai_html() {
 	if ( ! bds_hub_is_allowed_host() ) {
 		return '';
 	}
+	$sw = function_exists( 'bds_lang_swap_attrs' );
 	if ( ! is_user_logged_in() ) {
-		return '<section id="bds-free-ai"><h2>Free Directory AI</h2><p>Sign in with the account that claimed the business. No allowance is shown for a guest.</p></section>';
+		$html = '<section id="bds-free-ai"><h2' . ( $sw ? bds_lang_swap_attrs( 'Free Directory AI', 'IA gratis del directorio' ) : '' ) . '>Free Directory AI</h2>';
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( 'Sign in with the account that claimed the business. No allowance is shown for a guest.', 'Entre con la cuenta que reclamó el negocio. Un invitado no ve un saldo.' );
+		} else {
+			$html .= '<p>Sign in with the account that claimed the business. No allowance is shown for a guest.</p>';
+		}
+		return $html . '</section>';
 	}
 	$status = null;
 	if ( function_exists( 'bds_dir_free_ai_status' ) ) {
@@ -126,16 +180,29 @@ function bds_hub_free_ai_html() {
 		}
 	}
 	$view = bds_hub_free_ai_view( $status );
-	$html = '<section id="bds-free-ai"><h2>Free Directory AI</h2>';
+	$html = '<section id="bds-free-ai"><h2' . ( $sw ? bds_lang_swap_attrs( 'Free Directory AI', 'IA gratis del directorio' ) : '' ) . '>Free Directory AI</h2>';
 	if ( 'unavailable' === $view['state'] ) {
-		$html .= '<p>' . esc_html( $view['lines'][0] ) . ' Tool runs stay off until the shared meter is connected.</p></section>';
-		return $html;
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( $view['lines'][0] . ' Tool runs stay off until the shared meter is connected.', $view['lines'][0] . ' Las herramientas siguen apagadas hasta conectar el medidor compartido.' );
+		} else {
+			$html .= '<p>' . esc_html( $view['lines'][0] ) . ' Tool runs stay off until the shared meter is connected.</p>';
+		}
+		return $html . '</section>';
 	}
-	$html .= '<p>Period ' . esc_html( $view['period'] ) . '. These counts come from the allowance ledger. This screen does not run the tools.</p><ul>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'Period ' . $view['period'] . '. These counts come from the allowance ledger. This screen does not run the tools.', 'Periodo ' . $view['period'] . '. Estos números salen del libro de saldo. Esta pantalla no ejecuta las herramientas.' );
+	} else {
+		$html .= '<p>Period ' . esc_html( $view['period'] ) . '. These counts come from the allowance ledger. This screen does not run the tools.</p>';
+	}
+	$html .= '<ul>';
 	foreach ( $view['lines'] as $line ) {
 		$html .= '<li>' . esc_html( $line ) . '</li>';
 	}
-	$html .= '</ul><p>Upgrade prompts use the existing plan page. Nothing here starts a subscription.</p></section>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= '</ul>' . bds_lang_pair( 'Upgrade prompts use the existing plan page. Nothing here starts a subscription.', 'Las mejoras usan la página de planes existente. Nada aquí inicia una suscripción.' ) . '</section>';
+	} else {
+		$html .= '</ul><p>Upgrade prompts use the existing plan page. Nothing here starts a subscription.</p></section>';
+	}
 	return $html;
 }
 
@@ -143,9 +210,17 @@ function bds_hub_studio_html() {
 	if ( ! bds_hub_is_allowed_host() ) {
 		return '';
 	}
-	$html = '<section id="bds-studios"><h2>SEO, Social, and LinkedIn</h2>';
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section id="bds-studios"><h2' . ( $sw ? bds_lang_swap_attrs( 'SEO, Social, and LinkedIn', 'SEO, redes y LinkedIn' ) : '' ) . '>SEO, Social, and LinkedIn</h2>';
 	foreach ( bds_hub_studio_cards() as $card ) {
-		$html .= '<article id="bds-studio-' . esc_attr( $card['id'] ) . '"><h3>' . esc_html( $card['title'] ) . '</h3><p>' . esc_html( $card['detail'] ) . '</p><button type="button" disabled>Not connected</button></article>';
+		$title_es = isset( $card['title_es'] ) ? $card['title_es'] : $card['title'];
+		$html    .= '<article id="bds-studio-' . esc_attr( $card['id'] ) . '"><h3' . ( $sw ? bds_lang_swap_attrs( $card['title'], $title_es ) : '' ) . '>' . esc_html( $card['title'] ) . '</h3>';
+		if ( isset( $card['detail_es'] ) && function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( $card['detail'], $card['detail_es'] );
+		} else {
+			$html .= '<p>' . esc_html( $card['detail'] ) . '</p>';
+		}
+		$html .= '<button type="button" disabled' . ( $sw ? bds_lang_swap_attrs( 'Not connected', 'No conectado' ) : '' ) . '>Not connected</button></article>';
 	}
 	$html .= '</section>';
 	return $html;
@@ -159,7 +234,15 @@ function bds_hub_affiliate_html() {
 	// The live Partnero content filter rewrites the host and then leaves any path
 	// glued to ?ref=. The portal root is the URL that rewrite keeps intact.
 	// Do not call bds_po_url here; that filter adds the ref once.
-	return '<section id="bds-affiliate"><h2>Affiliate program</h2><p>' . esc_html( bds_hub_affiliate_copy() ) . '</p><a href="' . esc_url( $portal ) . '">Open the portal</a></section>';
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section id="bds-affiliate"><h2' . ( $sw ? bds_lang_swap_attrs( 'Affiliate program', 'Programa de afiliados' ) : '' ) . '>Affiliate program</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( bds_hub_affiliate_copy(), 'Los enlaces, conversiones, comisiones y pagos se muestran en el portal Partnero existente. Esta página no calcula un porcentaje ni un saldo.' );
+	} else {
+		$html .= '<p>' . esc_html( bds_hub_affiliate_copy() ) . '</p>';
+	}
+	$html .= '<a href="' . esc_url( $portal ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Open the portal', 'Abrir el portal' ) : '' ) . '>Open the portal</a></section>';
+	return $html;
 }
 
 function bds_hub_music_html() {
@@ -184,10 +267,15 @@ function bds_hub_music_html() {
 		}
 	}
 	$view = bds_hub_music_rows( $rows );
-	$html = '<section id="bds-music-orders"><h2>Music briefs</h2>';
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section id="bds-music-orders"><h2' . ( $sw ? bds_lang_swap_attrs( 'Music briefs', 'Briefs de música' ) : '' ) . '>Music briefs</h2>';
 	if ( ! $view ) {
-		$html .= '<p>No brief is saved on this account. A brief does not take payment or start production.</p></section>';
-		return $html;
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( 'No brief is saved on this account. A brief does not take payment or start production.', 'No hay un brief guardado en esta cuenta. Un brief no cobra ni empieza producción.' );
+		} else {
+			$html .= '<p>No brief is saved on this account. A brief does not take payment or start production.</p>';
+		}
+		return $html . '</section>';
 	}
 	$html .= '<ul>';
 	foreach ( $view as $row ) {
@@ -224,18 +312,57 @@ function bds_hub_next_html() {
 		return '';
 	}
 	$surface = bds_hub_is_directory() ? 'directory' : 'social';
-	$html    = '<section id="bds-hub-next"><h2>Do this next</h2><p>These doors already exist. This screen does not change a price.</p><p>';
+	$sw      = function_exists( 'bds_lang_swap_attrs' );
+	$html    = '<section id="bds-hub-next"><h2' . ( $sw ? bds_lang_swap_attrs( 'Do this next', 'Haga esto ahora' ) : '' ) . '>Do this next</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'These doors already exist. This screen does not change a price.', 'Estas puertas ya existen. Esta pantalla no cambia un precio.' );
+	} else {
+		$html .= '<p>These doors already exist. This screen does not change a price.</p>';
+	}
+	$html .= '<p>';
 	foreach ( bds_hub_next_actions( $surface ) as $action ) {
-		$html .= '<a href="' . esc_url( bds_hub_action_url( $action ) ) . '">' . esc_html( $action['label'] ) . '</a>';
+		$es    = isset( $action['label_es'] ) ? $action['label_es'] : $action['label'];
+		$html .= '<a href="' . esc_url( bds_hub_action_url( $action ) ) . '"' . ( $sw ? bds_lang_swap_attrs( $action['label'], $es ) : '' ) . '>' . esc_html( $action['label'] ) . '</a>';
 	}
 	return $html . '</p></section>';
+}
+
+function bds_hub_trial_html() {
+	if ( ! bds_hub_is_allowed_host() || ! function_exists( 'bds_hub_trial_view' ) ) {
+		return '';
+	}
+	$state = ( is_user_logged_in() && function_exists( 'bds_ai_trial_state' ) ) ? bds_ai_trial_state( get_current_user_id() ) : null;
+	$view  = bds_hub_trial_view( $state );
+	$sw    = function_exists( 'bds_lang_swap_attrs' );
+	$html  = '<section id="bds-hub-trial"><h2' . ( $sw ? bds_lang_swap_attrs( 'AI Business Essentials trial', 'Prueba de AI Business Essentials' ) : '' ) . '>' . esc_html__( 'AI Business Essentials trial', 'branddad' ) . '</h2>';
+	$html .= '<p>' . esc_html( $view['line'] ) . '</p>';
+	if ( ! empty( $view['cta'] ) ) {
+		$html .= '<p><a href="' . esc_url( bds_hub_action_url( array( 'host' => 'social', 'path' => '/product/ai-business-essentials/' ) ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Start 7-day trial', 'Empezar prueba de 7 días' ) : '' ) . '>' . esc_html__( 'Start 7-day trial', 'branddad' ) . '</a></p>';
+	}
+	return $html . '</section>';
+}
+
+function bds_hub_ops_html() {
+	if ( ! bds_hub_is_allowed_host() || ! is_user_logged_in() || ! current_user_can( 'manage_woocommerce' ) || ! function_exists( 'bds_hub_ops_inspect_view' ) ) {
+		return '';
+	}
+	$snap = function_exists( 'bds_codex_bridge_ops_snapshot' ) ? bds_codex_bridge_ops_snapshot() : array();
+	$view = bds_hub_ops_inspect_view( is_array( $snap ) ? $snap : array() );
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section id="bds-hub-ops"><h2' . ( $sw ? bds_lang_swap_attrs( 'Billing inspect', 'Inspección de cobro' ) : '' ) . '>' . esc_html__( 'Billing inspect', 'branddad' ) . '</h2>';
+	$html .= '<p>' . esc_html( 'State: ' . $view['state'] ) . '</p><ul>';
+	foreach ( $view['lines'] as $line ) {
+		$html .= '<li>' . esc_html( (string) $line ) . '</li>';
+	}
+	return $html . '</ul></section>';
 }
 
 function bds_hub_account_shortcode() {
 	if ( ! bds_hub_is_allowed_host() ) {
 		return '';
 	}
-	return '<div class="bds-hub" id="bds-account-hub">' . bds_hub_next_html() . bds_hub_membership_html() . bds_hub_compare_html() . bds_hub_saved_html() . bds_hub_free_ai_html() . bds_hub_studio_html() . bds_hub_affiliate_html() . bds_hub_music_html() . '</div>';
+	$extra = function_exists( 'bds_codex_hub_html' ) ? bds_codex_hub_html() : '';
+	return '<div class="bds-hub" id="bds-account-hub">' . bds_hub_next_html() . bds_hub_trial_html() . bds_hub_ops_html() . bds_hub_membership_html() . bds_hub_compare_html() . bds_hub_saved_html() . bds_hub_free_ai_html() . $extra . bds_hub_studio_html() . bds_hub_affiliate_html() . bds_hub_music_html() . '</div>';
 }
 add_shortcode( 'bds_account_hub', 'bds_hub_account_shortcode' );
 add_shortcode( 'bds_membership_status', 'bds_hub_membership_html' );
@@ -276,8 +403,9 @@ function bds_hub_save_button() {
 	if ( $listing_id < 1 ) {
 		return;
 	}
+	$sw = function_exists( 'bds_lang_swap_attrs' );
 	if ( ! is_user_logged_in() ) {
-		echo '<p id="bds-save-listing">Sign in to save this business on your account.</p>';
+		echo '<p id="bds-save-listing"' . ( $sw ? bds_lang_swap_attrs( 'Sign in to save this business on your account.', 'Entre para guardar este negocio en su cuenta.' ) : '' ) . '>Sign in to save this business on your account.</p>';
 		return;
 	}
 	echo '<form id="bds-save-listing" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
@@ -286,7 +414,9 @@ function bds_hub_save_button() {
 	echo '<input type="hidden" name="listing_id" value="' . (int) $listing_id . '" />';
 	$saved = in_array( $listing_id, bds_hub_saved_ids(), true );
 	echo '<input type="hidden" name="save_action" value="' . esc_attr( $saved ? 'remove' : 'save' ) . '" />';
-	echo '<button type="submit">' . esc_html( $saved ? 'Remove from saved' : 'Save this business' ) . '</button></form>';
+	$label    = $saved ? 'Remove from saved' : 'Save this business';
+	$label_es = $saved ? 'Quitar de guardados' : 'Guardar este negocio';
+	echo '<button type="submit"' . ( $sw ? bds_lang_swap_attrs( $label, $label_es ) : '' ) . '>' . esc_html( $label ) . '</button></form>';
 }
 add_action( 'wp_footer', 'bds_hub_save_button', 30 );
 

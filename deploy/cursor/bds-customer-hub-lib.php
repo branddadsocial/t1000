@@ -87,32 +87,43 @@ if ( ! function_exists( 'bds_hub_studio_cards' ) ) {
 	 * @return array<int,array{id:string,title:string,detail:string}>
 	 */
 	function bds_hub_studio_cards() {
-		$note = 'This screen does not generate, schedule, or publish. Codex has not connected execution for this workspace.';
+		$note    = 'This screen does not generate, schedule, or publish. Codex has not connected execution for this workspace.';
+		$note_es = 'Esta pantalla no genera, programa ni publica. Codex no ha conectado la ejecución de este espacio.';
 		return array(
 			array(
-				'id'     => 'seo',
-				'title'  => 'SEO Autopilot',
-				'detail' => 'You will connect a website, review drafts, and approve publishing here. ' . $note,
+				'id'        => 'seo',
+				'title'     => 'SEO Autopilot',
+				'title_es'  => 'Autopiloto SEO',
+				'detail'    => 'You will connect a website, review drafts, and approve publishing here. ' . $note,
+				'detail_es' => 'Conectará un sitio, revisará borradores y aprobará la publicación aquí. ' . $note_es,
 			),
 			array(
-				'id'     => 'social',
-				'title'  => 'Social Studio',
-				'detail' => 'The calendar will hold captions you approve before anything is sent. ' . $note,
+				'id'        => 'social',
+				'title'     => 'Social Studio',
+				'title_es'  => 'Estudio social',
+				'detail'    => 'The calendar will hold captions you approve before anything is sent. ' . $note,
+				'detail_es' => 'El calendario guardará textos que usted apruebe antes de enviar nada. ' . $note_es,
 			),
 			array(
-				'id'     => 'linkedin',
-				'title'  => 'LinkedIn Studio',
-				'detail' => 'Posts and comment drafts stay off until the account connection and platform permission exist. ' . $note,
+				'id'        => 'linkedin',
+				'title'     => 'LinkedIn Studio',
+				'title_es'  => 'Estudio LinkedIn',
+				'detail'    => 'Posts and comment drafts stay off until the account connection and platform permission exist. ' . $note,
+				'detail_es' => 'Los borradores de publicaciones y comentarios quedan apagados hasta existir la conexión y el permiso. ' . $note_es,
 			),
 			array(
-				'id'     => 'chatbot',
-				'title'  => 'Website chatbot',
-				'detail' => 'Approved answers stay in draft until a site owner connects the assistant. ' . $note,
+				'id'        => 'chatbot',
+				'title'     => 'Website chatbot',
+				'title_es'  => 'Chat del sitio',
+				'detail'    => 'Approved answers stay in draft until a site owner connects the assistant. ' . $note,
+				'detail_es' => 'Las respuestas aprobadas quedan en borrador hasta que el dueño conecte el asistente. ' . $note_es,
 			),
 			array(
-				'id'     => 'video',
-				'title'  => 'Video studio',
-				'detail' => 'No video is rendered or uploaded from this screen. ' . $note,
+				'id'        => 'video',
+				'title'     => 'Video studio',
+				'title_es'  => 'Estudio de video',
+				'detail'    => 'No video is rendered or uploaded from this screen. ' . $note,
+				'detail_es' => 'Esta pantalla no renderiza ni sube video. ' . $note_es,
 			),
 		);
 	}
@@ -226,6 +237,124 @@ if ( ! function_exists( 'bds_hub_saved_change' ) ) {
 	}
 }
 
+if ( ! function_exists( 'bds_hub_trial_view' ) ) {
+	/**
+	 * Map Codex trial state onto hub copy. Missing state stays unavailable.
+	 * Does not invent credits or Directory membership.
+	 *
+	 * @param mixed $state Return value of bds_ai_trial_state(), or null.
+	 * @return array{state:string,line:string,cta:bool}
+	 */
+	function bds_hub_trial_view( $state ) {
+		if ( ! is_array( $state ) || empty( $state['status'] ) ) {
+			return array(
+				'state' => 'unavailable',
+				'line'  => 'Sign in to see your AI Business Essentials trial status.',
+				'cta'   => true,
+			);
+		}
+		$status = strtolower( preg_replace( '/[^a-z0-9_]/', '', (string) $state['status'] ) );
+		if ( 'eligible' === $status ) {
+			return array(
+				'state' => 'eligible',
+				'line'  => 'Start the 7-day AI Business Essentials trial. Directory membership is not included.',
+				'cta'   => true,
+			);
+		}
+		if ( ! empty( $state['active'] ) || 'active' === $status ) {
+			$days = isset( $state['days_remaining'] ) ? (int) $state['days_remaining'] : 0;
+			$line = 'Your 7-day trial is active';
+			if ( $days > 0 ) {
+				$line .= '. ' . $days . ' days remaining';
+			}
+			return array(
+				'state' => 'active',
+				'line'  => $line . '. Directory membership is not included.',
+				'cta'   => false,
+			);
+		}
+		if ( 'paid' === $status ) {
+			return array(
+				'state' => 'paid',
+				'line'  => 'AI Business Essentials is active on this account.',
+				'cta'   => false,
+			);
+		}
+		if ( 'consumed' === $status ) {
+			return array(
+				'state' => 'consumed',
+				'line'  => 'This account already used the 7-day trial.',
+				'cta'   => false,
+			);
+		}
+		return array(
+			'state' => 'unavailable',
+			'line'  => 'Trial status is not available for this account.',
+			'cta'   => true,
+		);
+	}
+}
+
+if ( ! function_exists( 'bds_hub_ops_inspect_view' ) ) {
+	/**
+	 * Shop-manager billing inspect. Booleans only — never a key, webhook URL, or pk.
+	 *
+	 * @param array<string,mixed> $snap
+	 * @return array{state:string,lines:array<int,string>}
+	 */
+	function bds_hub_ops_inspect_view( array $snap ) {
+		$on = static function ( $key ) use ( $snap ) {
+			return ! empty( $snap[ $key ] );
+		};
+		$lines   = array();
+		$lines[] = $on( 'stripe_gateway' )
+			? 'Stripe gateway is enabled on this host (inspect only; no reconnect).'
+			: 'Stripe gateway is not enabled on this host.';
+		$lines[] = $on( 'woo_webhooks' )
+			? 'WooCommerce has at least one active webhook. Delivery secrets stay in the dashboard.'
+			: 'No active WooCommerce webhooks were counted. Stripe Dashboard delivery is an owner inspect.';
+		$lines[] = $on( 'formwise_exec' )
+			? 'FormWise execution key is defined (value not shown).'
+			: 'FormWise execution key is missing. Owner supplies it. Cursor will not invent it.';
+		$lines[] = $on( 'formwise_prov' )
+			? 'FormWise provisioning key is defined (value not shown).'
+			: 'FormWise provisioning key is missing. Owner supplies it. Cursor will not invent it.';
+		$flag_labels = array(
+			'followup_flag'        => 'Follow-up mail',
+			'leads_flag'           => 'Lead writes',
+			'inquiries_flag'       => 'Inquiry notices',
+			'monitor_flag'         => 'Monitor',
+			'sales_assistant_flag' => 'Sales assistant',
+		);
+		$any_flag = false;
+		foreach ( $flag_labels as $key => $label ) {
+			if ( $on( $key ) ) {
+				$any_flag = true;
+				$lines[]  = $label . ' flag is on. Leave it off until FormWise keys and mail gates pass.';
+			} else {
+				$lines[] = $label . ' flag is off.';
+			}
+		}
+		$lines[] = $on( 'entitlements_flag' )
+			? 'Entitlements flag is on; FormWise lifecycle still fail-closes without keys.'
+			: 'Entitlements flag is off.';
+		$keys = $on( 'formwise_exec' ) && $on( 'formwise_prov' );
+		if ( $any_flag && ! $keys ) {
+			$state = 'unsafe';
+		} elseif ( ! $keys ) {
+			$state = 'owner_blocked';
+		} elseif ( $any_flag ) {
+			$state = 'flags_on';
+		} else {
+			$state = 'keys_present_flags_off';
+		}
+		return array(
+			'state' => $state,
+			'lines' => $lines,
+		);
+	}
+}
+
 if ( ! function_exists( 'bds_hub_next_actions' ) ) {
 	/**
 	 * Next converting doors. Paths only — the MU prefixes the live host.
@@ -236,18 +365,19 @@ if ( ! function_exists( 'bds_hub_next_actions' ) ) {
 		$surface = strtolower( (string) $surface );
 		if ( 'directory' === $surface ) {
 			return array(
-				array( 'label' => 'List my business', 'host' => 'directory', 'path' => '/add-listing/' ),
-				array( 'label' => 'See membership plans', 'host' => 'directory', 'path' => '/select-your-plan/' ),
-				array( 'label' => 'Get featured', 'host' => 'directory', 'path' => '/featured-advertising/' ),
-				array( 'label' => 'How to claim a listing', 'host' => 'directory', 'path' => '/claim-your-business-listing-branddad-directory/' ),
+				array( 'label' => 'List my business free', 'label_es' => 'Listar mi negocio gratis', 'host' => 'directory', 'path' => '/add-listing/' ),
+				array( 'label' => 'See membership plans', 'label_es' => 'Ver planes de membresía', 'host' => 'directory', 'path' => '/select-your-plan/' ),
+				array( 'label' => 'Get featured', 'label_es' => 'Salir destacado', 'host' => 'directory', 'path' => '/featured-advertising/' ),
+				array( 'label' => 'How to claim a listing', 'label_es' => 'Cómo reclamar un listado', 'host' => 'directory', 'path' => '/claim-your-business-listing-branddad-directory/' ),
 			);
 		}
 		return array(
-			array( 'label' => 'Subscribe to AI Social Growth', 'host' => 'social', 'path' => '/product/ai-social-growth/' ),
-			array( 'label' => 'See all services', 'host' => 'social', 'path' => '/services/' ),
-			array( 'label' => 'Run the free audit', 'host' => 'social', 'path' => '/check-your-website/' ),
-			array( 'label' => 'List a business on Directory', 'host' => 'directory', 'path' => '/add-listing/' ),
-			array( 'label' => 'Get featured on Directory', 'host' => 'directory', 'path' => '/featured-advertising/' ),
+			array( 'label' => 'Try it free for 7 days', 'label_es' => 'Pruébelo 7 días', 'host' => 'social', 'path' => '/product/ai-business-essentials/' ),
+			array( 'label' => 'Subscribe to AI Social Growth', 'label_es' => 'Suscribirse a AI Social Growth', 'host' => 'social', 'path' => '/product/ai-social-growth/' ),
+			array( 'label' => 'See all services', 'label_es' => 'Ver todos los servicios', 'host' => 'social', 'path' => '/services/' ),
+			array( 'label' => 'Run the free audit', 'label_es' => 'Hacer la auditoría gratis', 'host' => 'social', 'path' => '/check-your-website/' ),
+			array( 'label' => 'List my business free', 'label_es' => 'Listar mi negocio gratis', 'host' => 'directory', 'path' => '/add-listing/' ),
+			array( 'label' => 'Get featured on Directory', 'label_es' => 'Salir destacado en el directorio', 'host' => 'directory', 'path' => '/featured-advertising/' ),
 		);
 	}
 }

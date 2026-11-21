@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.3
+ * Version: 0.2.14
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -12,6 +12,7 @@
  * - Paid activation still requires Woo is_paid() plus an allowlisted SKU. listing_id is an int on a published at_biz_dir. Client-supplied totals are ignored.
  * - Empty-lane CTA and /featured-advertising/ do not charge. Virtual path is an exact allowlist.
  * - GET listing is digits-only then a published at_biz_dir check. Fail closed to empty. Value is escaped into the form. No outbound fetch.
+ * - GET lane is an allowlisted key (local|regional|national|global). Unknown values do not preselect.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -141,10 +142,11 @@ function bds_feat_event_token_ok( $token, $grant_id, $type, $event_id ) {
 	return hash_equals( hash_hmac( 'sha256', $payload, wp_salt( 'auth' ) ), $parts[4] );
 }
 
-function bds_feat_render_lane( $title, $level, array $viewer ) {
+function bds_feat_render_lane( $title, $level, array $viewer, $title_es = '' ) {
 	$levels = bds_feat_levels();
 	$cap    = (int) $levels[ $level ]['cap'];
 	$cards  = array();
+	$sw     = function_exists( 'bds_lang_swap_attrs' );
 	foreach ( bds_feat_grants() as $grant ) {
 		if ( $level !== ( $grant['level'] ?? '' ) ) {
 			continue;
@@ -152,22 +154,25 @@ function bds_feat_render_lane( $title, $level, array $viewer ) {
 		$cards[] = bds_feat_listing_card( $grant );
 	}
 	$picked = bds_feat_select( $cards, $viewer, $cap );
-	$html   = '<section class="bds-feat-lane"><h2>' . esc_html( $title ) . '</h2>';
+	$html   = '<section class="bds-feat-lane"><h2' . ( $sw && '' !== $title_es ? bds_lang_swap_attrs( $title, $title_es ) : '' ) . '>' . esc_html( $title ) . '</h2>';
 	if ( empty( $picked['shown'] ) ) {
 		$copy = bds_feat_empty_copy( $level );
 		$buy  = esc_url( home_url( '/featured-advertising/' ) );
-		$html .= '<p>' . esc_html__( 'No featured businesses are showing here yet.', 'branddad' ) . '</p>';
-		if ( '' !== $copy['price'] ) {
-			$html .= '<p>' . esc_html(
-				sprintf(
-					/* translators: 1: placement name, 2: monthly price */
-					__( '%1$s is $%2$s per month after the listing is claimed. Request a placement — checkout opens only when that product is already for sale.', 'branddad' ),
-					$copy['label'],
-					$copy['price']
-				)
-			) . '</p>';
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( 'No featured businesses are showing here yet.', 'Aún no hay negocios destacados aquí.' );
+		} else {
+			$html .= '<p>' . esc_html__( 'No featured businesses are showing here yet.', 'branddad' ) . '</p>';
 		}
-		$html .= '<a class="bds-feat-buy" href="' . $buy . '">' . esc_html( $copy['cta'] ) . '</a></section>';
+		if ( '' !== $copy['price'] ) {
+			$en = sprintf( '%1$s is $%2$s per month after the listing is claimed. Request a placement — checkout opens only when that product is already for sale.', $copy['label'], $copy['price'] );
+			$es = sprintf( '%1$s es $%2$s al mes después de reclamar el listado. Pida un espacio — el checkout abre solo si ese producto ya está a la venta.', $copy['label'], $copy['price'] );
+			if ( function_exists( 'bds_lang_pair' ) ) {
+				$html .= bds_lang_pair( $en, $es );
+			} else {
+				$html .= '<p>' . esc_html( $en ) . '</p>';
+			}
+		}
+		$html .= '<a class="bds-feat-buy" href="' . $buy . '"' . ( $sw ? bds_lang_swap_attrs( $copy['cta'], 'Salir destacado' ) : '' ) . '>' . esc_html( $copy['cta'] ) . '</a></section>';
 		return $html;
 	}
 	$html .= '<div class="bds-feat-grid">';
@@ -193,8 +198,8 @@ function bds_feat_shortcode() {
 		return '';
 	}
 	$viewer = bds_feat_viewer_from_request();
-	return bds_feat_render_lane( __( 'Featured Worldwide', 'branddad' ), 'global', $viewer )
-		. bds_feat_render_lane( __( 'Featured Near You', 'branddad' ), 'local', $viewer );
+	return bds_feat_render_lane( __( 'Featured Worldwide', 'branddad' ), 'global', $viewer, 'Destacados en todo el mundo' )
+		. bds_feat_render_lane( __( 'Featured Near You', 'branddad' ), 'local', $viewer, 'Destacados cerca de usted' );
 }
 add_shortcode( 'bds_featured_lanes', 'bds_feat_shortcode' );
 
@@ -445,7 +450,7 @@ function bds_feat_styles() {
 	if ( ! bds_feat_is_directory() ) {
 		return;
 	}
-	echo '<style id="bds-feat-css">.bds-feat-home,.bds-feat-buy-page{max-width:1100px;margin:0 auto;padding:16px 20px 32px;color:#0b172a}.bds-feat-lane{margin:20px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-feat-buy,.bds-feat-buy-page a.bds-feat-buy{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0878ed;color:#fff;font-weight:800;text-decoration:none}.bds-feat-buy--quiet{background:#071a33}.bds-feat-buy-page form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-feat-buy-page input,.bds-feat-buy-page select,.bds-feat-buy-page textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-feat-hp{position:absolute;left:-9999px}#bds-feat-claim-ctas,#bds-feat-listing-ctas,#bds-feat-plans-ctas,#bds-feat-door-ctas{margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;max-width:1100px;color:#0b172a}</style>';
+	echo '<style id="bds-feat-css">.bds-feat-home,.bds-feat-buy-page{max-width:1100px;margin:0 auto;padding:16px 20px 32px;color:#0b172a}.bds-feat-lane{margin:20px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-feat-buy,.bds-feat-buy-page a.bds-feat-buy{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}.bds-feat-buy--quiet{background:#071a33}.bds-feat-buy-page form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-feat-buy-page input,.bds-feat-buy-page select,.bds-feat-buy-page textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-feat-hp{position:absolute;left:-9999px}#bds-feat-claim-ctas,#bds-feat-listing-ctas,#bds-feat-plans-ctas,#bds-feat-door-ctas{margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;max-width:1100px;color:#0b172a}</style>';
 }
 add_action( 'wp_head', 'bds_feat_styles', 40 );
 
@@ -459,15 +464,15 @@ function bds_feat_product_url( $level ) {
 		if ( $pid > 0 && function_exists( 'wc_get_product' ) ) {
 			$product = wc_get_product( $pid );
 			if ( $product && method_exists( $product, 'is_purchasable' ) && $product->is_purchasable() && 'publish' === get_post_status( $pid ) ) {
-				return get_permalink( $pid );
+				return apply_filters( 'bds_feat_product_permalink', get_permalink( $pid ), $level );
 			}
 		}
 	}
 	$post = get_page_by_path( 'featured-' . sanitize_title( $level ), OBJECT, 'product' );
 	if ( $post instanceof WP_Post && 'publish' === $post->post_status ) {
-		return get_permalink( $post );
+		return apply_filters( 'bds_feat_product_permalink', get_permalink( $post ), $level );
 	}
-	return '';
+	return apply_filters( 'bds_feat_product_permalink', '', $level );
 }
 
 function bds_feat_buy_markup() {
@@ -480,45 +485,71 @@ function bds_feat_buy_markup() {
 	$plans  = esc_url( home_url( '/select-your-plan/' ) );
 	$claim  = esc_url( home_url( '/claim-your-business-listing-branddad-directory/' ) );
 	$html   = '<div class="bds-feat-buy-page" id="bds-featured-buy">';
-	$html  .= '<h1>' . esc_html__( 'Get featured on BrandDad Directory', 'branddad' ) . '</h1>';
-	$html  .= '<p>' . esc_html__( 'Claim or create your listing, then request a paid lane. Featured ads rotate with paid first. This page does not invent traffic or rankings.', 'branddad' ) . '</p>';
-	if ( '' !== $note ) {
-		$html .= '<p role="status">' . esc_html( $note ) . '</p>';
+	$html  .= '<h1' . ( function_exists( 'bds_lang_swap_attrs' ) ? bds_lang_swap_attrs( 'Get featured on BrandDad Directory', 'Salga destacado en el directorio BrandDad' ) : '' ) . '>' . esc_html__( 'Get featured on BrandDad Directory', 'branddad' ) . '</h1>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'Claim or create your listing, then request a paid lane. Featured ads rotate with paid first. This page does not invent traffic or rankings.', 'Reclame o cree su listado y pida un espacio de pago. Los destacados rotan, con pago primero. Esta página no inventa tráfico ni rankings.' );
+	} else {
+		$html .= '<p>' . esc_html__( 'Claim or create your listing, then request a paid lane. Featured ads rotate with paid first. This page does not invent traffic or rankings.', 'branddad' ) . '</p>';
 	}
-	$html .= '<p><a class="bds-feat-buy" href="' . $list . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
-	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $claim . '">' . esc_html__( 'Claim a listing', 'branddad' ) . '</a>';
-	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $plans . '">' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p>';
+	$sw = function_exists( 'bds_lang_swap_attrs' );
+	if ( '' !== $note ) {
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( $note, 'Recibimos su solicitud de destacado. BrandDad confirmará el listado y abrirá checkout solo si ese producto ya está a la venta.' );
+		} else {
+			$html .= '<p role="status">' . esc_html( $note ) . '</p>';
+		}
+	}
+	$listing_prompt = bds_feat_listing_checkout_prompt( bds_feat_requested_listing_id() );
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$prompt_es = ! empty( $listing_prompt['attached'] )
+			? 'Suscribirse cada mes se vincula a ese listado. El carril permanece inactivo hasta que WooCommerce confirme el pago.'
+			: 'Abra Destacados desde un listado publicado para que Suscribirse cada mes se vincule. Un plan sin listado permanece inactivo.';
+		$html     .= bds_lang_pair( $listing_prompt['line'], $prompt_es );
+	} else {
+		$html .= '<p id="bds-feat-listing-note">' . esc_html( $listing_prompt['line'] ) . '</p>';
+	}
+	$html .= '<p><a class="bds-feat-buy" href="' . $list . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business', 'Listar mi negocio' ) : '' ) . '>' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $claim . '"' . ( $sw ? bds_lang_swap_attrs( 'Claim a listing', 'Reclamar un listado' ) : '' ) . '>' . esc_html__( 'Claim a listing', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $plans . '"' . ( $sw ? bds_lang_swap_attrs( 'See membership plans', 'Ver planes de membresía' ) : '' ) . '>' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p>';
 	$html .= '<div class="bds-feat-grid">';
 	foreach ( $levels as $slug => $row ) {
 		$url   = bds_feat_product_url( $slug );
 		$html .= '<article class="bds-feat-lane"><h2>' . esc_html( $row['label'] ) . '</h2>';
-		$html .= '<p class="bds-feat-price">$' . esc_html( $row['price'] ) . ' / ' . esc_html__( 'month', 'branddad' ) . '</p>';
+		$html .= '<p class="bds-feat-price">$' . esc_html( $row['price'] ) . ' / <span' . ( $sw ? bds_lang_swap_attrs( 'month', 'mes' ) : '' ) . '>' . esc_html__( 'month', 'branddad' ) . '</span></p>';
 		if ( '' !== $url ) {
-			$html .= '<a class="bds-feat-buy" href="' . esc_url( $url ) . '">' . esc_html__( 'Subscribe now', 'branddad' ) . '</a>';
+			$html .= '<a class="bds-feat-buy" href="' . esc_url( $url ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Subscribe monthly', 'Suscribirse cada mes' ) : '' ) . '>' . esc_html__( 'Subscribe monthly', 'branddad' ) . '</a>';
+		} elseif ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( 'Checkout is not open for this lane yet. Send a request below.', 'El checkout de este carril aún no está abierto. Envíe una solicitud abajo.' );
 		} else {
 			$html .= '<p>' . esc_html__( 'Checkout is not open for this lane yet. Send a request below.', 'branddad' ) . '</p>';
 		}
 		$html .= '</article>';
 	}
 	$html .= '</div>';
-	$html .= '<h2>' . esc_html__( 'Request a featured placement', 'branddad' ) . '</h2>';
-	$html .= '<p>' . esc_html__( 'Use this if checkout is closed. We match the request to a claimed listing before any charge.', 'branddad' ) . '</p>';
+	$html .= '<h2' . ( $sw ? bds_lang_swap_attrs( 'Request a featured placement', 'Pedir un espacio destacado' ) : '' ) . '>' . esc_html__( 'Request a featured placement', 'branddad' ) . '</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'Use this if checkout is closed. We match the request to a claimed listing before any charge.', 'Úselo si el checkout está cerrado. Emparejamos la solicitud con un listado reclamado antes de cualquier cargo.' );
+	} else {
+		$html .= '<p>' . esc_html__( 'Use this if checkout is closed. We match the request to a claimed listing before any charge.', 'branddad' ) . '</p>';
+	}
 	$html .= '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 	$html .= wp_nonce_field( 'bds_feat_request', 'bds_feat_request_nonce', true, false );
 	$html .= '<input type="hidden" name="action" value="bds_feat_request" />';
 	$html .= '<p class="bds-feat-hp" aria-hidden="true"><label>Company website <input type="text" name="bds_company_url" tabindex="-1" autocomplete="off" /></label></p>';
-	$html .= '<p><label>' . esc_html__( 'Placement', 'branddad' ) . '<select name="level" required>';
+	$html .= '<p><label><span' . ( $sw ? bds_lang_swap_attrs( 'Placement', 'Colocación' ) : '' ) . '>' . esc_html__( 'Placement', 'branddad' ) . '</span><select name="level" required>';
+	$want = bds_feat_valid_lane( isset( $_GET['lane'] ) ? wp_unslash( $_GET['lane'] ) : '' );
 	foreach ( $levels as $slug => $row ) {
-		$html .= '<option value="' . esc_attr( $slug ) . '">' . esc_html( $row['label'] . ' — $' . $row['price'] . '/month' ) . '</option>';
+		$sel   = ( $slug === $want ) ? ' selected="selected"' : '';
+		$html .= '<option value="' . esc_attr( $slug ) . '"' . $sel . '>' . esc_html( $row['label'] . ' — $' . $row['price'] . '/month' ) . '</option>';
 	}
 	$html .= '</select></label></p>';
 	$listing_id  = bds_feat_requested_listing_id();
 	$listing_val = $listing_id > 0 ? (string) $listing_id : '';
-	$html .= '<p><label>' . esc_html__( 'Listing ID or Directory URL', 'branddad' ) . '<input name="listing_ref" maxlength="160" required value="' . esc_attr( $listing_val ) . '" /></label></p>';
-	$html .= '<p><label>' . esc_html__( 'Your name', 'branddad' ) . '<input name="customer_name" maxlength="80" required /></label></p>';
-	$html .= '<p><label>' . esc_html__( 'Email', 'branddad' ) . '<input name="email" type="email" maxlength="120" required /></label></p>';
-	$html .= '<p><label>' . esc_html__( 'What should customers see?', 'branddad' ) . '<textarea name="note" maxlength="400"></textarea></label></p>';
-	$html .= '<p><button class="bds-feat-buy" type="submit">' . esc_html__( 'Send the featured request', 'branddad' ) . '</button></p></form></div>';
+	$html .= '<p><label><span' . ( $sw ? bds_lang_swap_attrs( 'Listing ID or Directory URL', 'ID de listado o URL del directorio' ) : '' ) . '>' . esc_html__( 'Listing ID or Directory URL', 'branddad' ) . '</span><input name="listing_ref" maxlength="160" required value="' . esc_attr( $listing_val ) . '" /></label></p>';
+	$html .= '<p><label><span' . ( $sw ? bds_lang_swap_attrs( 'Your name', 'Su nombre' ) : '' ) . '>' . esc_html__( 'Your name', 'branddad' ) . '</span><input name="customer_name" maxlength="80" required /></label></p>';
+	$html .= '<p><label><span' . ( $sw ? bds_lang_swap_attrs( 'Email', 'Correo' ) : '' ) . '>' . esc_html__( 'Email', 'branddad' ) . '</span><input name="email" type="email" maxlength="120" required /></label></p>';
+	$html .= '<p><label><span' . ( $sw ? bds_lang_swap_attrs( 'What should customers see?', '¿Qué deben ver los clientes?' ) : '' ) . '>' . esc_html__( 'What should customers see?', 'branddad' ) . '</span><textarea name="note" maxlength="400"></textarea></label></p>';
+	$html .= '<p><button class="bds-feat-buy" type="submit"' . ( $sw ? bds_lang_swap_attrs( 'Send the featured request', 'Enviar la solicitud de destacado' ) : '' ) . '>' . esc_html__( 'Send the featured request', 'branddad' ) . '</button></p></form></div>';
 	return $html;
 }
 
@@ -576,12 +607,17 @@ function bds_feat_claim_guide_ctas( $content ) {
 	if ( false !== strpos( $content, 'id="bds-feat-claim-ctas"' ) ) {
 		return $content;
 	}
-	$band  = '<div id="bds-feat-claim-ctas"><h2>' . esc_html__( 'Claim, list, or get featured', 'branddad' ) . '</h2>';
-	$band .= '<p>' . esc_html__( 'Open your listing, use Claim this listing, or start a new listing. Featured placement is a separate paid lane after the listing is claimed.', 'branddad' ) . '</p>';
-	$band .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Find my listing', 'branddad' ) . '</a>';
-	$band .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
-	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
-	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/select-your-plan/' ) ) . '">' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p></div>';
+	$sw    = function_exists( 'bds_lang_swap_attrs' );
+	$band  = '<div id="bds-feat-claim-ctas"><h2' . ( $sw ? bds_lang_swap_attrs( 'Claim, list, or get featured', 'Reclame, liste o salga destacado' ) : '' ) . '>' . esc_html__( 'Claim, list, or get featured', 'branddad' ) . '</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$band .= bds_lang_pair( 'Open your listing, use Claim this listing, or start a new listing. Featured placement is a separate paid lane after the listing is claimed.', 'Abra su listado, use Reclamar este listado o cree uno nuevo. Featured es un carril de pago aparte después de reclamar.' );
+	} else {
+		$band .= '<p>' . esc_html__( 'Open your listing, use Claim this listing, or start a new listing. Featured placement is a separate paid lane after the listing is claimed.', 'branddad' ) . '</p>';
+	}
+	$band .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Find my listing', 'Encontrar mi listado' ) : '' ) . '>' . esc_html__( 'Find my listing', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business', 'Listar mi negocio' ) : '' ) . '>' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Get featured', 'Salir destacado' ) : '' ) . '>' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/select-your-plan/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'See membership plans', 'Ver planes de membresía' ) : '' ) . '>' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p></div>';
 	return $content . $band;
 }
 add_filter( 'the_content', 'bds_feat_claim_guide_ctas', 30 );
@@ -618,11 +654,16 @@ function bds_feat_listing_cta_html() {
 	$printed = true;
 	$feat    = add_query_arg( 'listing', $id, home_url( '/featured-advertising/' ) );
 	$claim   = home_url( '/claim-your-business-listing-branddad-directory/' );
+	$sw      = function_exists( 'bds_lang_swap_attrs' );
 	$html    = '<div class="bds-feat-claim" id="bds-feat-listing-ctas">';
-	$html   .= '<h2>' . esc_html__( 'Claim or get featured', 'branddad' ) . '</h2>';
-	$html   .= '<p>' . esc_html__( 'If this is your business, claim the listing. Featured placement is a paid lane after that. This does not transfer ownership by itself.', 'branddad' ) . '</p>';
-	$html   .= '<p><a class="bds-feat-buy" href="' . esc_url( $feat ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
-	$html   .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( $claim ) . '">' . esc_html__( 'How to claim', 'branddad' ) . '</a></p></div>';
+	$html   .= '<h2' . ( $sw ? bds_lang_swap_attrs( 'Claim or get featured', 'Reclame o salga destacado' ) : '' ) . '>' . esc_html__( 'Claim or get featured', 'branddad' ) . '</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'If this is your business, claim the listing. Featured placement is a paid lane after that. This does not transfer ownership by itself.', 'Si este es su negocio, reclame el listado. Featured es un carril de pago después. Esto no transfiere la propiedad por sí solo.' );
+	} else {
+		$html .= '<p>' . esc_html__( 'If this is your business, claim the listing. Featured placement is a paid lane after that. This does not transfer ownership by itself.', 'branddad' ) . '</p>';
+	}
+	$html   .= '<p><a class="bds-feat-buy" href="' . esc_url( $feat ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Get featured', 'Salir destacado' ) : '' ) . '>' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
+	$html   .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( $claim ) . '"' . ( $sw ? bds_lang_swap_attrs( 'How to claim', 'Cómo reclamar' ) : '' ) . '>' . esc_html__( 'How to claim', 'branddad' ) . '</a></p></div>';
 	return $html;
 }
 
@@ -651,7 +692,9 @@ add_action( 'directorist_single_listing_after_content', 'bds_feat_listing_cta_fo
 function bds_feat_plans_page_ctas() {
 	return bds_feat_door_band(
 		__( 'Also list or get featured', 'branddad' ),
-		__( 'Activation stays $6.99 lifetime. Featured placement is a separate monthly lane and does not replace membership.', 'branddad' )
+		__( 'A basic listing is free. Featured placement is a separate monthly option and does not replace Pro or Elite.', 'branddad' ),
+		'También liste o salga destacado',
+		'Un listado básico es gratis. Featured es una opción mensual aparte y no reemplaza Pro o Elite.'
 	);
 }
 
@@ -660,12 +703,17 @@ function bds_feat_request_path() {
 	return trim( $path, '/' );
 }
 
-function bds_feat_door_band( $heading, $intro ) {
-	$html  = '<div id="bds-feat-door-ctas"><h2>' . esc_html( $heading ) . '</h2>';
-	$html .= '<p>' . esc_html( $intro ) . '</p>';
-	$html .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '">' . esc_html__( 'List my business', 'branddad' ) . '</a>';
-	$html .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '">' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
-	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/claim-your-business-listing-branddad-directory/' ) ) . '">' . esc_html__( 'How to claim', 'branddad' ) . '</a></p></div>';
+function bds_feat_door_band( $heading, $intro, $heading_es = '', $intro_es = '' ) {
+	$sw    = function_exists( 'bds_lang_swap_attrs' );
+	$html  = '<div id="bds-feat-door-ctas"><h2' . ( $sw && '' !== $heading_es ? bds_lang_swap_attrs( $heading, $heading_es ) : '' ) . '>' . esc_html( $heading ) . '</h2>';
+	if ( '' !== $intro_es && function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( $intro, $intro_es );
+	} else {
+		$html .= '<p>' . esc_html( $intro ) . '</p>';
+	}
+	$html .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>' . esc_html__( 'List my business free', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Get featured', 'Salir destacado' ) : '' ) . '>' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
+	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/claim-your-business-listing-branddad-directory/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'How to claim', 'Cómo reclamar' ) : '' ) . '>' . esc_html__( 'How to claim', 'branddad' ) . '</a></p></div>';
 	return $html;
 }
 
@@ -677,14 +725,18 @@ function bds_feat_path_ctas() {
 	if ( is_404() ) {
 		echo bds_feat_door_band(
 			__( 'Find a business or get featured', 'branddad' ),
-			__( 'This page is missing. List, claim, or request Featured instead. Membership prices on Select your plan are unchanged.', 'branddad' )
+			__( 'This page is missing. List, claim, or request Featured instead. Membership prices on Select your plan are unchanged.', 'branddad' ),
+			'Encuentre un negocio o salga destacado',
+			'Esta página no existe. Liste, reclame o pida Featured. Los precios de membresía en Select your plan no cambian.'
 		);
 		return;
 	}
 	if ( is_front_page() ) {
 		echo bds_feat_door_band(
 			__( 'Own a business on this Directory?', 'branddad' ),
-			__( 'List or claim, then request Featured. Activation stays $6.99 lifetime. Featured is a separate monthly lane.', 'branddad' )
+			__( 'List my business free, or claim the one that is already here. Featured is a separate monthly option.', 'branddad' ),
+			'¿Tiene un negocio en este directorio?',
+			'Liste mi negocio gratis, o reclame el que ya está aquí. Featured es una opción mensual aparte.'
 		);
 		return;
 	}
@@ -695,14 +747,27 @@ function bds_feat_path_ctas() {
 	if ( 'add-listing' === $path ) {
 		echo bds_feat_door_band(
 			__( 'Get found, then get featured', 'branddad' ),
-			__( 'A basic listing is free after the existing $6.99 lifetime activation. Featured placement is a separate monthly request.', 'branddad' )
+			__( 'A basic listing is free. We review it before it goes live. Featured placement is a separate monthly request.', 'branddad' ),
+			'Que lo encuentren, luego salga destacado',
+			'Un listado básico es gratis. Lo revisamos antes de publicarlo. Featured es una solicitud mensual aparte.'
 		);
 		return;
 	}
 	if ( is_post_type_archive( 'at_biz_dir' ) || ( is_search() && ! is_singular() ) ) {
 		echo bds_feat_door_band(
 			__( 'Own a business on this list?', 'branddad' ),
-			__( 'Claim or create your listing, then request Featured. This does not invent rankings.', 'branddad' )
+			__( 'List my business free, or claim the one that is already here. Featured is a separate request. This does not invent rankings.', 'branddad' ),
+			'¿Tiene un negocio en esta lista?',
+			'Liste mi negocio gratis, o reclame el que ya está aquí. Featured es una solicitud aparte. Esto no inventa rankings.'
+		);
+		return;
+	}
+	if ( ( function_exists( 'is_singular' ) && is_singular( 'post' ) ) || bds_feat_path_needs_door( $path ) ) {
+		echo bds_feat_door_band(
+			__( 'Own a business?', 'branddad' ),
+			__( 'A basic listing is free. We review it before it goes live. Featured placement is a separate request.', 'branddad' ),
+			'¿Tiene un negocio?',
+			'Un listado básico es gratis. Lo revisamos antes de publicarlo. Featured es una solicitud aparte.'
 		);
 	}
 }

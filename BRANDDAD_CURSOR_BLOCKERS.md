@@ -1,5 +1,41 @@
 # BrandDad Cursor blockers
 
+## Codex handoff — 2026-11-19 6:50pm America/Cancun
+
+Cursor conversion surfaces are live. Codex owns the shared backend. Do not flatten Pro prices. Do not claim the trial includes Directory membership. Do not send follow-up mail until Codex wires a mailer to the consent list. Do not name suppliers on customer copy.
+
+### Already live (Cursor). Do not rebuild these.
+
+- Social homepage and `/services/` launch pages `0.5.13`. Flagship is AI Business Essentials `$29.99/month` with a real 7-day trial. Buttons: “Start 7-day trial” / “Try it free for 7 days.” Other live plans: “Subscribe monthly.” One H1 on home and services (theme Home/Services demoted).
+- Directory homepage compose `1.5.31` + type doors `1.3.4`. Consumer categories first (food, events even if empty, hotels, health, travel, nightlife, beauty, real estate). `/travel/` 302s to Travel listings. `/events/` already did. List here → `/add-listing/`. Guests hitting `/add-listing/` go to `/registration/?bds_form=1`.
+- Free listing: membership `1.4.1` filter `bds_mt_user_can_list` + `bds-directory-free-listing-mu.php` `0.1.2`. One published basic listing for a signed-in free account. A second publish is held pending. WhatsApp account check before add-listing stays. US listings still need a real website; Mexico still needs a real WhatsApp. Never invent contact data. Never use `18729105115` as a listing number.
+- Older `$6.99` Activation stays in the catalog and is optional. QA `1.0.12` rewrites the Elementor “Activation required” card in HTML to “Free listing.” Stored Woo/Directorist prices were not changed. Pro still varies by directory type (`9.99` / `14.99` / `19.99`). Elite stays `$49/month`.
+- Sales helper `0.1.1` (`#bds-sales-help`) is a checked-answer box on both hosts. It stores nothing.
+- Follow-up consent `0.1.1` (`#bds-follow-consent`) saves email only when the box is checked. It does not send mail. Option `bds_follow_consent_v1`. Copy to send later is `bds_follow_message( $source )` for `trial|listing|audit|help`. WP admin: Tools → Follow-up consent.
+- Conversion clicks `0.1.1`. Names: `page_view`, `primary_cta_click`, `sales_assistant_engaged`, `signup_started`. Option `bds_conv_counts_v1`. A browser cannot mark a payment complete. WP admin: Tools → Conversion clicks.
+- Featured inquiry `/featured-advertising/` is live and fail-closed. Paid placement stays inactive until Woo `is_paid()` plus allowlisted SKU. SKUs: `bds-feat-local`, `bds-feat-regional`, `bds-feat-national`, `bds-feat-global`. Prices `9.99` / `19.99` / `39.99` / `99.99`. Products are live at `/product/local-featured/`, `/regional-featured/`, `/national-featured/`, `/global-homepage-featured/`.
+- Customer hub library `0.2.1` shows studio boards as frontends only. Execution is off.
+- Travel search stays a member perk teaser (`bds-travelpayouts-mu.php` `1.3.4`). Guest HTML does not load partner booking hosts. Local travel/hotel businesses stay public listings.
+
+### Codex must implement (this repo cannot)
+
+1. **One signup across Social and Directory.** Shared auth/session/entitlements. Cursor did not add a second login system.
+2. **FormWise** and any other form processor the owner already uses. Cursor did not replace it.
+3. **Billing webhooks** (Stripe/Woo): trial start, trial convert, renewal, failed renewal, cancel, refund. The 7-day trial must follow checkout terms. It must **not** grant Directory Pro/Elite, 10% member price, Featured, or Travel search.
+4. **Trial provisioning** for AI Business Essentials after a real checkout. Cursor only links to the live product URL when the catalog says the product is published.
+5. **Metered AI execution.** Hub can display a ledger when `bds_dir_free_ai_status()` returns tools. It does not run tools. Connect the authorized APIs.
+6. **SEO / Social / LinkedIn / video execution.** Studio cards say Codex has not connected those workspaces. Do not claim they publish.
+7. **Send follow-up mail** from `bds_follow_consent_v1` using `bds_follow_message()`. Consent required. Honor “stop.” Do not invent a second list.
+8. **Featured Woo products** with the SKUs above, then a paid order `is_paid()` to activate a grant. Cursor will not create those products.
+9. **Staged / quote_only checkout** for Complete AI packages (`$79.99` / `$149.99` / `$249.99`) and Done-for-You from `$399`. Stay inquiry until fulfillment cost is accepted. Catalog is fail-closed.
+10. **Music sale.** Briefs save only until license, delivery cost, and the payment lane exist.
+
+### Owner (not Codex, not Cursor)
+
+- Restore SSH from this PC to `branddad.social@ssh.gb.stackcp.com`. File Manager still works in the signed-in Chrome tab (pid 24928, parked off-screen).
+- Edit the Directory “Select your plan” Elementor Activation card if you want the stored page to match the rewritten HTML.
+- Decide which staged SKUs may sell. None were created.
+
 ## Tooling
 
 - `move_agent_to_root` failed twice: `Cannot create migration handle for unknown agent`. Files were written in the worktree by absolute path.
@@ -33,18 +69,46 @@
 - 2026-11-19 conversion is on GitHub `cursor/branddad-revenue-20261118`. Social revenue 0.2.4, launch pages 0.5.3, commercial catalog 0.3.1, Directory featured 0.2.3. Live Social still serves launch `data-version="0.5.0"` and header Get Featured still opens Directory home. Live Directory listings still have no Get featured band.
 - SSH to `branddad.social@ssh.gb.stackcp.com` now reaches the server and returns `Permission denied (publickey)` for `cp_migrate_ed25519`. That key is not authorized for this account. No second key is in `.ssh`.
 - File Manager deploy browser reaches `basket-summary-login` and was closed so it would not sit on screen. Re-run `deploy/cursor/_tmp_fm_headless_deploy.js` after a signed-in Client Panel session on the `chrome-cdp-profile`. Save paths must start with `/public_html/...`. Do not skip a GitHub raw fetch because the PHP contains `wp_die(..., 404)`.
+- 2026-11-19 4:15pm America/Cancun: the signed-in window title was `File Manager - Google Chrome`, with no debug port. Restarting Chrome to add port 19222 did not leave a listening port, and the window came back on the movie. The file manager tab was opened again in that same Chrome. Do not close Chrome again. The upload script still cannot type into that window until Chrome itself is started with `--remote-debugging-port=19222`.
 
 ## Owner decisions still required
 
-1. Restore SSH from this machine to `ssh.gb.stackcp.com`. The file-manager upload of the fail-closed plugins is done.
-2. Turn on live checkout for any `staged` or `quote_only` catalog row. Decision: which slugs may be sold after fulfillment cost is accepted. Checkout stays closed.
-3. Create WooCommerce or Stripe products for new AI, music, or Featured prices. Decision: create them or keep inquiry-only. None were created.
-4. Change an existing customer subscription, the $6.99 activation, or a Pro price. Decision: leave agreements as they are. They were not changed.
-5. Sell BrandDad Music. Decision: confirm license, delivery cost, and the payment lane. Briefs save only.
-6. Activate a paid Featured grant. Decision: point it at an existing Woo order that `is_paid()` returns true. This code does not charge.
-7. Publish slug `affiliate` on Social. Decision: leave it unpublished so the Partnero 301 stays. The door is `/affiliate-program/`. Done on both sites.
-8. Enable free-AI tool execution. Decision: Codex connects the meter. The ledger can display a balance. The screen does not run tools.
-9. Connect SEO, Social, and LinkedIn execution. Decision: Codex provides the authorized API. The boards stay disabled.
+1. **FormWise keys** (execution and provisioning). Cursor will not invent them. Keep mail/lead/FormWise/monitor flags off until the keys exist.
+2. **Stripe reconnect / webhook signing secret** in Woo or the Stripe Dashboard if renewals fail. Cursor inspect-only: both hosts load `pk_live` on checkout (Directory after a cart item). No reconnect click. No live charge.
+3. Restore SSH from this machine to `ssh.gb.stackcp.com`. File Manager is the deploy path until then.
+3b. **File Manager session** after machine wake: parked Chrome is on Client Panel login. Sign in off-screen so Cursor can save MU files. Do not start a new Chrome window.
+4. Turn on live checkout for any `staged` or `quote_only` catalog row. Decision: which slugs may be sold after fulfillment cost is accepted. Checkout stays closed.
+5. Featured SKUs `bds-feat-*` now exist on Directory. Do not recreate them. Do not flatten Pro or Activation prices.
+6. Change an existing customer subscription, the $6.99 activation, or a Pro price. Decision: leave agreements as they are. They were not changed.
+7. Sell BrandDad Music. Decision: confirm license, delivery cost, and the payment lane. Briefs save only.
+8. Activate a paid Featured grant. Decision: a Woo order that `is_paid()` returns true. This code does not charge.
+9. Publish slug `affiliate` on Social. Decision: leave it unpublished so the Partnero 301 stays. The door is `/affiliate-program/`. Done on both sites.
+10. Enable free-AI / FormWise tool execution. Decision: owner supplies keys. The ledger can display a balance. Flags stay off.
+11. Connect SEO, Social, and LinkedIn execution. Decision: authorized APIs. The boards stay disabled.
+
+## Free listing and homepage copy — uploaded 2026-11-19 6:05pm America/Cancun
+
+- Live via signed-in File Manager savefile. SSH is still closed. Do not restart Chrome. File Manager stays in the same Chrome window, off-screen.
+- Local Directory gate: membership tiers `1.4.0` adds `bds_mt_user_can_list` filter. `bds-directory-free-listing-mu.php` `0.1.0` allows one published listing for a signed-in free account. A second publish goes back to pending. Pro, Elite, Featured, the 10% member price, and stored plan prices are unchanged. Some Pro prices stay above $9.99 by business type.
+- Desk `1.0.2` sends a signed-out add-listing visit to registration, and lets an owner edit only a listing they already author. Front compose `1.5.27` keeps `#bds-home-cta-mid` and `#bds-home-cta-bottom`. Claim copy `1.3.1` no longer tells a new owner to buy Activation.
+- Those four Directory files live in the Codex checkout, not in this git branch. The file-manager list points at them. Upload them together with the free-listing plugin or the filter never runs.
+- Social launch pages `0.5.4` leads with the $29.99 Essentials trial. The trial button appears only when that product URL exists. No “no card” claim. Sales help `0.1.0` is a checked-answer box, not a second AI engine, and it stores nothing.
+- Tests passed: `tests/free-listing-test.php`, `tests/sales-help-test.php`, `tests/revenue-sections-test.php`, `tests/featured-rotation-test.php`. Secret scans of the two new plugins were empty.
+- Still Codex: one account across both sites, FormWise, payment webhooks, trial provisioning, and follow-up sending. This pass does not start a charge or publish a listing by itself.
+- 2026-11-19 4:25pm America/Cancun: launch pages 0.5.5 answer the plain price questions. Follow-up consent 0.1.0 stores an email only when the box is checked and does not send mail. Conversion clicks 0.1.0 count four browser events and cannot mark a payment complete. Not uploaded. The movie Chrome still has no listening debug port.
+- 2026-11-19 4:40pm America/Cancun: still local only. Port 19222 is not listening. Chrome was not closed or restarted. Directory hero compose is 1.5.28 (“Find a business. See what it offers. Contact it.” plus “List my business free”). Footer lock 1.3.2 and menu chrome 1.0.20 use that same label. The footer 10% link goes to Select your plan, not registration. AI finder 1.11.5 no longer says a free listing includes 10% off. Social launch 0.5.6, revenue 0.2.7 (plain product answers plus a late Get Featured menu fix for item 41544), catalog 0.3.2 (Essentials button “Start 7-day trial”; other live plans stay “Subscribe monthly”). Free-listing 0.1.1 prints three next steps on add-listing and registration only. Featured ads 0.2.5. Tests passed: revenue, conversion, free-listing, featured rotation. php -l clean on the edited plugins.
+- 2026-11-19 4:45pm America/Cancun: still local only. Chrome was not touched. Revenue 0.2.8 adds a next step to guides, the contact page, the account page, and an empty cart. Sales help 0.1.1 shows that next step without opening the question box, and Spanish questions get the same prices in Spanish. Follow-up 0.1.1 has the four email notes and still does not send them. Featured ads 0.2.6. Customer surfaces 0.2.1 and the hub library lead with the Essentials trial and “List my business free.” Tests passed: revenue, sales-help, follow-consent, customer-hub, conversion, free-listing, featured rotation.
+- 2026-11-19 4:50pm America/Cancun: still local only. Port 19222 is not listening. Chrome was not started. Launch pages 0.5.7 put the 7-day trial and the free listing on the services hero. Specialty services say “See the price.” Revenue 0.2.9 adds the same next step to creator services, Spotify promotion, AI ads, about, pricing, the affiliate page, blog archives, and product categories. Checkout, cart, and product pages are left alone. Featured ads 0.2.7 adds the free-listing door to Directory help, contact, about, blog, and feedback. Tests passed: conversion, revenue, featured rotation, sales-help, free-listing.
+- 2026-11-19 4:55pm America/Cancun: still local only. Chrome was not started. Launch 0.5.8 puts “List my business free” on the closing homepage and services band. Revenue 0.2.10 adds the Spanish line to the guide and a thank-you block on checkout/order-received that does not start another charge. Directory QA 1.0.7 shows WhatsApp or the real website first on a listing, refuses the BrandDad support number, and shows the free listing after a Directory order. Front compose 1.5.29 repeats the homepage offer in Spanish and says WhatsApp only when the business has a number. CTA bands stay. Tests passed: directory-contact, revenue, conversion, featured rotation.
+- 2026-11-19 5:00pm America/Cancun: still local only. Chrome was not started. Launch 0.5.9 repeats the $29.99 trial and the free listing in Spanish. Front compose 1.5.30, claim 1.3.2, registration 1.2.2, QA 1.0.8, and membership 1.4.1 repeat that same offer in Spanish on the owner bands, city pages, claim box, signup, browse, empty search, sign-in, and the plan page. The older $6.99 plan is still described as not required. Tests passed: directory-contact, conversion. php -l clean.
+- 2026-11-19 5:21pm America/Cancun: signup blank-page fix is local only. Directory perf 1.1.62 no longer stores the registration form in the shared HTML cache, and a failed HTML rewrite keeps the original page. Registration 1.2.3 shows a reload link when the signup form is missing. Menu chrome 1.0.21 renames “Claim a listing 2” and points the free-list fallback at add-listing. Launch pages 0.5.10 hides the extra “Home” heading when the real hero is present. None of this is uploaded.
+- 2026-11-19 6:25pm America/Cancun: leftover live copy is now rewritten in HTML, not only in the browser. Launch 0.5.12, compose 1.5.31, QA 1.0.12 uploaded via the same off-screen File Manager tab. Live: Social homepage has one H1 (the Essentials headline); Directory homepage has one H1 (Find a business…); Select your plan Activation card is “Free listing”; the required-$6.99 sentence is gone from HTML. SSH still closed. Movie window left in front.
+- 2026-11-19 6:05pm America/Cancun: File Manager savefile succeeded for the conversion MU set (36 files, then QA 1.0.11). Same Chrome pid 24928, File Manager parked off-screen, movie left in front. Live checks: `/registration/` now returns the form (`?bds_form=1`), `/add-listing/` sends guests to registration not Select your plan, `/pricing/` 301s to `/services/`, Get Featured opens `/featured-advertising/`, Social launch `data-version="0.5.11"`, Local SEO button is Subscribe monthly, Essentials is Start 7-day trial. The $6.99 Activation card still exists in Select your plan page content; QA 1.0.11 rewrites it in the browser. SSH still closed. Chrome was not killed.
+- 2026-11-19 5:40pm America/Cancun: live audit again. Same public failures: blank /registration/ (0 bytes), /add-listing/ still opens Select your plan, homepage still says the $6.99 plan is required, help still says “see plans,” Social Get Featured still opens the Directory homepage, /pricing/ is still 404, Social h1 is still “Home,” and the Social footer still says “10% off.” Port 19222 is not listening. Chrome was not started. Extra local fix: type doors 1.3.2 sends “List here” to add-listing, and Social footer 1.1.18 no longer says a free listing includes 10% off.
+- 2026-11-19 5:30pm America/Cancun: reported audit items are fixed in the local plugins and are not uploaded. Registration 1.2.4 sends a GET of the exact signup URL to the form query that already returns the page. QA 1.0.10 replaces the required-$6.99 sentence, the placeholder footer, the “see plans” help button, and a missing heading. Revenue 0.2.12 sends /pricing/ to /services/, corrects Get Featured when it opens the Directory homepage, and gives AI Ads, Creator Services, Spotify, and the affiliate page a next step. Launch 0.5.11 replaces a lone “Home” heading. Catalog 0.3.3 labels every live plan Subscribe monthly, including Local SEO, and the product page adds that button when the product is published. Travel 1.3.4 keeps booking hosts off guest pages. Service finder says “Open the AI workspace.” Growth-engine membership links go to Select your plan. Chrome was not started.
+- 2026-11-19 5:18pm America/Cancun: public page audit. `/registration/` returns HTTP 200 with an empty body; the same page with a query string returns the form. `/add-listing/` still sends guests to Select your plan. Live help and the Directory homepage still say a listing starts at the $6.99 activation. Social header Get Featured still opens the Directory homepage. `/pricing/` is a 404. The new screens are not live.
+- 2026-11-19 5:11pm America/Cancun: upload attempted. A separate headless Chrome reached the Client Panel login page and was closed. The movie window was left open. SSH to branddad.social@ssh.gb.stackcp.com closed the connection on the first try and was not retried. The plugins are still local only.
+- 2026-11-19 after 5:00pm America/Cancun: still local only. Port 19222 is not listening. Chrome was not started and SSH was not retried. Help (QA 1.0.9) now has the browse, list, claim, gift, and travel steps. Gift cards 1.2.2 say to buy the card on the page or list a business free, and they do not include the 10% price. Travel (account control 1.3.4 plus the QA travel band) says the search is a paid perk, a free listing does not include it, and BrandDad does not sell tickets. Desk 1.0.3 tells an account that already has its one listing to update that listing, and a listing in review stays unpublished. Signup (free listing 0.1.2) and the Social account and thank-you screen (revenue 0.2.11) are a three-step onboarding screen. Phone CSS makes those buttons at least 44px and full width under 480px. A live phone viewport was not opened. Tests passed: revenue, free-listing, directory-contact. php -l clean.
 
 ## Not done
 

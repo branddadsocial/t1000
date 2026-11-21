@@ -83,15 +83,50 @@ hub_expect( false === $full['ok'] && 'limit' === $full['reason'], 'saved list st
 
 $dir_next = bds_hub_next_actions( 'directory' );
 hub_expect( 'Get featured' === $dir_next[2]['label'], 'directory hub sells featured' );
+hub_expect( 'Salir destacado' === $dir_next[2]['label_es'], 'directory hub featured Spanish is present' );
 hub_expect( '/featured-advertising/' === $dir_next[2]['path'], 'featured path is the buy page' );
 $soc_next = bds_hub_next_actions( 'social' );
-hub_expect( '/product/ai-social-growth/' === $soc_next[0]['path'], 'social hub leads with a live product' );
+hub_expect( 'Try it free for 7 days' === $soc_next[0]['label'], 'social hub uses the approved trial label' );
+hub_expect( '/product/ai-business-essentials/' === $soc_next[0]['path'], 'social hub leads with the Essentials trial' );
+hub_expect( '/product/ai-social-growth/' === $soc_next[1]['path'], 'Social Growth stays a live product' );
 hub_expect( false === strpos( json_encode( $soc_next ), '$' ), 'hub next actions do not invent a price' );
 
 $seo_dup = bds_seo_emit_decision( array( 'canonical' ), '/services/' );
 hub_expect( false === $seo_dup['emit'] && 'canonical_exists' === $seo_dup['reason'], 'existing canonical blocks a second tag' );
 $seo_city = bds_seo_emit_decision( array(), '/austin/texas/edge-rooftop/' );
 hub_expect( false === $seo_city['emit'] && 'city_page' === $seo_city['reason'], 'city URL does not get a new alternate' );
+
+$trial_off = bds_hub_trial_view( null );
+hub_expect( 'unavailable' === $trial_off['state'], 'missing trial state is unavailable' );
+hub_expect( false === strpos( $trial_off['line'], '25' ), 'missing trial does not invent credits' );
+$trial_ok = bds_hub_trial_view( array( 'status' => 'eligible' ) );
+hub_expect( 'eligible' === $trial_ok['state'] && true === $trial_ok['cta'], 'eligible trial keeps the start CTA' );
+hub_expect( false !== strpos( $trial_ok['line'], 'Directory membership is not included' ), 'trial copy does not grant Directory' );
+$trial_on = bds_hub_trial_view( array( 'status' => 'active', 'active' => true, 'days_remaining' => 6 ) );
+hub_expect( 'active' === $trial_on['state'] && false === $trial_on['cta'], 'active trial is not a second checkout CTA' );
+hub_expect( false !== strpos( $trial_on['line'], '6 days remaining' ), 'active trial shows remaining days from state' );
+$trial_paid = bds_hub_trial_view( array( 'status' => 'paid' ) );
+hub_expect( 'paid' === $trial_paid['state'], 'paid Essentials is distinct from trial' );
+
+$ops_blocked = bds_hub_ops_inspect_view( array() );
+hub_expect( 'owner_blocked' === $ops_blocked['state'], 'empty snapshot is owner-blocked' );
+hub_expect( false === strpos( json_encode( $ops_blocked ), 'sk_' ), 'ops inspect does not invent a secret' );
+hub_expect( false === strpos( json_encode( $ops_blocked ), 'pk_live' ), 'ops inspect does not print a publishable key' );
+$ops_flags = bds_hub_ops_inspect_view(
+	array(
+		'stripe_gateway' => true,
+		'followup_flag'  => true,
+	)
+);
+hub_expect( 'unsafe' === $ops_flags['state'], 'a mail flag without FormWise keys is unsafe' );
+$ops_keys = bds_hub_ops_inspect_view(
+	array(
+		'formwise_exec' => true,
+		'formwise_prov' => true,
+		'stripe_gateway' => true,
+	)
+);
+hub_expect( 'keys_present_flags_off' === $ops_keys['state'], 'keys without flags stay gated' );
 
 if ( $failed > 0 ) {
 	fwrite( STDERR, "{$failed} failed\n" );

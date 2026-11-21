@@ -22,6 +22,20 @@ if ( ! function_exists( 'bds_feat_levels' ) ) {
 	}
 }
 
+if ( ! function_exists( 'bds_feat_valid_lane' ) ) {
+	/**
+	 * Allowlisted featured lane from a query string. Unknown values fail closed to empty.
+	 *
+	 * @param mixed $lane Raw GET value.
+	 * @return string
+	 */
+	function bds_feat_valid_lane( $lane ) {
+		$lane = strtolower( (string) $lane );
+		$lane = preg_replace( '/[^a-z0-9_\-]/', '', $lane );
+		return isset( bds_feat_levels()[ $lane ] ) ? $lane : '';
+	}
+}
+
 if ( ! function_exists( 'bds_feat_rank' ) ) {
 	/** Paid first, complimentary trial and partnership together, then free, then BrandDad promo. */
 	function bds_feat_rank( $kind ) {
@@ -235,6 +249,34 @@ if ( ! function_exists( 'bds_feat_empty_copy' ) ) {
 	}
 }
 
+if ( ! function_exists( 'bds_feat_path_needs_door' ) ) {
+	/**
+	 * Help, contact, about, blog, and feedback need a listing door.
+	 * Home, plans, add-listing, and listing archives already have one.
+	 *
+	 * @param string $path Request path.
+	 * @return bool
+	 */
+	function bds_feat_path_needs_door( $path ) {
+		$path = strtolower( trim( (string) $path, '/' ) );
+		if ( '' === $path ) {
+			return false;
+		}
+		$skip = array( 'add-listing', 'select-your-plan', 'featured-advertising', 'registration', 'sign-in', 'dashboard', 'all-listings' );
+		if ( in_array( $path, $skip, true ) ) {
+			return false;
+		}
+		if ( 0 === strpos( $path, 'single-category' ) || 0 === strpos( $path, 'single-location' ) || 0 === strpos( $path, 'location/' ) ) {
+			return false;
+		}
+		$top = strstr( $path, '/', true );
+		if ( false === $top ) {
+			$top = $path;
+		}
+		return in_array( $top, array( 'help', 'contact-us', 'about', 'blog', 'feedback' ), true );
+	}
+}
+
 if ( ! function_exists( 'bds_feat_product_sku' ) ) {
 	function bds_feat_product_sku( $level ) {
 		$level = (string) $level;
@@ -258,5 +300,27 @@ if ( ! function_exists( 'bds_feat_parse_listing_id' ) ) {
 			return $id > 0 ? $id : 0;
 		}
 		return 0;
+	}
+}
+
+if ( ! function_exists( 'bds_feat_listing_checkout_prompt' ) ) {
+	/**
+	 * Featured buy page copy. Zero listing stays inactive; no charge is implied.
+	 *
+	 * @param mixed $listing_id
+	 * @return array{attached:bool,line:string}
+	 */
+	function bds_feat_listing_checkout_prompt( $listing_id ) {
+		$id = (int) $listing_id;
+		if ( $id > 0 ) {
+			return array(
+				'attached' => true,
+				'line'     => 'Subscribe monthly attaches to listing ' . $id . '. The lane stays inactive until WooCommerce confirms payment.',
+			);
+		}
+		return array(
+			'attached' => false,
+			'line'     => 'Open Featured from a published listing so Subscribe monthly can attach. A plan without a listing stays inactive.',
+		);
 	}
 }

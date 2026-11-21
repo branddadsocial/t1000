@@ -1,0 +1,9 @@
+.vexp/
+deploy/cursor/_tmp*/
+deploy/cursor/_tmp_*
+deploy/cursor/_fm_*.php
+deploy/cursor/_fm_*.js
+deploy/cursor/_chunk_info.php
+deploy/cursor/_extract_*.php
+deploy/cursor/_hash_slices.php
+deploy/cursor/_probe_live.php
