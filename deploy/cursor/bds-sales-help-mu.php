@@ -204,6 +204,26 @@ function bds_sales_help_on_host() {
 }
 
 /**
+ * Checkout, account, and studio boards already have their own next step.
+ * A second helper on those surfaces is a duplicate assistant.
+ *
+ * @param mixed $path Request path.
+ * @return bool
+ */
+function bds_sales_help_path_ok( $path ) {
+	$path = strtolower( trim( (string) $path, '/' ) );
+	$top  = strstr( $path, '/', true );
+	if ( false === $top ) {
+		$top = $path;
+	}
+	return ! in_array(
+		$top,
+		array( 'cart', 'checkout', 'my-account', 'account-hub', 'studio-boards' ),
+		true
+	);
+}
+
+/**
  * @return string
  */
 function bds_sales_help_question() {
@@ -222,6 +242,10 @@ function bds_sales_help_question() {
  */
 function bds_sales_help_footer() {
 	if ( ! bds_sales_help_on_host() ) {
+		return;
+	}
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) ( function_exists( 'wp_parse_url' ) ? wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) ) : '';
+	if ( ! bds_sales_help_path_ok( $path ) ) {
 		return;
 	}
 	$question = bds_sales_help_question();
