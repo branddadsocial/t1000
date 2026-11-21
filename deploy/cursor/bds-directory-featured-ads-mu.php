@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.26
+ * Version: 0.2.27
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -928,12 +928,16 @@ function bds_feat_help_alias() {
 		return;
 	}
 	$path = bds_feat_request_path();
-	if ( in_array( $path, array( 'faq', 'faqs', 'frequently-asked-questions', 'sitemap', 'site-map', 'how-it-works', 'careers', 'career', 'work-with-us' ), true ) ) {
+	if ( in_array( $path, array( 'faq', 'faqs', 'frequently-asked-questions', 'sitemap', 'site-map', 'how-it-works', 'careers', 'career', 'work-with-us', 'support', 'help-center' ), true ) ) {
 		wp_safe_redirect( home_url( '/help/' ), 302 );
 		exit;
 	}
 	if ( 'featured' === $path ) {
 		wp_safe_redirect( home_url( '/featured-advertising/' ), 302 );
+		exit;
+	}
+	if ( 'team' === $path ) {
+		wp_safe_redirect( home_url( '/about-us/' ), 302 );
 		exit;
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.33
+ * Version: 0.2.34
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -976,6 +976,18 @@ function bds_rev_alias_dest( $path ) {
 	if ( 'get-featured' === $path ) {
 		return 'https://directory.branddad.social/featured-advertising/';
 	}
+	if ( in_array( $path, array( 'partners', 'investors', 'newsletter' ), true ) ) {
+		return home_url( '/contact-us/' );
+	}
+	if ( 'affiliates' === $path ) {
+		return 'https://affiliates.branddad.social/program';
+	}
+	if ( 'signup' === $path ) {
+		return 'https://directory.branddad.social/registration/';
+	}
+	if ( 'claim' === $path ) {
+		return 'https://directory.branddad.social/claim-your-business-listing-branddad-directory/';
+	}
 	if ( 'music' === $path || 'branddad-music' === $path ) {
 		return home_url( '/#branddad-music' );
 	}
@@ -1032,6 +1044,7 @@ function bds_rev_allowed_redirect_hosts( $hosts ) {
 	$hosts = is_array( $hosts ) ? $hosts : array();
 	if ( bds_rev_is_social() ) {
 		$hosts[] = 'directory.branddad.social';
+		$hosts[] = 'affiliates.branddad.social';
 	}
 	return $hosts;
 }
