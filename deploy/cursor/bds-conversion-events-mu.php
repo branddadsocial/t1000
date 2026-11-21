@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Conversion Events
  * Description: Counts a few named browser clicks. It does not record a person, a payment, or a page address.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: BrandDad
  *
  * Ingestion: one event name from a fixed list. Extra fields are ignored.
@@ -30,6 +30,38 @@ function bds_conv_allow( $name ) {
 		),
 		true
 	);
+}
+
+/**
+ * Checkout, account, and studio boards already have a next step.
+ * A second click counter on those surfaces is leftover CX.
+ *
+ * @param mixed $path Request path.
+ * @return bool
+ */
+function bds_conv_path_ok( $path ) {
+	$path = strtolower( trim( (string) $path, '/' ) );
+	$top  = strstr( $path, '/', true );
+	if ( false === $top ) {
+		$top = $path;
+	}
+	return ! in_array(
+		$top,
+		array( 'cart', 'checkout', 'my-account', 'account-hub', 'studio-boards' ),
+		true
+	);
+}
+
+/**
+ * @return string
+ */
+function bds_conv_request_path() {
+	$raw = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
+	if ( function_exists( 'wp_unslash' ) ) {
+		$raw = (string) wp_unslash( $raw );
+	}
+	$path = function_exists( 'wp_parse_url' ) ? wp_parse_url( $raw, PHP_URL_PATH ) : parse_url( $raw, PHP_URL_PATH );
+	return trim( (string) $path, '/' );
 }
 
 /**
@@ -71,6 +103,9 @@ function bds_conv_footer() {
 	$host = isset( $_SERVER['HTTP_HOST'] ) ? strtolower( (string) $_SERVER['HTTP_HOST'] ) : '';
 	$host = preg_replace( '/:\d+$/', '', $host );
 	if ( ! in_array( $host, array( 'branddad.social', 'www.branddad.social', 'directory.branddad.social' ), true ) ) {
+		return;
+	}
+	if ( ! bds_conv_path_ok( bds_conv_request_path() ) ) {
 		return;
 	}
 	$cfg = array(

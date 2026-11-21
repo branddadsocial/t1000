@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~4:45pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~4:50pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -62,7 +62,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Account emails | Copy only in bridge **0.1.6**. New-account and reset-password additional content. Does not `wp_mail`. |
 | Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help, follow, lang-switch, free-listing. Sticky help respects `prefers-reduced-motion`. |
 | Gift / travel / legal | Gift marketplace copy is not a BrandDad charge. Travel/hotels do not sell tickets. Social privacy/terms get the next-step band. |
-| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Follow **0.1.6** skips those same surfaces so checkout is not a second email box. Conversion **0.1.2** counts hub and door clicks. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow still does not send. |
+| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Follow **0.1.6** skips those same surfaces so checkout is not a second email box. Conversion **0.1.3** counts hub and door clicks and skips checkout, cart, My Account, account-hub, and studio-boards. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow still does not send. |
 | Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. Gift and flights `directory_type` queries now map to marketplace/travel copy. Featured MU stamp **0.2.24**. |
 | Memberships / blogs | `/memberships/`, `/membership/`, `/plans/` alias to Select your plan. Directory blog door does not sell a listing. |
 | Music / quote-only | Live home already has music brief and “does not take payment.” DFY contact note is quote-only. |
@@ -75,7 +75,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.24 / revenue 0.2.31 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.24 / revenue 0.2.31 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.3 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -205,9 +205,17 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Follow-up worker **0.1.3** stays off. No StartHost cron. No new live-copy plugin.
-- Track A leftover: live Directory `/how-it-works/` aborts. Featured **0.2.24** sends it to `/help/` with the existing faq/sitemap alias. Directory-only. Live `/help/` is not redirected.
-- Live leftover still waiting on FM: Directory homepage HTML rewrite, classifieds/faq/how-it-works aliases, Subscribe now on Featured buy and `/services/`, Social faqs/careers aliases (revenue **0.2.31**).
+- Track A leftover not waiting on FM to write: conversion **0.1.3** skips checkout, cart, My Account, account-hub, and studio-boards, matching sales-help **0.1.7** and follow **0.1.6**. It still cannot mark `payment_completed`. Unknown event names stay dropped.
+- Remaining Cursor-unblocked local leftovers are now in git. Live still waits on the owner actions below.
 - GitHub wp-cron remains **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
-- Suites: featured-rotation. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.24 / revenue 0.2.31 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2, execution 0.2.5, and follow-up worker **0.1.3** are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
-- Flags off. No charge. Not pushed. Owner gates (FormWise keys, Stripe Dashboard, FM session, charge auth) still block “all complete.”
+- Suites: conversion-events. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.24 / revenue 0.2.31 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.3 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2, execution 0.2.5, and follow-up worker **0.1.3** are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
+- Flags off. No charge. Not pushed.
+
+## Owner actions (nothing else Cursor can finish without these)
+
+1. Sign in to Client Panel File Manager (`https://cp.clientpanel.us/services/2c1c765a6dd36152/file-manager`) in the parked Chrome. Upload the deploy list above. Do not upload local catalog 0.3.4 over live 0.4.0 or local launch over live 0.5.26.
+2. Add FormWise execution and provisioning keys. Leave mail/lead/inquiry/monitor/sales-assistant flags off until those keys exist.
+3. Inspect Stripe Dashboard webhook signing secret / reconnect if renewals fail. Cursor does not click reconnect and does not charge.
+4. Authorize one live test charge when you want checkout proven end to end. None is authorized now.
+5. Do not add StartHost cron. GitHub wp-cron + spawn MU stay.
