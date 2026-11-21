@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~9:40am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~9:45am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -42,9 +42,10 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Item | Status |
 |---|---|
 | Launch trial copy | Live 0.5.26. Buttons “Start 7-day trial” / “Try it free for 7 days.” |
-| Hub trial + account API wiring | Local bridge **0.1.3** (live still 0.1.0 until FM). Surfaces **0.2.7** trial band + shop-manager ops inspect. Hub next-action label is **Try it free for 7 days**. |
-| Featured listing attach | Local prompt when `?listing=` is missing. Product pages already say Subscribe monthly. Buy page still Subscribe now until 0.2.14 deploys. |
-| Revenue live CTAs | Local revenue **0.2.22** uses **Subscribe monthly** (was Subscribe now). Home strip / trial labels already matched. Live services page still Subscribe now until FM. |
+| Hub trial + account API wiring | Local bridge **0.1.4** (live still 0.1.0 until FM). Surfaces **0.2.7** trial band + shop-manager ops inspect. Live `/account-hub/` already prints the hub. |
+| Featured listing attach | Local 0.2.15 listing prompt + **List my business free** on buy/claim. Live `/featured-advertising/` still Subscribe now until FM. |
+| Revenue live CTAs | Local revenue **0.2.23**. Help gets the next-step band. Live `/services/` still mixes Subscribe now until FM. |
+| Checkout fail-closed copy | Local bridge **0.1.4** `#bds-checkout-failclosed`. Does not say “no card”. Trial does not grant Directory. |
 | `$6.99` | QA rewrite “not required” plus stored Select-your-plan Activation card. Do not flatten stored prices. |
 
 ## Owner blockers (not Cursor, not Codex code)
@@ -52,7 +53,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy of 0.1.3 / 0.2.7 / 0.2.14 waits on a signed-in File Manager tab. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy of 0.1.4 / 0.2.7 / 0.2.15 / 0.2.23 / sales-help 0.1.4 waits on a signed-in File Manager tab. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -66,9 +67,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 
 ## This pass
 
-- File Manager remains Client Panel login (hwnd 197924 at `-2400`). Credentials not typed. Did not wait. Windows Security left alone.
-- Live home: Subscribe monthly + Start 7-day trial / Try it free for 7 days, `data-version="0.5.26"`. No `$6.99`, no “no card”.
-- Live `/services/`: both Subscribe monthly (launch) and Subscribe now (revenue until 0.2.22 deploys).
-- Git `cursor-slim-020`: `37a52e9` takeover 0.1.3/0.2.7/0.2.14/0.2.22; `a841ebe` remaining conversion MUs + backend copies. Catalog 0.3.4 and launch 0.5.26 stay uncommitted (do not overwrite live catalog 0.4.0).
-- Suites passed: customer-hub, codex-bridge, featured-rotation, revenue-sections, sales-help, conversion-events, follow-consent, free-listing, lang-switch, spawn, brand-contrast, directory-contact, launch-funnel, launch-heading, early-contact-cache, type-doors.
-- Spawn MU kept. No StartHost cron. Flags off. No charge. Not pushed.
+- FM still login (hwnd 197924 at `-2400`). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched.
+- Live public pages: help has sales-help + guide-next. `/account-hub/` has the hub. Registration/add-listing have `#bds-free-steps`. Claim has `#bds-feat-claim-ctas`. Featured buy still Subscribe now. `$6.99` leftover is the “not required” rewrite. Checkout “no card” is a Stripe JS error string, not a customer claim.
+- Track A: bridge **0.1.4** fail-closed checkout note; featured **0.2.15** List my business free on buy/claim; sales-help **0.1.4** trial does not grant Directory; revenue **0.2.23** help path gets the next-step band.
+- Suites: codex-bridge, featured-rotation, revenue-sections, sales-help passed.
+- Flags off. No charge. Not pushed.

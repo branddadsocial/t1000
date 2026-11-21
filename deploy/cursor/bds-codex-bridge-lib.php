@@ -196,3 +196,21 @@ if ( ! function_exists( 'bds_codex_featured_listing_prompt' ) ) {
 		);
 	}
 }
+
+if ( ! function_exists( 'bds_codex_checkout_failclosed_copy' ) ) {
+	/**
+	 * Public checkout copy. Does not claim “no card”, start a charge, or grant Directory membership.
+	 *
+	 * @return array{heading:string,lines:array<int,string>}
+	 */
+	function bds_codex_checkout_failclosed_copy() {
+		return array(
+			'heading' => 'Before you pay',
+			'lines'   => array(
+				'This checkout does not charge until you complete payment.',
+				'The 7-day trial does not include Directory membership, Featured, or the 10% member price.',
+				'Featured placement stays inactive until WooCommerce confirms payment.',
+			),
+		);
+	}
+}

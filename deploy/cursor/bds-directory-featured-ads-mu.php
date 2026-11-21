@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.14
+ * Version: 0.2.15
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -508,7 +508,7 @@ function bds_feat_buy_markup() {
 	} else {
 		$html .= '<p id="bds-feat-listing-note">' . esc_html( $listing_prompt['line'] ) . '</p>';
 	}
-	$html .= '<p><a class="bds-feat-buy" href="' . $list . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business', 'Listar mi negocio' ) : '' ) . '>' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$html .= '<p><a class="bds-feat-buy" href="' . $list . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>' . esc_html__( 'List my business free', 'branddad' ) . '</a>';
 	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $claim . '"' . ( $sw ? bds_lang_swap_attrs( 'Claim a listing', 'Reclamar un listado' ) : '' ) . '>' . esc_html__( 'Claim a listing', 'branddad' ) . '</a>';
 	$html .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . $plans . '"' . ( $sw ? bds_lang_swap_attrs( 'See membership plans', 'Ver planes de membresía' ) : '' ) . '>' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p>';
 	$html .= '<div class="bds-feat-grid">';
@@ -615,7 +615,7 @@ function bds_feat_claim_guide_ctas( $content ) {
 		$band .= '<p>' . esc_html__( 'Open your listing, use Claim this listing, or start a new listing. Featured placement is a separate paid lane after the listing is claimed.', 'branddad' ) . '</p>';
 	}
 	$band .= '<p><a class="bds-feat-buy" href="' . esc_url( home_url( '/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Find my listing', 'Encontrar mi listado' ) : '' ) . '>' . esc_html__( 'Find my listing', 'branddad' ) . '</a>';
-	$band .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business', 'Listar mi negocio' ) : '' ) . '>' . esc_html__( 'List my business', 'branddad' ) . '</a>';
+	$band .= '<a class="bds-feat-buy" href="' . esc_url( home_url( '/add-listing/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>' . esc_html__( 'List my business free', 'branddad' ) . '</a>';
 	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/featured-advertising/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Get featured', 'Salir destacado' ) : '' ) . '>' . esc_html__( 'Get featured', 'branddad' ) . '</a>';
 	$band .= '<a class="bds-feat-buy bds-feat-buy--quiet" href="' . esc_url( home_url( '/select-your-plan/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'See membership plans', 'Ver planes de membresía' ) : '' ) . '>' . esc_html__( 'See membership plans', 'branddad' ) . '</a></p></div>';
 	return $content . $band;

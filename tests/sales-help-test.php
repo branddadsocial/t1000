@@ -27,11 +27,16 @@ assert_true( 'trial' === bds_sales_help_match( 'Can I try the 29.99 plan?' ), 't
 assert_true( 'person' === bds_sales_help_match( 'I need a person for custom work' ), 'custom maps to a person' );
 assert_true( 'start' === bds_sales_help_match( 'hello there' ), 'unknown stays on the start card' );
 assert_true( false !== strpos( $cards['trial']['href'], '/product/ai-business-essentials/' ), 'trial link is the essentials product' );
+assert_true( false !== strpos( $cards['trial']['body'], 'Directory membership is not included' ), 'trial help does not grant Directory' );
+assert_true( 'Try it free for 7 days' === $cards['trial']['label'], 'trial help uses the approved CTA' );
 assert_true( 'find' === bds_sales_help_match( 'buscar un plomero cerca' ), 'a Spanish shopper is not sent to checkout' );
 assert_true( 'listing' === bds_sales_help_match( 'quiero listar mi negocio' ), 'a Spanish owner is sent to the free listing' );
 assert_true( 'es' === bds_sales_help_lang( 'quiero listar mi negocio' ), 'Spanish questions are recognized' );
 $es = bds_sales_help_card( 'listing', 'es' );
 assert_true( false !== strpos( $es['body'], '29.99' ), 'the Spanish listing answer keeps the real price' );
+$es_trial = bds_sales_help_card( 'trial', 'es' );
+assert_true( 'Pruébelo 7 días' === $es_trial['label'], 'Spanish trial CTA matches the approved label' );
+assert_true( false !== strpos( $es_trial['body'], 'membresía del directorio no está incluida' ), 'Spanish trial help does not grant Directory' );
 assert_true( false !== strpos( $es['href'], '/add-listing/' ), 'the Spanish listing answer uses the free listing' );
 function esc_html( $s ) { return $s; }
 function esc_url( $s ) { return $s; }
@@ -59,6 +64,8 @@ if ( ! function_exists( 'bds_lang_pair' ) ) {
 $bar_es = bds_sales_help_markup( $cards['start'] );
 assert_true( false !== strpos( $bar_es, 'Listar mi negocio gratis' ) && false !== strpos( $bar_es, 'data-bds-copy-es=' ), 'the helper CTA Spanish is tagged' );
 assert_true( false !== strpos( $bar_es, 'Ayúdeme a elegir' ), 'the helper summary Spanish is tagged' );
+$help_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-sales-help-mu.php' );
+assert_true( false !== strpos( $help_src, 'Version: 0.1.4' ), 'sales help stamps 0.1.4' );
 
 echo "sales-help ok\n";
 

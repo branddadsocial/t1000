@@ -73,7 +73,7 @@ bridge_expect( '9.99' === $skus['bds-feat-local']['monthly'], 'local featured pr
 bridge_expect( '99.99' === $skus['bds-feat-global']['monthly'], 'global featured price is 99.99' );
 
 $bridge_mu = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-codex-bridge-mu.php' );
-bridge_expect( false !== strpos( $bridge_mu, 'Version: 0.1.3' ), 'bridge MU version is 0.1.3' );
+bridge_expect( false !== strpos( $bridge_mu, 'Version: 0.1.4' ), 'bridge MU version is 0.1.4' );
 bridge_expect( false !== strpos( $bridge_mu, 'j.access' ), 'hub status reads access.mode from the live account API' );
 bridge_expect( false !== strpos( $bridge_mu, 'Directory membership is not included' ), 'trial hub copy does not grant Directory' );
 bridge_expect( false !== strpos( $bridge_mu, 'bds-billing-inspect' ), 'shop-manager billing inspect is registered' );
@@ -85,6 +85,13 @@ bridge_expect( false !== strpos( $feat_prompt['line'], 'stays inactive' ), 'miss
 $feat_ok = bds_codex_featured_listing_prompt( 17607 );
 bridge_expect( true === $feat_ok['attached'] && false !== strpos( $feat_ok['line'], '17607' ), 'digit listing id is named in copy' );
 bridge_expect( false === strpos( json_encode( $feat_ok ), 'pk_' ), 'listing prompt does not print a Stripe key' );
+
+$pay = bds_codex_checkout_failclosed_copy();
+bridge_expect( 'Before you pay' === $pay['heading'], 'checkout fail-closed has a heading' );
+$pay_blob = strtolower( json_encode( $pay ) );
+bridge_expect( false === strpos( $pay_blob, 'no card' ), 'checkout copy does not say no card' );
+bridge_expect( false !== strpos( $pay_blob, 'directory membership' ), 'checkout copy does not grant Directory with the trial' );
+bridge_expect( false !== strpos( $bridge_mu, 'bds-checkout-failclosed' ), 'checkout fail-closed markup is registered' );
 
 if ( $failed > 0 ) {
 	fwrite( STDERR, "{$failed} failed\n" );

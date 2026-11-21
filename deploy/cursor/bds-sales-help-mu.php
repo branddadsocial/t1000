@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Sales Help
  * Description: A short helper with checked prices and real links. It does not start a new AI engine or change an account.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins. The
@@ -38,7 +38,7 @@ function bds_sales_help_cards() {
 		),
 		'trial'   => array(
 			'title' => 'Try business help for 7 days',
-			'body'  => 'AI Business Essentials is $29.99 a month. The product page includes a 7-day trial. It helps with posts, replies, and everyday writing. You review the work before it is used. It does not promise sales, followers, or a higher search ranking.',
+			'body'  => 'AI Business Essentials is $29.99 a month. The product page includes a 7-day trial. It helps with posts, replies, and everyday writing. You review the work before it is used. Directory membership is not included. It does not promise sales, followers, or a higher search ranking.',
 			'href'  => 'https://branddad.social/product/ai-business-essentials/',
 			'label' => 'Try it free for 7 days',
 		),
@@ -126,9 +126,9 @@ function bds_sales_help_card( $key, $lang ) {
 		),
 		'trial'   => array(
 			'title' => 'Pruebe la ayuda por 7 días',
-			'body'  => 'AI Business Essentials cuesta $29.99 al mes. La página del producto incluye 7 días de prueba. Usted revisa el trabajo antes de usarlo. No promete ventas ni una mejor posición en la búsqueda.',
+			'body'  => 'AI Business Essentials cuesta $29.99 al mes. La página del producto incluye 7 días de prueba. Usted revisa el trabajo antes de usarlo. La membresía del directorio no está incluida. No promete ventas ni una mejor posición en la búsqueda.',
 			'href'  => 'https://branddad.social/product/ai-business-essentials/',
-			'label' => 'Probarlo 7 días',
+			'label' => 'Pruébelo 7 días',
 		),
 		'find'    => array(
 			'title' => 'Encuentre un negocio',

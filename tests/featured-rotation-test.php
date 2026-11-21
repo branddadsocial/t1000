@@ -93,7 +93,7 @@ expect( false === bds_feat_path_needs_door( '' ), 'the homepage keeps its own do
 expect( false === bds_feat_path_needs_door( 'add-listing' ), 'add-listing keeps its own door' );
 expect( false === bds_feat_path_needs_door( 'single-category/coffee-shops' ), 'category pages keep their own intro' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.14' ), 'featured MU stamps 0.2.14' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.15' ), 'featured MU stamps 0.2.15' );
 expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty worldwide lane heading has Spanish' );
 expect( false !== strpos( $feat_src, 'Listar mi negocio gratis' ), 'door CTAs have Spanish' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly' ), 'featured checkout uses Subscribe monthly' );

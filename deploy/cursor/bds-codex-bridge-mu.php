@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Codex Surface Bridge
  * Description: Cursor-owned checkout, geography, email-proof, and dashboard wiring for the Codex backend. Does not charge, send mail, or enable Codex flags.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Author: BrandDad
  *
  * Secure design (auth / API / ingestion / payments):
@@ -103,6 +103,32 @@ function bds_codex_bridge_checkout_consent() {
 	echo '</span></label></p>';
 }
 add_action( 'woocommerce_review_order_before_submit', 'bds_codex_bridge_checkout_consent', 20 );
+
+/** Fail-closed checkout copy on both hosts. No charge, no “no card” claim. */
+function bds_codex_bridge_checkout_note() {
+	if ( ! bds_codex_bridge_hosts() || ! function_exists( 'bds_codex_checkout_failclosed_copy' ) ) {
+		return;
+	}
+	$copy = bds_codex_checkout_failclosed_copy();
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	echo '<section id="bds-checkout-failclosed">';
+	echo '<h2' . ( $sw ? bds_lang_swap_attrs( $copy['heading'], 'Antes de pagar' ) : '' ) . '>' . esc_html( $copy['heading'] ) . '</h2><ul>';
+	$es = array(
+		'This checkout does not charge until you complete payment.' => 'Este checkout no cobra hasta que complete el pago.',
+		'The 7-day trial does not include Directory membership, Featured, or the 10% member price.' => 'La prueba de 7 días no incluye membresía del directorio, Featured ni el 10% de miembro.',
+		'Featured placement stays inactive until WooCommerce confirms payment.' => 'Featured permanece inactivo hasta que WooCommerce confirme el pago.',
+	);
+	foreach ( $copy['lines'] as $line ) {
+		$line_es = isset( $es[ $line ] ) ? $es[ $line ] : $line;
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			echo bds_lang_pair( $line, $line_es, 'li' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} else {
+			echo '<li>' . esc_html( $line ) . '</li>';
+		}
+	}
+	echo '</ul></section>';
+}
+add_action( 'woocommerce_before_checkout_form', 'bds_codex_bridge_checkout_note', 6 );
 
 function bds_codex_bridge_requested_listing() {
 	$raw = isset( $_GET['listing'] ) ? wp_unslash( $_GET['listing'] ) : ( isset( $_POST['_bds_feat_listing_id'] ) ? wp_unslash( $_POST['_bds_feat_listing_id'] ) : '' );
