@@ -361,13 +361,17 @@ if ( ! function_exists( 'bds_feat_listing_type_surface' ) ) {
 	function bds_feat_listing_type_surface( $raw ) {
 		$type = strtolower( preg_replace( '/[^a-z0-9\-]/', '', (string) $raw ) );
 		$map  = array(
-			'events'       => 'events',
-			'jobs'         => 'jobs',
-			'jobs-careers' => 'jobs',
-			'classifieds'  => 'classifieds',
-			'travel'       => 'travel',
-			'hotels-stays' => 'hotels',
-			'hotels'       => 'hotels',
+			'events'                => 'events',
+			'jobs'                  => 'jobs',
+			'jobs-careers'          => 'jobs',
+			'classifieds'           => 'classifieds',
+			'travel'                => 'travel',
+			'flights'               => 'travel',
+			'hotels-stays'          => 'hotels',
+			'hotels'                => 'hotels',
+			'gifts'                 => 'gifts',
+			'gift-cards'            => 'gifts',
+			'gift-card-marketplace' => 'gifts',
 		);
 		return isset( $map[ $type ] ) ? $map[ $type ] : '';
 	}

@@ -108,7 +108,10 @@ expect( 'blog' === bds_feat_directory_surface( 'blog' ), 'blog surface is recogn
 expect( 'gifts' === bds_feat_directory_surface( 'gift-card-marketplace' ), 'gift marketplace maps to gifts' );
 expect( 'travel' === bds_feat_directory_surface( 'flights' ), 'flights maps to travel' );
 expect( 'travel' === bds_feat_listing_type_surface( 'travel' ), 'all-listings travel type is recognized' );
+expect( 'travel' === bds_feat_listing_type_surface( 'flights' ), 'all-listings flights type uses travel copy' );
 expect( 'hotels' === bds_feat_listing_type_surface( 'hotels-stays' ), 'all-listings hotels type is recognized' );
+expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings gift-cards type uses marketplace copy' );
+expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
 expect( false !== strpos( $feat_src, 'Version: 0.2.21' ), 'featured MU stamps 0.2.21' );

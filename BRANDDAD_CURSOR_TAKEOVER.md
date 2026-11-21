@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~10:35am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~3:15pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -48,7 +48,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Lead / inquiry / monitor | Flags still off (503). Lead **0.1.2** follow-up only after consent **and** verified email. Inquiries **0.1.2** honeypot `company_website` is 422 and never fetched; privacy_ack + contact_consent required. Monitor **0.1.1** SSRF: http/https, no credentials, ports 80/443 only, literal IP hosts refused, DNS A/AAAA must all be public, `wp_safe_remote_get` timeout 10 / redirection 0 / 64KB. |
 | Sales chat | Chat is 503 `assistant_unavailable` unless `BDS_SALES_ASSISTANT_ENABLED` and a non-empty `BDS_FORMWISE_EXECUTION_KEY`. Catalog GET stays public. Model links are stripped. No FormWise key invented. |
 | Airbnb one-review | Slug `branddad-ai-review-dispute-assistant` is not in the commercial catalog. Launch `bds_ai_launch_product_url` is empty while unpublished. Homepage copy stays gated (“Secure checkout is in final testing”). Launch **0.5.26** and catalog **0.3.4** were not edited. |
-| GitHub wp-cron schedule | Rechecked 2026-11-21 ~10:35am America/Cancun: still **one** schedule run `44905829871` success 2026-11-21T12:49:47Z (7:49am America/Cancun). `total_count` 1. Not a 5-minute cadence. Spawn MU stays. **Do not add StartHost cron.** |
+| GitHub wp-cron schedule | Rechecked 2026-11-21 ~3:15pm America/Cancun: **two** schedule runs, both success. `44905829871` at 2026-11-21T12:49:47Z (7:49am America/Cancun) and `44943159190` at 2026-11-21T19:51:22Z (2:51pm America/Cancun). About 7 hours apart. Not a 5-minute cadence. Spawn MU stays. **Do not add StartHost cron.** |
 
 ## Track A — CX (independent)
 
@@ -63,7 +63,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help, follow, lang-switch, free-listing. Sticky help respects `prefers-reduced-motion`. |
 | Gift / travel / legal | Gift marketplace copy is not a BrandDad charge. Travel/hotels do not sell tickets. Social privacy/terms get the next-step band. |
 | Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Conversion **0.1.2** counts hub and door clicks. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow **0.1.5** has Featured/music/gift copy plus `#0668d8` / 44px / focus-visible (does not send). |
-| Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. |
+| Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. Gift and flights `directory_type` queries now map to marketplace/travel copy. Featured MU stamp stays **0.2.21**. |
 | Memberships / blogs | `/memberships/`, `/membership/`, `/plans/` alias to Select your plan. Directory blog door does not sell a listing. |
 | Music / quote-only | Live home already has music brief and “does not take payment.” DFY contact note is quote-only. |
 | Mobile contrast | Sales help **0.1.7** and lang-switch **0.1.4** use `#0668d8`, 44px taps, and focus rings. Contrast suite includes them. |
@@ -192,8 +192,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No Subscribe now rewrites piled. No StartHost cron added.
-- Leftover CX: sales-help **0.1.7** no longer stacks on checkout, cart, My Account, account-hub, or studio-boards. Live link probe (America/Cancun): gift-card-marketplace, claim, add-listing, check-your-website, contact-us, studio-boards, pricing→services all 200. Directory `/classifieds/` and `/faq/` aborted until featured aliases deploy.
-- GitHub wp-cron still **one** schedule run `44905829871`. Contrast suite green (`#0668d8`, no `#0878ed`). Lang-switch still strips `bd_lang` so shared cache stays English.
-- Suites: sales-help; brand-contrast; lang-switch. php -l clean. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
-- Deploy when FM signs in (including featured lib country match): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
-- Flags off. No charge. Not pushed.
+- Leftover CX: `directory_type` gift-cards / gift-card-marketplace / gifts now map to marketplace copy; flights maps to travel copy. Featured MU stamp stays **0.2.21**.
+- GitHub wp-cron is **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Do not add StartHost cron.
+- Suites: featured-rotation; featured-geo. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in (including featured lib country match and gift type map): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
+- Flags off. No charge. Not pushed. Tracker BSD-1 is For Review; this cycle followed the continue instruction.
