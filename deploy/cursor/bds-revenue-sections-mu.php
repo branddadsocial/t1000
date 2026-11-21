@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.32
+ * Version: 0.2.33
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -958,11 +958,23 @@ function bds_rev_alias_dest( $path ) {
 	if ( 'sitemap' === $path || 'site-map' === $path ) {
 		return bds_rev_services_url();
 	}
-	if ( in_array( $path, array( 'faqs', 'faq', 'frequently-asked-questions' ), true ) ) {
+	if ( in_array( $path, array( 'faqs', 'faq', 'frequently-asked-questions', 'how-it-works', 'support', 'help-center' ), true ) ) {
 		return home_url( '/help/' );
 	}
 	if ( in_array( $path, array( 'careers', 'career', 'work-with-us' ), true ) ) {
 		return home_url( '/contact-us/' );
+	}
+	if ( 'team' === $path ) {
+		return home_url( '/about-us/' );
+	}
+	if ( 'jobs' === $path ) {
+		return 'https://directory.branddad.social/all-listings/?directory_type=jobs-careers';
+	}
+	if ( 'classifieds' === $path ) {
+		return 'https://directory.branddad.social/all-listings/?directory_type=classifieds';
+	}
+	if ( 'get-featured' === $path ) {
+		return 'https://directory.branddad.social/featured-advertising/';
 	}
 	if ( 'music' === $path || 'branddad-music' === $path ) {
 		return home_url( '/#branddad-music' );
@@ -1009,6 +1021,21 @@ function bds_rev_pricing_redirect() {
 	exit;
 }
 add_action( 'template_redirect', 'bds_rev_pricing_redirect', 0 );
+
+/**
+ * Social leftover doors that already live on Directory.
+ *
+ * @param mixed $hosts Allowed hosts.
+ * @return array<int,string>
+ */
+function bds_rev_allowed_redirect_hosts( $hosts ) {
+	$hosts = is_array( $hosts ) ? $hosts : array();
+	if ( bds_rev_is_social() ) {
+		$hosts[] = 'directory.branddad.social';
+	}
+	return $hosts;
+}
+add_filter( 'allowed_redirect_hosts', 'bds_rev_allowed_redirect_hosts' );
 
 /**
  * Theme "About Us" / "Contact us" H1 sits above the real page heading.
