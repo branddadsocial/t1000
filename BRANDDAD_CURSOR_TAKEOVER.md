@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~10:08am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~10:12am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -30,9 +30,9 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 |---|---|
 | Stripe inspect (no reconnect) | Social Essentials product + Directory checkout-with-cart both load `wc-stripe` and `pk_live` (length 107, value not printed). No reconnect click. No charge. |
 | Stripe reconnect | **Owner blocker.** Dashboard-only if a webhook signing secret or account link is stale. |
-| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. |
+| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. Local execution **0.2.2**: `process_job` is `execution_not_configured` and does not POST without `BDS_FORMWISE_EXECUTION_KEY`. Subscriptions **0.5.1**: `bds_ai_subscription_readiness()['ready']` is false without the provisioning key; tier DELETE is not sent. |
 | Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Local mapping tests: 7-day terms only, paid wins over trial, trial does not grant Directory/Featured/member price/Travel. Trial MU **0.1.2**. |
-| Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Flags not flipped here. |
+| Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Follow-up worker **0.1.2** stays off (`BDS_FOLLOWUP_ENABLED` unset): no `wp_mail`, no hourly schedule. Flags not flipped here. |
 | Featured checkout | Products live. Adapter live. Local **0.2.21** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias, faq/sitemap → help. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
 | Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Directory membership HMAC **0.1.3** is fail-closed: empty key disables, timestamp >300s and body tamper refuse, `hash_equals`. Consent checkbox must be checked (`1`/`yes`/`true`/`on`); unchecked never provisions. Tests use a dummy local HMAC, not a Stripe or FormWise secret. Shop-manager Tools **Billing inspect** counts active Woo webhooks as a boolean. Stripe Dashboard delivery is owner inspect. |
 | Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.2**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
@@ -99,6 +99,14 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - Legacy: `bds_feat_activate_paid_order` stays unhooked so processing/completed cannot grant without the adapter gates.
 - Secrets: no Stripe or FormWise keys in source. No flag flip.
 
+## Secure design (FormWise execution + follow-up mail)
+
+- Identity: logged-in WordPress customer for AI jobs; follow-up recipients are consent-list rows with a verified email.
+- AuthN: WP cookie + REST nonce on `/ai/jobs`. FormWise is a service principal with a host-held bearer. Absence of `BDS_FORMWISE_EXECUTION_KEY` is a closed gate (`execution_not_configured`), not a silent allow.
+- AuthZ: only allowlisted tool keys and array inputs may reach the provider. Browser cannot pick remote_id, origin, or credit cost. Provisioning DELETE requires `bds_ai_subscription_readiness()` (recurring engine + provisioning key + entitlements flag).
+- Follow-up: `BDS_FOLLOWUP_ENABLED` plus a verified From address gate **send and schedule**. Unset flag means no `wp_mail` and no hourly event. Consent must still be explicit and fresh before any later send.
+- Secrets: tests do not define FormWise keys, From addresses, or enable flags. No Stripe keys in source. Outbound FormWise uses `wp_safe_remote_post` with redirection 0 only after the key gate.
+
 ## Secure design (lead / inquiry / monitor SSRF)
 
 - Identity: public lead/inquiry posts from BrandDad HTTPS origins; monitoring is a logged-in paid subscriber with `authorization_confirmed`.
@@ -113,7 +121,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No extra live-copy MU. No StartHost cron added.
-- Track B: Featured `product_ready` / SKU / `is_paid` grant unit tests. Adapter **0.1.2**. Next fail-closed: Directory membership consent checkbox never provisions unless stored `yes` (bridge **0.1.3**).
-- Suites: featured-grant, featured-geo, webhook-signature, featured-rotation. php -l clean. rafter secrets empty on the edited adapters and grant tests. `rafter run` quota remains exhausted until 2026-11-23.
+- Track B: FormWise `process_job` is `execution_not_configured` without a key (execution **0.2.2**). Follow-up worker **0.1.2** stays off: no `wp_mail`, no hourly schedule. Next fail-closed: subscription readiness/revocation stay closed without the provisioning key (subscriptions **0.5.1**, tests only).
+- Suites: formwise-followup-failclosed, trial-entitlement. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
 - Deploy when FM signs in (conversion MUs, unchanged): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.

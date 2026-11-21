@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Consent Follow-up Worker
  * Description: Default-off, consent-checked email delivery for the existing BrandDad follow-up list.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_CONSENT_FOLLOWUP_VERSION', '0.1.1' );
+define( 'BDS_CONSENT_FOLLOWUP_VERSION', '0.1.2' );
 
 /** Delivery is deliberately unavailable until a verified sender and kill switch are configured. */
 function bds_follow_worker_ready() {
@@ -18,6 +18,11 @@ function bds_follow_worker_ready() {
 		&& true === BDS_FOLLOWUP_ENABLED
 		&& defined( 'BDS_FOLLOWUP_FROM_EMAIL' )
 		&& is_email( BDS_FOLLOWUP_FROM_EMAIL );
+}
+
+/** Mail is never queued or sent while the worker is off. */
+function bds_follow_worker_may_mail() {
+	return bds_follow_worker_ready() && function_exists( 'bds_follow_message' );
 }
 
 function bds_follow_worker_lock() {
@@ -116,7 +121,7 @@ function bds_follow_worker_destination_url( $source ) {
 
 /** Send one consented message. The authoritative copy remains Cursor's bds_follow_message(). */
 function bds_follow_worker_send( $email, $source, $unsubscribe_token ) {
-	if ( ! bds_follow_worker_ready() || ! function_exists( 'bds_follow_message' ) ) {
+	if ( ! bds_follow_worker_may_mail() ) {
 		return false;
 	}
 	$email  = sanitize_email( $email );
@@ -146,7 +151,7 @@ function bds_follow_worker_send( $email, $source, $unsubscribe_token ) {
 
 /** Process a small bounded batch; one accepted mail ends this simple sequence. */
 function bds_follow_worker_run() {
-	if ( ! bds_follow_worker_ready() ) {
+	if ( ! bds_follow_worker_may_mail() ) {
 		return;
 	}
 	$lock = bds_follow_worker_lock();

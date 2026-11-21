@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.2.1
+ * Version: 0.2.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.2.1' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.2.2' );
+
+/** FormWise is never called without a non-empty execution key. Tests do not invent one. */
+function bds_ai_exec_formwise_ready() {
+	return defined( 'BDS_FORMWISE_EXECUTION_KEY' )
+		&& is_string( BDS_FORMWISE_EXECUTION_KEY )
+		&& '' !== trim( (string) BDS_FORMWISE_EXECUTION_KEY );
+}
+
+/** A job may reach the provider only with an allowlisted tool, array inputs, and a configured key. */
+function bds_ai_exec_job_may_call_provider( $tool_key, $inputs ) {
+	$tools = bds_ai_exec_tool_catalog();
+	return isset( $tools[ sanitize_key( (string) $tool_key ) ] ) && is_array( $inputs ) && bds_ai_exec_formwise_ready();
+}
 
 /**
  * Published workflows verified in the BrandDad Social FormWise workspace.
@@ -549,7 +562,7 @@ function bds_ai_exec_process_job( $job_id ) {
 			bds_ai_exec_paid_finish( $user_id, $plan, $reservation, false );
 		}
 	};
-	if ( ! isset( $tools[ $tool_key ] ) || ! is_array( $inputs ) || ! defined( 'BDS_FORMWISE_EXECUTION_KEY' ) || '' === trim( (string) BDS_FORMWISE_EXECUTION_KEY ) ) {
+	if ( ! bds_ai_exec_job_may_call_provider( $tool_key, $inputs ) ) {
 		$failed( 'execution_not_configured' );
 		return;
 	}
