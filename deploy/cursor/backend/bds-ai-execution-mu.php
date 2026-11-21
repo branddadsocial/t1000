@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.2.2
+ * Version: 0.2.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.2.2' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.2.3' );
 
 /** FormWise is never called without a non-empty execution key. Tests do not invent one. */
 function bds_ai_exec_formwise_ready() {
@@ -265,6 +265,39 @@ function bds_ai_exec_choose_access( $paid, $trial ) {
 	return is_array( $trial ) && $trial ? $trial : array();
 }
 
+/**
+ * Job access is derived from paid/trial facts or a verified listing.
+ * A client-supplied access_mode never grants directory_free against another listing.
+ *
+ * @param mixed $plan            Active paid or trial plan, or empty.
+ * @param mixed $requested_mode  Ignored browser access_mode.
+ * @param mixed $listing_id      Request listing id; re-checked via $listing_eligible.
+ * @param mixed $user_id         Signed-in session user.
+ * @param bool  $listing_eligible True only when Directory facts say this user owns the listing.
+ * @return array{mode:string,listing_id:int}
+ */
+function bds_ai_exec_create_access( $plan, $requested_mode, $listing_id, $user_id, $listing_eligible ) {
+	unset( $requested_mode );
+	if ( is_array( $plan ) && $plan ) {
+		$mode = sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
+		return array(
+			'mode'       => $mode ? $mode : 'paid',
+			'listing_id' => 0,
+		);
+	}
+	$listing_id = absint( $listing_id );
+	if ( $listing_id && absint( $user_id ) && true === $listing_eligible ) {
+		return array(
+			'mode'       => 'directory_free',
+			'listing_id' => $listing_id,
+		);
+	}
+	return array(
+		'mode'       => 'none',
+		'listing_id' => 0,
+	);
+}
+
 /** Prefer a paid entitlement; otherwise accept one bounded active trial. */
 function bds_ai_exec_active_plan( $user_id ) {
 	$paid  = bds_ai_exec_active_paid_plan( $user_id );
@@ -439,20 +472,22 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 			return rest_ensure_response( bds_ai_exec_job_response( $existing[0] ) );
 		}
 
-		$access_mode = sanitize_key( (string) $request->get_param( 'access_mode' ) );
-		$reservation = '';
-		$listing_id  = 0;
 		$plan        = bds_ai_exec_active_plan( $user_id );
+		$listing_id  = absint( $request->get_param( 'listing_id' ) );
+		$eligible    = $listing_id && function_exists( 'bds_dir_free_ai_listing_eligible' )
+			&& true === bds_dir_free_ai_listing_eligible( $listing_id, $user_id );
+		$access      = bds_ai_exec_create_access( $plan, $request->get_param( 'access_mode' ), $listing_id, $user_id, $eligible );
+		$access_mode = $access['mode'];
+		$listing_id  = absint( $access['listing_id'] );
+		$reservation = '';
 		// Paid/trial access has deterministic precedence. A customer cannot spend
 		// free Directory allowances while a paid or trial allowance is active.
 		if ( $plan ) {
-			$access_mode = sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
 			if ( 'trial' === ( $plan['access_mode'] ?? '' ) && empty( $tools[ $tool_key ]['trial'] ) ) {
 				return new WP_Error( 'trial_tool_unavailable', 'This tool is not included in the trial.', array( 'status' => 403 ) );
 			}
 			$reservation = bds_ai_exec_paid_reserve( $user_id, $plan, $tools[ $tool_key ]['credit_cost'] );
 		} elseif ( 'directory_free' === $access_mode ) {
-		$listing_id = absint( $request->get_param( 'listing_id' ) );
 		if ( empty( $tools[ $tool_key ]['free_key'] ) || ! function_exists( 'bds_dir_free_ai_reserve' ) ) {
 			return new WP_Error( 'free_access_unavailable', 'This tool is not available with free Directory access.', array( 'status' => 403 ) );
 		}

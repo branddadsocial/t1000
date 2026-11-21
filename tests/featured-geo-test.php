@@ -43,6 +43,21 @@ geo_expect( false === bds_feat_in_scope( $local, array( 'country' => 'MX' ) ), '
 $regional = array( 'level' => 'regional', 'active' => true, 'country' => 'MX', 'lat' => 20.63, 'lng' => -87.07 );
 geo_expect( true === bds_feat_in_scope( $regional, $cancun ), 'regional card covers Cancun from Playa' );
 geo_expect( false === bds_feat_in_scope( $regional, $austin ), 'regional card does not jump countries by radius alone when lat is US' );
+geo_expect( false === bds_feat_same_country( 'MX', 'US' ), 'MX and US are not the same Featured country' );
+geo_expect( true === bds_feat_same_country( 'mx', 'MX' ), 'ISO country compare is case-insensitive' );
+geo_expect( false === bds_feat_same_country( '', 'MX' ), 'a missing card country fails closed' );
+geo_expect( false === bds_feat_same_country( 'MEX', 'MEX' ), 'a three-letter country code fails closed' );
+
+$matamoros   = array( 'country' => 'MX', 'lat' => 25.869, 'lng' => -97.504 );
+$brownsville = array( 'country' => 'US', 'lat' => 25.901, 'lng' => -97.497 );
+$border_km   = bds_feat_haversine_km( $matamoros['lat'], $matamoros['lng'], $brownsville['lat'], $brownsville['lng'] );
+geo_expect( $border_km < 25, 'Matamoros to Brownsville is inside the regional 100km radius' );
+$regional_border = array( 'level' => 'regional', 'active' => true, 'country' => 'MX', 'lat' => 25.869, 'lng' => -97.504 );
+geo_expect( false === bds_feat_in_scope( $regional_border, $brownsville ), 'regional card does not cross the border inside 100km' );
+geo_expect( true === bds_feat_in_scope( $regional_border, $matamoros ), 'regional card stays in scope in the same country' );
+geo_expect( false === bds_feat_in_scope( array( 'level' => 'regional', 'active' => true, 'lat' => 20.63, 'lng' => -87.07 ), $cancun ), 'regional without ISO country fails closed' );
+$local_border = array( 'level' => 'local', 'active' => true, 'country' => 'MX', 'lat' => 25.869, 'lng' => -97.504 );
+geo_expect( false === bds_feat_in_scope( $local_border, $brownsville ), 'local card also requires the same ISO country' );
 
 $national = array( 'level' => 'national', 'active' => true, 'country' => 'MX' );
 geo_expect( true === bds_feat_in_scope( $national, $playa ), 'national card stays inside the viewer country' );

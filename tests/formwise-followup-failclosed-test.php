@@ -197,7 +197,7 @@ fw_expect( 0 === $GLOBALS['bds_remote_posts'], 'provisioning DELETE is not sent 
 fw_expect( ! defined( 'BDS_FORMWISE_EXECUTION_KEY' ), 'tests do not invent a FormWise execution key' );
 fw_expect( ! defined( 'BDS_FORMWISE_PROVISIONING_KEY' ), 'tests do not invent a FormWise provisioning key' );
 fw_expect( ! defined( 'BDS_AI_ENTITLEMENTS_ENABLED' ), 'tests do not enable entitlements' );
-fw_expect( '0.2.2' === BDS_AI_EXECUTION_VERSION, 'execution MU stamps 0.2.2' );
+fw_expect( '0.2.3' === BDS_AI_EXECUTION_VERSION, 'execution MU stamps 0.2.3' );
 
 $exec_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-ai-execution-mu.php' );
 $follow_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-consent-followup-worker-mu.php' );

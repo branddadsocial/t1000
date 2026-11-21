@@ -64,6 +64,15 @@ if ( ! function_exists( 'bds_feat_haversine_km' ) ) {
 	}
 }
 
+if ( ! function_exists( 'bds_feat_same_country' ) ) {
+	/** ISO-2 country match. Empty or three-letter codes fail closed. */
+	function bds_feat_same_country( $card_country, $viewer_country ) {
+		$card_country   = strtoupper( (string) $card_country );
+		$viewer_country = strtoupper( (string) $viewer_country );
+		return (bool) preg_match( '/^[A-Z]{2}$/', $card_country ) && $card_country === $viewer_country;
+	}
+}
+
 if ( ! function_exists( 'bds_feat_in_scope' ) ) {
 	/**
 	 * @param array<string,mixed> $card
@@ -80,8 +89,11 @@ if ( ! function_exists( 'bds_feat_in_scope' ) ) {
 		}
 		$card_country   = strtoupper( (string) ( $card['country'] ?? '' ) );
 		$viewer_country = strtoupper( (string) ( $viewer['country'] ?? '' ) );
+		if ( ! bds_feat_same_country( $card_country, $viewer_country ) ) {
+			return false;
+		}
 		if ( 'national' === $level ) {
-			return '' !== $card_country && $card_country === $viewer_country;
+			return true;
 		}
 		if ( ! isset( $card['lat'], $card['lng'], $viewer['lat'], $viewer['lng'] ) ) {
 			return false;

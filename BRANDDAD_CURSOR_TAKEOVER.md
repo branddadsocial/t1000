@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~10:25am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~10:30am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -30,7 +30,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 |---|---|
 | Stripe inspect (no reconnect) | Social Essentials product + Directory checkout-with-cart both load `wc-stripe` and `pk_live` (length 107, value not printed). No reconnect click. No charge. |
 | Stripe reconnect | **Owner blocker.** Dashboard-only if a webhook signing secret or account link is stale. |
-| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. Local execution **0.2.2**: `process_job` is `execution_not_configured` and does not POST without `BDS_FORMWISE_EXECUTION_KEY`. Subscriptions **0.5.2**: readiness stays closed without the provisioning key; unpaid or mismatched orders are not the current paid order. |
+| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. Local execution **0.2.3**: `process_job` is `execution_not_configured` without `BDS_FORMWISE_EXECUTION_KEY`. `bds_ai_exec_create_access` ignores client `access_mode`; a foreign listing id cannot spend Directory free AI. Subscriptions **0.5.2**: unpaid or mismatched orders are not the current paid order. |
 | Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Local mapping tests: 7-day terms only, paid wins over trial, trial does not grant Directory/Featured/member price/Travel. Trial MU **0.1.2**. |
 | Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Follow-up worker **0.1.2** stays off (`BDS_FOLLOWUP_ENABLED` unset): no `wp_mail`, no hourly schedule. Flags not flipped here. |
 | Featured checkout | Products live. Adapter live. Local **0.2.21** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias, faq/sitemap → help. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
@@ -42,7 +42,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Customer status API | Local **0.3.1**. Status/value use the signed-in session user, never a request user id. Email verification defaults false. Credits are not converted into a provider dollar amount. Revenue, rankings, and unpublished outcomes stay `unavailable`. |
 | Provider-cost ledger | Local **0.1.2**. Internal record API only (no REST POST). Guessed providers, products missing from the catalog, estimated bases, zero amounts, and timestamps outside the 7-year window return 0. Admin contribution is `manage_woocommerce` GET. Tests do not charge. |
 | Directory free AI | Local **0.1.1**. Eligibility is published `at_biz_dir` + claim claimed/approved/verified + author === claimed_by === user. Execution stays closed without `BDS_DIRECTORY_FREE_AI_EXECUTION_ENABLED` and a FormWise key (neither set). Free AI does not grant Featured or Travel. Live-copy MU under `deploy/cursor/` was not edited. |
-| Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.2**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
+| Featured geo | Local 25km **and** same ISO-2 country; regional 100km **and** same ISO-2 country (not radius-only). National ISO country. Global worldwide. Missing country/lat fails closed for non-global. Adapter **0.1.2**. Featured MU stamp stays **0.2.21**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
 | Featured grant | Adapter **0.1.2**. Allowlisted SKUs only. `product_ready` requires the catalog monthly, `_wps_sfw_product=yes`, and interval 1 month. `is_paid()` false, inactive sub, unlinked order, unowned listing, missing geo, or a stale next-payment date cannot activate. Legacy `bds_feat_activate_paid_order` hooks stay removed. Tests do not charge. |
 | Sales catalog contract | Local catalog **0.3.4**. Live Social catalog **0.4.0** — do not upload local over live. Anonymous `/sales/catalog` contract: Essentials $29.99 for_sale when published. Staged/quote-only (complete packages, DFY, music) have no checkout URL. Assistant stays closed without FormWise keys. |
 | Lead / inquiry / monitor | Flags still off (503). Lead **0.1.2** follow-up only after consent **and** verified email. Inquiries **0.1.2** honeypot `company_website` is 422 and never fetched; privacy_ack + contact_consent required. Monitor **0.1.1** SSRF: http/https, no credentials, ports 80/443 only, literal IP hosts refused, DNS A/AAAA must all be public, `wp_safe_remote_get` timeout 10 / redirection 0 / 64KB. |
@@ -94,7 +94,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - AuthZ: signature first; then event id must match the Idempotency-Key; receiver creates/reuses a subscriber only. It does not create a listing or grant Pro/Elite/Featured. Unchecked checkout consent (`bds_directory_membership_consent_checked`) never writes yes; `may_provision` requires stored `yes`.
 - Replay: timestamp must be within 300s; event id is 64 hex; option lock around persist.
 - Trial mapping: 7-day Essentials only. Paid wins over trial. Missing facts grant nothing. Trial does not include Directory membership, Featured, 10% member price, or Travel.
-- Featured geo: missing ISO country fails non-global billing; local/regional also need a real lat/lng.
+- Featured geo: missing ISO country fails non-global billing; local/regional also need a real lat/lng **and** the same ISO-2 country as the viewer (radius alone is not enough).
 - Catalog: staged/quote_only have no checkout URL. Anonymous sales catalog is Essentials. Local 0.3.4 must not overwrite live 0.4.0.
 
 ## Secure design (account-link empty secret)
@@ -176,10 +176,23 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - Execution: `bds_dir_free_ai_execution_ready()` is false unless `BDS_DIRECTORY_FREE_AI_EXECUTION_ENABLED` and a non-empty `BDS_FORMWISE_EXECUTION_KEY`. Tests set neither. This MU does not call FormWise. Free AI does not grant Featured or Travel.
 - Secrets: no keys in source. Live-copy `deploy/cursor/bds-directory-free-ai-mu.php` was not edited.
 
+## Secure design (Featured regional country)
+
+- Identity: Directory viewers vs a paid Featured listing's stored ISO-2 country and coordinates.
+- AuthZ: `bds_feat_in_scope` requires `bds_feat_same_country` for every non-global lane, then radius for local (25km) and regional (100km). A border pair inside 100km with different ISO codes is out of scope. Empty or three-letter country codes fail closed.
+- Secrets: no keys. No charge. Featured MU version stamp stays 0.2.21 so the conversion deploy list is unchanged.
+
+## Secure design (execution directory_free BOLA)
+
+- Identity: the signed-in job author. Listing ownership is Directory claim facts, not the JSON body.
+- AuthN: WordPress cookie on `/ai/jobs`. FormWise is still closed without `BDS_FORMWISE_EXECUTION_KEY`.
+- AuthZ: `bds_ai_exec_create_access` ignores client `access_mode`. Paid/trial plan wins and clears listing_id. `directory_free` requires a non-zero session user **and** `bds_dir_free_ai_listing_eligible`. A foreign listing id resolves to mode `none` / listing 0 (`subscription_required`).
+- Secrets: tests do not invent FormWise keys or enable execution flags.
+
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No extra live-copy MU. No StartHost cron added.
-- Track B: customer-status **0.3.1** session-scoped, no inferred revenue; provider-cost **0.1.2** record rejects guessed/estimated/zero; Directory free AI **0.1.1** eligibility + execution_ready false.
-- Suites: status-ledger-freeai-failclosed. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
+- Track B: regional Featured requires the same ISO-2 country, not radius alone. Execution **0.2.3** ignores client `access_mode`; a foreign listing cannot spend Directory free AI. Featured MU stamp stays **0.2.21**.
+- Suites: featured-geo; execution-access-bola; formwise-followup; featured-grant; featured-rotation. php -l clean. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
 - Deploy when FM signs in (conversion MUs, unchanged): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.
