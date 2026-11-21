@@ -10,6 +10,8 @@
 - Added the secure design, API contract, entitlement rules, product catalog row, and Cursor handoff. Checkout remains staged until hosted payment → entitlement → result → no second case → failed-run release → refund denial acceptance passes.
 - Local verification passes 40/40 Node contract files, 45/45 deployment PHP lints, 4/4 standalone PHP tests, focused FormWise schema checks, and `git diff --check`. `rafter secrets .` found no secrets. Manual OWASP web/API/LLM review found no unresolved critical issue in this diff: customer identity comes from the session, object ownership is enforced, output is stripped/bounded, provider origin/flow are fixed, redirects are off, and the AI has no submission or account tools.
 - Required `rafter run --mode fast` was attempted and rejected because the account remains at 16/16 fast scans. No paid Plus scan was used. No production price, product, order, payment, provider execution, customer record, or live checkout changed in this batch.
+- Production deployment completed through the authenticated StartHost File Manager for the three reviewed modules: `bds-ai-commercial-catalog-mu.php`, `bds-ai-execution-mu.php`, and `bds-ai-launch-pages-mu.php`. The upload UI reported all three files completed.
+- Live smoke verification now returns the one-Airbnb-review Services copy and the `$9.99 one time for one Airbnb review case` product-page copy. The product remains non-purchasable with the final one-case delivery-testing notice, and the protected AI tools route returns HTTP 401 anonymously rather than `rest_no_route`.
 
 Updated: 2026-11-20
 

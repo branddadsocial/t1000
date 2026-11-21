@@ -10,6 +10,10 @@
 - `rafter secrets .`: pass, no secrets detected; Betterleaks version-mismatch warning recorded.
 - Manual Rafter code review: web access control, API BOLA/BFLA/BOPLA/resource controls, LLM prompt injection/output handling/agency/cost reviewed against `deploy/bds-ai-execution-mu.php`. Evidence: authenticated route/body cap at lines 152–156; explicit input allowlist at 176–205; customer-owned paid order lookup at 369–409; locked reservation/job binding at 414–463; payment/refund recheck at 466–483; owner-only job response at 543–558; HMAC-bound idempotency at 580–596; private author-owned job creation at 641–679; fixed provider origin/disabled redirects/bounded response at 766–789; stripped/bounded output at 707–716. The FormWise prompt has no credentials or action tools and explicitly treats form input as untrusted.
 - `rafter run --mode fast`: attempted, blocked by account fast-scan limit 16/16. No paid Plus scan run.
+- StartHost production upload: pass; the File Manager reported `3/3` and `Completed` for the catalog, execution, and launch-page modules.
+- Live Services smoke: HTTP 200; contains `One Airbnb review. One simple payment.` and no longer contains the old `Google, Airbnb, and Trustpilot` block.
+- Live one-review product smoke: HTTP 200; contains `$9.99 one time for one Airbnb review case.` and the staged-checkout notice; contains neither `Add to cart` nor the legacy `$699.00` price.
+- Live protected route smoke: `/wp-json/branddad/v1/ai/tools` returns HTTP 401 `rest_forbidden` anonymously, proving the route is loaded and fail-closed rather than missing.
 
 ## 2026-11-20 release-integrity refresh
 

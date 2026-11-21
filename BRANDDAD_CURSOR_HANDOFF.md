@@ -116,6 +116,7 @@ Do not deploy this branch over newer Cursor public-page files. Merge only the ba
 - UI must require login, show a redaction warning, require the authorization affirmation, escape the returned plain text, and repeat that Airbnb makes the final decision.
 - The service page copy in backend launch source has been rewritten around “one review, one payment, one guided appeal.” Merge the copy into Cursor's newer public-page version rather than overwriting it.
 - Checkout remains fail-closed until hosted staging proves payment, entitlement, one usable result, second-case denial, failed-run release, and refund denial. After that acceptance, set the exact Woo simple/virtual product to $9.99, sold individually, update the catalog launch state, and verify cart/checkout/result on mobile and desktop.
+- The three backend/public-copy modules were deployed to production on 2026-11-20. Live smoke proves the new Services copy, staged product copy, and authenticated AI route are active. Cursor should treat the service as visible but not yet purchasable; do not add an active checkout CTA until the remaining acceptance gate closes.
 # 2026-11-20 public audit-page presentation note
 
 - The free website-audit page is clean at 320px, 390px, and 430px: no horizontal overflow remains, and the 390px content audit found no old pricing, provider branding, or green primary CTA.
