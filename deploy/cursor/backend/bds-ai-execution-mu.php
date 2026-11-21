@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.2.4
+ * Version: 0.2.5
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.2.4' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.2.5' );
 
 /** FormWise is never called without a non-empty execution key. Tests do not invent one. */
 function bds_ai_exec_formwise_ready() {
@@ -578,8 +578,19 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 	}
 }
 
-/** Extract a bounded customer-facing string from documented provider response shapes. */
-function bds_ai_exec_extract_output( $data ) {
+/**
+ * Extract a bounded customer-facing string from documented provider response shapes.
+ * Untrusted FormWise JSON: non-arrays, nested objects in string keys, and
+ * data wrapping deeper than 4 levels fail closed to empty.
+ *
+ * @param mixed $data  Decoded provider JSON.
+ * @param int   $depth Nesting of `data` wrappers already walked.
+ * @return string
+ */
+function bds_ai_exec_extract_output( $data, $depth = 0 ) {
+	if ( ! is_array( $data ) || (int) $depth > 4 ) {
+		return '';
+	}
 	$candidates = array( 'output', 'result', 'reply', 'response', 'message', 'text' );
 	foreach ( $candidates as $key ) {
 		if ( isset( $data[ $key ] ) && is_string( $data[ $key ] ) ) {
@@ -588,7 +599,7 @@ function bds_ai_exec_extract_output( $data ) {
 		}
 	}
 	if ( isset( $data['data'] ) && is_array( $data['data'] ) ) {
-		return bds_ai_exec_extract_output( $data['data'] );
+		return bds_ai_exec_extract_output( $data['data'], (int) $depth + 1 );
 	}
 	return '';
 }

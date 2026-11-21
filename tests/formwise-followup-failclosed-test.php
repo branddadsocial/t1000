@@ -139,6 +139,10 @@ function is_wp_error( $thing ) {
 function wp_json_encode( $v ) {
 	return json_encode( $v );
 }
+function wp_strip_all_tags( $s ) {
+	$s = preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', (string) $s );
+	return trim( strip_tags( $s ) );
+}
 
 require dirname( __DIR__ ) . '/deploy/cursor/backend/bds-ai-execution-mu.php';
 require dirname( __DIR__ ) . '/deploy/cursor/backend/bds-consent-followup-worker-mu.php';
@@ -196,6 +200,16 @@ fw_expect( true === bds_ai_exec_tool_allows_directory_free( 'social_draft' ), 's
 fw_expect( false === bds_ai_exec_tool_allows_directory_free( 'listing_studio' ), 'listing_studio cannot spend Directory free AI' );
 fw_expect( false === bds_ai_exec_tool_allows_directory_free( 'linkedin_profile' ), 'linkedin_profile cannot spend Directory free AI' );
 
+fw_expect( 'Hello cafe' === bds_ai_exec_extract_output( array( 'output' => 'Hello cafe' ) ), 'a string output field is kept' );
+fw_expect( 'Hello cafe' === bds_ai_exec_extract_output( array( 'data' => array( 'output' => 'Hello cafe' ) ) ), 'one data wrapper is walked' );
+fw_expect( 'Hello cafe' === bds_ai_exec_extract_output( array( 'output' => '<script>x</script>Hello cafe' ) ), 'provider HTML is stripped' );
+fw_expect( '' === bds_ai_exec_extract_output( 'Hello cafe' ), 'a non-array provider body is empty' );
+fw_expect( '' === bds_ai_exec_extract_output( array( 'output' => array( 'nested' => 'nope' ) ) ), 'a non-string output field is empty' );
+$deep = array( 'data' => array( 'data' => array( 'data' => array( 'data' => array( 'data' => array( 'output' => 'too deep' ) ) ) ) ) );
+fw_expect( '' === bds_ai_exec_extract_output( $deep ), 'data wrapping deeper than 4 levels is empty' );
+$long = str_repeat( 'a', 12001 );
+fw_expect( 12000 === strlen( bds_ai_exec_extract_output( array( 'output' => $long ) ) ), 'provider text is capped at 12000 characters' );
+
 $job              = new WP_Post();
 $job->ID          = 41;
 $job->post_type   = 'bds_ai_job';
@@ -241,7 +255,7 @@ fw_expect( 0 === $GLOBALS['bds_remote_posts'], 'provisioning DELETE is not sent 
 fw_expect( ! defined( 'BDS_FORMWISE_EXECUTION_KEY' ), 'tests do not invent a FormWise execution key' );
 fw_expect( ! defined( 'BDS_FORMWISE_PROVISIONING_KEY' ), 'tests do not invent a FormWise provisioning key' );
 fw_expect( ! defined( 'BDS_AI_ENTITLEMENTS_ENABLED' ), 'tests do not enable entitlements' );
-fw_expect( '0.2.4' === BDS_AI_EXECUTION_VERSION, 'execution MU stamps 0.2.4' );
+fw_expect( '0.2.5' === BDS_AI_EXECUTION_VERSION, 'execution MU stamps 0.2.5' );
 
 $exec_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-ai-execution-mu.php' );
 $follow_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-consent-followup-worker-mu.php' );

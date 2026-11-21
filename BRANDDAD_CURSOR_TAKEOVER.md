@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~3:30pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~3:35pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -30,7 +30,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 |---|---|
 | Stripe inspect (no reconnect) | Social Essentials product + Directory checkout-with-cart both load `wc-stripe` and `pk_live` (length 107, value not printed). No reconnect click. No charge. |
 | Stripe reconnect | **Owner blocker.** Dashboard-only if a webhook signing secret or account link is stale. |
-| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. Local execution **0.2.4**: `process_job` is `execution_not_configured` without `BDS_FORMWISE_EXECUTION_KEY`. Stored `_bds_inputs` are re-allowlisted before any FormWise POST (`remote_id` / `origin` / `credit_cost` dropped; forced fields win). Trial cannot call `listing_studio` or `linkedin_profile`. Public `/ai/tools` omits provider ids. `bds_ai_exec_create_access` ignores client `access_mode`; a foreign listing id cannot spend Directory free AI. Subscriptions **0.5.2**: unpaid or mismatched orders are not the current paid order. |
+| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. Local execution **0.2.5**: `process_job` is `execution_not_configured` without `BDS_FORMWISE_EXECUTION_KEY`. Stored `_bds_inputs` are re-allowlisted before any FormWise POST (`remote_id` / `origin` / `credit_cost` dropped; forced fields win). Trial cannot call `listing_studio` or `linkedin_profile`. Public `/ai/tools` omits provider ids. `bds_ai_exec_create_access` ignores client `access_mode`; a foreign listing id cannot spend Directory free AI. Subscriptions **0.5.2**: unpaid or mismatched orders are not the current paid order. |
 | Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Local mapping tests: 7-day terms only, paid wins over trial, trial does not grant Directory/Featured/member price/Travel. Trial MU **0.1.2**. |
 | Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Follow-up worker **0.1.2** stays off (`BDS_FOLLOWUP_ENABLED` unset): no `wp_mail`, no hourly schedule. Flags not flipped here. |
 | Featured checkout | Products live. Adapter live. Local **0.2.21** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias, faq/sitemap → help. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
@@ -192,7 +192,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 
 - Ingestion: browser REST JSON → `bds_ai_exec_sanitize_provider_inputs` (catalog field schema, per-field max, 32KB encoded) → stored `_bds_inputs` JSON (`json_decode`, never `unserialize`) → `process_job` re-allowlists before FormWise. Tampered extra keys including `remote_id`, `origin`, and `credit_cost` are dropped. Forced catalog fields always win.
 - AuthZ: WordPress cookie + REST nonce. Job GET is author-scoped 404. Tool URLs use catalog `remote_id` only. Trial tools require the catalog `trial` flag (`listing_studio` and `linkedin_profile` are paid-only). Directory free AI requires a catalog `free_key`.
-- Public `/ai/tools` omits `remote_id`. FormWise POST is `wp_safe_remote_post` timeout 45 / redirection 0 / 128KB. Response text is tag-stripped and capped at 12k. Network errors fail closed and are not auto-retried.
+- Public `/ai/tools` omits `remote_id`. FormWise POST is `wp_safe_remote_post` timeout 45 / redirection 0 / 128KB. Provider JSON is untrusted: non-arrays, non-string output fields, and `data` wrapping deeper than 4 levels are empty; HTML/script is stripped; text is capped at 12k. Network errors fail closed and are not auto-retried.
 - Secrets: tests do not invent `BDS_FORMWISE_EXECUTION_KEY`. Missing key stays `execution_not_configured`.
 
 ## Secure design (execution directory_free BOLA)
@@ -205,8 +205,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No Subscribe now rewrites piled. No StartHost cron added. Live classifieds/faq still wait on FM; not stalled.
-- Track B: onboarding **0.1.2** recommends only a tool the current access mode can call. Trial listing goal remaps off `listing_studio`. Directory free AI remaps off tools without a `free_key`. Website goal stays `website_plan` on trial.
+- Track B: execution **0.2.5** fail-closes untrusted FormWise JSON. `data` wrapping deeper than 4 levels, non-arrays, and non-string output fields are empty. HTML is stripped. Text is capped at 12k. Does not invent a FormWise key.
 - GitHub wp-cron remains **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
-- Suites: onboarding-subscription-failclosed; formwise-followup-failclosed. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2 and execution 0.2.4 are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
-- Flags off. No charge. Not pushed.
+- Suites: formwise-followup-failclosed; execution-access-bola. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2 and execution 0.2.5 are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
+- Flags off. No charge. Not pushed. Prompt Codex batches 1–7 and 9–10 still owner-gated.
