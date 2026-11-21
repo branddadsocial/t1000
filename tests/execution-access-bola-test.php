@@ -70,7 +70,7 @@ bola_expect( 'directory_free' === $owned['mode'] && 12 === $owned['listing_id'],
 $empty = bds_ai_exec_create_access( array(), 'directory_free', 0, 7, false );
 bola_expect( 'none' === $empty['mode'] && 0 === $empty['listing_id'], 'directory_free without a listing is subscription_required' );
 
-bola_expect( '0.2.3' === BDS_AI_EXECUTION_VERSION, 'execution stamps 0.2.3' );
+bola_expect( '0.2.4' === BDS_AI_EXECUTION_VERSION, 'execution stamps 0.2.4' );
 bola_expect( ! defined( 'BDS_FORMWISE_EXECUTION_KEY' ), 'tests do not invent a FormWise execution key' );
 bola_expect( ! defined( 'BDS_DIRECTORY_FREE_AI_EXECUTION_ENABLED' ), 'tests do not enable Directory free AI execution' );
 bola_expect( ! defined( 'BDS_AI_ENTITLEMENTS_ENABLED' ), 'tests do not enable entitlements' );

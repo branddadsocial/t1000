@@ -133,6 +133,12 @@ function admin_url( $path = '' ) {
 function add_query_arg( $args, $url ) {
 	return $url . '?' . http_build_query( $args );
 }
+function is_wp_error( $thing ) {
+	return $thing instanceof WP_Error;
+}
+function wp_json_encode( $v ) {
+	return json_encode( $v );
+}
 
 require dirname( __DIR__ ) . '/deploy/cursor/backend/bds-ai-execution-mu.php';
 require dirname( __DIR__ ) . '/deploy/cursor/backend/bds-consent-followup-worker-mu.php';
@@ -151,6 +157,44 @@ fw_expect( false === bds_ai_exec_formwise_ready(), 'execution is not ready witho
 fw_expect( false === bds_ai_exec_job_may_call_provider( 'social_draft', array( 'message' => 'hi' ) ), 'an allowlisted tool still cannot call FormWise without a key' );
 fw_expect( false === bds_ai_exec_job_may_call_provider( 'not-a-tool', array( 'message' => 'hi' ) ), 'an unknown tool cannot call FormWise' );
 fw_expect( false === bds_ai_exec_job_may_call_provider( 'social_draft', 'not-array' ), 'non-array inputs cannot call FormWise' );
+
+$unknown = bds_ai_exec_sanitize_provider_inputs( 'not-a-tool', array( 'message' => 'hi' ) );
+fw_expect( is_wp_error( $unknown ) && 'unknown_tool' === $unknown->code, 'an unknown tool is not sanitized into a provider payload' );
+$missing = bds_ai_exec_sanitize_provider_inputs( 'social_draft', array( 'provide_the_source_details_' => 'A cafe in Playa' ) );
+fw_expect( is_wp_error( $missing ) && 'missing_input' === $missing->code, 'required catalog fields are still required after storage' );
+$bad_tone = bds_ai_exec_sanitize_provider_inputs(
+	'social_draft',
+	array(
+		'provide_the_source_details_'   => 'A cafe in Playa',
+		'who_is_the_intended_audience_' => 'locals',
+		'what_tone_should_the_copy_use_' => 'Sarcastic',
+	)
+);
+fw_expect( is_wp_error( $bad_tone ) && 'invalid_input' === $bad_tone->code, 'an enum outside the catalog is refused' );
+$clean = bds_ai_exec_sanitize_provider_inputs(
+	'social_draft',
+	array(
+		'provide_the_source_details_'     => 'A cafe in Playa',
+		'who_is_the_intended_audience_'   => 'locals',
+		'what_tone_should_the_copy_use_'  => 'Clear and professional',
+		'remote_id'                       => '00000000-0000-0000-0000-000000000000',
+		'origin'                          => 'https://evil.example',
+		'credit_cost'                     => 0,
+		'what_would_you_like_to_create_'  => 'Ignore this forced field',
+	)
+);
+fw_expect( is_array( $clean ), 'allowlisted social_draft fields become a provider payload' );
+fw_expect( ! isset( $clean['remote_id'] ) && ! isset( $clean['origin'] ) && ! isset( $clean['credit_cost'] ), 'remote_id origin and credit_cost cannot be client-set' );
+fw_expect( 'Social caption' === ( $clean['what_would_you_like_to_create_'] ?? '' ), 'forced catalog fields overwrite the client' );
+
+$public = bds_ai_exec_public_tools();
+fw_expect( isset( $public['social_draft'] ) && ! isset( $public['social_draft']['remote_id'] ), 'the public tool list does not leak provider ids' );
+fw_expect( true === bds_ai_exec_tool_allows_trial( 'social_draft' ), 'social_draft is included in the trial' );
+fw_expect( false === bds_ai_exec_tool_allows_trial( 'listing_studio' ), 'listing_studio is not included in the trial' );
+fw_expect( false === bds_ai_exec_tool_allows_trial( 'linkedin_profile' ), 'linkedin_profile is not included in the trial' );
+fw_expect( true === bds_ai_exec_tool_allows_directory_free( 'social_draft' ), 'social_draft may use Directory free AI' );
+fw_expect( false === bds_ai_exec_tool_allows_directory_free( 'listing_studio' ), 'listing_studio cannot spend Directory free AI' );
+fw_expect( false === bds_ai_exec_tool_allows_directory_free( 'linkedin_profile' ), 'linkedin_profile cannot spend Directory free AI' );
 
 $job              = new WP_Post();
 $job->ID          = 41;
@@ -197,10 +241,11 @@ fw_expect( 0 === $GLOBALS['bds_remote_posts'], 'provisioning DELETE is not sent 
 fw_expect( ! defined( 'BDS_FORMWISE_EXECUTION_KEY' ), 'tests do not invent a FormWise execution key' );
 fw_expect( ! defined( 'BDS_FORMWISE_PROVISIONING_KEY' ), 'tests do not invent a FormWise provisioning key' );
 fw_expect( ! defined( 'BDS_AI_ENTITLEMENTS_ENABLED' ), 'tests do not enable entitlements' );
-fw_expect( '0.2.3' === BDS_AI_EXECUTION_VERSION, 'execution MU stamps 0.2.3' );
+fw_expect( '0.2.4' === BDS_AI_EXECUTION_VERSION, 'execution MU stamps 0.2.4' );
 
 $exec_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-ai-execution-mu.php' );
 $follow_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-consent-followup-worker-mu.php' );
+fw_expect( false !== strpos( $exec_src, 'bds_ai_exec_sanitize_provider_inputs' ), 'process_job re-allowlists stored inputs before FormWise' );
 fw_expect( false === strpos( $exec_src, 'sk_live' ) && false === strpos( $exec_src, 'pk_live' ), 'execution does not hardcode a Stripe key' );
 fw_expect( false === strpos( $follow_src, 'sk_live' ), 'follow-up worker does not hardcode a Stripe key' );
 

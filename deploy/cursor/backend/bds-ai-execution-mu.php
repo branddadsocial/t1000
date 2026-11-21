@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.2.3
+ * Version: 0.2.4
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.2.3' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.2.4' );
 
 /** FormWise is never called without a non-empty execution key. Tests do not invent one. */
 function bds_ai_exec_formwise_ready() {
@@ -204,6 +204,35 @@ function bds_ai_exec_validate_inputs( $tool, $raw ) {
 		return new WP_Error( 'request_too_large', 'The request is too large.', array( 'status' => 413 ) );
 	}
 	return $out;
+}
+
+/**
+ * Stored or request JSON must match the catalog allowlist before FormWise.
+ * Extra keys including remote_id and origin are dropped. Forced fields always win.
+ *
+ * @param mixed $tool_key Catalog key.
+ * @param mixed $inputs   Request or stored inputs.
+ * @return array|WP_Error
+ */
+function bds_ai_exec_sanitize_provider_inputs( $tool_key, $inputs ) {
+	$tools = bds_ai_exec_tool_catalog();
+	$key   = sanitize_key( (string) $tool_key );
+	if ( ! isset( $tools[ $key ] ) ) {
+		return new WP_Error( 'unknown_tool', 'This AI tool is not available.', array( 'status' => 404 ) );
+	}
+	return bds_ai_exec_validate_inputs( $tools[ $key ], is_array( $inputs ) ? $inputs : array() );
+}
+
+/** Trial jobs may call only catalog tools marked trial. */
+function bds_ai_exec_tool_allows_trial( $tool_key ) {
+	$tools = bds_ai_exec_tool_catalog();
+	return ! empty( $tools[ sanitize_key( (string) $tool_key ) ]['trial'] );
+}
+
+/** Directory free AI may spend only tools that name a free_key. */
+function bds_ai_exec_tool_allows_directory_free( $tool_key ) {
+	$tools = bds_ai_exec_tool_catalog();
+	return ! empty( $tools[ sanitize_key( (string) $tool_key ) ]['free_key'] );
 }
 
 /** Find one active, locally provisioned AI subscription owned by the user. */
@@ -438,11 +467,8 @@ function bds_ai_exec_get_job( WP_REST_Request $request ) {
 function bds_ai_exec_create_job( WP_REST_Request $request ) {
 	$user_id = get_current_user_id();
 	$tool_key = sanitize_key( (string) $request->get_param( 'tool' ) );
-	$tools = bds_ai_exec_tool_catalog();
-	if ( ! isset( $tools[ $tool_key ] ) ) {
-		return new WP_Error( 'unknown_tool', 'This AI tool is not available.', array( 'status' => 404 ) );
-	}
-	$inputs = bds_ai_exec_validate_inputs( $tools[ $tool_key ], $request->get_param( 'inputs' ) );
+	$tools    = bds_ai_exec_tool_catalog();
+	$inputs   = bds_ai_exec_sanitize_provider_inputs( $tool_key, $request->get_param( 'inputs' ) );
 	if ( is_wp_error( $inputs ) ) {
 		return $inputs;
 	}
@@ -483,12 +509,12 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 		// Paid/trial access has deterministic precedence. A customer cannot spend
 		// free Directory allowances while a paid or trial allowance is active.
 		if ( $plan ) {
-			if ( 'trial' === ( $plan['access_mode'] ?? '' ) && empty( $tools[ $tool_key ]['trial'] ) ) {
+			if ( 'trial' === ( $plan['access_mode'] ?? '' ) && ! bds_ai_exec_tool_allows_trial( $tool_key ) ) {
 				return new WP_Error( 'trial_tool_unavailable', 'This tool is not included in the trial.', array( 'status' => 403 ) );
 			}
 			$reservation = bds_ai_exec_paid_reserve( $user_id, $plan, $tools[ $tool_key ]['credit_cost'] );
 		} elseif ( 'directory_free' === $access_mode ) {
-		if ( empty( $tools[ $tool_key ]['free_key'] ) || ! function_exists( 'bds_dir_free_ai_reserve' ) ) {
+		if ( ! bds_ai_exec_tool_allows_directory_free( $tool_key ) || ! function_exists( 'bds_dir_free_ai_reserve' ) ) {
 			return new WP_Error( 'free_access_unavailable', 'This tool is not available with free Directory access.', array( 'status' => 403 ) );
 		}
 		$reservation = bds_dir_free_ai_reserve( $listing_id, $user_id, $tools[ $tool_key ]['free_key'], 1 );
@@ -597,8 +623,13 @@ function bds_ai_exec_process_job( $job_id ) {
 			bds_ai_exec_paid_finish( $user_id, $plan, $reservation, false );
 		}
 	};
-	if ( ! bds_ai_exec_job_may_call_provider( $tool_key, $inputs ) ) {
+	if ( ! bds_ai_exec_job_may_call_provider( $tool_key, is_array( $inputs ) ? $inputs : array() ) ) {
 		$failed( 'execution_not_configured' );
+		return;
+	}
+	$inputs = bds_ai_exec_sanitize_provider_inputs( $tool_key, $inputs );
+	if ( is_wp_error( $inputs ) ) {
+		$failed( 'invalid_inputs' );
 		return;
 	}
 	update_post_meta( $job_id, '_bds_status', 'running' );
