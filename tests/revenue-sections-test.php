@@ -105,6 +105,11 @@ rev_expect( true === bds_rev_path_needs_guide( 'press' ), 'press gets a next ste
 rev_expect( true === bds_rev_path_needs_guide( 'refund_returns' ), 'refund returns get a next step' );
 rev_expect( home_url( '/privacy-policy/' ) === bds_rev_alias_dest( 'cookie-policy' ), 'cookie leftover URLs open privacy' );
 rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'sitemap' ), 'dead sitemap URLs open the services catalog' );
+rev_expect( home_url( '/help/' ) === bds_rev_alias_dest( 'faqs' ), 'dead Social faqs URLs open help' );
+rev_expect( home_url( '/help/' ) === bds_rev_alias_dest( 'faq' ), 'dead Social faq URLs open help' );
+rev_expect( home_url( '/contact-us/' ) === bds_rev_alias_dest( 'careers' ), 'dead Social careers URLs open contact' );
+rev_expect( '' === bds_rev_alias_dest( 'help' ), 'the live help page is not redirected' );
+rev_expect( '' === bds_rev_alias_dest( 'contact-us' ), 'the live contact page is not redirected' );
 rev_expect( false === bds_rev_path_needs_guide( 'shop' ), 'the shop archive uses the live plan strip' );
 rev_expect( false === bds_rev_path_needs_guide( 'pricing' ), 'the missing pricing page is not a destination' );
 rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'pricing' ), 'pricing opens the services catalog' );
@@ -249,6 +254,8 @@ $dup = '<h1 class="entry-title">About Us</h1><h1>Practical growth systems, clear
 $dup_out = bds_rev_strip_theme_entry_title_h1( $dup );
 rev_expect( false === strpos( $dup_out, '<h1 class="entry-title">About Us</h1>' ), 'theme About Us is not a second H1' );
 rev_expect( false !== strpos( $dup_out, '<h1>Practical growth systems, clearly explained.</h1>' ), 'the real about heading stays' );
+$rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.31' ), 'revenue MU stamps 0.2.31' );
 
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );
