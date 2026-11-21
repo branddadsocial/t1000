@@ -127,6 +127,9 @@ function esc_url_raw( $s ) {
 function wp_http_validate_url() {
 	return false;
 }
+function wp_parse_url( $url, $component = -1 ) {
+	return parse_url( $url, $component );
+}
 function admin_url( $path = '' ) {
 	return 'https://branddad.social/wp-admin/' . ltrim( (string) $path, '/' );
 }
@@ -241,9 +244,32 @@ fw_expect( 0 === $GLOBALS['bds_mail_sends'], 'the worker run does not send mail 
 bds_follow_worker_schedule();
 fw_expect( 0 === $GLOBALS['bds_scheduled'], 'the worker does not schedule hourly mail while off' );
 fw_expect( false === bds_follow_worker_row_eligible( array( 'consent' => 0, 'status' => 'interested', 'email' => 'owner@example.com', 'saved' => gmdate( DATE_ATOM ) ) ), 'a row without consent is not eligible' );
+fw_expect( 'featured' === bds_follow_worker_source( 'featured' ), 'Featured consent keeps the Featured source' );
+fw_expect( 'music' === bds_follow_worker_source( 'music' ), 'music consent keeps the music source' );
+fw_expect( 'gift' === bds_follow_worker_source( 'gift' ), 'gift consent keeps the marketplace source' );
+fw_expect( '' === bds_follow_worker_source( 'drop-table' ), 'an unknown source is empty, not remapped to help' );
+fw_expect( '' === bds_follow_worker_source( '' ), 'a missing source is empty' );
+fw_expect( 'https://directory.branddad.social/featured-advertising/' === bds_follow_worker_destination_url( 'featured' ), 'Featured mail points at Featured, not Essentials checkout' );
+fw_expect( 'https://directory.branddad.social/gift-card-marketplace/' === bds_follow_worker_destination_url( 'gift' ), 'gift mail points at the marketplace' );
+fw_expect( 'https://directory.branddad.social/add-listing/' === bds_follow_worker_destination_url( 'listing' ), 'listing mail points at add-listing' );
+fw_expect( '' === bds_follow_worker_destination_url( 'drop-table' ), 'an unknown source has no destination URL' );
+fw_expect( true === bds_follow_worker_url_ok( 'https://branddad.social/' ), 'Social https is allowed' );
+fw_expect( false === bds_follow_worker_url_ok( 'https://evil.example/wp-cron.php' ), 'a foreign host is refused' );
+fw_expect( false === bds_follow_worker_url_ok( 'http://branddad.social/' ), 'http is refused' );
+fw_expect( false === bds_follow_worker_url_ok( 'https://user:pass@branddad.social/' ), 'userinfo is refused' );
+$eligible_feat = array(
+	'consent' => 1,
+	'status'  => 'interested',
+	'email'   => 'owner@example.com',
+	'saved'   => gmdate( DATE_ATOM ),
+	'source'  => 'featured',
+);
+fw_expect( true === bds_follow_worker_row_eligible( $eligible_feat ), 'Featured consent with a fresh timestamp is eligible' );
+$eligible_feat['source'] = 'drop-table';
+fw_expect( false === bds_follow_worker_row_eligible( $eligible_feat ), 'an unknown source is not mailed as help' );
 fw_expect( ! defined( 'BDS_FOLLOWUP_ENABLED' ), 'tests do not enable the follow-up flag' );
 fw_expect( ! defined( 'BDS_FOLLOWUP_FROM_EMAIL' ), 'tests do not invent a follow-up From address' );
-fw_expect( '0.1.2' === BDS_CONSENT_FOLLOWUP_VERSION, 'follow-up worker stamps 0.1.2' );
+fw_expect( '0.1.3' === BDS_CONSENT_FOLLOWUP_VERSION, 'follow-up worker stamps 0.1.3' );
 
 $ready = bds_ai_subscription_readiness();
 fw_expect( false === $ready['formwise_key'], 'subscription readiness has no FormWise provisioning key' );

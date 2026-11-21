@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Consent Follow-up Worker
  * Description: Default-off, consent-checked email delivery for the existing BrandDad follow-up list.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_CONSENT_FOLLOWUP_VERSION', '0.1.2' );
+define( 'BDS_CONSENT_FOLLOWUP_VERSION', '0.1.3' );
 
 /** Delivery is deliberately unavailable until a verified sender and kill switch are configured. */
 function bds_follow_worker_ready() {
@@ -43,16 +43,19 @@ function bds_follow_worker_unlock( $key ) {
 	}
 }
 
-/** Normalize only the four sources accepted by Cursor's consent form. */
+/** Normalize only the sources Cursor's consent form may store. Unknown is empty, not help. */
 function bds_follow_worker_source( $source ) {
 	$source = sanitize_key( (string) $source );
-	return in_array( $source, array( 'help', 'trial', 'listing', 'audit' ), true ) ? $source : 'help';
+	return in_array( $source, array( 'help', 'trial', 'listing', 'audit', 'featured', 'music', 'gift' ), true ) ? $source : '';
 }
 
 /** Fresh explicit consent is required immediately before queueing and sending. */
 function bds_follow_worker_row_eligible( $row, $now = null ) {
 	$now = null === $now ? time() : absint( $now );
 	if ( ! is_array( $row ) || 1 !== absint( $row['consent'] ?? 0 ) || 'interested' !== ( $row['status'] ?? '' ) || ! is_email( $row['email'] ?? '' ) ) {
+		return false;
+	}
+	if ( '' === bds_follow_worker_source( $row['source'] ?? '' ) ) {
 		return false;
 	}
 	$saved = strtotime( (string) ( $row['saved'] ?? '' ) );
@@ -111,12 +114,63 @@ function bds_follow_worker_unsubscribe_url( $token ) {
 	);
 }
 
-/** Use only server-verified destinations. Empty checkout links are omitted. */
-function bds_follow_worker_destination_url( $source ) {
-	if ( 'listing' === $source ) {
-		return 'https://directory.branddad.social/add-listing/';
+/**
+ * Next-step links are hardcoded BrandDad HTTPS URLs. User source never becomes a fetch.
+ *
+ * @param string $url Candidate URL.
+ * @return bool
+ */
+function bds_follow_worker_url_ok( $url ) {
+	if ( ! is_string( $url ) || '' === $url || strlen( $url ) > 180 ) {
+		return false;
 	}
-	return function_exists( 'bds_ai_commercial_checkout_url' ) ? (string) bds_ai_commercial_checkout_url( 'ai-business-essentials' ) : '';
+	$parts = function_exists( 'wp_parse_url' ) ? wp_parse_url( $url ) : parse_url( $url );
+	if ( ! is_array( $parts ) ) {
+		return false;
+	}
+	$scheme = isset( $parts['scheme'] ) ? strtolower( (string) $parts['scheme'] ) : '';
+	$host   = isset( $parts['host'] ) ? strtolower( (string) $parts['host'] ) : '';
+	$port   = isset( $parts['port'] ) ? (int) $parts['port'] : 0;
+	$path   = isset( $parts['path'] ) ? (string) $parts['path'] : '';
+	if ( 'https' !== $scheme ) {
+		return false;
+	}
+	if ( ! in_array( $host, array( 'branddad.social', 'www.branddad.social', 'directory.branddad.social' ), true ) ) {
+		return false;
+	}
+	if ( $port && 443 !== $port ) {
+		return false;
+	}
+	if ( ! empty( $parts['user'] ) || ! empty( $parts['pass'] ) ) {
+		return false;
+	}
+	if ( ! empty( $parts['query'] ) ) {
+		return false;
+	}
+	if ( false !== strpos( $path, '..' ) ) {
+		return false;
+	}
+	return true;
+}
+
+/** Use only server-verified destinations. Empty or foreign links are omitted. */
+function bds_follow_worker_destination_url( $source ) {
+	$source = bds_follow_worker_source( $source );
+	if ( '' === $source ) {
+		return '';
+	}
+	$map = array(
+		'listing'  => 'https://directory.branddad.social/add-listing/',
+		'featured' => 'https://directory.branddad.social/featured-advertising/',
+		'gift'     => 'https://directory.branddad.social/gift-card-marketplace/',
+		'music'    => 'https://branddad.social/',
+	);
+	if ( isset( $map[ $source ] ) ) {
+		$url = $map[ $source ];
+		return bds_follow_worker_url_ok( $url ) ? $url : '';
+	}
+	$url = function_exists( 'bds_ai_commercial_checkout_url' ) ? (string) bds_ai_commercial_checkout_url( 'ai-business-essentials' ) : '';
+	return bds_follow_worker_url_ok( $url ) ? $url : '';
 }
 
 /** Send one consented message. The authoritative copy remains Cursor's bds_follow_message(). */
@@ -126,7 +180,7 @@ function bds_follow_worker_send( $email, $source, $unsubscribe_token ) {
 	}
 	$email  = sanitize_email( $email );
 	$source = bds_follow_worker_source( $source );
-	if ( ! is_email( $email ) ) {
+	if ( ! is_email( $email ) || '' === $source ) {
 		return false;
 	}
 	$message = bds_follow_message( $source );
