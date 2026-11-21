@@ -1,5 +1,19 @@
 # BrandDad Codex progress
 
+## 2026-11-20 FormWise assistant reconciliation
+
+- Read the full authoritative Sales Assistant operating guide and verified catalog. Replaced the stale quote-only review-dispute entry with the live `$9.99` one-time Airbnb offer, one-case scope, customer-provided facts, editable-copy workflow, Airbnb-controlled outcome, and no-removal-guarantee language. Also removed a duplicated sentence fragment from the catalog.
+- Found that the Sales Assistant's unpublished draft had also drifted from its stronger live prompt. Restored it exactly to the current live version, confirmed the draft/live diff is empty, and left production unchanged. Then ran three focused cases: price/scope, no-guarantee/no-submission, and three-review boundary cases all passed.
+- Investigated an apparently inverted Directory Concierge draft. The live production prompt was already correct; the unpublished draft had drifted. Restored the draft exactly to live v2, confirmed `diff_agent_draft` reports no changes, and passed identity, Social-service refusal, and location-first tests 3/3. No publication was needed.
+- Swept six live Directory surfaces (home, all categories, restaurants, events, jobs, and add listing). Each returned HTTP 200, referenced the current Directory Concierge, and contained neither the superseded Directory Assistant ID/name nor the Social Sales Assistant ID.
+
+## 2026-11-20 live route and conversion-link reconciliation
+
+- Re-read the live WordPress REST index after the production deployment. All 15 expected BrandDad backend routes are registered; the previous `rest_no_route` checklist blocker was stale and is now closed.
+- Sampled eleven customer/admin GET routes anonymously. Every route returned HTTP 401 `rest_forbidden`; the public sales catalog returned HTTP 200 with the authoritative Business Essentials offer.
+- Extracted the real internal anchors from Social Home and Services, discarded scripts, fragments, mail/phone actions, account/checkout routes, and add-to-cart mutations, then fetched 61 unique public destinations with a four-request throttle. All 61 returned HTTP 200.
+- Re-audited FormWise from the signed-in organization connection. Sales Assistant, Directory Concierge, and the superseded Directory Assistant remain published with `embedding=anywhere`, empty `allowedSites`, and public direct links. Domain restriction is a live access-permission change and remains pending an exact action-time confirmation in FormWise's Publish/Share controls.
+
 ## 2026-11-20 Airbnb production copy reconciliation
 
 - Preserved Cursor's newer `0.5.24` public-page work and merged the one-case Airbnb copy into that source instead of overwriting it with the older Codex variant. Production launch pages are now `0.5.25`; StartHost reported the single-file upload complete.

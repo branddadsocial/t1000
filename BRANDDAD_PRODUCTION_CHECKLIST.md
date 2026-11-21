@@ -16,7 +16,7 @@
 - [x] Complete Rafter code-review walk, local secret scan, and document fast-scan quota blocker.
 - [ ] Run `rafter run` fast after quota resets and reconcile findings.
 - [x] Build and independently verify current production-only Social and Directory archives; package-local checksums and PHP lint pass, and no staging/acceptance/repair helper is present.
-- [!] Live Social currently returns `rest_no_route` for the reviewed backend APIs; production package deployment has not occurred.
+- [x] Live Social exposes all 15 expected reviewed backend routes. Eleven sampled customer/admin GET routes fail closed with HTTP 401 to anonymous callers, while the public sales catalog returns HTTP 200.
 - [ ] Test cross-account denial, CSRF/nonce, replay, rate-limit, and provider-outage cases in WordPress.
 - [x] Add a verified-only provider-cost ledger with no public write route and explicit incomplete-coverage reporting.
 - [x] Reject negative and fractional provider costs before WordPress integer normalization.
@@ -133,8 +133,9 @@ Nothing unchecked above may be described as fully operational.
 - [~] Diagnosed the missing live-webhook evidence: Woo marks the live account `Incomplete` because stored Stripe keys exist but their origin cannot be verified; sync is disabled and the plugin requires an authorized reconnect. The configured webhook endpoint is publicly reachable, but reconnect and a signed test event remain pending.
 - [x] Refresh FormWise agents, app, flows, portals, and tier plans without spending credits.
 - [x] Admit Business Essentials, AI Lead Assistant, AI Local SEO, and AI Social Growth groups to the existing restricted customer portal and verify provider read-back without adding members or spending credits.
-- [~] Live pages are correctly separated: sampled Directory routes reference only the dedicated Concierge, Social home references only the Sales Assistant, and no sampled page references the older Directory Assistant. FormWise still reports all three agents as embeddable anywhere with direct links, and the older Assistant remains published; restrict via supported domain/Suite controls and retire the old agent after a no-reference sweep.
+- [~] Live pages are correctly separated: sampled Directory routes reference only the dedicated Concierge, Social home references only the Sales Assistant, and no sampled page references the older Directory Assistant. A fresh FormWise API audit still reports all three published agents as `embedding=anywhere` with direct links; domain-lock the Sales Assistant to Social and Concierge to Directory, then retire the older Assistant after a final no-reference sweep.
 - [x] Reconciled and published the Sales Assistant with the verified launch catalog, current starters, ten saved accuracy/safety cases, explicit trial-billing language, and the current white-labeled BrandDad links.
+- [x] Reconciled the Sales Assistant knowledge with the live `$9.99` one-case Airbnb Review Dispute Assistant offer and passed focused price, scope, and no-guarantee tests 3/3.
 - [x] Obtained explicit credit approval, ran the saved ten-case suite, corrected the two initial failures, found and repaired a prompt-negation/catalog-retrieval defect before publication, and passed the final targeted trial, pricing, and prompt-injection gates.
 - [~] Approved controlled FormWise executions now prove real provider output and the configured 5-credit-per-run model cost. Customer-isolation and server-proxy acceptance still remain before enabling the separate BrandDad-hosted external execution route.
 - [~] Monitor Directory `all-locations` cold performance. HTTP 200 is stable, but one 18-second cold cache-bypass response and later 1.3-6.6 second responses indicate a cache/bootstrap optimization opportunity.

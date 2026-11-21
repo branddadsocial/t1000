@@ -1,5 +1,20 @@
 # BrandDad Codex test results
 
+## 2026-11-20 FormWise assistant reconciliation
+
+- Sales Assistant draft/live comparison after repair: `changed=[]`; no publication was needed. Final Airbnb offer tests on the live-matching draft: 3/3 passed. Outputs state `$9.99` one time, one review case per purchase, customer-provided facts, editable policy-based message, no BrandDad submission, Airbnb-controlled decision, and no removal guarantee.
+- Directory Concierge live/draft comparison: `changed=[]`; the repaired unpublished draft now exactly matches live v2, so no publication was performed.
+- Directory Concierge focused tests: 3/3 passed for exact assistant identity, rejection of BrandDad Social service questions, and asking for city/region/country before directory recommendations.
+- Live Directory assistant-reference sweep: 6/6 sampled public surfaces returned HTTP 200 and contained the current Concierge ID; 0/6 contained the superseded Assistant ID/name or the Social Sales Assistant ID.
+
+## 2026-11-20 live route and conversion-link reconciliation
+
+- WordPress REST index: all 15 expected BrandDad route roots present.
+- Anonymous protected-route smoke: 11/11 customer/admin GET routes returned HTTP 401 `rest_forbidden`; zero returned data or `rest_no_route`.
+- Public catalog smoke: `GET /wp-json/branddad/v1/sales/catalog` returned HTTP 200 with the canonical `$29.99` Business Essentials offer and product URL.
+- Social Home/Services internal-destination audit: 61/61 unique non-mutating public URLs returned HTTP 200 under four-request throttling; account, checkout, cart, add-to-cart, mail, phone, script, and fragment actions were deliberately excluded.
+- FormWise share audit: all three published public assistants currently report `embedding=anywhere`, `allowedSites=[]`, and direct public links. No agent setting or publication state was changed during this read-only audit.
+
 ## 2026-11-20 Airbnb production copy reconciliation
 
 - Live `Services`: HTTP 200, launch version `0.5.25`, one-Airbnb-review section present, legacy multi-platform section absent, and no active cart action.
