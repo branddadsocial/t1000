@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Status API
  * Description: Customer-owned account, entitlement, usage, and evidence-based monthly value reporting.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: BrandDad Social
  */
 
@@ -10,10 +10,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_CUSTOMER_STATUS_API_VERSION', '0.3.0' );
+define( 'BDS_CUSTOMER_STATUS_API_VERSION', '0.3.1' );
 
 function bds_customer_status_permission() {
 	return is_user_logged_in();
+}
+
+/** Status and value reports always use the signed-in session, never a request user id. */
+function bds_customer_status_subject_user_id( $session_user_id, $requested_user_id = 0 ) {
+	unset( $requested_user_id );
+	return absint( $session_user_id );
+}
+
+/** Paid/trial plan facts win; a Directory listing never impersonates a paid plan. */
+function bds_customer_status_access_mode( $plan, $listing_id ) {
+	if ( is_array( $plan ) && $plan ) {
+		$mode = sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
+		return $mode ? $mode : 'paid';
+	}
+	return absint( $listing_id ) ? 'directory_free' : 'none';
+}
+
+function bds_customer_status_email_verified( $user_id ) {
+	return (bool) apply_filters( 'bds_account_link_email_verified', false, absint( $user_id ) );
+}
+
+function bds_customer_value_unavailable_metrics( $inquiries_available ) {
+	$unavailable = array( 'social_posts_published', 'blogs_published', 'search_rankings', 'revenue_generated' );
+	if ( ! $inquiries_available ) {
+		$unavailable[] = 'leads_captured';
+	}
+	return $unavailable;
+}
+
+/** Credits are usage units. They are never converted into a provider dollar amount. */
+function bds_customer_value_cost_tracking( $credits ) {
+	return array(
+		'provider_units' => absint( $credits ),
+		'provider_cost'  => 'unavailable',
+		'note'           => 'Provider cost is not reported until a verified provider cost value is returned or reconciled.',
+	);
 }
 
 /** Customer-owned account status; provider ids and internal ledger keys stay private. */
@@ -33,11 +69,11 @@ function bds_customer_status_response( $user_id ) {
 	$listing_id = function_exists( 'bds_onboarding_directory_access' ) ? bds_onboarding_directory_access( $user_id ) : 0;
 	$onboarding = function_exists( 'bds_onboarding_response' ) ? bds_onboarding_response( $user_id ) : array();
 
-	$mode = $plan ? sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) ) : ( $listing_id ? 'directory_free' : 'none' );
+	$mode = bds_customer_status_access_mode( $plan, $listing_id );
 	return array(
 		'account' => array(
 			'user_id' => $user_id,
-			'email_verified' => (bool) apply_filters( 'bds_account_link_email_verified', false, $user_id ),
+			'email_verified' => bds_customer_status_email_verified( $user_id ),
 		),
 		'access' => array(
 			'mode'       => $mode,
@@ -115,10 +151,6 @@ function bds_customer_value_report( $user_id, $period ) {
 		}
 		$credits += absint( get_post_meta( $job_id, '_bds_credit_cost', true ) );
 	}
-	$unavailable = array( 'social_posts_published', 'blogs_published', 'search_rankings', 'revenue_generated' );
-	if ( ! function_exists( 'bds_inquiries_monthly_summary' ) ) {
-		$unavailable[] = 'leads_captured';
-	}
 	return array(
 		'period' => $period,
 		'generated_at' => gmdate( DATE_ATOM ),
@@ -156,19 +188,15 @@ function bds_customer_value_report( $user_id, $period ) {
 				'note'   => 'Outcome analytics are not connected yet.',
 			),
 		),
-		'cost_tracking' => array(
-			'provider_units' => $credits,
-			'provider_cost'  => 'unavailable',
-			'note'           => 'Provider cost is not reported until a verified provider cost value is returned or reconciled.',
-		),
+		'cost_tracking' => bds_customer_value_cost_tracking( $credits ),
 		'website_monitoring' => function_exists( 'bds_monitoring_customer_summary' ) ? bds_monitoring_customer_summary( $user_id, $period ) : array( 'status' => 'unavailable' ),
 		'customer_inquiries' => function_exists( 'bds_inquiries_monthly_summary' ) ? bds_inquiries_monthly_summary( $user_id, $period ) : array( 'status' => 'unavailable' ),
-		'unavailable_metrics' => $unavailable,
+		'unavailable_metrics' => bds_customer_value_unavailable_metrics( function_exists( 'bds_inquiries_monthly_summary' ) ),
 	);
 }
 
 function bds_customer_status_get() {
-	return rest_ensure_response( bds_customer_status_response( get_current_user_id() ) );
+	return rest_ensure_response( bds_customer_status_response( bds_customer_status_subject_user_id( get_current_user_id() ) ) );
 }
 
 function bds_customer_value_get( WP_REST_Request $request ) {
@@ -176,7 +204,7 @@ function bds_customer_value_get( WP_REST_Request $request ) {
 	if ( is_wp_error( $period ) ) {
 		return $period;
 	}
-	return rest_ensure_response( bds_customer_value_report( get_current_user_id(), $period ) );
+	return rest_ensure_response( bds_customer_value_report( bds_customer_status_subject_user_id( get_current_user_id() ), $period ) );
 }
 
 function bds_customer_status_register_routes() {

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Verified Provider Cost Ledger
  * Description: Append-only verified provider-cost records and privacy-limited contribution reporting for WooCommerce administrators.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_PROVIDER_COST_LEDGER_VERSION', '0.1.1' );
+define( 'BDS_PROVIDER_COST_LEDGER_VERSION', '0.1.2' );
 
 function bds_provider_cost_register_type() {
 	register_post_type(
@@ -42,6 +42,35 @@ function bds_provider_cost_catalog_has( $product_slug ) {
 	return is_array( $catalog ) && isset( $catalog[ $product_slug ] );
 }
 
+/** Non-negative integer amounts and timestamps only. Negatives and floats never record. */
+function bds_provider_cost_uint( $raw ) {
+	$valid = ( is_int( $raw ) && $raw >= 0 ) || ( is_string( $raw ) && ctype_digit( $raw ) );
+	return $valid ? absint( $raw ) : 0;
+}
+
+/**
+ * Guessed providers, products missing from the catalog, estimated bases,
+ * zero amounts, and timestamps outside the 7-year window never record.
+ */
+function bds_provider_cost_event_may_record( $provider, $catalog_has, $basis, $currency, $amount, $occurred, $idem, $now ) {
+	$provider = sanitize_key( (string) $provider );
+	$basis    = sanitize_key( (string) $basis );
+	$currency = strtoupper( sanitize_text_field( (string) $currency ) );
+	$amount   = absint( $amount );
+	$occurred = absint( $occurred );
+	$idem     = sanitize_text_field( (string) $idem );
+	$now      = absint( $now );
+	if ( ! in_array( $provider, bds_provider_cost_allowed_providers(), true )
+		|| true !== $catalog_has
+		|| ! in_array( $basis, bds_provider_cost_allowed_bases(), true )
+		|| ! preg_match( '/^[A-Z]{3}$/', $currency )
+		|| $amount < 1 || $amount > 100000000
+		|| strlen( $idem ) < 8 || strlen( $idem ) > 200 ) {
+		return false;
+	}
+	return $occurred >= $now - ( 7 * YEAR_IN_SECONDS ) && $occurred <= $now + 300;
+}
+
 function bds_provider_cost_event_key( $provider, $product_slug, $currency, $amount_minor, $occurred_at, $idempotency ) {
 	$material = implode( '|', array( $provider, $product_slug, $currency, absint( $amount_minor ), absint( $occurred_at ), $idempotency ) );
 	return hash_hmac( 'sha256', $material, wp_salt( 'auth' ) );
@@ -64,24 +93,11 @@ function bds_provider_cost_record( $event ) {
 	$product  = sanitize_key( (string) ( $event['product_slug'] ?? '' ) );
 	$basis    = sanitize_key( (string) ( $event['basis'] ?? '' ) );
 	$currency = strtoupper( sanitize_text_field( (string) ( $event['currency'] ?? '' ) ) );
-	$amount_raw = $event['amount_minor'] ?? null;
-	$occurred_raw = $event['occurred_at'] ?? null;
-	$amount_valid = ( is_int( $amount_raw ) && $amount_raw >= 0 ) || ( is_string( $amount_raw ) && ctype_digit( $amount_raw ) );
-	$occurred_valid = ( is_int( $occurred_raw ) && $occurred_raw >= 0 ) || ( is_string( $occurred_raw ) && ctype_digit( $occurred_raw ) );
-	$amount   = $amount_valid ? absint( $amount_raw ) : 0;
-	$occurred = $occurred_valid ? absint( $occurred_raw ) : 0;
+	$amount   = bds_provider_cost_uint( $event['amount_minor'] ?? null );
+	$occurred = bds_provider_cost_uint( $event['occurred_at'] ?? null );
 	$idem     = sanitize_text_field( (string) ( $event['idempotency'] ?? '' ) );
 
-	if ( ! in_array( $provider, bds_provider_cost_allowed_providers(), true )
-		|| ! bds_provider_cost_catalog_has( $product )
-		|| ! in_array( $basis, bds_provider_cost_allowed_bases(), true )
-		|| ! preg_match( '/^[A-Z]{3}$/', $currency )
-		|| $amount < 1 || $amount > 100000000
-		|| strlen( $idem ) < 8 || strlen( $idem ) > 200 ) {
-		return 0;
-	}
-	$now = time();
-	if ( $occurred < $now - ( 7 * YEAR_IN_SECONDS ) || $occurred > $now + 300 ) {
+	if ( ! bds_provider_cost_event_may_record( $provider, bds_provider_cost_catalog_has( $product ), $basis, $currency, $amount, $occurred, $idem, time() ) ) {
 		return 0;
 	}
 

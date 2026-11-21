@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~10:20am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~10:25am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -39,6 +39,9 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Lifecycle is_paid | Local **0.4.2**. `payment_confirmed` records only when Woo `is_paid()` is true. Featured also needs an allowlisted lane. Refunds record only after a matching `payment_confirmed`. Trial stays `trial_started`, not paid. No `wp_mail`. Tests do not charge. |
 | Onboarding website SSRF | Local **0.1.1**. Stored `website_url` is http/https only, no credentials, ports 80/443, no localhost/.local/.internal, no literal IPs. The function never fetches. Invalid URLs are 422. |
 | Subscription order map | Local **0.5.2**. `bds_ai_order_matches_subscription` requires the parent order or an authoritative renewal for that subscription. Unpaid or mismatched ids return 0 from `bds_ai_paid_order_id_or_zero`. Tests do not charge. |
+| Customer status API | Local **0.3.1**. Status/value use the signed-in session user, never a request user id. Email verification defaults false. Credits are not converted into a provider dollar amount. Revenue, rankings, and unpublished outcomes stay `unavailable`. |
+| Provider-cost ledger | Local **0.1.2**. Internal record API only (no REST POST). Guessed providers, products missing from the catalog, estimated bases, zero amounts, and timestamps outside the 7-year window return 0. Admin contribution is `manage_woocommerce` GET. Tests do not charge. |
+| Directory free AI | Local **0.1.1**. Eligibility is published `at_biz_dir` + claim claimed/approved/verified + author === claimed_by === user. Execution stays closed without `BDS_DIRECTORY_FREE_AI_EXECUTION_ENABLED` and a FormWise key (neither set). Free AI does not grant Featured or Travel. Live-copy MU under `deploy/cursor/` was not edited. |
 | Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.2**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
 | Featured grant | Adapter **0.1.2**. Allowlisted SKUs only. `product_ready` requires the catalog monthly, `_wps_sfw_product=yes`, and interval 1 month. `is_paid()` false, inactive sub, unlinked order, unowned listing, missing geo, or a stale next-payment date cannot activate. Legacy `bds_feat_activate_paid_order` hooks stay removed. Tests do not charge. |
 | Sales catalog contract | Local catalog **0.3.4**. Live Social catalog **0.4.0** — do not upload local over live. Anonymous `/sales/catalog` contract: Essentials $29.99 for_sale when published. Staged/quote-only (complete packages, DFY, music) have no checkout URL. Assistant stays closed without FormWise keys. |
@@ -150,10 +153,33 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - AuthZ: `bds_ai_order_matches_subscription` requires the parent order or an authoritative renewal tagged to that subscription. Unpaid, mismatched, or missing ids return 0 from `bds_ai_paid_order_id_or_zero`. Provision still requires readiness, active status, and is not in a 7-day trial window unless this is a renewal.
 - Secrets: tests do not define FormWise or Stripe keys. Entitlements flag stays off.
 
+## Secure design (customer status API)
+
+- Identity: the signed-in WordPress customer. Status and value reports name that session user only.
+- AuthN: WordPress cookie. Anonymous GET is refused by `is_user_logged_in`.
+- AuthZ: `bds_customer_status_subject_user_id` ignores a requested user id. Access mode is paid/trial from plan facts, else `directory_free` only when a listing id exists, else `none`. Email verification filter defaults false.
+- Data: credits stay units. `provider_cost` is the string `unavailable`. Revenue, rankings, social posts, blogs, and unpublished delivery outcomes are not inferred.
+- Secrets: no FormWise or Stripe keys. No outbound fetch.
+
+## Secure design (provider-cost ledger)
+
+- Identity: WooCommerce administrators for the contribution GET; verified adapters for the internal record API.
+- AuthN: `manage_woocommerce` on `/admin/finance/contribution`. There is no REST POST for costs.
+- AuthZ: record requires an allowlisted provider, a commercial-catalog product, an allowlisted basis (`provider_reported` / `processor_reported` / `invoice_reconciled` / `contract_unit_reconciled`), ISO currency, amount 1–100000000 minor units, idempotency 8–200 chars, and a timestamp in the last 7 years (not more than 300s future). Estimated or guessed rows return 0.
+- Secrets: idempotency is stored as HMAC with `wp_salt('auth')`, not in the clear. Tests do not charge.
+
+## Secure design (Directory free AI)
+
+- Identity: the verified Directory listing owner. Listing id in a shortcode or job is re-checked against post author + claim meta, not trusted from the request.
+- AuthN: WordPress cookie for the status shortcode. Anonymous output is empty.
+- AuthZ: published `at_biz_dir` + claim `claimed`/`approved`/`verified` + author === claimed_by === user. Draft, other authors, pending claims, and user 0 are ineligible. Allowance remaining cannot go negative. Unlock only deletes `bds_dir_free_ai_lock_*`. Browser junk periods do not become option keys.
+- Execution: `bds_dir_free_ai_execution_ready()` is false unless `BDS_DIRECTORY_FREE_AI_EXECUTION_ENABLED` and a non-empty `BDS_FORMWISE_EXECUTION_KEY`. Tests set neither. This MU does not call FormWise. Free AI does not grant Featured or Travel.
+- Secrets: no keys in source. Live-copy `deploy/cursor/bds-directory-free-ai-mu.php` was not edited.
+
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No extra live-copy MU. No StartHost cron added.
-- Track B: onboarding website URLs are stored fail-closed (onboarding **0.1.1**, never fetched). Subscriptions **0.5.2**: unpaid or mismatched orders are not the current paid order.
-- Suites: onboarding-subscription-failclosed; formwise-followup still green. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
+- Track B: customer-status **0.3.1** session-scoped, no inferred revenue; provider-cost **0.1.2** record rejects guessed/estimated/zero; Directory free AI **0.1.1** eligibility + execution_ready false.
+- Suites: status-ledger-freeai-failclosed. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
 - Deploy when FM signs in (conversion MUs, unchanged): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.

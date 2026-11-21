@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Free AI Entitlements (Staged)
  * Description: Per-business eligibility and concurrency-safe monthly allowance ledger for verified Directory businesses.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_DIRECTORY_FREE_AI_VERSION', '0.1.0' );
+define( 'BDS_DIRECTORY_FREE_AI_VERSION', '0.1.1' );
 
 /** Initial per-business monthly allowances. External execution remains disabled. */
 function bds_dir_free_ai_allowances() {
@@ -23,19 +23,52 @@ function bds_dir_free_ai_allowances() {
 	);
 }
 
-/** Verify ownership from authoritative listing data, never request data. */
+/** Verify ownership from authoritative listing facts, never request data. */
+function bds_dir_free_ai_facts_eligible( $post_type, $post_status, $author_id, $claim_state, $claimed_by, $user_id ) {
+	$user_id = absint( $user_id );
+	if ( 'at_biz_dir' !== (string) $post_type || 'publish' !== (string) $post_status || ! $user_id ) {
+		return false;
+	}
+	$state = sanitize_key( (string) $claim_state );
+	return in_array( $state, array( 'claimed', 'approved', 'verified' ), true )
+		&& $user_id === absint( $author_id )
+		&& $user_id === absint( $claimed_by );
+}
+
 function bds_dir_free_ai_listing_eligible( $listing_id, $user_id ) {
 	$listing_id = absint( $listing_id );
 	$user_id    = absint( $user_id );
 	$post       = $listing_id ? get_post( $listing_id ) : null;
-	if ( ! $post instanceof WP_Post || 'at_biz_dir' !== $post->post_type || 'publish' !== $post->post_status || ! $user_id ) {
+	if ( ! $post instanceof WP_Post ) {
 		return false;
 	}
-	$state      = sanitize_key( (string) get_post_meta( $listing_id, '_bds_claim_state', true ) );
-	$claimed_by = absint( get_post_meta( $listing_id, '_bds_claimed_by', true ) );
-	return in_array( $state, array( 'claimed', 'approved', 'verified' ), true )
-		&& $user_id === absint( $post->post_author )
-		&& $user_id === $claimed_by;
+	return bds_dir_free_ai_facts_eligible(
+		$post->post_type,
+		$post->post_status,
+		$post->post_author,
+		get_post_meta( $listing_id, '_bds_claim_state', true ),
+		get_post_meta( $listing_id, '_bds_claimed_by', true ),
+		$user_id
+	);
+}
+
+/** External execution stays closed until the owner flag and FormWise key are both present. */
+function bds_dir_free_ai_execution_ready() {
+	return defined( 'BDS_DIRECTORY_FREE_AI_EXECUTION_ENABLED' ) && BDS_DIRECTORY_FREE_AI_EXECUTION_ENABLED
+		&& defined( 'BDS_FORMWISE_EXECUTION_KEY' ) && '' !== (string) BDS_FORMWISE_EXECUTION_KEY;
+}
+
+function bds_dir_free_ai_remaining( $limit, $used, $pending ) {
+	return max( 0, absint( $limit ) - absint( $used ) - absint( $pending ) );
+}
+
+function bds_dir_free_ai_units_fit( $limit, $used, $pending, $units ) {
+	$units = max( 1, absint( $units ) );
+	return ( absint( $used ) + absint( $pending ) + $units ) <= absint( $limit );
+}
+
+function bds_dir_free_ai_lock_key_is_owned( $lock_key ) {
+	return is_string( $lock_key ) && 0 === strpos( $lock_key, 'bds_dir_free_ai_lock_' );
 }
 
 /** Record local eligibility after the existing moderation workflow approves ownership. */
@@ -55,9 +88,13 @@ function bds_dir_free_ai_period_key( $timestamp = null ) {
 	return gmdate( 'Y-m', $timestamp );
 }
 
-/** Internal option key; no browser-provided strings are accepted. */
+function bds_dir_free_ai_period_is_valid( $period ) {
+	return (bool) preg_match( '/^(20\d{2})-(0[1-9]|1[0-2])$/', (string) $period );
+}
+
+/** Internal option key; browser-provided periods that are not YYYY-MM are ignored. */
 function bds_dir_free_ai_ledger_key( $listing_id, $period = '' ) {
-	$period = preg_match( '/^\d{4}-\d{2}$/', (string) $period ) ? (string) $period : bds_dir_free_ai_period_key();
+	$period = bds_dir_free_ai_period_is_valid( $period ) ? (string) $period : bds_dir_free_ai_period_key();
 	return 'bds_dir_free_ai_' . absint( $listing_id ) . '_' . str_replace( '-', '', $period );
 }
 
@@ -77,7 +114,7 @@ function bds_dir_free_ai_lock( $listing_id ) {
 
 /** Release only the exact lock created for this listing. */
 function bds_dir_free_ai_unlock( $lock_key ) {
-	if ( is_string( $lock_key ) && 0 === strpos( $lock_key, 'bds_dir_free_ai_lock_' ) ) {
+	if ( bds_dir_free_ai_lock_key_is_owned( $lock_key ) ) {
 		delete_option( $lock_key );
 	}
 }
@@ -118,7 +155,7 @@ function bds_dir_free_ai_status( $listing_id, $user_id ) {
 			'limit'     => absint( $definition['limit'] ),
 			'used'      => $used,
 			'pending'   => $pending,
-			'remaining' => max( 0, absint( $definition['limit'] ) - $used - $pending ),
+			'remaining' => bds_dir_free_ai_remaining( $definition['limit'], $used, $pending ),
 		);
 	}
 	return array( 'period' => bds_dir_free_ai_period_key(), 'listing_id' => absint( $listing_id ), 'tools' => $status );
@@ -154,7 +191,7 @@ function bds_dir_free_ai_reserve( $listing_id, $user_id, $tool, $units = 1 ) {
 				$pending += absint( $reservation['units'] ?? 0 );
 			}
 		}
-		if ( $used + $pending + $units > absint( $allowances[ $tool ]['limit'] ) ) {
+		if ( ! bds_dir_free_ai_units_fit( $allowances[ $tool ]['limit'], $used, $pending, $units ) ) {
 			return new WP_Error( 'allowance_exhausted', 'This business has used its monthly free allowance for this tool.' );
 		}
 		$token = wp_generate_uuid4();
