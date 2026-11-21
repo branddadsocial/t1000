@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Language Switch
  * Description: English / Español control for BrandDad Social and Directory. One language on screen. No Google Translate. Charge currency stays USD.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins.
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LANG_SWITCH_VER', '0.1.2' );
+define( 'BDS_LANG_SWITCH_VER', '0.1.3' );
 
 /**
  * Social and Directory only.
@@ -122,6 +122,11 @@ function bds_lang_converting_menu_es( $title ) {
 		'See membership plans'     => 'Ver planes de membresía',
 		'How to claim'             => 'Cómo reclamar',
 		'Claim a listing'          => 'Reclamar un listado',
+		'Try it free for 7 days'   => 'Pruébelo 7 días',
+		'Start 7-day trial'        => 'Empezar prueba de 7 días',
+		'Subscribe monthly'        => 'Suscribirse cada mes',
+		'Search the Directory'     => 'Buscar en el directorio',
+		'Get featured'             => 'Salir destacado',
 	);
 	return isset( $map[ $label ] ) ? $map[ $label ] : '';
 }

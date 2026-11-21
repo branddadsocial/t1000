@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Conversion Events
  * Description: Counts a few named browser clicks. It does not record a person, a payment, or a page address.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad
  *
  * Ingestion: one event name from a fixed list. Extra fields are ignored.
@@ -78,7 +78,7 @@ function bds_conv_footer() {
 		'nonce' => wp_create_nonce( 'bds_conv_event' ),
 	);
 	echo '<script id="bds-conv-events">window.BDS_CONV=' . wp_json_encode( $cfg ) . ';';
-	echo '(function(){var c=window.BDS_CONV||{};function send(name){if(!c.url)return;var b=new URLSearchParams();b.set("action","bds_conv_event");b.set("nonce",c.nonce||"");b.set("event",name);if(navigator.sendBeacon){navigator.sendBeacon(c.url,b);}else{fetch(c.url,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:b,credentials:"same-origin",keepalive:true});}}send("page_view");document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest("a"):null;if(!a)return;var href=a.getAttribute("href")||"";var cls=a.className||"";var name="";if(a.closest&&a.closest("#bds-sales-help")){name="sales_assistant_engaged";}else if(/registration|add-listing|\\/claim/.test(href)){name="signup_started";}else if(/\\bbdai-button\\b|\\bbds-feat-buy\\b|\\bbds-hcta__btn\\b|\\bbds-wah__btn\\b|\\bbds-dtd__btn--list\\b|\\bbds-rev-button\\b/.test(cls)||(a.getAttribute&&a.getAttribute("data-bds-home-cta"))){name="primary_cta_click";}if(name){send(name);}},true);})();</script>';
+	echo '(function(){var c=window.BDS_CONV||{};function send(name){if(!c.url)return;var b=new URLSearchParams();b.set("action","bds_conv_event");b.set("nonce",c.nonce||"");b.set("event",name);if(navigator.sendBeacon){navigator.sendBeacon(c.url,b);}else{fetch(c.url,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:b,credentials:"same-origin",keepalive:true});}}send("page_view");document.addEventListener("click",function(e){var a=e.target&&e.target.closest?e.target.closest("a"):null;if(!a)return;var href=a.getAttribute("href")||"";var cls=a.className||"";var name="";if(a.closest&&a.closest("#bds-sales-help")){name="sales_assistant_engaged";}else if(/registration|add-listing|\\/claim/.test(href)){name="signup_started";}else if(/\\bbdai-button\\b|\\bbds-feat-buy\\b|\\bbds-hcta__btn\\b|\\bbds-wah__btn\\b|\\bbds-dtd__btn--list\\b|\\bbds-rev-button\\b/.test(cls)||(a.closest&&(a.closest(".bds-hub")||a.closest("#bds-feat-door-ctas")||a.closest("#bds-onboard")||a.closest("#bds-hub-dashboard")))||(a.getAttribute&&a.getAttribute("data-bds-home-cta"))){name="primary_cta_click";}if(name){send(name);}},true);})();</script>';
 }
 add_action( 'wp_footer', 'bds_conv_footer', 52 );
 

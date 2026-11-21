@@ -97,6 +97,8 @@ rev_expect( true === bds_rev_path_needs_guide( 'start-a-campaign' ), 'start a ca
 rev_expect( true === bds_rev_path_needs_guide( 'help' ), 'help gets a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'studio-boards' ), 'studio boards get a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'seo' ), 'seo leftover URLs get a next step' );
+rev_expect( true === bds_rev_path_needs_guide( 'privacy-policy' ), 'privacy policy gets a next step' );
+rev_expect( true === bds_rev_path_needs_guide( 'terms-conditions' ), 'terms get a next step' );
 rev_expect( false === bds_rev_path_needs_guide( 'pricing' ), 'the missing pricing page is not a destination' );
 rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'pricing' ), 'pricing opens the services catalog' );
 rev_expect( false !== strpos( bds_rev_alias_dest( 'music' ), '#branddad-music' ), 'music opens the brief' );

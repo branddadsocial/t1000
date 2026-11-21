@@ -273,7 +273,31 @@ if ( ! function_exists( 'bds_feat_path_needs_door' ) ) {
 		if ( false === $top ) {
 			$top = $path;
 		}
-		return in_array( $top, array( 'help', 'contact-us', 'about', 'blog', 'feedback', 'events', 'jobs', 'jobs-careers', 'classifieds', 'memberships', 'membership', 'plans' ), true );
+		return in_array(
+			$top,
+			array(
+				'help',
+				'contact-us',
+				'about',
+				'blog',
+				'feedback',
+				'events',
+				'jobs',
+				'jobs-careers',
+				'classifieds',
+				'memberships',
+				'membership',
+				'plans',
+				'gift-cards',
+				'gift-card-marketplace',
+				'travel',
+				'hotels',
+				'flights',
+				'privacy-policy',
+				'privacy-policy-2',
+			),
+			true
+		);
 	}
 }
 
@@ -298,9 +322,36 @@ if ( ! function_exists( 'bds_feat_directory_surface' ) ) {
 			'blog'         => 'blog',
 			'memberships'  => 'memberships',
 			'membership'   => 'memberships',
-			'plans'        => 'memberships',
+			'plans'                 => 'memberships',
+			'gift-cards'            => 'gifts',
+			'gift-card-marketplace' => 'gifts',
+			'travel'                => 'travel',
+			'hotels'                => 'hotels',
+			'flights'               => 'travel',
 		);
 		return isset( $map[ $top ] ) ? $map[ $top ] : '';
+	}
+}
+
+if ( ! function_exists( 'bds_feat_listing_type_surface' ) ) {
+	/**
+	 * Directory type query on all-listings. Unknown values fail closed.
+	 *
+	 * @param mixed $raw directory_type query.
+	 * @return string events|jobs|classifieds|travel|hotels|gifts|
+	 */
+	function bds_feat_listing_type_surface( $raw ) {
+		$type = strtolower( preg_replace( '/[^a-z0-9\-]/', '', (string) $raw ) );
+		$map  = array(
+			'events'       => 'events',
+			'jobs'         => 'jobs',
+			'jobs-careers' => 'jobs',
+			'classifieds'  => 'classifieds',
+			'travel'       => 'travel',
+			'hotels-stays' => 'hotels',
+			'hotels'       => 'hotels',
+		);
+		return isset( $map[ $type ] ) ? $map[ $type ] : '';
 	}
 }
 

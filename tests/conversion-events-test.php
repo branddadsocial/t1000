@@ -34,9 +34,11 @@ $catalog = file_get_contents( __DIR__ . '/../deploy/bds-ai-commercial-catalog-mu
 assert_true( false !== strpos( $catalog, 'Start 7-day trial' ), 'Essentials checkout button names the real trial' );
 assert_true( false !== strpos( $catalog, 'Subscribe monthly' ), 'plans without a trial still say Subscribe monthly' );
 $conv = file_get_contents( __DIR__ . '/../deploy/cursor/bds-conversion-events-mu.php' );
-assert_true( false !== strpos( $conv, '0.1.1' ), 'conversion events keep the extra click names' );
+assert_true( false !== strpos( $conv, '0.1.2' ), 'conversion events keep the extra click names' );
 assert_true( false !== strpos( $conv, 'bds-wah__btn' ), 'Directory hero clicks count' );
 assert_true( false !== strpos( $conv, 'bds-dtd__btn--list' ), 'directory-door list clicks count' );
 assert_true( false !== strpos( $conv, '/claim' ), 'claim clicks count as signup start' );
+assert_true( false !== strpos( $conv, 'bds-feat-door-ctas' ), 'Directory door clicks count' );
+assert_true( false !== strpos( $conv, 'bds-hub' ), 'account hub clicks count' );
 
 echo "conversion-events ok\n";

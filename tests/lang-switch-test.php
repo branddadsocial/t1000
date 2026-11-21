@@ -121,7 +121,7 @@ unset( $_GET['bd_lang'], $_COOKIE['bd_lang'] );
 
 require dirname( __DIR__ ) . '/deploy/cursor/bds-lang-switch-mu.php';
 
-assert_true( '0.1.2' === BDS_LANG_SWITCH_VER, 'language switch version' );
+assert_true( '0.1.3' === BDS_LANG_SWITCH_VER, 'language switch version' );
 assert_true( 'en' === bds_lang_sanitize( '<script>' ), 'unknown input becomes English' );
 assert_true( 'en' === bds_lang_sanitize( 'fr' ), 'French is not a public language' );
 assert_true( 'es' === bds_lang_sanitize( 'ES' ), 'Spanish is allowlisted' );
@@ -179,6 +179,8 @@ assert_true( false !== strpos( $svc_es, 'Borradores profesionales de respuesta' 
 
 assert_true( 'Salir destacado' === bds_lang_converting_menu_es( 'Get Featured' ), 'Get Featured menu has Spanish' );
 assert_true( 'Listar mi negocio gratis' === bds_lang_converting_menu_es( 'List my business free' ), 'free listing menu has Spanish' );
+assert_true( 'Pruébelo 7 días' === bds_lang_converting_menu_es( 'Try it free for 7 days' ), 'trial menu has Spanish' );
+assert_true( 'Suscribirse cada mes' === bds_lang_converting_menu_es( 'Subscribe monthly' ), 'Subscribe monthly menu has Spanish' );
 assert_true( '' === bds_lang_converting_menu_es( 'Learn' ), 'non-converting menu stays English' );
 $feat_item        = (object) array( 'title' => 'Get Featured' );
 $feat_atts        = bds_lang_menu_link_attrs( array( 'href' => '/featured-advertising/' ), $feat_item );

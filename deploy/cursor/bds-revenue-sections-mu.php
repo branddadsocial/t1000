@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.25
+ * Version: 0.2.26
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -688,7 +688,32 @@ function bds_rev_path_needs_guide( $path ) {
 	if ( false === $top ) {
 		$top = $path;
 	}
-	return in_array( $top, array( 'help', 'contact-us', 'creator-services', 'spotify-promotion', 'ai-ads', 'about', 'about-us', 'blog', 'affiliate-program', 'learning-center', 'start-a-campaign', 'studio-boards', 'studio', 'seo' ), true );
+	return in_array(
+		$top,
+		array(
+			'help',
+			'contact-us',
+			'creator-services',
+			'spotify-promotion',
+			'ai-ads',
+			'about',
+			'about-us',
+			'blog',
+			'affiliate-program',
+			'learning-center',
+			'start-a-campaign',
+			'studio-boards',
+			'studio',
+			'seo',
+			'privacy-policy',
+			'terms',
+			'terms-conditions',
+			'refunds',
+			'refund-returns',
+			'cookie-policy',
+		),
+		true
+	);
 }
 
 function bds_rev_guide_footer() {

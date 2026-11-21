@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Sales Help
  * Description: A short helper with checked prices and real links. It does not start a new AI engine or change an account.
- * Version: 0.1.6
+ * Version: 0.1.7
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins. The
@@ -54,6 +54,24 @@ function bds_sales_help_cards() {
 			'href'  => 'https://branddad.social/contact-us/',
 			'label' => 'Contact BrandDad',
 		),
+		'featured' => array(
+			'title' => 'Featured is a separate monthly option',
+			'body'  => 'Featured placement starts at $9.99 a month. It stays inactive until WooCommerce confirms payment. A basic Directory listing is free and separate. This does not invent rankings.',
+			'href'  => 'https://directory.branddad.social/featured-advertising/',
+			'label' => 'Get featured',
+		),
+		'music'    => array(
+			'title' => 'BrandDad Music is inquiry only',
+			'body'  => 'Send a brief for original business music. BrandDad confirms scope and licensing before any payment or production. The brief does not take payment.',
+			'href'  => 'https://branddad.social/#branddad-music',
+			'label' => 'Send a music brief',
+		),
+		'gift'     => array(
+			'title' => 'Gift cards are a Directory marketplace',
+			'body'  => 'Gift cards on the Directory are a marketplace. BrandDad does not take that payment on Social. A basic listing is free. Featured is a separate monthly option.',
+			'href'  => 'https://directory.branddad.social/gift-card-marketplace/',
+			'label' => 'See gift cards',
+		),
 	);
 }
 
@@ -70,6 +88,15 @@ function bds_sales_help_match( $text ) {
 	}
 	if ( false !== strpos( $text, 'person' ) || false !== strpos( $text, 'persona' ) || false !== strpos( $text, 'human' ) || false !== strpos( $text, 'humano' ) || false !== strpos( $text, 'custom' ) || false !== strpos( $text, 'bill' ) || false !== strpos( $text, 'factura' ) ) {
 		return 'person';
+	}
+	if ( false !== strpos( $text, 'featured' ) || false !== strpos( $text, 'destacad' ) ) {
+		return 'featured';
+	}
+	if ( false !== strpos( $text, 'music' ) || false !== strpos( $text, 'musica' ) || false !== strpos( $text, 'música' ) ) {
+		return 'music';
+	}
+	if ( false !== strpos( $text, 'gift' ) || false !== strpos( $text, 'regalo' ) ) {
+		return 'gift';
 	}
 	$owns = false !== strpos( $text, 'own' ) || false !== strpos( $text, 'my business' ) || false !== strpos( $text, 'my shop' ) || false !== strpos( $text, 'mi negocio' ) || false !== strpos( $text, 'mi tienda' );
 	if ( ! $owns && ( false !== strpos( $text, 'find' ) || false !== strpos( $text, 'looking' ) || false !== strpos( $text, 'near' ) || false !== strpos( $text, 'cerca' ) || false !== strpos( $text, 'plumber' ) || false !== strpos( $text, 'plomero' ) || false !== strpos( $text, 'search' ) || false !== strpos( $text, 'buscar' ) ) ) {
@@ -92,7 +119,7 @@ function bds_sales_help_match( $text ) {
  */
 function bds_sales_help_lang( $text ) {
 	$text = strtolower( (string) $text );
-	foreach ( array( 'negocio', 'listar', 'buscar', 'plomero', 'prueba', 'probar', 'gratis', 'cerca', 'necesito' ) as $word ) {
+	foreach ( array( 'negocio', 'listar', 'buscar', 'plomero', 'prueba', 'probar', 'gratis', 'cerca', 'necesito', 'destacad', 'musica', 'música', 'regalo' ) as $word ) {
 		if ( false !== strpos( $text, $word ) ) {
 			return 'es';
 		}
@@ -141,6 +168,24 @@ function bds_sales_help_card( $key, $lang ) {
 			'body'  => 'Use el formulario para un proyecto especial, un problema de cobro, o algo que esta página no cubre. Los planes normales se empiezan en su página de producto.',
 			'href'  => 'https://branddad.social/contact-us/',
 			'label' => 'Escribir a BrandDad',
+		),
+		'featured' => array(
+			'title' => 'Featured es una opción mensual aparte',
+			'body'  => 'Featured empieza en $9.99 al mes. Permanece inactivo hasta que WooCommerce confirme el pago. Un listado básico es gratis y está aparte. Esto no inventa rankings.',
+			'href'  => 'https://directory.branddad.social/featured-advertising/',
+			'label' => 'Salir destacado',
+		),
+		'music'    => array(
+			'title' => 'BrandDad Music es solo consulta',
+			'body'  => 'Envíe un brief para música original de negocio. BrandDad confirma alcance y licencias antes de cualquier pago o producción. El brief no cobra.',
+			'href'  => 'https://branddad.social/#branddad-music',
+			'label' => 'Enviar un brief de música',
+		),
+		'gift'     => array(
+			'title' => 'Las tarjetas de regalo son un marketplace',
+			'body'  => 'Las tarjetas de regalo del directorio son un marketplace. BrandDad no cobra ese pago en Social. Un listado básico es gratis. Featured es una opción mensual aparte.',
+			'href'  => 'https://directory.branddad.social/gift-card-marketplace/',
+			'label' => 'Ver tarjetas de regalo',
 		),
 	);
 	return $es[ $key ];

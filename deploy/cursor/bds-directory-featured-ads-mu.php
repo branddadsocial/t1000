@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.17
+ * Version: 0.2.18
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -745,6 +745,10 @@ function bds_feat_path_ctas() {
 		return;
 	}
 	$surface = function_exists( 'bds_feat_directory_surface' ) ? bds_feat_directory_surface( $path ) : '';
+	if ( '' === $surface && function_exists( 'bds_feat_listing_type_surface' ) ) {
+		$type     = isset( $_GET['directory_type'] ) ? wp_unslash( $_GET['directory_type'] ) : '';
+		$surface  = bds_feat_listing_type_surface( $type );
+	}
 	if ( 'events' === $surface ) {
 		echo bds_feat_door_band(
 			__( 'Find events, or list yours free', 'branddad' ),
@@ -778,6 +782,33 @@ function bds_feat_path_ctas() {
 			__( 'A basic listing is free. Pro, Elite, and Featured stay paid options. Membership prices on Select your plan are unchanged.', 'branddad' ),
 			'Vea planes de membresía, o liste gratis',
 			'Un listado básico es gratis. Pro, Elite y Featured siguen siendo opciones de pago. Los precios de membresía en Select your plan no cambian.'
+		);
+		return;
+	}
+	if ( 'travel' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Find travel stays, or list yours free', 'branddad' ),
+			__( 'BrandDad does not sell tickets or book flights here. A basic listing is free. Featured is a separate monthly option.', 'branddad' ),
+			'Encuentre hospedaje, o liste el suyo gratis',
+			'BrandDad no vende boletos ni reserva vuelos aquí. Un listado básico es gratis. Featured es una opción mensual aparte.'
+		);
+		return;
+	}
+	if ( 'hotels' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Find a stay, or list yours free', 'branddad' ),
+			__( 'BrandDad does not take a booking fee here. A basic listing is free. Featured is a separate monthly option.', 'branddad' ),
+			'Encuentre hospedaje, o liste el suyo gratis',
+			'BrandDad no cobra una tarifa de reserva aquí. Un listado básico es gratis. Featured es una opción mensual aparte.'
+		);
+		return;
+	}
+	if ( 'gifts' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Browse gift cards, or list free', 'branddad' ),
+			__( 'Gift cards on this Directory are a marketplace. BrandDad does not take that payment here. A basic listing is free. Featured is a separate monthly option.', 'branddad' ),
+			'Vea tarjetas de regalo, o liste gratis',
+			'Las tarjetas de regalo de este directorio son un marketplace. BrandDad no cobra ese pago aquí. Un listado básico es gratis. Featured es una opción mensual aparte.'
 		);
 		return;
 	}
