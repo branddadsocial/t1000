@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.36
+ * Version: 0.2.37
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -1006,8 +1006,20 @@ function bds_rev_alias_dest( $path ) {
 	if ( 'classifieds' === $path ) {
 		return 'https://directory.branddad.social/all-listings/?directory_type=classifieds';
 	}
-	if ( 'get-featured' === $path ) {
+	if ( 'get-featured' === $path || 'advertise-with-us' === $path ) {
 		return 'https://directory.branddad.social/featured-advertising/';
+	}
+	if ( in_array( $path, array( 'trial', 'start-trial', 'try', 'try-it-free', 'free-trial', 'essentials', 'business-essentials', 'ai-essentials' ), true ) ) {
+		return home_url( '/product/ai-business-essentials/' );
+	}
+	if ( 'get-started' === $path || 'subscribe' === $path ) {
+		return bds_rev_services_url();
+	}
+	if ( 'sign-up' === $path ) {
+		return 'https://directory.branddad.social/registration/';
+	}
+	if ( 'store' === $path ) {
+		return home_url( '/shop/' );
 	}
 	if ( in_array( $path, array( 'partners', 'investors', 'newsletter' ), true ) ) {
 		return home_url( '/contact-us/' );
@@ -1040,6 +1052,9 @@ function bds_rev_alias_dest( $path ) {
 			}
 		}
 		return $url;
+	}
+	if ( 'dfy' === $path ) {
+		$path = 'done-for-you-ai';
 	}
 	if ( in_array( $path, array( 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'done-for-you-ai' ), true ) ) {
 		$url = add_query_arg( 'offer', $path, home_url( '/contact-us/' ) );

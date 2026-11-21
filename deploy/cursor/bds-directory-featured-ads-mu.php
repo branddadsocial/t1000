@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.28
+ * Version: 0.2.29
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -949,6 +949,67 @@ function bds_feat_help_alias() {
 	}
 }
 add_action( 'template_redirect', 'bds_feat_help_alias', 8 );
+
+/**
+ * More leftover Directory doors that abort until they open a live page.
+ *
+ * @param string $path Request path without slashes.
+ * @return string
+ */
+function bds_feat_leftover_dest( $path ) {
+	$path = strtolower( trim( (string) $path, '/' ) );
+	if ( 'gifts' === $path || 'marketplace' === $path ) {
+		return home_url( '/gift-card-marketplace/' );
+	}
+	if ( 'partners' === $path ) {
+		return home_url( '/contact-us/' );
+	}
+	if ( 'cookies' === $path || 'cookie-policy' === $path ) {
+		return home_url( '/privacy-policy/' );
+	}
+	if ( in_array( $path, array( 'list-your-business', 'add-business', 'list-business', 'submit-listing', 'post-a-job', 'post-job', 'get-started' ), true ) ) {
+		return home_url( '/add-listing/' );
+	}
+	if ( 'advertise-with-us' === $path ) {
+		return home_url( '/featured-advertising/' );
+	}
+	if ( 'subscribe' === $path ) {
+		return home_url( '/select-your-plan/' );
+	}
+	if ( 'trial' === $path ) {
+		return 'https://branddad.social/product/ai-business-essentials/';
+	}
+	return '';
+}
+
+function bds_feat_leftover_alias() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	$dest = bds_feat_leftover_dest( bds_feat_request_path() );
+	if ( '' === $dest ) {
+		return;
+	}
+	wp_safe_redirect( $dest, 302 );
+	exit;
+}
+add_action( 'template_redirect', 'bds_feat_leftover_alias', 8 );
+
+/**
+ * Directory leftover trial URLs open the live Social Essentials product.
+ *
+ * @param mixed $hosts Allowed hosts.
+ * @return array<int,string>
+ */
+function bds_feat_allowed_redirect_hosts( $hosts ) {
+	$hosts = is_array( $hosts ) ? $hosts : array();
+	if ( bds_feat_is_directory() ) {
+		$hosts[] = 'branddad.social';
+		$hosts[] = 'www.branddad.social';
+	}
+	return $hosts;
+}
+add_filter( 'allowed_redirect_hosts', 'bds_feat_allowed_redirect_hosts' );
 
 /** Hide the Directorist demo refund modal on public Directory pages. Account and checkout stay untouched. */
 function bds_feat_hide_demo_refund() {
