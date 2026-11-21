@@ -206,3 +206,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Push the clean Codex branch without merging and verify local/remote commit identity so the mandatory remote scan will cover the exact helper; quota resets 2026-11-23 20:03:31 UTC.
 - [x] Re-run the full local branch regression after adding the helper: 39 Node contracts, 39 top-level deployment PHP lints, and 4 standalone PHP tests all pass.
 - [x] Observe the clean homepage cross its hard stale cutoff and regenerate automatically; verify the new early object starts at age 6 with one Concierge and no duplicate Sales Help widget.
+- [x] Airbnb one-case assistant: real published FormWise output verified with synthetic facts.
+- [x] Airbnb one-case assistant: isolated staging order/entitlement/job/duplicate/refund/failure-release/cleanup acceptance passed 26/26.
+- [ ] Airbnb one-case assistant: required remote Rafter fast scan clears for the exact committed revision (currently quota-blocked at 16/16).
+- [ ] Airbnb one-case assistant: safe real payment, result ownership, cancellation/refund, and reconciliation lifecycle passes before enabling checkout.

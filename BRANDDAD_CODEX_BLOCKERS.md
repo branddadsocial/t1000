@@ -77,3 +77,5 @@ Updated: 2026-11-20
 
 - Cursor public conversion surfaces are already live and documented; Codex can continue APIs independently.
 - FormWise published assets and tier plan IDs are confirmed through the connected organization.
+- **Airbnb one-case hosted functional acceptance closed 2026-11-20:** the real FormWise flow passed separately and the isolated staging WordPress order/entitlement/job/refund/failure/cleanup report passed 26/26. Staging intentionally used an exact-URL provider fixture instead of copying the production execution credential.
+- **Airbnb one-case production activation remains blocked:** required remote Rafter fast scan is still rejected at 16/16, and a real Stripe/Woo payment-to-result/refund lifecycle has not been approved or completed. Keep the exact Woo product staged, sold-individually configuration unactivated, and checkout CTA disabled until those gates clear.
