@@ -23,6 +23,8 @@ assert_same( false, bds_free_list_allow( false, 'pro', 5, 0 ), 'pro is not grant
 $steps = bds_free_list_steps_html( '/add-listing/' );
 assert_same( true, false !== strpos( $steps, 'What happens next' ), 'add-listing shows the next steps' );
 assert_same( true, false !== strpos( $steps, 'real website' ), 'add-listing asks for a real website' );
+assert_same( true, false !== strpos( $steps, 'See membership plans' ), 'add-listing points at membership plans' );
+assert_same( true, false !== strpos( $steps, '#0668d8' ), 'free-listing steps use the approved accessible blue' );
 $join = bds_free_list_steps_html( 'registration' );
 assert_same( true, false !== strpos( $join, 'A basic listing is free' ), 'registration says the listing is free' );
 assert_same( true, false !== strpos( $join, 'Verify WhatsApp' ), 'registration tells the owner to verify WhatsApp' );

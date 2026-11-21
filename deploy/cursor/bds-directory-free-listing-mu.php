@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Free Listing
  * Description: A signed-in free account may publish one basic listing. Paid plans, prices, and caps stay as they are.
- * Version: 0.1.5
+ * Version: 0.1.6
  * Author: BrandDad
  *
  * Deploy: directory.branddad.social wp-content/mu-plugins/bds-directory-free-listing-mu.php
@@ -171,7 +171,7 @@ add_action( 'transition_post_status', 'bds_free_list_hold_second_publish', 10, 3
  */
 function bds_free_list_steps_html( $path ) {
 	$path  = strtolower( trim( (string) $path, '/' ) );
-	$style = '<style>#bds-free-steps{max-width:720px;margin:18px auto;padding:18px 20px;box-sizing:border-box}#bds-free-steps a{display:inline-flex;align-items:center;min-height:44px;padding:10px 14px;margin:4px 8px 0 0}#bds-free-steps ol{padding-left:1.2rem}@media (max-width:480px){#bds-free-steps{padding:16px}#bds-free-steps a{display:flex;width:100%;margin:8px 0;justify-content:center;box-sizing:border-box}}</style>';
+	$style = '<style>#bds-free-steps{max-width:720px;margin:18px auto;padding:18px 20px;box-sizing:border-box}#bds-free-steps a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;margin:4px 8px 0 0;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}#bds-free-steps a:focus-visible{outline:3px solid #0668d8;outline-offset:2px}#bds-free-steps ol{padding-left:1.2rem}@media (max-width:480px){#bds-free-steps{padding:16px}#bds-free-steps a{display:flex;width:100%;margin:8px 0;justify-content:center;box-sizing:border-box}}</style>';
 	$h2 = function_exists( 'bds_lang_swap_attrs' ) ? bds_lang_swap_attrs( 'What happens next', 'Qué sigue' ) : '';
 	if ( 'add-listing' === $path ) {
 		$lis = function_exists( 'bds_lang_pair' )
@@ -179,11 +179,11 @@ function bds_free_list_steps_html( $path ) {
 			. bds_lang_pair( 'We review the listing. It is not public until that review is done.', 'Revisamos el listado. No es público hasta terminar esa revisión.', 'li' )
 			. bds_lang_pair( 'People can then find it and use the contact button on the listing.', 'La gente podrá encontrarlo y usar el contacto del listado.', 'li' )
 			: '<li>Add the business name, a photo, and a real website. In Mexico, add the business WhatsApp.</li><li>We review the listing. It is not public until that review is done.</li><li>People can then find it and use the contact button on the listing.</li>';
-		$see = function_exists( 'bds_lang_swap_attrs' ) ? bds_lang_swap_attrs( 'See plans', 'Ver planes' ) : '';
+		$see = function_exists( 'bds_lang_swap_attrs' ) ? bds_lang_swap_attrs( 'See membership plans', 'Ver planes de membresía' ) : '';
 		return $style . '<section id="bds-free-steps" aria-label="What happens next"><h2' . $h2 . '>What happens next</h2><ol>'
 			. $lis
 			. '</ol>'
-			. '<p><a href="https://directory.branddad.social/select-your-plan/"' . $see . '>See plans</a></p></section>';
+			. '<p><a href="https://directory.branddad.social/select-your-plan/"' . $see . '>See membership plans</a></p></section>';
 	}
 	if ( 'registration' === $path ) {
 		$lis = function_exists( 'bds_lang_pair' )

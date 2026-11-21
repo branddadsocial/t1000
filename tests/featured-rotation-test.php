@@ -108,7 +108,7 @@ expect( 'travel' === bds_feat_listing_type_surface( 'travel' ), 'all-listings tr
 expect( 'hotels' === bds_feat_listing_type_surface( 'hotels-stays' ), 'all-listings hotels type is recognized' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.18' ), 'featured MU stamps 0.2.18' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.19' ), 'featured MU stamps 0.2.19' );
 expect( false !== strpos( $feat_src, ':focus-visible' ), 'featured buttons keep a visible focus ring' );
 expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty worldwide lane heading has Spanish' );
 expect( false !== strpos( $feat_src, 'Listar mi negocio gratis' ), 'door CTAs have Spanish' );
@@ -117,6 +117,8 @@ expect( false === strpos( $feat_src, 'Subscribe now' ), 'featured checkout no lo
 expect( false !== strpos( $feat_src, 'does not sell tickets' ), 'events copy does not sell tickets' );
 expect( false !== strpos( $feat_src, 'does not sell tickets or book flights' ), 'travel copy does not sell tickets' );
 expect( false !== strpos( $feat_src, 'does not take that payment here' ), 'gift cards stay a marketplace' );
+expect( false !== strpos( $feat_src, 'Sign in to list free' ), 'sign-in still offers the free listing' );
+expect( false !== strpos( $feat_src, 'This search does not sell a listing' ), 'empty search does not sell a listing' );
 expect( false !== strpos( $feat_src, 'bds-feat-hide-refund' ), 'demo refund modal is hidden on public Directory pages' );
 expect( false !== strpos( $feat_src, 'directory_type=classifieds' ), 'classifieds alias opens the classifieds directory type' );
 expect( false !== strpos( $feat_src, 'bds_feat_memberships_alias' ), 'membership leftover URLs open Select your plan' );

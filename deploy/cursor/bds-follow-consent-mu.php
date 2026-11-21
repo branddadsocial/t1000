@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Follow Consent
  * Description: Saves an email only when the person asks BrandDad to write to them. It does not send mail.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Author: BrandDad
  *
  * Ingestion: public form → nonce check → email, consent, and source only.
@@ -39,7 +39,7 @@ function bds_follow_decision( $email, $consent, $source ) {
 			'error' => 'email',
 		);
 	}
-	$allowed = array( 'help', 'trial', 'listing', 'audit' );
+	$allowed = array( 'help', 'trial', 'listing', 'audit', 'featured', 'music', 'gift' );
 	$source  = strtolower( preg_replace( '/[^a-z]/', '', (string) $source ) );
 	if ( ! in_array( $source, $allowed, true ) ) {
 		$source = 'help';
@@ -76,6 +76,18 @@ function bds_follow_message( $source ) {
 			'subject' => 'The next step with BrandDad',
 			'body'    => 'A basic Directory listing is free. AI Business Essentials is $29.99 a month after a 7-day trial. Start with the free listing if money is tight. This does not promise customers. Reply if you want these notes to stop.',
 		),
+		'featured' => array(
+			'subject' => 'Featured placement on BrandDad Directory',
+			'body'    => 'Featured placement starts at $9.99 a month. It stays inactive until WooCommerce confirms payment. A basic Directory listing is free and separate. This does not invent rankings. Reply if you want these notes to stop.',
+		),
+		'music'    => array(
+			'subject' => 'Your BrandDad Music brief',
+			'body'    => 'A music brief does not take payment or start production. BrandDad confirms scope and licensing first. Reply if you want these notes to stop.',
+		),
+		'gift'     => array(
+			'subject' => 'Directory gift cards',
+			'body'    => 'Gift cards on the Directory are a marketplace. BrandDad does not take that payment on Social. A basic listing is free. Featured is a separate monthly option. Reply if you want these notes to stop.',
+		),
 	);
 	$source = strtolower( preg_replace( '/[^a-z]/', '', (string) $source ) );
 	return isset( $notes[ $source ] ) ? $notes[ $source ] : $notes['help'];
@@ -97,6 +109,15 @@ function bds_follow_source_for_path( $path ) {
 	}
 	if ( false !== strpos( $path, 'check-your-website' ) ) {
 		return 'audit';
+	}
+	if ( false !== strpos( $path, 'featured-advertising' ) || false !== strpos( $path, 'featured-' ) ) {
+		return 'featured';
+	}
+	if ( false !== strpos( $path, 'music' ) ) {
+		return 'music';
+	}
+	if ( false !== strpos( $path, 'gift' ) ) {
+		return 'gift';
 	}
 	return 'help';
 }
@@ -215,7 +236,7 @@ function bds_follow_admin() {
 	}
 	echo '<div class="wrap"><h1>Follow-up consent</h1>';
 	echo '<p>These people asked for email. This screen does not send it.</p>';
-	foreach ( array( 'help', 'trial', 'listing', 'audit' ) as $source ) {
+	foreach ( array( 'help', 'trial', 'listing', 'audit', 'featured', 'music', 'gift' ) as $source ) {
 		$note = bds_follow_message( $source );
 		echo '<h2>' . esc_html( $note['subject'] ) . '</h2><p>' . esc_html( $note['body'] ) . '</p>';
 	}

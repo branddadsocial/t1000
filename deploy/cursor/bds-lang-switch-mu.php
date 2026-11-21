@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Language Switch
  * Description: English / Español control for BrandDad Social and Directory. One language on screen. No Google Translate. Charge currency stays USD.
- * Version: 0.1.3
+ * Version: 0.1.4
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins.
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LANG_SWITCH_VER', '0.1.3' );
+define( 'BDS_LANG_SWITCH_VER', '0.1.4' );
 
 /**
  * Social and Directory only.
@@ -201,8 +201,9 @@ function bds_lang_head() {
 		. 'html:not([data-bds-lang="es"]) [data-bds-copy="es"]{display:none!important}'
 		. 'html[data-bds-lang="es"] [data-bds-copy="en"]{display:none!important}'
 		. '#bds-lang-switch{position:fixed;top:12px;right:12px;z-index:1200;display:flex;gap:0;border:1px solid rgba(15,23,42,.16);border-radius:999px;overflow:hidden;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(15,23,42,.12);font:700 12px/1 Segoe UI,system-ui,sans-serif}'
-		. '#bds-lang-switch button{border:0;background:transparent;color:#0f172a;padding:8px 11px;cursor:pointer;min-height:36px}'
-		. '#bds-lang-switch button[aria-pressed="true"]{background:#0372ff;color:#fff}'
+		. '#bds-lang-switch button{border:0;background:transparent;color:#0f172a;padding:8px 11px;cursor:pointer;min-height:44px}'
+		. '#bds-lang-switch button[aria-pressed="true"]{background:#0668d8;color:#fff}'
+		. '#bds-lang-switch button:focus-visible{outline:3px solid #0668d8;outline-offset:2px}'
 		. 'body.admin-bar #bds-lang-switch{top:46px}'
 		. '@media (max-width:782px){body.admin-bar #bds-lang-switch{top:56px}}'
 		. '</style>' . "\n";

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.18
+ * Version: 0.2.19
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -744,6 +744,15 @@ function bds_feat_path_ctas() {
 		echo bds_feat_plans_page_ctas(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		return;
 	}
+	if ( 'sign-in' === $path || 'login' === $path ) {
+		echo bds_feat_door_band(
+			__( 'Sign in to list free', 'branddad' ),
+			__( 'A basic listing is free after you sign in. Featured is a separate monthly option. This screen does not start a charge.', 'branddad' ),
+			'Entre para listar gratis',
+			'Un listado básico es gratis después de entrar. Featured es una opción mensual aparte. Esta pantalla no inicia un cargo.'
+		);
+		return;
+	}
 	$surface = function_exists( 'bds_feat_directory_surface' ) ? bds_feat_directory_surface( $path ) : '';
 	if ( '' === $surface && function_exists( 'bds_feat_listing_type_surface' ) ) {
 		$type     = isset( $_GET['directory_type'] ) ? wp_unslash( $_GET['directory_type'] ) : '';
@@ -830,7 +839,16 @@ function bds_feat_path_ctas() {
 		);
 		return;
 	}
-	if ( is_post_type_archive( 'at_biz_dir' ) || ( is_search() && ! is_singular() ) ) {
+	if ( is_search() && ! is_singular() ) {
+		echo bds_feat_door_band(
+			__( 'No listing matched? List yours free', 'branddad' ),
+			__( 'This search does not sell a listing. A basic listing is free. Featured is a separate monthly option.', 'branddad' ),
+			'¿No hubo un listado? Liste el suyo gratis',
+			'Esta búsqueda no vende un listado. Un listado básico es gratis. Featured es una opción mensual aparte.'
+		);
+		return;
+	}
+	if ( is_post_type_archive( 'at_biz_dir' ) ) {
 		echo bds_feat_door_band(
 			__( 'Own a business on this list?', 'branddad' ),
 			__( 'List my business free, or claim the one that is already here. Featured is a separate request. This does not invent rankings.', 'branddad' ),

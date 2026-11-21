@@ -31,8 +31,16 @@ assert_true( false !== strpos( $listing['body'], 'free' ), 'the listing note say
 assert_true( 'help' === bds_follow_source_for_path( '/contact-us/' ), 'a normal page stays on the help note' );
 assert_true( 'trial' === bds_follow_source_for_path( '/product/ai-business-essentials/' ), 'the essentials page uses the trial note' );
 assert_true( 'listing' === bds_follow_source_for_path( '/add-listing/' ), 'add-listing uses the listing note' );
+assert_true( 'featured' === bds_follow_source_for_path( '/featured-advertising/' ), 'Featured uses the Featured note' );
+assert_true( 'music' === bds_follow_source_for_path( '/#branddad-music' ), 'music uses the brief note' );
+assert_true( 'gift' === bds_follow_source_for_path( '/gift-card-marketplace/' ), 'gift cards use the marketplace note' );
+$feat_note = bds_follow_message( 'featured' );
+assert_true( false !== strpos( $feat_note['body'], '$9.99' ), 'the Featured note names the Local price' );
+assert_true( false === strpos( strtolower( $feat_note['body'] ), 'no card' ), 'the Featured note does not say no card' );
+$music_note = bds_follow_message( 'music' );
+assert_true( false !== strpos( $music_note['body'], 'does not take payment' ), 'the music note does not take payment' );
 $src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-follow-consent-mu.php' );
-assert_true( false !== strpos( $src, 'Version: 0.1.3' ), 'follow consent stamps 0.1.3' );
+assert_true( false !== strpos( $src, 'Version: 0.1.4' ), 'follow consent stamps 0.1.4' );
 assert_true( false !== strpos( $src, 'Guardar mi correo' ), 'follow submit Spanish is tagged' );
 assert_true( false !== strpos( $src, '<span' ) && false !== strpos( $src, 'BrandDad puede escribirme' ), 'checkbox label Spanish is an inner span' );
 

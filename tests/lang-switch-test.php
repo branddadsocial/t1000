@@ -121,7 +121,7 @@ unset( $_GET['bd_lang'], $_COOKIE['bd_lang'] );
 
 require dirname( __DIR__ ) . '/deploy/cursor/bds-lang-switch-mu.php';
 
-assert_true( '0.1.3' === BDS_LANG_SWITCH_VER, 'language switch version' );
+assert_true( '0.1.4' === BDS_LANG_SWITCH_VER, 'language switch version' );
 assert_true( 'en' === bds_lang_sanitize( '<script>' ), 'unknown input becomes English' );
 assert_true( 'en' === bds_lang_sanitize( 'fr' ), 'French is not a public language' );
 assert_true( 'es' === bds_lang_sanitize( 'ES' ), 'Spanish is allowlisted' );
@@ -142,6 +142,9 @@ $src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-lang-switch-m
 assert_true( false === strpos( $src, 'googtrans' ), 'the switcher does not use Google Translate' );
 assert_true( false === strpos( $src, 'bd-lc-root' ), 'the switcher does not reuse the killed widget id' );
 assert_true( false !== strpos( $src, 'id="bds-lang-switch"' ), 'the switcher uses a live id' );
+assert_true( false !== strpos( $src, '#0668d8' ), 'the switcher uses the approved accessible blue' );
+assert_true( false === strpos( $src, '#0372ff' ), 'the lower-contrast switcher blue is gone' );
+assert_true( false !== strpos( $src, ':focus-visible' ), 'the switcher keeps a visible focus ring' );
 assert_true( false !== strpos( $src, 'location.search' ), 'cached pages read the language from the browser, not from PHP' );
 assert_true( false !== strpos( $src, 'remove_query_arg' ), 'bd_lang is stripped so shared cache stays English' );
 
