@@ -1,5 +1,13 @@
 # BrandDad Codex progress
 
+## 2026-11-20 FormWise domain-restricted Suite preparation
+
+- Verified from FormWise documentation and the live builder that standalone Agent embeds have no URL-allowlist control; domain permissions are a Suite feature.
+- Created two one-Agent Suites without changing the live WordPress embeds: Social Sales Assistant Suite `e49a28ba-e73c-4c4e-b945-92018cd47034` and Directory Concierge Suite `32733848-06ea-47ad-bff9-4a95b9a0e3c1`.
+- Both Suites are published on the owned `ai.branddad.social` domain, have session context off, and currently remain `Restricted, no sites yet`. Their direct white-label share URLs return HTTP 200; no customer data, credentials, or access entitlements were added.
+- Staged, but did not submit, the exact authorized origins: `https://branddad.social` for Sales and `https://directory.branddad.social` for Concierge. Clicking **Add** is a live permission change and is awaiting action-time confirmation. The live sites still use their previous standalone Agent embeds, so no visitor experience changed.
+- Added `FORMWISE_DOMAIN_SUITE_SECURE_DESIGN.md` with the provider-supported allowlist architecture, trust boundaries, STRIDE review, abuse cases, deployment sequence, and rollback rules.
+
 ## 2026-11-20 FormWise assistant reconciliation
 
 - Read the full authoritative Sales Assistant operating guide and verified catalog. Replaced the stale quote-only review-dispute entry with the live `$9.99` one-time Airbnb offer, one-case scope, customer-provided facts, editable-copy workflow, Airbnb-controlled outcome, and no-removal-guarantee language. Also removed a duplicated sentence fragment from the catalog.

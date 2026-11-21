@@ -1,5 +1,12 @@
 # BrandDad Codex test results
 
+## 2026-11-20 FormWise domain-restricted Suite preparation
+
+- Live builder inspection: standalone Agent Share dialogs expose link/embed controls but no authorized-URL setting; Suite Settings expose `Restrict to authorized URLs`, an allowlist input, and session-context control.
+- Suite composition read-back: Sales Suite contains only BrandDad Sales Assistant; Directory Suite contains only BrandDad Directory Concierge. Both report `Published`, `1 product`, `Restricted, no sites yet`, and session context off.
+- White-label direct-link smoke: both new `https://ai.branddad.social/toolsets/...` URLs returned HTTP 200 before WordPress migration.
+- No **Add** permission action, iframe-source change, Agent publication, customer assignment, plan assignment, or live WordPress deployment was performed in this preparation step.
+
 ## 2026-11-20 FormWise assistant reconciliation
 
 - Sales Assistant draft/live comparison after repair: `changed=[]`; no publication was needed. Final Airbnb offer tests on the live-matching draft: 3/3 passed. Outputs state `$9.99` one time, one review case per purchase, customer-provided facts, editable policy-based message, no BrandDad submission, Airbnb-controlled decision, and no removal guarantee.
