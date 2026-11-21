@@ -1,5 +1,16 @@
 # BrandDad Codex test results
 
+## 2026-11-21 FormWise domain-restricted Suite production acceptance
+
+- Provider setting read-back: Sales Suite allowlists `https://branddad.social`; Directory Suite allowlists `https://directory.branddad.social`; both contain exactly one intended published Agent and have session context off.
+- Live StartHost save: Social Sales Assistant MU plugin version `0.4.2`; Directory Experience version `0.68.15`. Exact pre-change files were preserved locally for rollback.
+- Social browser smoke: the homepage launcher opened `https://ai.branddad.social/toolsets/e49a28ba-e73c-4c4e-b945-92018cd47034` inside the BrandDad AI Sales Assistant dialog.
+- Cache-bypass reference sweep: Social Home, Directory Home, All Categories, Restaurants, canonical Events results, and canonical Jobs results returned HTTP 200, contained their intended new Suite ID, and contained no superseded standalone Agent ID.
+- Deterministic checks: both edited PHP files pass `php -l`; Directory navigation and home-conversion contracts pass; `git diff --check` passes; file-specific `rafter secrets` reports no detected secrets.
+- Manual OWASP review: A01/A02/A03/A04/A07/A08/A09/A10 and LLM01-LLM10 are N/A to the changed behavior because the diff only replaces fixed HTTPS embed constants and versions. A05 retains `esc_url`, `strict-origin-when-cross-origin`, the existing Social iframe sandbox, `noopener noreferrer`, and clipboard-only iframe permission. A06 has no dependency change. No model output, retrieval path, prompt, tool, user input, customer data, credential, authentication, payment, network fetcher, SQL, shell, deletion, or serialization path changed.
+- Required remote `rafter run --mode fast` was attempted against the Social remote and rejected because all 16/16 free scans are used. Paid Plus was not run.
+- The legacy `/events/`, `/jobs/`, and `/add-listing/` aliases still return the existing Directory link-policy response rather than the full canonical experience. Canonical discovery URLs remain `/all-listings/?directory_type=events` and `/all-listings/?directory_type=jobs-careers`; the alias behavior is tracked separately from this successful assistant migration.
+
 ## 2026-11-20 FormWise domain-restricted Suite preparation
 
 - Live builder inspection: standalone Agent Share dialogs expose link/embed controls but no authorized-URL setting; Suite Settings expose `Restrict to authorized URLs`, an allowlist input, and session-context control.

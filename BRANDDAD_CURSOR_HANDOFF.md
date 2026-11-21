@@ -1,5 +1,12 @@
 # BrandDad Cursor handoff
 
+## Live assistant embed contracts — 2026-11-21
+
+- BrandDad Social public assistant iframe source: `https://ai.branddad.social/toolsets/e49a28ba-e73c-4c4e-b945-92018cd47034`. Its FormWise Suite is restricted to `https://branddad.social`; do not replace it with a `builder.formwise.ai/tools/...` Agent URL.
+- BrandDad Directory public Concierge iframe source: `https://ai.branddad.social/toolsets/32733848-06ea-47ad-bff9-4a95b9a0e3c1`. Its FormWise Suite is restricted to `https://directory.branddad.social`; do not reuse the Social assistant or a superseded Directory Agent URL.
+- Keep session context off, preserve the existing iframe sandbox/referrer policy/escaping, and do not request camera or microphone permissions. Treat Suite URLs as presentation endpoints, not authentication or customer-entitlement controls.
+- Live host versions after migration: Social Sales Assistant MU plugin `0.4.2`; Directory Experience `0.68.15`.
+
 ## Admin contribution reporting
 
 The backend now includes `deploy/bds-provider-cost-ledger-mu.php` for Social. Cursor may render `GET /wp-json/branddad/v1/admin/finance/contribution?period=YYYY-MM` only inside a `manage_woocommerce` administration surface. Preserve the response labels: this is recorded contribution from confirmed revenue and verified stored variable costs, not final profit. Do not infer missing provider costs or show a green margin as complete when `cost_coverage_state` is `partial_unless_reconciled` or `no_verified_costs`.

@@ -1,5 +1,13 @@
 # BrandDad Codex progress
 
+## 2026-11-21 FormWise domain-restricted Suite production migration
+
+- Added the exact production origins to the provider-managed Suite allowlists: `https://branddad.social` for BrandDad Social Sales Assistant and `https://directory.branddad.social` for BrandDad Directory Concierge. Both one-Agent Suites remain published on `ai.branddad.social` with session context off.
+- Preserved exact live rollback copies before changing either host. StartHost File Manager then saved Social MU plugin `0.4.2` with Suite `e49a28ba-e73c-4c4e-b945-92018cd47034` and Directory Experience `0.68.15` with Suite `32733848-06ea-47ad-bff9-4a95b9a0e3c1`.
+- A fresh Social homepage launcher opened the new white-label Sales Suite successfully. Cache-bypass HTTP checks found the new Suite ID and no previous Agent ID on Social Home, Directory Home, All Categories, Restaurants, and the canonical Events/Jobs result pages.
+- File-specific PHP lint, Directory navigation/home contracts, `git diff --check`, and Rafter local secret scans pass. Manual OWASP web/LLM review found no new input, auth, payment, credential, tool, or data boundary: only fixed HTTPS URLs and version strings changed, while the existing iframe escaping, sandbox, referrer policy, and clipboard-only permission remain. Required remote `rafter run --mode fast` was attempted and rejected at the existing 16/16 quota; paid Plus was not used.
+- The old standalone Agent URLs remain only as local rollback targets. No Agent prompt, publication, plan, customer, credit, payment, or customer record changed in this migration.
+
 ## 2026-11-20 FormWise domain-restricted Suite preparation
 
 - Verified from FormWise documentation and the live builder that standalone Agent embeds have no URL-allowlist control; domain permissions are a Suite feature.
