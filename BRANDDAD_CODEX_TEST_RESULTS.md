@@ -1,5 +1,16 @@
 # BrandDad Codex test results
 
+## 2026-11-20 Airbnb one-review product
+
+- `node tests/airbnb-review-case-contract.mjs`: pass; 21 focused entitlement, schema, privacy, refund, queue-race, catalog, and copy assertions.
+- Full Node contract sweep: 40/40 files pass.
+- Deployment PHP syntax sweep: 45/45 files pass.
+- Standalone PHP compatibility sweep: 4/4 files pass.
+- `git diff --check`: pass (line-ending conversion warnings only).
+- `rafter secrets .`: pass, no secrets detected; Betterleaks version-mismatch warning recorded.
+- Manual Rafter code review: web access control, API BOLA/BFLA/BOPLA/resource controls, LLM prompt injection/output handling/agency/cost reviewed against `deploy/bds-ai-execution-mu.php`. Evidence: authenticated route/body cap at lines 152–156; explicit input allowlist at 176–205; customer-owned paid order lookup at 369–409; locked reservation/job binding at 414–463; payment/refund recheck at 466–483; owner-only job response at 543–558; HMAC-bound idempotency at 580–596; private author-owned job creation at 641–679; fixed provider origin/disabled redirects/bounded response at 766–789; stripped/bounded output at 707–716. The FormWise prompt has no credentials or action tools and explicitly treats form input as untrusted.
+- `rafter run --mode fast`: attempted, blocked by account fast-scan limit 16/16. No paid Plus scan run.
+
 ## 2026-11-20 release-integrity refresh
 
 - Reconciled the root source checksum manifest against every listed `deploy/` artifact and corrected four stale hashes: trial, customer reporting, Directory membership bridge, and lifecycle events.

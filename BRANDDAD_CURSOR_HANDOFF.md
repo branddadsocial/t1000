@@ -104,6 +104,18 @@ Do not auto-activate an earlier anonymous consent request after a later registra
 - `deploy/bds-customer-inquiries-mu.php` on Social beside subscriptions, customer status, and lifecycle. Deploy disabled first; enable only after the hosted form and tenant-isolation staging acceptance.
 
 Do not deploy this branch over newer Cursor public-page files. Merge only the backend files and documented helper calls.
+
+## 2026-11-20 Airbnb one-review product handoff
+
+- Offer: **Airbnb Review Appeal Assistant — One Review**, proposed **$9.99 one time**.
+- This is separate from the $9.99/month Review Assistant. Do not present it as a subscription or done-for-you submission service.
+- Product slug: `branddad-ai-review-dispute-assistant` (existing Woo product id observed as 53640; resolve by slug in code rather than hard-coding the id).
+- AI job tool: `airbnb_review_appeal` through `POST /wp-json/branddad/v1/ai/jobs`, then poll the returned customer-owned job URL.
+- Use the exact request contract in `BRANDDAD_SHARED_API_CONTRACTS.md`. Generate a new 16–64 character idempotency key for a new case and reuse it only for a retry of the exact same body.
+- The backend fixes Airbnb and derives the paid order/line entitlement. Never ask the browser for an order id, product id, provider id, flow id, or customer id.
+- UI must require login, show a redaction warning, require the authorization affirmation, escape the returned plain text, and repeat that Airbnb makes the final decision.
+- The service page copy in backend launch source has been rewritten around “one review, one payment, one guided appeal.” Merge the copy into Cursor's newer public-page version rather than overwriting it.
+- Checkout remains fail-closed until hosted staging proves payment, entitlement, one usable result, second-case denial, failed-run release, and refund denial. After that acceptance, set the exact Woo simple/virtual product to $9.99, sold individually, update the catalog launch state, and verify cart/checkout/result on mobile and desktop.
 # 2026-11-20 public audit-page presentation note
 
 - The free website-audit page is clean at 320px, 390px, and 430px: no horizontal overflow remains, and the 390px content audit found no old pricing, provider branding, or green primary CTA.

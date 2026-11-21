@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Launch Pages (Staged)
  * Description: Consolidated, accessible homepage and services-page experience for the approved BrandDad AI launch plans.
- * Version: 0.5.3
+ * Version: 0.6.0
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.5.3' );
+define( 'BDS_AI_LAUNCH_PAGES_VERSION', '0.6.0' );
 
 /** Public replacement remains fail-closed until the final launch gate. */
 function bds_ai_launch_pages_enabled() {
@@ -61,6 +61,13 @@ function bds_ai_launch_product_url( $slug ) {
 			return '';
 		}
 	}
+	$post = get_page_by_path( sanitize_title( $slug ), OBJECT, 'product' );
+	$url  = $post instanceof WP_Post && 'publish' === $post->post_status ? get_permalink( $post ) : '';
+	return bds_ai_launch_keep_ref( $url );
+}
+
+/** Resolve a published information page even while its checkout remains gated. */
+function bds_ai_launch_product_page_url( $slug ) {
 	$post = get_page_by_path( sanitize_title( $slug ), OBJECT, 'product' );
 	$url  = $post instanceof WP_Post && 'publish' === $post->post_status ? get_permalink( $post ) : '';
 	return bds_ai_launch_keep_ref( $url );
@@ -135,48 +142,74 @@ function bds_ai_launch_offer_card( $offer ) {
 /** Explain the review product without promising deletion or platform access. */
 function bds_ai_launch_review_support_markup() {
 	$case_url = bds_ai_launch_product_url( 'branddad-ai-review-dispute-assistant' );
-	$portal_url = esc_url( 'https://ai.branddad.social/d/b2694bae-90ca-40f8-90d3-d8bf18a99fea' );
+	$case_page_url = bds_ai_launch_product_page_url( 'branddad-ai-review-dispute-assistant' );
+	$offer = function_exists( 'bds_ai_commercial_offer' ) ? bds_ai_commercial_offer( 'branddad-ai-review-dispute-assistant' ) : null;
 	ob_start();
 	?>
 	<section class="bdai-section bdai-review-support" id="branddad-review-support" aria-labelledby="bdai-review-title">
-		<p class="bdai-kicker"><?php esc_html_e( 'Google, Airbnb, and Trustpilot', 'branddad' ); ?></p>
-		<h2 id="bdai-review-title"><?php esc_html_e( 'A real plan for a review that may break platform rules.', 'branddad' ); ?></h2>
-		<p><?php esc_html_e( 'BrandDad helps you check the policy, organize the facts, and prepare the strongest honest submission the evidence supports. We do not promise removal—the platform makes the final decision.', 'branddad' ); ?></p>
+		<p class="bdai-kicker"><?php esc_html_e( 'One Airbnb review. One simple payment.', 'branddad' ); ?></p>
+		<h2 id="bdai-review-title"><?php esc_html_e( 'Get help writing your Airbnb review appeal.', 'branddad' ); ?></h2>
+		<p><?php esc_html_e( 'Tell the BrandDad assistant what the review says, what happened, and what proof you have. It checks whether the facts may fit Airbnb review rules and gives you a clear message to review, copy, and paste into Airbnb.', 'branddad' ); ?></p>
 		<div class="bdai-review-grid">
 			<article>
-				<p class="bdai-review-step"><?php esc_html_e( 'Self-service AI', 'branddad' ); ?></p>
-				<h3><?php esc_html_e( 'Prepare the case yourself', 'branddad' ); ?></h3>
+				<p class="bdai-review-step"><?php esc_html_e( 'Pay once', 'branddad' ); ?></p>
+				<h3><?php esc_html_e( 'One Airbnb review case', 'branddad' ); ?></h3>
+				<?php if ( is_array( $offer ) ) : ?><p class="bdai-price"><strong><?php echo esc_html( '$' . $offer['price'] ); ?></strong><span><?php esc_html_e( ' one time', 'branddad' ); ?></span></p><?php endif; ?>
 				<ul>
-					<li><?php esc_html_e( 'Choose Google, Airbnb, or Trustpilot.', 'branddad' ); ?></li>
-					<li><?php esc_html_e( 'Check the review against the platform rules.', 'branddad' ); ?></li>
-					<li><?php esc_html_e( 'Build an evidence checklist and dispute draft.', 'branddad' ); ?></li>
-					<li><?php esc_html_e( 'Prepare a calm public response when removal is not appropriate.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'Answer guided questions about one review.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'Receive an evidence checklist and honest case assessment.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'Get a full message and a shorter version for Airbnb.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'Get a professional public reply if removal is not supported.', 'branddad' ); ?></li>
 				</ul>
-				<a class="bdai-button" href="#branddad-ai-plans"><?php esc_html_e( 'Compare self-service plans', 'branddad' ); ?></a>
+				<?php if ( $case_url ) : ?><a class="bdai-button" href="<?php echo esc_url( $case_url ); ?>"><?php esc_html_e( 'Get help with one review', 'branddad' ); ?></a><?php elseif ( $case_page_url ) : ?><a class="bdai-button bdai-button--ghost" href="<?php echo esc_url( $case_page_url ); ?>"><?php esc_html_e( 'View the one-review service', 'branddad' ); ?></a><p class="bdai-readiness"><?php esc_html_e( 'Secure checkout opens after the final one-case delivery test.', 'branddad' ); ?></p><?php else : ?><span class="bdai-soon"><?php esc_html_e( 'Secure checkout is in final testing', 'branddad' ); ?></span><?php endif; ?>
 			</article>
 			<article>
-				<p class="bdai-review-step"><?php esc_html_e( 'Done-with-you support', 'branddad' ); ?></p>
-				<h3><?php esc_html_e( 'Have BrandDad review and organize it', 'branddad' ); ?></h3>
+				<p class="bdai-review-step"><?php esc_html_e( 'How it works', 'branddad' ); ?></p>
+				<h3><?php esc_html_e( 'You stay in control of the case', 'branddad' ); ?></h3>
 				<ul>
-					<li><?php esc_html_e( 'A person checks the AI-prepared case and evidence.', 'branddad' ); ?></li>
-					<li><?php esc_html_e( 'We prepare the platform-specific submission and next steps.', 'branddad' ); ?></li>
-					<li><?php esc_html_e( 'The authorized owner submits it, or we assist only where the platform permits.', 'branddad' ); ?></li>
-					<li><?php esc_html_e( 'No password sharing, impersonation, mass flagging, or removal guarantee.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'You provide only truthful, redacted details you can verify.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'BrandDad prepares the message; you review and submit it.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'We never need your Airbnb password or booking ID.', 'branddad' ); ?></li>
+					<li><?php esc_html_e( 'Airbnb makes the final decision, so removal is not guaranteed.', 'branddad' ); ?></li>
 				</ul>
-				<?php if ( $case_url ) : ?><a class="bdai-button" href="<?php echo esc_url( $case_url ); ?>"><?php esc_html_e( 'Request case support', 'branddad' ); ?></a><?php endif; ?>
 			</article>
 		</div>
-		<p class="bdai-review-portal"><strong><?php esc_html_e( 'Already a BrandDad customer?', 'branddad' ); ?></strong> <?php esc_html_e( 'Sign in to your private BrandDad AI workspace, open Review Dispute Assistant, and answer the guided case questions. It prepares the letter, short submission, evidence checklist, and next steps for you to review.', 'branddad' ); ?> <a class="bdai-text-link" href="<?php echo $portal_url; ?>"><?php esc_html_e( 'Open my case workspace', 'branddad' ); ?> <span aria-hidden="true">&rarr;</span></a></p>
-		<p class="bdai-review-note"><?php esc_html_e( 'BrandDad provides policy-based business support, not legal representation. Do not send passwords, government IDs, medical information, or other sensitive personal data through public chat.', 'branddad' ); ?></p>
+		<p class="bdai-review-note"><?php esc_html_e( 'This is policy-based writing help, not legal representation. Do not send passwords, booking IDs, government IDs, medical information, or other sensitive personal data.', 'branddad' ); ?></p>
 	</section>
 	<?php
 	return (string) ob_get_clean();
 }
 
+/** Replace the legacy quote copy on the exact Airbnb one-case product page. */
+function bds_ai_launch_airbnb_product_copy( $content ) {
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return $content;
+	}
+	$product_id = get_queried_object_id();
+	if ( 'branddad-ai-review-dispute-assistant' !== (string) get_post_field( 'post_name', $product_id ) ) {
+		return $content;
+	}
+	if ( 'woocommerce_short_description' === current_filter() ) {
+		return '<p>' . esc_html__( 'Pay once for help with one Airbnb review. Answer guided questions and receive an evidence checklist plus long and short messages to review, copy, and paste into Airbnb. Airbnb makes the final decision; removal is not guaranteed.', 'branddad' ) . '</p>';
+	}
+	return '<div class="bdai-airbnb-product"><p><strong>' . esc_html__( '$9.99 one time for one Airbnb review case.', 'branddad' ) . '</strong></p>'
+		. '<p>' . esc_html__( 'Answer guided questions about the review, what happened, and the evidence you can verify. The BrandDad assistant prepares a case assessment, evidence checklist, full appeal message, short version, public-response fallback, and exact next steps.', 'branddad' ) . '</p>'
+		. '<h2>' . esc_html__( 'What you receive', 'branddad' ) . '</h2><ul>'
+		. '<li>' . esc_html__( 'Help with one Airbnb review', 'branddad' ) . '</li>'
+		. '<li>' . esc_html__( 'A truthful, policy-based message to review, copy, and paste', 'branddad' ) . '</li>'
+		. '<li>' . esc_html__( 'A shorter version for limited form fields', 'branddad' ) . '</li>'
+		. '<li>' . esc_html__( 'An evidence checklist and professional public reply fallback', 'branddad' ) . '</li></ul>'
+		. '<p><strong>' . esc_html__( 'You submit the message yourself. Airbnb makes the final decision, and removal is not guaranteed.', 'branddad' ) . '</strong></p>'
+		. '<p>' . esc_html__( 'Never send passwords, booking IDs, government IDs, medical information, or unrelated private details.', 'branddad' ) . '</p>'
+		. '<p class="bdai-soon">' . esc_html__( 'Secure checkout is in final one-case delivery testing.', 'branddad' ) . '</p></div>';
+}
+add_filter( 'the_content', 'bds_ai_launch_airbnb_product_copy', 999 );
+add_filter( 'woocommerce_short_description', 'bds_ai_launch_airbnb_product_copy', 999 );
+
 /** Keep valuable established services discoverable from the AI-first Services page. */
 function bds_ai_launch_specialty_services_markup() {
 	$services = array(
-		array( 'branddad-ai-review-dispute-assistant', 'AI Review Dispute Assistant', 'Policy-based preparation and optional case support for Google, Airbnb, and Trustpilot.' ),
+		array( 'branddad-ai-review-dispute-assistant', 'Airbnb Review Appeal Assistant — One Review', 'Pay once, explain one Airbnb review case, and receive a policy-based message to review and copy into Airbnb.' ),
 		array( 'branddad-social-media-growth-studio', 'Social Media Growth Studio', 'Content and account support for businesses that want more than self-service drafts.' ),
 		array( 'real-influencers-engagements-ig-fb-tiktok-youtube-more', 'Creator & Influencer Campaigns', 'Plan a relevant, disclosed creator campaign around your audience, approved content, and budget.' ),
 		array( 'press-release-services', 'Press Release Distribution', 'Turn a real announcement into a professional release and distribution campaign.' ),

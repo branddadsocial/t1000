@@ -1,5 +1,16 @@
 # BrandDad Codex progress
 
+## 2026-11-20 Airbnb one-review appeal product
+
+- Corrected the missing commercial model for the existing Review Dispute product: it is now specified as **Airbnb Review Appeal Assistant — One Review**, a proposed $9.99 one-time purchase, separate from the $9.99/month Review Assistant.
+- Reused the already published, white-labeled FormWise Review Dispute flow (`86c87c94-2054-4641-87e1-2a70a0a9b1d4`) instead of creating a duplicate bot. Its published field ids and enum values were read back and pinned in the execution contract.
+- Added one-order-line/one-case backend enforcement to the authenticated AI job API. The browser cannot choose Airbnb/provider/flow/order/customer/price; the backend derives the completed or processing Woo order owner and exact product line, reserves atomically, attaches the reservation to the private job before scheduling, revalidates payment/refund state immediately before the provider request, commits only after a usable result, and releases a definite failure.
+- New orders capture immutable product identity, the product is sold individually, and checkout requires a linked customer account. Inputs are allowlisted, capped at 3,000 characters per narrative field, and require the exact authorization affirmation.
+- Rewrote the staged launch copy around one review, one payment, a copy-and-paste message, customer control, redaction, and no removal guarantee. The legacy vague quote/multi-platform positioning is removed from the reviewed source.
+- Added the secure design, API contract, entitlement rules, product catalog row, and Cursor handoff. Checkout remains staged until hosted payment → entitlement → result → no second case → failed-run release → refund denial acceptance passes.
+- Local verification passes 40/40 Node contract files, 45/45 deployment PHP lints, 4/4 standalone PHP tests, focused FormWise schema checks, and `git diff --check`. `rafter secrets .` found no secrets. Manual OWASP web/API/LLM review found no unresolved critical issue in this diff: customer identity comes from the session, object ownership is enforced, output is stripped/bounded, provider origin/flow are fixed, redirects are off, and the AI has no submission or account tools.
+- Required `rafter run --mode fast` was attempted and rejected because the account remains at 16/16 fast scans. No paid Plus scan was used. No production price, product, order, payment, provider execution, customer record, or live checkout changed in this batch.
+
 Updated: 2026-11-20
 
 ## 2026-11-20 release-integrity refresh

@@ -111,6 +111,25 @@ Admin-only (`manage_woocommerce`) monthly aggregate over the current or precedin
 
 The ledger is written internally only after authoritative success: lead creation/stage changes, persisted trial history, successful FormWise plan provisioning for a paid order, committed AI metering, replay-safe Directory membership persistence, completed onboarding state, successful access removal, or an actual Woo refund id. Stable HMAC idempotency keys prevent duplicate hook delivery from double-counting.
 
+## POST `/ai/jobs` — Airbnb one-review case
+
+Authenticated WordPress customer request using the existing AI job route. Header: a 16–64 character `Idempotency-Key`. Body:
+
+```json
+{
+  "tool": "airbnb_review_appeal",
+  "inputs": {
+    "what_help_do_you_need_": "Prepare a first removal request",
+    "what_have_you_already_done_": "Nothing yet",
+    "what_does_the_review_say_": "Redacted excerpt, 3000 characters maximum",
+    "what_facts_and_evidence_can_you_verify_": "Verified facts only, 3000 characters maximum",
+    "are_you_authorized_": "Yes, I am authorized"
+  }
+}
+```
+
+The browser cannot choose the platform, provider, workflow id, product, order, line item, price, entitlement, or customer. The server fixes the platform to Airbnb and requires one unused processing/completed Woo order line for `branddad-ai-review-dispute-assistant` owned by the current user. The API reserves that exact line atomically, queues the fixed published FormWise flow, releases the case on a definite failure, and commits it only after a usable bounded result is stored. The order status, owner, product slug, and unrefunded quantity are revalidated immediately before the provider request. A different customer's job returns 404 through the normal `GET /ai/jobs/{id}` owner check.
+
 ## POST `/internal/free-membership`
 
 Server-to-server only on `directory.branddad.social`. BrandDad Social sends this event only after explicit `bds_directory_membership_consent` was stored on an eligible Business Essentials checkout and the WPS subscription activated. The request uses the fixed Directory HTTPS endpoint, a five-minute timestamp, body HMAC, and stable idempotency key under `BDS_ACCOUNT_LINK_SECRET`. It reuses an account by email or creates a private `subscriber`; it never creates or publishes a business listing. Cursor must show the consent checkbox and submit value `1`, `yes`, `true`, or `on`.

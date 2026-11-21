@@ -4,11 +4,12 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-ai-execution-mu.php', 'utf8');
 
 // Snapshot verified read-only against the published BrandDad Social FormWise
-// workspace on 2026-11-19. A FormWise editor changing a published question,
+// workspace on 2026-11-20. A FormWise editor changing a published question,
 // enum option, workflow, or App must deliberately update this contract and the
 // WordPress allowlist together.
 const required = [
   ['Copy and Reviews flow id', '0cc9b6ff-309a-49f7-9a47-dd66c926208a'],
+  ['Review Dispute Assistant flow id', '86c87c94-2054-4641-87e1-2a70a0a9b1d4'],
   ['SEO Action Planner flow id', '2e9921a0-5996-4bc9-a053-49fab3a7fc58'],
   ['Website Improvement Planner flow id', '3d3deeff-cc55-43a3-b96e-4969df4296cc'],
   ['Directory Listing Studio flow id', '4ada4e24-ac55-4a56-be18-113107cc8741'],
@@ -18,6 +19,12 @@ const required = [
   ['Copy audience field', 'who_is_the_intended_audience_'],
   ['Copy tone field', 'what_tone_should_the_copy_use_'],
   ['Copy action field', 'what_action_should_the_reader_take_'],
+  ['Review-dispute platform field', 'which_review_platform_'],
+  ['Review-dispute goal field', 'what_help_do_you_need_'],
+  ['Review-dispute status field', 'what_have_you_already_done_'],
+  ['Review-dispute excerpt field', 'what_does_the_review_say_'],
+  ['Review-dispute evidence field', 'what_facts_and_evidence_can_you_verify_'],
+  ['Review-dispute authorization field', 'are_you_authorized_'],
   ['SEO page field', 'which_page_and_goal_are_you_working_on_'],
   ['SEO observation field', 'what_did_the_website_check_observe_'],
   ['SEO performance field', 'what_search_performance_data_can_you_share_'],
@@ -41,6 +48,16 @@ const required = [
 const exactEnumValues = [
   'Social caption',
   'Customer review response',
+  'Airbnb',
+  'Prepare a first removal request',
+  'Prepare an appeal after a rejection',
+  'Prepare a public response',
+  'Help me decide',
+  'Nothing yet',
+  'Reported it and waiting',
+  'Removal request was rejected',
+  'Appeal was already submitted',
+  'Yes, I am authorized',
   'Clear and professional',
   'Friendly and conversational',
   'Confident and persuasive',

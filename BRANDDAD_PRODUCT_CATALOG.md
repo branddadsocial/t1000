@@ -12,6 +12,7 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 | AI Lead Assistant | $19.99/mo, 80 credits | Plan verified; BrandDad acquisition pipeline plus customer-owned inquiry form/inbox/status and real counts implemented default-off; Cursor form/inbox, staging isolation, AI summaries, and verified notifications remain |
 | AI Social Growth | $29.99/mo, 150 credits | Plan and draft flow verified; publishing adapter not yet production-ready |
 | AI Review Assistant | $9.99/mo | Draft workflow available; standalone plan mapping remains staged |
+| Airbnb Review Appeal Assistant — One Review | $9.99 one time | Published white-labeled FormWise workflow and one-paid-order/one-case backend implemented; public checkout remains staged until payment → result → no-reuse → refund acceptance passes |
 | AI Business Monitoring | $9.99/mo | SSRF-resistant daily availability worker and actual monthly counters implemented default-off; standalone plan mapping, real-host acceptance, and verified failure alerts remain staged |
 | AI Website Chatbot | $29.99/mo | Blocked by observed reply cost and customer knowledge automation |
 | AI Sales Assistant Plus | $39.99/mo | Blocked by observed reply cost; BrandDad's own assistant has a separate capped proxy |

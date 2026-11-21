@@ -13,6 +13,16 @@
 
 An eligible request needs an active `wps_subscriptions` record for the authenticated WordPress user and a recognized `_bds_ai_formwise_plan_id`. Monthly customer credits are reserved atomically before provider work and committed only after a usable result is stored. Failed work releases the reservation.
 
+## Airbnb Review Appeal Assistant — one-time case
+
+- This is not the monthly AI Review Assistant. It is a separate $9.99 target-price, one-time product for one Airbnb review case.
+- One processing/completed Woo order line for the exact product slug grants one case to the order owner. Product quantity is intended to be sold individually.
+- The platform is fixed to Airbnb. The customer must affirm authorization and provide only redacted, verifiable facts.
+- One entitlement is reserved before FormWise execution and committed only after a usable result is stored. A definite failure releases it.
+- Refunded/cancelled orders cannot start a new case. The order state and unrefunded line quantity are rechecked immediately before provider execution.
+- A subscription, Directory allowance, or direct FormWise share link cannot substitute for the one-time order entitlement.
+- The result is writing assistance, not legal representation, platform submission, or a removal guarantee.
+
 ## Seven-day Business Essentials trial
 
 - Same product/entitlement family as paid Business Essentials.

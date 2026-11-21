@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.2.0' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.3.0' );
 
 /**
  * Published workflows verified in the BrandDad Social FormWise workspace.
@@ -47,6 +47,21 @@ function bds_ai_exec_tool_catalog() {
 				'who_is_the_intended_audience_'     => array( 'type' => 'string', 'required' => true, 'max' => 1000 ),
 				'what_tone_should_the_copy_use_'    => array( 'type' => 'enum', 'required' => true, 'options' => array( 'Clear and professional', 'Friendly and conversational', 'Confident and persuasive', 'Calm and empathetic' ) ),
 				'what_action_should_the_reader_take_' => array( 'type' => 'string', 'required' => false, 'max' => 1000 ),
+			),
+		),
+		'airbnb_review_appeal' => array(
+			'label'       => 'Airbnb review appeal — one case',
+			'kind'        => 'flow',
+			'remote_id'   => '86c87c94-2054-4641-87e1-2a70a0a9b1d4',
+			'credit_cost' => 1,
+			'one_time_product_slug' => 'branddad-ai-review-dispute-assistant',
+			'forced'      => array( 'which_review_platform_' => 'Airbnb' ),
+			'fields'      => array(
+				'what_help_do_you_need_' => array( 'type' => 'enum', 'required' => true, 'options' => array( 'Prepare a first removal request', 'Prepare an appeal after a rejection', 'Prepare a public response', 'Help me decide' ) ),
+				'what_have_you_already_done_' => array( 'type' => 'enum', 'required' => true, 'options' => array( 'Nothing yet', 'Reported it and waiting', 'Removal request was rejected', 'Appeal was already submitted' ) ),
+				'what_does_the_review_say_' => array( 'type' => 'string', 'required' => true, 'max' => 3000 ),
+				'what_facts_and_evidence_can_you_verify_' => array( 'type' => 'string', 'required' => true, 'max' => 3000 ),
+				'are_you_authorized_' => array( 'type' => 'enum', 'required' => true, 'options' => array( 'Yes, I am authorized' ) ),
 			),
 		),
 		'local_seo_report' => array(
@@ -350,6 +365,180 @@ function bds_ai_exec_paid_finish( $user_id, $plan, $token, $commit ) {
 	}
 }
 
+/** Find an unused, paid one-case WooCommerce line owned by this customer. */
+function bds_ai_exec_case_entitlement( $user_id, $product_slug ) {
+	if ( ! function_exists( 'wc_get_orders' ) || ! function_exists( 'wc_get_product' ) ) {
+		return new WP_Error( 'case_checkout_unavailable', 'Case access is not configured yet.', array( 'status' => 503 ) );
+	}
+	$orders = wc_get_orders(
+		array(
+			'customer_id' => absint( $user_id ),
+			'status'      => array( 'wc-processing', 'wc-completed' ),
+			'limit'       => 100,
+			'orderby'     => 'date',
+			'order'       => 'DESC',
+			'return'      => 'objects',
+		)
+	);
+	foreach ( is_array( $orders ) ? $orders : array() as $order ) {
+		if ( ! $order instanceof WC_Order || absint( $order->get_customer_id() ) !== absint( $user_id ) ) {
+			continue;
+		}
+		foreach ( $order->get_items( 'line_item' ) as $item_id => $item ) {
+			$product       = $item instanceof WC_Order_Item_Product ? $item->get_product() : null;
+			$recorded_slug = $item instanceof WC_Order_Item_Product ? sanitize_title( (string) $item->get_meta( '_bds_ai_case_product_slug', true ) ) : '';
+			$current_slug  = $product instanceof WC_Product ? sanitize_title( $product->get_slug() ) : '';
+			if ( sanitize_title( $product_slug ) !== $recorded_slug && sanitize_title( $product_slug ) !== $current_slug ) {
+				continue;
+			}
+			$remaining_quantity = max( 0, absint( $item->get_quantity() ) + (int) $order->get_qty_refunded_for_item( $item_id ) );
+			if ( $remaining_quantity < 1 ) {
+				continue;
+			}
+			$key    = 'bds_ai_case_' . absint( $order->get_id() ) . '_' . absint( $item_id );
+			$ledger = get_option( $key, array() );
+			$ledger = is_array( $ledger ) ? $ledger : array();
+			$pending_expires = absint( $ledger['pending_expires'] ?? 0 );
+			$pending_job_id  = absint( $ledger['pending_job_id'] ?? 0 );
+			$pending_status  = $pending_job_id ? sanitize_key( get_post_meta( $pending_job_id, '_bds_status', true ) ) : '';
+			$active_job      = $pending_job_id && in_array( $pending_status, array( 'pending', 'running', 'completed', 'completed_metering_review' ), true );
+			if ( empty( $ledger['used'] ) && ! $active_job && ( ! $pending_expires || $pending_expires <= time() || 'failed' === $pending_status ) ) {
+				return array( 'order_id' => absint( $order->get_id() ), 'item_id' => absint( $item_id ), 'key' => $key );
+			}
+		}
+	}
+	return new WP_Error( 'case_purchase_required', 'Buy one Airbnb review case, or finish the case you already started.', array( 'status' => 403 ) );
+}
+
+/** Reserve one purchased case before scheduling provider work. */
+function bds_ai_exec_case_reserve( $user_id, $entitlement ) {
+	$key  = sanitize_key( (string) ( $entitlement['key'] ?? '' ) );
+	$lock = bds_ai_exec_lock( 'case|' . $key );
+	if ( ! $key || ! $lock ) {
+		return new WP_Error( 'busy', 'Another case request is being processed.', array( 'status' => 409 ) );
+	}
+	try {
+		$ledger = get_option( $key, array() );
+		$ledger = is_array( $ledger ) ? $ledger : array();
+		if ( ! empty( $ledger['used'] ) || absint( $ledger['pending_expires'] ?? 0 ) > time() ) {
+			return new WP_Error( 'case_already_used', 'This purchase already has a case in progress or completed.', array( 'status' => 409 ) );
+		}
+		$token = wp_generate_uuid4();
+		update_option(
+			$key,
+			array(
+				'used'            => false,
+				'pending_token'   => $token,
+				'pending_expires' => time() + 1200,
+				'pending_job_id'  => 0,
+				'user_id'         => absint( $user_id ),
+			),
+			false
+		);
+		return $token;
+	} finally {
+		bds_ai_exec_unlock( $lock );
+	}
+}
+
+/** Bind the reservation to the private job so queue delay cannot reopen the case. */
+function bds_ai_exec_case_attach_job( $user_id, $order_id, $item_id, $token, $job_id ) {
+	$key  = 'bds_ai_case_' . absint( $order_id ) . '_' . absint( $item_id );
+	$lock = bds_ai_exec_lock( 'case|' . $key );
+	if ( ! $lock ) {
+		return false;
+	}
+	try {
+		$ledger = get_option( $key, array() );
+		if ( ! is_array( $ledger ) || absint( $ledger['user_id'] ?? 0 ) !== absint( $user_id ) || ! hash_equals( (string) ( $ledger['pending_token'] ?? '' ), (string) $token ) ) {
+			return false;
+		}
+		$ledger['pending_job_id']  = absint( $job_id );
+		$ledger['pending_expires'] = time() + DAY_IN_SECONDS;
+		update_option( $key, $ledger, false );
+		return true;
+	} finally {
+		bds_ai_exec_unlock( $lock );
+	}
+}
+
+/** Revalidate the exact order line immediately before spending provider credits. */
+function bds_ai_exec_case_order_is_paid( $user_id, $order_id, $item_id, $product_slug ) {
+	if ( ! function_exists( 'wc_get_order' ) ) {
+		return false;
+	}
+	$order = wc_get_order( absint( $order_id ) );
+	if ( ! $order instanceof WC_Order || absint( $order->get_customer_id() ) !== absint( $user_id ) || ! $order->has_status( array( 'processing', 'completed' ) ) ) {
+		return false;
+	}
+	$item = $order->get_item( absint( $item_id ) );
+	if ( ! $item instanceof WC_Order_Item_Product ) {
+		return false;
+	}
+	$product       = $item->get_product();
+	$recorded_slug = sanitize_title( (string) $item->get_meta( '_bds_ai_case_product_slug', true ) );
+	$current_slug  = $product instanceof WC_Product ? sanitize_title( $product->get_slug() ) : '';
+	$remaining_quantity = max( 0, absint( $item->get_quantity() ) + (int) $order->get_qty_refunded_for_item( $item_id ) );
+	return ( sanitize_title( $product_slug ) === $recorded_slug || sanitize_title( $product_slug ) === $current_slug )
+		&& $remaining_quantity > 0;
+}
+
+/** Persist immutable one-case product identity on new order lines. */
+function bds_ai_exec_case_capture_order_item( $item, $cart_item_key, $values, $order ) {
+	$product = isset( $values['data'] ) && $values['data'] instanceof WC_Product ? $values['data'] : null;
+	if ( $item instanceof WC_Order_Item_Product && $product instanceof WC_Product && 'branddad-ai-review-dispute-assistant' === sanitize_title( $product->get_slug() ) ) {
+		$item->add_meta_data( '_bds_ai_case_product_slug', 'branddad-ai-review-dispute-assistant', true );
+	}
+}
+add_action( 'woocommerce_checkout_create_order_line_item', 'bds_ai_exec_case_capture_order_item', 10, 4 );
+
+/** The one-case product requires an account so the private result has an owner. */
+function bds_ai_exec_case_requires_checkout_account( $required ) {
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return $required;
+	}
+	foreach ( WC()->cart->get_cart() as $cart_item ) {
+		$product = isset( $cart_item['data'] ) && $cart_item['data'] instanceof WC_Product ? $cart_item['data'] : null;
+		if ( $product instanceof WC_Product && 'branddad-ai-review-dispute-assistant' === sanitize_title( $product->get_slug() ) ) {
+			return true;
+		}
+	}
+	return $required;
+}
+add_filter( 'woocommerce_checkout_registration_required', 'bds_ai_exec_case_requires_checkout_account', 20 );
+add_filter(
+	'woocommerce_is_sold_individually',
+	static function ( $sold_individually, $product ) {
+		return $product instanceof WC_Product && 'branddad-ai-review-dispute-assistant' === sanitize_title( $product->get_slug() ) ? true : $sold_individually;
+	},
+	20,
+	2
+);
+
+/** Commit or release a purchased case reservation. */
+function bds_ai_exec_case_finish( $user_id, $order_id, $item_id, $token, $commit ) {
+	$key  = 'bds_ai_case_' . absint( $order_id ) . '_' . absint( $item_id );
+	$lock = bds_ai_exec_lock( 'case|' . $key );
+	if ( ! $lock ) {
+		return false;
+	}
+	try {
+		$ledger = get_option( $key, array() );
+		if ( ! is_array( $ledger ) || absint( $ledger['user_id'] ?? 0 ) !== absint( $user_id ) || ! hash_equals( (string) ( $ledger['pending_token'] ?? '' ), (string) $token ) ) {
+			return false;
+		}
+		$ledger['used']            = (bool) $commit;
+		$ledger['used_at']         = $commit ? time() : 0;
+		$ledger['pending_token']   = '';
+		$ledger['pending_expires'] = 0;
+		$ledger['pending_job_id']  = 0;
+		update_option( $key, $ledger, false );
+		return true;
+	} finally {
+		bds_ai_exec_unlock( $lock );
+	}
+}
+
 /** Return only customer-owned job data. */
 function bds_ai_exec_job_response( $job_id ) {
 	$post = get_post( absint( $job_id ) );
@@ -417,10 +606,21 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 		$access_mode = sanitize_key( (string) $request->get_param( 'access_mode' ) );
 		$reservation = '';
 		$listing_id  = 0;
-		$plan        = bds_ai_exec_active_plan( $user_id );
+		$order_id    = 0;
+		$order_item_id = 0;
+		$plan        = array();
 		// Paid/trial access has deterministic precedence. A customer cannot spend
 		// free Directory allowances while a paid or trial allowance is active.
-		if ( $plan ) {
+		if ( ! empty( $tools[ $tool_key ]['one_time_product_slug'] ) ) {
+			$entitlement = bds_ai_exec_case_entitlement( $user_id, $tools[ $tool_key ]['one_time_product_slug'] );
+			if ( is_wp_error( $entitlement ) ) {
+				return $entitlement;
+			}
+			$reservation = bds_ai_exec_case_reserve( $user_id, $entitlement );
+			$order_id = absint( $entitlement['order_id'] );
+			$order_item_id = absint( $entitlement['item_id'] );
+			$access_mode = 'one_time_case';
+		} elseif ( $plan = bds_ai_exec_active_plan( $user_id ) ) {
 			$access_mode = sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
 			if ( 'trial' === ( $plan['access_mode'] ?? '' ) && empty( $tools[ $tool_key ]['trial'] ) ) {
 				return new WP_Error( 'trial_tool_unavailable', 'This tool is not included in the trial.', array( 'status' => 403 ) );
@@ -449,7 +649,9 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 		true
 	);
 		if ( is_wp_error( $job_id ) ) {
-		if ( 'directory_free' === $access_mode ) {
+		if ( 'one_time_case' === $access_mode ) {
+			bds_ai_exec_case_finish( $user_id, $order_id, $order_item_id, $reservation, false );
+		} elseif ( 'directory_free' === $access_mode ) {
 			bds_dir_free_ai_release( $listing_id, $user_id, $reservation );
 		} else {
 			bds_ai_exec_paid_finish( $user_id, $plan, $reservation, false );
@@ -460,13 +662,21 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 	update_post_meta( $job_id, '_bds_inputs', wp_json_encode( $inputs ) );
 	update_post_meta( $job_id, '_bds_status', 'pending' );
 	update_post_meta( $job_id, '_bds_credit_cost', absint( $tools[ $tool_key ]['credit_cost'] ) );
-	$resolved_mode = 'directory_free' === $access_mode ? 'directory_free' : sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
+	$resolved_mode = in_array( $access_mode, array( 'directory_free', 'one_time_case' ), true ) ? $access_mode : sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
 	update_post_meta( $job_id, '_bds_access_mode', $resolved_mode );
 	update_post_meta( $job_id, '_bds_listing_id', $listing_id );
 	update_post_meta( $job_id, '_bds_subscription_id', absint( $plan['subscription_id'] ?? 0 ) );
 	update_post_meta( $job_id, '_bds_allowance_cycle', max( 1, absint( $plan['allowance_cycle'] ?? 1 ) ) );
 	update_post_meta( $job_id, '_bds_reservation', $reservation );
+	update_post_meta( $job_id, '_bds_order_id', $order_id );
+	update_post_meta( $job_id, '_bds_order_item_id', $order_item_id );
 	update_post_meta( $job_id, '_bds_idempotency', $idem_hash );
+		if ( 'one_time_case' === $access_mode && ! bds_ai_exec_case_attach_job( $user_id, $order_id, $order_item_id, $reservation, $job_id ) ) {
+			update_post_meta( $job_id, '_bds_status', 'failed' );
+			update_post_meta( $job_id, '_bds_error_code', 'case_reservation_attach_failed' );
+			bds_ai_exec_case_finish( $user_id, $order_id, $order_item_id, $reservation, false );
+			return new WP_Error( 'case_reservation_attach_failed', 'The case could not be reserved safely.', array( 'status' => 503 ) );
+		}
 		$scheduled = false;
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
 			$action_id = as_enqueue_async_action( 'bds_ai_exec_process_job', array( $job_id ), 'branddad-ai' );
@@ -477,7 +687,9 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 		if ( ! $scheduled ) {
 			update_post_meta( $job_id, '_bds_status', 'failed' );
 			update_post_meta( $job_id, '_bds_error_code', 'job_schedule_failed' );
-			if ( 'directory_free' === $access_mode ) {
+			if ( 'one_time_case' === $access_mode ) {
+				bds_ai_exec_case_finish( $user_id, $order_id, $order_item_id, $reservation, false );
+			} elseif ( 'directory_free' === $access_mode ) {
 				bds_dir_free_ai_release( $listing_id, $user_id, $reservation );
 			} else {
 				bds_ai_exec_paid_finish( $user_id, $plan, $reservation, false );
@@ -523,15 +735,19 @@ function bds_ai_exec_process_job( $job_id ) {
 	$mode        = sanitize_key( get_post_meta( $job_id, '_bds_access_mode', true ) );
 	$listing_id  = absint( get_post_meta( $job_id, '_bds_listing_id', true ) );
 	$subscription_id = absint( get_post_meta( $job_id, '_bds_subscription_id', true ) );
+	$order_id     = absint( get_post_meta( $job_id, '_bds_order_id', true ) );
+	$order_item_id = absint( get_post_meta( $job_id, '_bds_order_item_id', true ) );
 	$allowance_cycle = max( 1, absint( get_post_meta( $job_id, '_bds_allowance_cycle', true ) ) );
 	$plan        = array( 'subscription_id' => $subscription_id, 'allowance_cycle' => $allowance_cycle );
 	$plan['access_mode'] = $mode;
 	$reservation = sanitize_text_field( get_post_meta( $job_id, '_bds_reservation', true ) );
 	$inputs      = json_decode( (string) get_post_meta( $job_id, '_bds_inputs', true ), true );
-	$failed      = static function ( $code ) use ( $job_id, $mode, $listing_id, $user_id, $reservation, $plan ) {
+	$failed      = static function ( $code ) use ( $job_id, $mode, $listing_id, $user_id, $order_id, $order_item_id, $reservation, $plan ) {
 		update_post_meta( $job_id, '_bds_status', 'failed' );
 		update_post_meta( $job_id, '_bds_error_code', sanitize_key( $code ) );
-		if ( 'directory_free' === $mode && function_exists( 'bds_dir_free_ai_release' ) ) {
+		if ( 'one_time_case' === $mode ) {
+			bds_ai_exec_case_finish( $user_id, $order_id, $order_item_id, $reservation, false );
+		} elseif ( 'directory_free' === $mode && function_exists( 'bds_dir_free_ai_release' ) ) {
 			bds_dir_free_ai_release( $listing_id, $user_id, $reservation );
 		} else {
 			bds_ai_exec_paid_finish( $user_id, $plan, $reservation, false );
@@ -539,6 +755,10 @@ function bds_ai_exec_process_job( $job_id ) {
 	};
 	if ( ! isset( $tools[ $tool_key ] ) || ! is_array( $inputs ) || ! defined( 'BDS_FORMWISE_EXECUTION_KEY' ) || '' === trim( (string) BDS_FORMWISE_EXECUTION_KEY ) ) {
 		$failed( 'execution_not_configured' );
+		return;
+	}
+	if ( 'one_time_case' === $mode && ! bds_ai_exec_case_order_is_paid( $user_id, $order_id, $order_item_id, (string) ( $tools[ $tool_key ]['one_time_product_slug'] ?? '' ) ) ) {
+		$failed( 'case_payment_inactive' );
 		return;
 	}
 	update_post_meta( $job_id, '_bds_status', 'running' );
@@ -581,9 +801,11 @@ function bds_ai_exec_process_job( $job_id ) {
 	}
 	update_post_meta( $job_id, '_bds_result', $output );
 	update_post_meta( $job_id, '_bds_status', 'completed' );
-	$committed = 'directory_free' === $mode && function_exists( 'bds_dir_free_ai_commit' )
-		? bds_dir_free_ai_commit( $listing_id, $user_id, $reservation )
-		: bds_ai_exec_paid_finish( $user_id, $plan, $reservation, true );
+	$committed = 'one_time_case' === $mode
+		? bds_ai_exec_case_finish( $user_id, $order_id, $order_item_id, $reservation, true )
+		: ( 'directory_free' === $mode && function_exists( 'bds_dir_free_ai_commit' )
+			? bds_dir_free_ai_commit( $listing_id, $user_id, $reservation )
+			: bds_ai_exec_paid_finish( $user_id, $plan, $reservation, true ) );
 	if ( ! $committed ) {
 		update_post_meta( $job_id, '_bds_status', 'completed_metering_review' );
 		update_post_meta( $job_id, '_bds_error_code', 'metering_commit_failed' );

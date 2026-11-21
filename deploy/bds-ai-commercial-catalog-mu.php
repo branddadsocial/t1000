@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Commercial Catalog (Staged)
  * Description: One fail-closed source of truth for BrandDad AI pricing, limits, delivery readiness, and checkout eligibility.
- * Version: 0.3.1
+ * Version: 0.4.0
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_COMMERCIAL_CATALOG_VERSION', '0.3.1' );
+define( 'BDS_AI_COMMERCIAL_CATALOG_VERSION', '0.4.0' );
 
 /**
  * Authoritative BrandDad AI commercial catalog.
@@ -57,6 +57,13 @@ function bds_ai_commercial_catalog() {
 			'category' => 'specialized', 'launch_state' => 'staged', 'trial_days' => 0,
 			'summary' => 'Professional review-response drafts that the business reviews before posting.',
 			'limits' => array( 'Up to 15 response drafts each month', 'Manual approval required', 'No automatic posting' ),
+		),
+		'branddad-ai-review-dispute-assistant' => array(
+			'name' => 'Airbnb Review Appeal Assistant — One Review', 'price' => '9.99', 'customer_credits' => 0,
+			'category' => 'one_time_service', 'launch_state' => 'staged', 'trial_days' => 0, 'billing' => 'one_time',
+			'summary' => 'Answer guided questions about one Airbnb review and receive an honest, policy-based message to review and copy into Airbnb.',
+			'limits' => array( 'One Airbnb review case', 'One guided AI case package', 'Evidence checklist', 'Long and short copy-and-paste drafts', 'Public-response fallback', 'No removal guarantee' ),
+			'launch_blocker' => 'Public checkout opens after the one-case payment, entitlement, execution, refund, and result-page acceptance test passes.',
 		),
 		'ai-social-starter' => array(
 			'name' => 'AI Social Starter', 'monthly' => '14.99', 'customer_credits' => 60,
