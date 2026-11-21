@@ -208,5 +208,7 @@ Nothing unchecked above may be described as fully operational.
 - [x] Observe the clean homepage cross its hard stale cutoff and regenerate automatically; verify the new early object starts at age 6 with one Concierge and no duplicate Sales Help widget.
 - [x] Airbnb one-case assistant: real published FormWise output verified with synthetic facts.
 - [x] Airbnb one-case assistant: isolated staging order/entitlement/job/duplicate/refund/failure-release/cleanup acceptance passed 26/26.
+- [x] Airbnb one-case assistant: reconcile visible Services/product copy into Cursor's newer production launch-page source without activating checkout.
+- [x] Airbnb one-case assistant: exact-product SEO description repair is linted, contract-tested, contrast-tested, secret-scanned, manually reviewed, deployed after action-time confirmation, and live-verified with exactly one correct meta description while checkout stays disabled.
 - [ ] Airbnb one-case assistant: required remote Rafter fast scan clears for the exact committed revision (currently quota-blocked at 16/16).
 - [ ] Airbnb one-case assistant: safe real payment, result ownership, cancellation/refund, and reconciliation lifecycle passes before enabling checkout.

@@ -1,5 +1,13 @@
 # BrandDad Codex progress
 
+## 2026-11-20 Airbnb production copy reconciliation
+
+- Preserved Cursor's newer `0.5.24` public-page work and merged the one-case Airbnb copy into that source instead of overwriting it with the older Codex variant. Production launch pages are now `0.5.25`; StartHost reported the single-file upload complete.
+- Live Services and product-page smoke checks show the one-Airbnb-review scope, `$9.99 one time`, staged-checkout notice, no `Add to cart`, and no visible legacy multi-platform quote copy.
+- A remaining legacy description was isolated to the HTML metadata layer. Cursor source `0.5.26` now repairs only the exact Airbnb product's existing description meta tag at the final response boundary, without a database mutation or duplicate tag. Focused launch, heading, contrast, syntax, diff, and secret checks pass. After exact action-time confirmation, StartHost reported the single-file production upload complete.
+- Two independent cache-bypass live requests returned HTTP 200 with exactly one description meta tag containing the one-Airbnb-case scope and `$9.99 one time`. Visible legacy quote/multi-platform copy is absent, the Services page stamps `0.5.26`, and checkout remains disabled.
+- Manual Rafter review found the new callback has no request parameters, SQL, auth, payment, credential, filesystem, deletion, or external-fetch behavior; it matches one existing description tag and emits an escaped fixed string. Required remote fast scanning was attempted again and remains blocked at 16/16; no paid Plus scan was used.
+
 ## 2026-11-20 Airbnb one-review appeal product
 
 - Corrected the missing commercial model for the existing Review Dispute product: it is now specified as **Airbnb Review Appeal Assistant — One Review**, a proposed $9.99 one-time purchase, separate from the $9.99/month Review Assistant.

@@ -1,5 +1,15 @@
 # BrandDad Codex test results
 
+## 2026-11-20 Airbnb production copy reconciliation
+
+- Live `Services`: HTTP 200, launch version `0.5.25`, one-Airbnb-review section present, legacy multi-platform section absent, and no active cart action.
+- Live product: HTTP 200; visible short and long descriptions contain the one-review scope and `$9.99 one time`; no visible quote copy and no active cart action.
+- Source `0.5.26`: `php -l`, `tests/launch-funnel-test.php`, `tests/launch-heading-test.php`, `tests/brand-contrast-test.php`, and `git diff --check` pass. The funnel test proves exactly one description meta tag, fixed scope/price text, removal of the legacy multi-platform quote text, and preservation of the remaining response body.
+- `rafter secrets deploy/bds-ai-launch-pages-mu.php`: no secrets detected (Betterleaks version warning retained). `rafter run --mode fast`: blocked by the existing 16/16 quota; paid Plus not used.
+- Manual Rafter/CWE review: the exact-product gate is server-derived; the HTML callback accepts no request values, replaces at most one description tag, escapes the fixed description, and performs no database, filesystem, auth, credential, payment, network, or deletion action.
+- StartHost production upload: pass; File Manager reported `1/1 Completed` for the exact `bds-ai-launch-pages-mu.php` `0.5.26` file.
+- Post-upload live acceptance: two cache-bypass requests returned HTTP 200; the product has exactly one correct description meta tag, visible one-case/$9.99 copy, no visible legacy quote/multi-platform copy, and no Woo Add to Cart control. The Services HTML stamps launch version `0.5.26`.
+
 ## 2026-11-20 Airbnb one-review product
 
 - `node tests/airbnb-review-case-contract.mjs`: pass; 21 focused entitlement, schema, privacy, refund, queue-race, catalog, and copy assertions.
