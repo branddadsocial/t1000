@@ -295,6 +295,12 @@ if ( ! function_exists( 'bds_feat_path_needs_door' ) ) {
 				'flights',
 				'privacy-policy',
 				'privacy-policy-2',
+				'about-us',
+				'terms',
+				'terms-and-conditions',
+				'faq',
+				'sitemap',
+				'how-it-works',
 			),
 			true
 		);

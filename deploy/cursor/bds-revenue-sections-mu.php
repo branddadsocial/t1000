@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.28
+ * Version: 0.2.29
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -700,7 +700,7 @@ function bds_rev_guide_next() {
  */
 function bds_rev_path_needs_guide( $path ) {
 	$path = strtolower( trim( (string) $path, '/' ) );
-	if ( '' === $path || 'services' === $path || 'check-your-website' === $path || 'cart' === $path || 'checkout' === $path || 0 === strpos( $path, 'checkout/' ) ) {
+	if ( '' === $path || 'services' === $path || 'check-your-website' === $path || 'cart' === $path || 'checkout' === $path || 'shop' === $path || 0 === strpos( $path, 'checkout/' ) ) {
 		return false;
 	}
 	if ( 0 === strpos( $path, 'product/' ) ) {
@@ -772,6 +772,20 @@ function bds_rev_empty_cart_footer() {
 	echo bds_rev_guide_next(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 add_action( 'wp_footer', 'bds_rev_empty_cart_footer', 27 );
+
+/** The shop archive should sell live plans. It does not start a charge. */
+function bds_rev_shop_footer() {
+	if ( ! bds_rev_is_social() || is_admin() ) {
+		return;
+	}
+	$path = bds_rev_request_path();
+	$shop = 'shop' === $path || ( function_exists( 'is_shop' ) && is_shop() );
+	if ( ! $shop ) {
+		return;
+	}
+	echo bds_rev_home_strip(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_footer', 'bds_rev_shop_footer', 26 );
 
 /**
  * After checkout, the next step is the free listing. This block does not start another charge.
@@ -942,6 +956,9 @@ function bds_rev_alias_dest( $path ) {
 	}
 	if ( 'cookie-policy' === $path || 'cookies' === $path ) {
 		return home_url( '/privacy-policy/' );
+	}
+	if ( 'sitemap' === $path || 'site-map' === $path ) {
+		return bds_rev_services_url();
 	}
 	if ( 'music' === $path || 'branddad-music' === $path ) {
 		return home_url( '/#branddad-music' );

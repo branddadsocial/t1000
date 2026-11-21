@@ -102,6 +102,8 @@ rev_expect( true === bds_rev_path_needs_guide( 'terms-conditions' ), 'terms get 
 rev_expect( true === bds_rev_path_needs_guide( 'press' ), 'press gets a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'refund_returns' ), 'refund returns get a next step' );
 rev_expect( home_url( '/privacy-policy/' ) === bds_rev_alias_dest( 'cookie-policy' ), 'cookie leftover URLs open privacy' );
+rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'sitemap' ), 'dead sitemap URLs open the services catalog' );
+rev_expect( false === bds_rev_path_needs_guide( 'shop' ), 'the shop archive uses the live plan strip' );
 rev_expect( false === bds_rev_path_needs_guide( 'pricing' ), 'the missing pricing page is not a destination' );
 rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'pricing' ), 'pricing opens the services catalog' );
 rev_expect( false !== strpos( bds_rev_alias_dest( 'music' ), '#branddad-music' ), 'music opens the brief' );

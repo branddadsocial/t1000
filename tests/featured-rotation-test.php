@@ -97,6 +97,9 @@ expect( true === bds_feat_path_needs_door( 'jobs' ), 'jobs gets a listing door' 
 expect( true === bds_feat_path_needs_door( 'classifieds' ), 'classifieds gets a listing door' );
 expect( true === bds_feat_path_needs_door( 'memberships' ), 'memberships gets a listing door' );
 expect( true === bds_feat_path_needs_door( 'blog' ), 'blog gets a listing door' );
+expect( true === bds_feat_path_needs_door( 'about-us' ), 'about-us gets a listing door' );
+expect( true === bds_feat_path_needs_door( 'terms-and-conditions' ), 'terms get a listing door' );
+expect( true === bds_feat_path_needs_door( 'faq' ), 'faq leftover URLs get a listing door' );
 expect( 'events' === bds_feat_directory_surface( 'events' ), 'events surface is recognized' );
 expect( 'jobs' === bds_feat_directory_surface( 'jobs-careers' ), 'jobs-careers maps to jobs' );
 expect( 'classifieds' === bds_feat_directory_surface( 'classifieds' ), 'classifieds surface is recognized' );
@@ -108,7 +111,7 @@ expect( 'travel' === bds_feat_listing_type_surface( 'travel' ), 'all-listings tr
 expect( 'hotels' === bds_feat_listing_type_surface( 'hotels-stays' ), 'all-listings hotels type is recognized' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.20' ), 'featured MU stamps 0.2.20' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.21' ), 'featured MU stamps 0.2.21' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly</a>' ), 'leftover Subscribe now is rewritten to Subscribe monthly' );
 expect( false !== strpos( $feat_src, ':focus-visible' ), 'featured buttons keep a visible focus ring' );
 expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty worldwide lane heading has Spanish' );
@@ -124,6 +127,7 @@ expect( false !== strpos( $feat_src, 'This search does not sell a listing' ), 'e
 expect( false !== strpos( $feat_src, 'bds-feat-hide-refund' ), 'demo refund modal is hidden on public Directory pages' );
 expect( false !== strpos( $feat_src, 'directory_type=classifieds' ), 'classifieds alias opens the classifieds directory type' );
 expect( false !== strpos( $feat_src, 'bds_feat_memberships_alias' ), 'membership leftover URLs open Select your plan' );
+expect( false !== strpos( $feat_src, 'bds_feat_help_alias' ), 'faq and sitemap leftover URLs open Directory help' );
 expect( false !== strpos( $feat_src, 'Membership prices on Select your plan are unchanged' ), 'membership copy does not flatten prices' );
 $no_list = bds_feat_listing_checkout_prompt( 0 );
 expect( false === $no_list['attached'], 'buy page without listing stays unattached' );
