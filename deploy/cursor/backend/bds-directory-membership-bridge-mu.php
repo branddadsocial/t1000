@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Membership Bridge
  * Description: Consented, signed, idempotent free Directory account provisioning from BrandDad Social checkout.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0.1.1' );
+define( 'BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0.1.2' );
 
 function bds_directory_membership_secret() {
 	$secret = defined( 'BDS_ACCOUNT_LINK_SECRET' ) ? trim( (string) BDS_ACCOUNT_LINK_SECRET ) : '';
@@ -21,6 +21,35 @@ function bds_directory_membership_secret() {
 function bds_directory_membership_hmac_key() {
 	$secret = bds_directory_membership_secret();
 	return $secret ? hash_hmac( 'sha256', 'branddad-directory-membership-v1', $secret, true ) : '';
+}
+
+/**
+ * Fail-closed HMAC for the Directory membership webhook.
+ * Empty key, stale timestamp, malformed ids, and a mismatched body all refuse.
+ *
+ * @param mixed $timestamp Unix seconds as digits.
+ * @param mixed $signature Hex HMAC.
+ * @param mixed $event_id  Hex event id.
+ * @param mixed $body      Raw JSON body.
+ * @param mixed $hmac_key  Derived binary key. Never a Stripe or FormWise secret.
+ * @param int   $now       Unix now, injectable for tests.
+ * @return true|string Error code.
+ */
+function bds_directory_membership_verify_signature( $timestamp, $signature, $event_id, $body, $hmac_key, $now = null ) {
+	$now       = null === $now ? time() : (int) $now;
+	$timestamp = (string) $timestamp;
+	$signature = (string) $signature;
+	$event_id  = (string) $event_id;
+	$body      = (string) $body;
+	$hmac_key  = (string) $hmac_key;
+	if ( '' === $hmac_key ) {
+		return 'bridge_disabled';
+	}
+	if ( ! ctype_digit( $timestamp ) || abs( $now - (int) $timestamp ) > 300 || ! preg_match( '/^[a-f0-9]{64}$/', $signature ) || ! preg_match( '/^[a-f0-9]{64}$/', $event_id ) ) {
+		return 'invalid_signature';
+	}
+	$expected = hash_hmac( 'sha256', $timestamp . "\n" . hash( 'sha256', $body ), $hmac_key );
+	return hash_equals( $expected, $signature ) ? true : 'invalid_signature';
 }
 
 function bds_directory_membership_host() {
@@ -145,11 +174,12 @@ function bds_directory_membership_permission( WP_REST_Request $request ) {
 	$timestamp = sanitize_text_field( (string) $request->get_header( 'X-BDS-Timestamp' ) );
 	$signature = sanitize_text_field( (string) $request->get_header( 'X-BDS-Signature' ) );
 	$event_id  = sanitize_text_field( (string) $request->get_header( 'Idempotency-Key' ) );
-	if ( ! ctype_digit( $timestamp ) || abs( time() - absint( $timestamp ) ) > 300 || ! preg_match( '/^[a-f0-9]{64}$/', $signature ) || ! preg_match( '/^[a-f0-9]{64}$/', $event_id ) ) {
-		return new WP_Error( 'invalid_signature', 'The membership event could not be verified.', array( 'status' => 401 ) );
+	$ok        = bds_directory_membership_verify_signature( $timestamp, $signature, $event_id, $request->get_body(), bds_directory_membership_hmac_key() );
+	if ( true !== $ok ) {
+		$code = 'bridge_disabled' === $ok ? 'bridge_disabled' : 'invalid_signature';
+		return new WP_Error( $code, 'The membership event could not be verified.', array( 'status' => 'bridge_disabled' === $ok ? 503 : 401 ) );
 	}
-	$expected = hash_hmac( 'sha256', $timestamp . "\n" . hash( 'sha256', $request->get_body() ), bds_directory_membership_hmac_key() );
-	return hash_equals( $expected, $signature ) ? true : new WP_Error( 'invalid_signature', 'The membership event could not be verified.', array( 'status' => 401 ) );
+	return true;
 }
 
 /** Idempotently create or reuse a private subscriber account; never create a listing. */

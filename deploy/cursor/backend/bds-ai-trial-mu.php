@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Trial
  * Description: Fail-closed seven-day AI Business Essentials trial lifecycle and customer status API.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,9 +10,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_TRIAL_VERSION', '0.1.1' );
+define( 'BDS_AI_TRIAL_VERSION', '0.1.2' );
 define( 'BDS_AI_TRIAL_PRODUCT_SLUG', 'ai-business-essentials' );
 define( 'BDS_AI_TRIAL_CREDITS', 25 );
+
+/**
+ * The 7-day Essentials trial does not grant Directory, Featured, or member price.
+ *
+ * @return array<string,bool>
+ */
+function bds_ai_trial_directory_grants() {
+	return array(
+		'directory_membership' => false,
+		'featured'             => false,
+		'member_price'         => false,
+		'travel'               => false,
+	);
+}
+
+/** Trial terms copied by WP Swings must be exactly seven days. */
+function bds_ai_trial_terms_are_seven_day( $number, $interval ) {
+	return 7 === absint( $number ) && 'day' === sanitize_key( (string) $interval );
+}
+
+/**
+ * Map authoritative subscription facts onto a customer-safe status.
+ * Paid Essentials wins. An active window is trial. History or a matched sub is consumed.
+ *
+ * @param mixed $paid         Paid plan row, or empty.
+ * @param mixed $has_active   Active trial window.
+ * @param mixed $has_history  Prior trial history.
+ * @param mixed $has_matched  Matching Essentials subscription without an open window.
+ * @return string
+ */
+function bds_ai_trial_status_from_records( $paid, $has_active, $has_history, $has_matched ) {
+	if ( ! empty( $paid ) ) {
+		return 'paid';
+	}
+	if ( ! empty( $has_active ) ) {
+		return 'active';
+	}
+	if ( ! empty( $has_history ) || ! empty( $has_matched ) ) {
+		return 'consumed';
+	}
+	return 'eligible';
+}
 
 /** Require an authenticated cookie session and WordPress REST nonce. */
 function bds_ai_trial_permission() {
@@ -71,7 +113,7 @@ function bds_ai_trial_order_for_subscription( $subscription_id ) {
 function bds_ai_trial_terms_match( $subscription_id ) {
 	$number   = absint( wps_sfw_get_meta_data( absint( $subscription_id ), 'wps_sfw_subscription_free_trial_number', true ) );
 	$interval = sanitize_key( (string) wps_sfw_get_meta_data( absint( $subscription_id ), 'wps_sfw_subscription_free_trial_interval', true ) );
-	return 7 === $number && 'day' === $interval;
+	return bds_ai_trial_terms_are_seven_day( $number, $interval );
 }
 
 /** Customer-safe trial state derived only from authoritative subscription records. */
@@ -99,16 +141,8 @@ function bds_ai_trial_state( $user_id ) {
 		}
 	}
 
-	$paid = function_exists( 'bds_ai_exec_active_paid_plan' ) ? bds_ai_exec_active_paid_plan( $user_id ) : array();
-	if ( $paid ) {
-		$status = 'paid';
-	} elseif ( $active ) {
-		$status = 'active';
-	} elseif ( $history || $matched ) {
-		$status = 'consumed';
-	} else {
-		$status = 'eligible';
-	}
+	$paid   = function_exists( 'bds_ai_exec_active_paid_plan' ) ? bds_ai_exec_active_paid_plan( $user_id ) : array();
+	$status = bds_ai_trial_status_from_records( $paid, $active, $history, $matched );
 
 	return array(
 		'status'         => $status,

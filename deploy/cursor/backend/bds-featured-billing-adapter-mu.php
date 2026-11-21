@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Featured Billing Adapter
  * Description: Subscription-safe Woo billing lifecycle for Cursor-owned Directory Featured placement records.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_FEATURED_BILLING_VERSION', '0.1.0' );
+define( 'BDS_FEATURED_BILLING_VERSION', '0.1.1' );
 
 function bds_featured_billing_skus() {
 	return array(
@@ -130,13 +130,20 @@ function bds_featured_billing_order_context( $order ) {
 	return 1 === count( $found ) ? $found[0] : array();
 }
 
-/** Cursor supplies actual listing geography; absence keeps non-global billing closed. */
-function bds_featured_billing_geo( $listing_id, $level ) {
-	$geo = apply_filters( 'bds_featured_listing_geo', array(), absint( $listing_id ) );
-	$geo = is_array( $geo ) ? $geo : array();
+/**
+ * Fail-closed listing geography. Missing country keeps non-global closed.
+ * Local and regional also need a real lat/lng.
+ *
+ * @param mixed  $geo   Filter payload.
+ * @param string $level Featured lane.
+ * @return array<string,mixed>
+ */
+function bds_featured_billing_normalize_geo( $geo, $level ) {
+	$geo     = is_array( $geo ) ? $geo : array();
+	$level   = (string) $level;
 	$country = strtoupper( sanitize_text_field( (string) ( $geo['country'] ?? '' ) ) );
-	$lat = isset( $geo['lat'] ) && is_numeric( $geo['lat'] ) ? (float) $geo['lat'] : null;
-	$lng = isset( $geo['lng'] ) && is_numeric( $geo['lng'] ) ? (float) $geo['lng'] : null;
+	$lat     = isset( $geo['lat'] ) && is_numeric( $geo['lat'] ) ? (float) $geo['lat'] : null;
+	$lng     = isset( $geo['lng'] ) && is_numeric( $geo['lng'] ) ? (float) $geo['lng'] : null;
 	if ( 'global' !== $level && ! preg_match( '/^[A-Z]{2}$/', $country ) ) {
 		return array();
 	}
@@ -144,6 +151,12 @@ function bds_featured_billing_geo( $listing_id, $level ) {
 		return array();
 	}
 	return array( 'country' => $country, 'lat' => $lat, 'lng' => $lng );
+}
+
+/** Cursor supplies actual listing geography; absence keeps non-global billing closed. */
+function bds_featured_billing_geo( $listing_id, $level ) {
+	$geo = apply_filters( 'bds_featured_listing_geo', array(), absint( $listing_id ) );
+	return bds_featured_billing_normalize_geo( $geo, $level );
 }
 
 function bds_featured_billing_lock( $subscription_id ) {

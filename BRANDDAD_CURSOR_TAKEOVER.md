@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~9:53am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~9:56am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -31,10 +31,12 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Stripe inspect (no reconnect) | Social Essentials product + Directory checkout-with-cart both load `wc-stripe` and `pk_live` (length 107, value not printed). No reconnect click. No charge. |
 | Stripe reconnect | **Owner blocker.** Dashboard-only if a webhook signing secret or account link is stale. |
 | FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. |
-| Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Provisioning is WP Swings 7-day terms after a real checkout. |
-| Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. |
+| Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Local mapping tests: 7-day terms only, paid wins over trial, trial does not grant Directory/Featured/member price/Travel. Trial MU **0.1.2**. |
+| Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Flags not flipped here. |
 | Featured checkout | Products live. Adapter live. Local **0.2.21** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias, faq/sitemap → help. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
-| Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Shop-manager Tools **Billing inspect** (local bridge 0.1.3) counts active Woo webhooks as a boolean. Stripe Dashboard delivery list is owner inspect. |
+| Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Directory membership HMAC **0.1.2** is fail-closed: empty key disables, timestamp >300s and body tamper refuse, `hash_equals`. Tests use a dummy local HMAC, not a Stripe or FormWise secret. Consent checkbox still required before any provision. Shop-manager Tools **Billing inspect** counts active Woo webhooks as a boolean. Stripe Dashboard delivery is owner inspect. |
+| Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.1**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
+| Sales catalog contract | Local catalog **0.3.4**. Live Social catalog **0.4.0** — do not upload local over live. Anonymous `/sales/catalog` contract: Essentials $29.99 for_sale when published. Staged/quote-only (complete packages, DFY, music) have no checkout URL. Assistant stays closed without FormWise keys. |
 | GitHub wp-cron schedule | Only schedule run remains `44905829871` success 2026-11-21T12:49:47Z (7:49am America/Cancun). Four earlier `workflow_dispatch` successes. Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron. |
 
 ## Track A — CX (independent)
@@ -74,11 +76,20 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - Secrets: snapshot is booleans from `defined()` / gateway `enabled`. Values are never echoed. Webhook URLs are not listed.
 - No writes, no REST, no charge, no flag flip.
 
+## Secure design (membership webhook + trial mapping)
+
+- Identity: Social checkout customer who checked Directory consent; Directory receiver is host-locked to `directory.branddad.social`.
+- AuthN: HMAC-SHA256 over `timestamp + body hash` with a derived key. Empty `BDS_ACCOUNT_LINK_SECRET` disables the bridge (503). Tests use a dummy local HMAC, never a Stripe or FormWise key.
+- AuthZ: signature first; then event id must match the Idempotency-Key; receiver creates/reuses a subscriber only. It does not create a listing or grant Pro/Elite/Featured.
+- Replay: timestamp must be within 300s; event id is 64 hex; option lock around persist.
+- Trial mapping: 7-day Essentials only. Paid wins over trial. Missing facts grant nothing. Trial does not include Directory membership, Featured, 10% member price, or Travel.
+- Featured geo: missing ISO country fails non-global billing; local/regional also need a real lat/lng.
+- Catalog: staged/quote_only have no checkout URL. Anonymous sales catalog is Essentials. Local 0.3.4 must not overwrite live 0.4.0.
+
 ## This pass
 
-- FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone.
-- Live leftover until FM: `/services/` mixes Subscribe now; `/account-hub/` still See plans; `/featured-advertising/` Subscribe now + See plans + demo refund modal HTML; `/classifieds/` 404; `/cookie-policy/` 404; `/sitemap/` 404; Directory `/faq/` 404; `/shop/` has sales-help but no live plan strip; press/privacy missing `bds-rev-guide-next`.
-- Track A: hub **0.2.9** guest See membership plans → Directory Select your plan; revenue **0.2.29** leftover Subscribe now / Choose this plan / See plans rewrites, shop live-plan strip, sitemap → services; featured **0.2.21** leftover rewrites plus faq/sitemap → help; follow **0.1.5** form `#0668d8` / 44px / focus-visible.
-- Suites: featured, revenue, hub, follow, contrast, sales-help, conversion, lang-switch, free-listing, bridge passed. php -l clean. rafter secrets empty on the edited MUs.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
+- FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No extra live-copy MU.
+- Track B: webhook HMAC tests; trial/entitlement mapping tests; Featured geo unit tests; sales catalog contract tests. Helpers extracted in membership bridge **0.1.2**, trial **0.1.2**, featured billing **0.1.1**, execution **0.2.1**.
+- Suites: webhook-signature, trial-entitlement, featured-geo, sales-catalog-contract, plus featured-rotation, hub, bridge, launch-funnel. php -l clean. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in (conversion MUs, unchanged): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.

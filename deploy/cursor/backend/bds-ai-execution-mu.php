@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.2.0' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.2.1' );
 
 /**
  * Published workflows verified in the BrandDad Social FormWise workspace.
@@ -237,14 +237,26 @@ function bds_ai_exec_active_paid_plan( $user_id ) {
 	return array();
 }
 
-/** Prefer a paid entitlement; otherwise accept one bounded active trial. */
-function bds_ai_exec_active_plan( $user_id ) {
-	$paid = bds_ai_exec_active_paid_plan( $user_id );
-	if ( $paid ) {
+/**
+ * Paid Essentials wins over an open trial. Empty facts grant nothing.
+ *
+ * @param mixed $paid  Paid plan row.
+ * @param mixed $trial Active trial plan row.
+ * @return array<string,mixed>
+ */
+function bds_ai_exec_choose_access( $paid, $trial ) {
+	if ( is_array( $paid ) && $paid ) {
 		$paid['access_mode'] = 'paid';
 		return $paid;
 	}
-	return function_exists( 'bds_ai_trial_plan' ) ? bds_ai_trial_plan( $user_id ) : array();
+	return is_array( $trial ) && $trial ? $trial : array();
+}
+
+/** Prefer a paid entitlement; otherwise accept one bounded active trial. */
+function bds_ai_exec_active_plan( $user_id ) {
+	$paid  = bds_ai_exec_active_paid_plan( $user_id );
+	$trial = function_exists( 'bds_ai_trial_plan' ) ? bds_ai_trial_plan( $user_id ) : array();
+	return bds_ai_exec_choose_access( $paid, $trial );
 }
 
 function bds_ai_exec_period() {
