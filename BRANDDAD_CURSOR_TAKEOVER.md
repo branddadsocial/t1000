@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~3:35pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~3:40pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -62,7 +62,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Account emails | Copy only in bridge **0.1.6**. New-account and reset-password additional content. Does not `wp_mail`. |
 | Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help, follow, lang-switch, free-listing. Sticky help respects `prefers-reduced-motion`. |
 | Gift / travel / legal | Gift marketplace copy is not a BrandDad charge. Travel/hotels do not sell tickets. Social privacy/terms get the next-step band. |
-| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Conversion **0.1.2** counts hub and door clicks. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow **0.1.5** has Featured/music/gift copy plus `#0668d8` / 44px / focus-visible (does not send). |
+| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Follow **0.1.6** skips those same surfaces so checkout is not a second email box. Conversion **0.1.2** counts hub and door clicks. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow still does not send. |
 | Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. Gift and flights `directory_type` queries now map to marketplace/travel copy. Featured MU stamp stays **0.2.21**. |
 | Memberships / blogs | `/memberships/`, `/membership/`, `/plans/` alias to Select your plan. Directory blog door does not sell a listing. |
 | Music / quote-only | Live home already has music brief and “does not take payment.” DFY contact note is quote-only. |
@@ -75,7 +75,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -204,9 +204,9 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 
 ## This pass
 
-- FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No Subscribe now rewrites piled. No StartHost cron added. Live classifieds/faq still wait on FM; not stalled.
-- Track B: execution **0.2.5** fail-closes untrusted FormWise JSON. `data` wrapping deeper than 4 levels, non-arrays, and non-string output fields are empty. HTML is stripped. Text is capped at 12k. Does not invent a FormWise key.
+- FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No Subscribe now rewrites piled. No StartHost cron added. Live classifieds/faq still wait on FM; not stalled. Prompt owner batches 1–7 and 9–10 were not forced.
+- Leftover CX: follow **0.1.6** no longer prints the email-capture box on checkout, cart, My Account, account-hub, or studio-boards. Sales-help **0.1.7** already skipped those surfaces.
 - GitHub wp-cron remains **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
-- Suites: formwise-followup-failclosed; execution-access-bola. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2 and execution 0.2.5 are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
-- Flags off. No charge. Not pushed. Prompt Codex batches 1–7 and 9–10 still owner-gated.
+- Suites: follow-consent; sales-help. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2 and execution 0.2.5 are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
+- Flags off. No charge. Not pushed.

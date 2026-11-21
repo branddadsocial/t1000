@@ -40,7 +40,15 @@ assert_true( false === strpos( strtolower( $feat_note['body'] ), 'no card' ), 't
 $music_note = bds_follow_message( 'music' );
 assert_true( false !== strpos( $music_note['body'], 'does not take payment' ), 'the music note does not take payment' );
 $src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-follow-consent-mu.php' );
-assert_true( false !== strpos( $src, 'Version: 0.1.5' ), 'follow consent stamps 0.1.5' );
+assert_true( true === bds_follow_path_ok( '' ), 'the homepage may show follow consent' );
+assert_true( true === bds_follow_path_ok( 'services' ), 'services may show follow consent' );
+assert_true( false === bds_follow_path_ok( 'checkout' ), 'checkout does not get a second email box' );
+assert_true( false === bds_follow_path_ok( 'checkout/order-pay/12' ), 'order-pay does not get a second email box' );
+assert_true( false === bds_follow_path_ok( 'cart' ), 'cart does not get a second email box' );
+assert_true( false === bds_follow_path_ok( 'my-account/orders' ), 'My Account does not get a second email box' );
+assert_true( false === bds_follow_path_ok( 'account-hub' ), 'account hub does not get a second email box' );
+assert_true( false === bds_follow_path_ok( 'studio-boards' ), 'studio boards do not get a second email box' );
+assert_true( false !== strpos( $src, 'Version: 0.1.6' ), 'follow consent stamps 0.1.6' );
 assert_true( false !== strpos( $src, '#0668d8' ), 'follow form uses the approved accessible blue' );
 assert_true( false !== strpos( $src, ':focus-visible' ), 'follow form keeps a visible focus ring' );
 assert_true( false !== strpos( $src, 'Guardar mi correo' ), 'follow submit Spanish is tagged' );

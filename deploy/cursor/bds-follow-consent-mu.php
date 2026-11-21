@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Follow Consent
  * Description: Saves an email only when the person asks BrandDad to write to them. It does not send mail.
- * Version: 0.1.5
+ * Version: 0.1.6
  * Author: BrandDad
  *
  * Ingestion: public form → nonce check → email, consent, and source only.
@@ -99,6 +99,26 @@ function bds_follow_message( $source ) {
  * @param string $path Request path.
  * @return string
  */
+/**
+ * Checkout, account, and studio boards already have a next step.
+ * A second email-capture box on those surfaces is leftover CX.
+ *
+ * @param mixed $path Request path.
+ * @return bool
+ */
+function bds_follow_path_ok( $path ) {
+	$path = strtolower( trim( (string) $path, '/' ) );
+	$top  = strstr( $path, '/', true );
+	if ( false === $top ) {
+		$top = $path;
+	}
+	return ! in_array(
+		$top,
+		array( 'cart', 'checkout', 'my-account', 'account-hub', 'studio-boards' ),
+		true
+	);
+}
+
 function bds_follow_source_for_path( $path ) {
 	$path = strtolower( trim( (string) $path, '/' ) );
 	if ( false !== strpos( $path, 'ai-business-essentials' ) ) {
@@ -194,6 +214,10 @@ function bds_follow_form() {
 	if ( ! in_array( $host, array( 'branddad.social', 'www.branddad.social', 'directory.branddad.social' ), true ) ) {
 		return;
 	}
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+	if ( ! bds_follow_path_ok( $path ) ) {
+		return;
+	}
 	$note = isset( $_GET['bds_follow'] ) ? sanitize_key( wp_unslash( $_GET['bds_follow'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$sw = function_exists( 'bds_lang_swap_attrs' );
 	echo '<style id="bds-follow-css">#bds-follow-consent{max-width:720px;margin:18px auto;padding:16px 18px;border-top:1px solid #dbe5ef}#bds-follow-consent input[type="email"]{min-height:44px;padding:8px;width:100%;max-width:420px;box-sizing:border-box}#bds-follow-consent button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border:0;border-radius:10px;background:#0668d8;color:#fff;font-weight:800}#bds-follow-consent button:focus-visible,#bds-follow-consent input:focus-visible{outline:3px solid #0668d8;outline-offset:2px}</style>';
@@ -202,7 +226,6 @@ function bds_follow_form() {
 	wp_nonce_field( 'bds_follow_consent', 'bds_follow_nonce' );
 	echo '<p><label for="bds-follow-email"' . ( $sw ? bds_lang_swap_attrs( 'Email me the next step', 'Envíeme el siguiente paso' ) : '' ) . '>Email me the next step</label></p>';
 	echo '<p><input id="bds-follow-email" name="bds_follow_email" type="email" maxlength="120" required autocomplete="email"></p>';
-	$path   = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
 	$source = bds_follow_source_for_path( $path );
 	echo '<input type="hidden" name="bds_follow_source" value="' . esc_attr( $source ) . '">';
 	echo '<p><label><input type="checkbox" name="bds_follow_consent" value="1" required> <span' . ( $sw ? bds_lang_swap_attrs( 'BrandDad may email me about this. I can tell you to stop.', 'BrandDad puede escribirme sobre esto. Puedo pedir que pare.' ) : '' ) . '>BrandDad may email me about this. I can tell you to stop.</span></label></p>';
