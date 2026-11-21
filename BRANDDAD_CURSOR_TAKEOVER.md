@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~9:35am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~9:40am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -66,9 +66,9 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 
 ## This pass
 
-- File Manager remains Client Panel login. Credentials not typed. Did not wait.
-- Track A: hub trial label **Try it free for 7 days**. Revenue **0.2.22** live cards/contact notes **Subscribe monthly**. Featured **0.2.14** already matched.
-- Repo: `.gitignore` drops File Manager packer junk and `.vexp/`. Catalog 0.3.4 and launch 0.5.26 left uncommitted so they cannot be mistaken for a live overwrite.
-- Verified commit candidates: bridge 0.1.3, surfaces 0.2.7, featured 0.2.14, revenue 0.2.22, hub lib, tests, takeover docs.
-- Suites: customer-hub, codex-bridge, featured-rotation, revenue-sections, sales-help, conversion-events passed.
-- Spawn MU kept. No StartHost cron. Flags off. No charge. Chrome stays at `-2400`.
+- File Manager remains Client Panel login (hwnd 197924 at `-2400`). Credentials not typed. Did not wait. Windows Security left alone.
+- Live home: Subscribe monthly + Start 7-day trial / Try it free for 7 days, `data-version="0.5.26"`. No `$6.99`, no “no card”.
+- Live `/services/`: both Subscribe monthly (launch) and Subscribe now (revenue until 0.2.22 deploys).
+- Git `cursor-slim-020`: `37a52e9` takeover 0.1.3/0.2.7/0.2.14/0.2.22; `a841ebe` remaining conversion MUs + backend copies. Catalog 0.3.4 and launch 0.5.26 stay uncommitted (do not overwrite live catalog 0.4.0).
+- Suites passed: customer-hub, codex-bridge, featured-rotation, revenue-sections, sales-help, conversion-events, follow-consent, free-listing, lang-switch, spawn, brand-contrast, directory-contact, launch-funnel, launch-heading, early-contact-cache, type-doors.
+- Spawn MU kept. No StartHost cron. Flags off. No charge. Not pushed.
