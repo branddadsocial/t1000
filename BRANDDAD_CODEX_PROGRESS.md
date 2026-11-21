@@ -1,5 +1,13 @@
 # BrandDad Codex progress
 
+## 2026-11-21 Directory response-integrity incident and repair
+
+- Post-migration cache-bypass acceptance found that the live Directory Experience main file had been reduced to the one-line Suite URL instead of the reviewed PHP plugin. Fresh WordPress HTML and REST responses were therefore corrupted even though some cached pages still appeared normal.
+- Revalidated the complete local `0.68.15` source before recovery: it begins with `<?php`, contains the Directory Suite UUID exactly once, passes `php -l`, both Directory contracts, `git diff --check`, and a file-specific local Rafter secret scan. The required remote fast scan remains quota-blocked at 16/16; paid Plus was not used.
+- Uploaded the exact 145,636-byte reviewed `0.68.15` file to the existing StartHost plugin path. StartHost reported `1/1 Uploads` and `Completed`; a read-only Code Editor inspection then showed the PHP header, version `0.68.15`, and the correct fixed Suite constant.
+- Fresh production acceptance now passes: the add-listing REST response parses as JSON; Home, All Categories, Restaurants, canonical Events, canonical Jobs, Add Listing, `/events/`, and `/jobs/` return HTTP 200 with substantial HTML; every tested public page contains the Directory Suite and none contains the superseded assistant or raw one-line Suite response.
+- The exact `0.68.14` rollback file remains preserved locally but was not needed. No Directory data, customer record, listing, payment, subscription, FormWise content, or Social file changed during the repair.
+
 ## 2026-11-21 FormWise domain-restricted Suite production migration
 
 - Added the exact production origins to the provider-managed Suite allowlists: `https://branddad.social` for BrandDad Social Sales Assistant and `https://directory.branddad.social` for BrandDad Directory Concierge. Both one-Agent Suites remain published on `ai.branddad.social` with session context off.

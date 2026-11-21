@@ -1,5 +1,13 @@
 # BrandDad Codex test results
 
+## 2026-11-21 Directory response-integrity recovery acceptance
+
+- StartHost replacement evidence: upload `1/1` completed for `branddad-directory-experience.php`; read-only hosted source inspection shows `<?php`, plugin version `0.68.15`, and the fixed Directory Suite URL inside the constant rather than before the PHP boundary.
+- REST recovery: `GET /wp-json/wp/v2/pages?slug=add-listing&context=view&_fields=id,slug,link,content,status` returned HTTP 200, 844 bytes, valid JSON, no raw Suite prefix, and no superseded assistant ID.
+- Public recovery sweep: Home (559,590 bytes), All Categories (474,858), Restaurants (443,349), canonical Events (438,140), canonical Jobs (436,769), Add Listing (504,405), `/events/` (436,768), and `/jobs/` (435,482) all returned HTTP 200 with full HTML rather than the 73-byte Suite URL.
+- Assistant reference checks: all eight sampled public surfaces contained Suite `32733848-06ea-47ad-bff9-4a95b9a0e3c1`; none contained the superseded standalone assistant signature.
+- Local recovery gate: PHP lint, Directory navigation/home contracts, `git diff --check`, and file-specific local secret scanning passed. Remote `rafter run --mode fast` remains blocked by the existing 16/16 free-scan quota; paid Plus was not used.
+
 ## 2026-11-21 FormWise domain-restricted Suite production acceptance
 
 - Provider setting read-back: Sales Suite allowlists `https://branddad.social`; Directory Suite allowlists `https://directory.branddad.social`; both contain exactly one intended published Agent and have session context off.
@@ -9,7 +17,7 @@
 - Deterministic checks: both edited PHP files pass `php -l`; Directory navigation and home-conversion contracts pass; `git diff --check` passes; file-specific `rafter secrets` reports no detected secrets.
 - Manual OWASP review: A01/A02/A03/A04/A07/A08/A09/A10 and LLM01-LLM10 are N/A to the changed behavior because the diff only replaces fixed HTTPS embed constants and versions. A05 retains `esc_url`, `strict-origin-when-cross-origin`, the existing Social iframe sandbox, `noopener noreferrer`, and clipboard-only iframe permission. A06 has no dependency change. No model output, retrieval path, prompt, tool, user input, customer data, credential, authentication, payment, network fetcher, SQL, shell, deletion, or serialization path changed.
 - Required remote `rafter run --mode fast` was attempted against the Social remote and rejected because all 16/16 free scans are used. Paid Plus was not run.
-- The legacy `/events/`, `/jobs/`, and `/add-listing/` aliases still return the existing Directory link-policy response rather than the full canonical experience. Canonical discovery URLs remain `/all-listings/?directory_type=events` and `/all-listings/?directory_type=jobs-careers`; the alias behavior is tracked separately from this successful assistant migration.
+- The initial post-migration alias result was invalidated by the later-discovered one-line hosted-file corruption. After restoring the complete `0.68.15` plugin, `/events/`, `/jobs/`, and `/add-listing/` all return full HTTP 200 HTML; canonical discovery URLs remain `/all-listings/?directory_type=events` and `/all-listings/?directory_type=jobs-careers`.
 
 ## 2026-11-20 FormWise domain-restricted Suite preparation
 

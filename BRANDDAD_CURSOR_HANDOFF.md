@@ -6,6 +6,7 @@
 - BrandDad Directory public Concierge iframe source: `https://ai.branddad.social/toolsets/32733848-06ea-47ad-bff9-4a95b9a0e3c1`. Its FormWise Suite is restricted to `https://directory.branddad.social`; do not reuse the Social assistant or a superseded Directory Agent URL.
 - Keep session context off, preserve the existing iframe sandbox/referrer policy/escaping, and do not request camera or microphone permissions. Treat Suite URLs as presentation endpoints, not authentication or customer-entitlement controls.
 - Live host versions after migration: Social Sales Assistant MU plugin `0.4.2`; Directory Experience `0.68.15`.
+- Response-integrity recovery is complete: the live Directory plugin starts with valid PHP again, WordPress REST JSON parses normally, and Home/categories/restaurants/events/jobs/add-listing surfaces return full HTML. Treat any raw Suite URL before HTML/JSON as a deployment failure, not an intended redirect or link policy.
 
 ## Admin contribution reporting
 

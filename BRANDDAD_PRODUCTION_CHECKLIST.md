@@ -27,6 +27,7 @@
 
 - [x] Restrict the Social Sales Assistant Suite to `https://branddad.social`, migrate the live MU plugin to the owned white-label Suite URL, and verify the live launcher loads it.
 - [x] Restrict the Directory Concierge Suite to `https://directory.branddad.social`, migrate Directory Experience to `0.68.15`, and verify fresh public surfaces contain the Suite ID with no superseded Agent ID.
+- [x] Recover the Directory Experience main file from the post-migration one-line response corruption; verify hosted PHP source, valid REST JSON, and full HTTP 200 HTML across Home, categories, restaurants, events, jobs, and add-listing routes.
 - [x] Preserve exact pre-migration Social and Directory plugin rollback copies before the Suite URL changes.
 - [x] Verify the protected File Manager path and both live WordPress roots read-only.
 - [x] Create an isolated hosted staging document root and separate database.

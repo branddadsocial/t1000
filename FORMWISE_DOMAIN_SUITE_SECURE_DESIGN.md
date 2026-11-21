@@ -51,3 +51,15 @@ Trust boundaries are the visitor-to-WordPress request, WordPress-to-FormWise ifr
 ## Residual risk
 
 The Suite allowlist prevents third-party embedding but is not a confidentiality boundary: the assistant remains public on an owned white-label share domain. This matches the public-assistant use case. Stronger visitor authentication would require a separate portal/entitlement design and is intentionally out of scope for the public Sales Assistant and Directory Concierge.
+
+## 2026-11-21 response-integrity repair
+
+Post-deployment acceptance found the Suite URL emitted as plain text before WordPress output. The intended plugin must start with `<?php`; the fixed Suite URL belongs only inside the escaped iframe constant. This is a deployment-editor artifact, not an application feature.
+
+- **Data flow:** `browser -> CDN -> WordPress bootstrap -> plugin -> HTML/JSON response`. The repair removes one unauthenticated plaintext prefix before the WordPress bootstrap output; it adds no endpoint or data flow.
+- **Authorization:** public GET behavior only. No authenticated object, user role, customer record, or write endpoint is involved.
+- **Input:** no request value is read or transformed. The correction restores the exact reviewed `0.68.15` source boundary.
+- **Output:** HTML and REST JSON must begin with their normal document/JSON content, never an assistant URL. The fixed Suite URL remains escaped only where the iframe/link is intentionally rendered.
+- **S/T/R/I/D/E:** no identity or privilege change; exact clean source prevents response tampering; Git plus rollback files preserve attribution; removing the prefix prevents internal implementation leakage and JSON corruption; no new work or resource path is added; no role or capability changes.
+- **Abuse twin:** an attacker requests a REST endpoint expecting a valid JSON response and instead receives prefixed text that breaks clients. The acceptance test must parse JSON directly and assert the response does not start with the Suite URL.
+- **Rollback:** the exact pre-migration `0.68.14` file remains available. If the clean `0.68.15` save fails acceptance, restore `0.68.14`; do not leave a partially edited file live.
