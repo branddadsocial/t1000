@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~3:40pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~4:05pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -57,7 +57,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Launch trial copy | Live 0.5.26. Buttons “Start 7-day trial” / “Try it free for 7 days.” |
 | Hub trial + account API wiring | Local bridge **0.1.6** (live still 0.1.0 until FM). Surfaces **0.2.9** guest “See membership plans” → Directory `/select-your-plan/`. Live `/account-hub/` still says See plans until FM. |
 | Featured listing attach | Local **0.2.21** listing prompt, leftover Subscribe now / See plans rewrites, events/jobs/classifieds/travel/hotels/gifts doors, sign-in and empty-search copy, classifieds alias, faq/sitemap → help, demo refund modal hidden. Live Featured buy still Subscribe now until FM. |
-| Revenue live CTAs | Local revenue **0.2.29**. Shop archive prints the live plan strip. Sitemap leftover URLs open services. Leftover Subscribe now / Choose this plan / See plans rewrites. Quote-only contact copy. Privacy/terms/press/refunds next-step band. Cookie leftover URLs open privacy. Live `/services/` still mixes Subscribe now until FM. |
+| Revenue live CTAs | Local revenue **0.2.30**. Shop archive prints the live plan strip. Sitemap leftover URLs open services. Leftover Subscribe now / Choose this plan / See plans rewrites. Quote-only contact copy. Privacy/terms/press/refunds next-step band. Cookie leftover URLs open privacy. Studio-boards and account-hub keep their own next step (no second guide band). Live `/services/` still mixes Subscribe now until FM. |
 | Dashboards / studios | Live `/studio-boards/` on both hosts. Local copy is inquiry-only and does not start checkout. Directory `/dashboard/` gets `#bds-hub-dashboard`. |
 | Account emails | Copy only in bridge **0.1.6**. New-account and reset-password additional content. Does not `wp_mail`. |
 | Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help, follow, lang-switch, free-listing. Sticky help respects `prefers-reduced-motion`. |
@@ -75,7 +75,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.30 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -205,8 +205,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No Subscribe now rewrites piled. No StartHost cron added. Live classifieds/faq still wait on FM; not stalled. Prompt owner batches 1–7 and 9–10 were not forced.
-- Leftover CX: follow **0.1.6** no longer prints the email-capture box on checkout, cart, My Account, account-hub, or studio-boards. Sales-help **0.1.7** already skipped those surfaces.
+- Leftover CX: revenue **0.2.30** no longer prints the guide next-step band on studio-boards or `/studio/`. Those pages already have inquiry-only copy. Sales-help **0.1.7** and follow **0.1.6** already skip them.
 - GitHub wp-cron remains **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
-- Suites: follow-consent; sales-help. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2 and execution 0.2.5 are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
+- Suites: revenue-sections. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.30 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2 and execution 0.2.5 are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
 - Flags off. No charge. Not pushed.

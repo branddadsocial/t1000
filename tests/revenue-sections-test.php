@@ -95,7 +95,9 @@ rev_expect( true === bds_rev_path_needs_guide( 'affiliate-program' ), 'the affil
 rev_expect( true === bds_rev_path_needs_guide( 'learning-center' ), 'the learning center gets a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'start-a-campaign' ), 'start a campaign gets a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'help' ), 'help gets a next step' );
-rev_expect( true === bds_rev_path_needs_guide( 'studio-boards' ), 'studio boards get a next step' );
+rev_expect( false === bds_rev_path_needs_guide( 'studio-boards' ), 'studio boards keep their own next step' );
+rev_expect( false === bds_rev_path_needs_guide( 'studio' ), 'studio keeps its own next step' );
+rev_expect( false === bds_rev_path_needs_guide( 'account-hub' ), 'account hub keeps its own next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'seo' ), 'seo leftover URLs get a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'privacy-policy' ), 'privacy policy gets a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'terms-conditions' ), 'terms get a next step' );
