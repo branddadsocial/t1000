@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.22
+ * Version: 0.2.23
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -963,13 +963,13 @@ function bds_feat_home_legacy_css() {
 	if ( '' !== bds_feat_request_path() ) {
 		return;
 	}
-	echo '<style id="bds-feat-home-legacy">body.home #bdd-title{position:static!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important}body.home #bds-dfc-gift,body.home #bds-dfc-gift-place-js{display:none!important}</style>';
+	echo '<style id="bds-feat-home-legacy">body.home #bdd-title{position:static!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important}body.home #bds-dfc-gift,body.home #bds-dfc-gift-place-js{display:none!important}body.home #bds-wa-hero:not(:has(#bdd-title)),body.home .bds-wah:not(:has(#bdd-title)){display:none!important}</style>';
 }
 add_action( 'wp_head', 'bds_feat_home_legacy_css', 41 );
 
 /**
- * After the homepage paints: hide the retired WhatsApp H1 wrapper when the
- * current Directory Experience heading is present, and drop leftover gift markup.
+ * After the homepage paints: hide the retired WhatsApp hero when the current
+ * Directory Experience heading is present, and drop leftover gift markup.
  *
  * @return void
  */
@@ -980,9 +980,32 @@ function bds_feat_home_legacy_js() {
 	if ( '' !== bds_feat_request_path() ) {
 		return;
 	}
-	echo '<script id="bds-feat-home-legacy-js">(function(){if(!document.body||!document.body.classList.contains("home"))return;var current=document.getElementById("bdd-title");var legacy=document.querySelector("h1.bds-wah__title");if(current&&legacy){var wrap=legacy.closest("#bds-wa-hero,.bds-wah,section,.elementor-top-section")||legacy;if(wrap&&!wrap.contains(current)){wrap.hidden=true;wrap.setAttribute("aria-hidden","true");}else{legacy.hidden=true;legacy.setAttribute("aria-hidden","true");}}var gift=document.getElementById("bds-dfc-gift");if(gift)gift.remove();var giftJs=document.getElementById("bds-dfc-gift-place-js");if(giftJs)giftJs.remove();})();</script>';
+	echo '<script id="bds-feat-home-legacy-js">(function(){if(!document.body||!document.body.classList.contains("home"))return;var current=document.getElementById("bdd-title");if(current){var wrap=document.getElementById("bds-wa-hero")||document.querySelector(".bds-wah");if(wrap&&!wrap.contains(current)){wrap.hidden=true;wrap.setAttribute("aria-hidden","true");}}var gift=document.getElementById("bds-dfc-gift");if(gift)gift.remove();var giftJs=document.getElementById("bds-dfc-gift-place-js");if(giftJs)giftJs.remove();})();</script>';
 }
 add_action( 'wp_footer', 'bds_feat_home_legacy_js', 33 );
+
+/**
+ * Rewrite Directory homepage HTML so the parked heading and leftover gift
+ * block are gone before cache, not only after CSS/JS.
+ *
+ * @return void
+ */
+function bds_feat_home_legacy_buffer_start() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	if ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) {
+		return;
+	}
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return;
+	}
+	if ( '' !== bds_feat_request_path() ) {
+		return;
+	}
+	ob_start( 'bds_feat_rewrite_home_legacy_html' );
+}
+add_action( 'template_redirect', 'bds_feat_home_legacy_buffer_start', 0 );
 
 function bds_feat_client_key() {
 	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';

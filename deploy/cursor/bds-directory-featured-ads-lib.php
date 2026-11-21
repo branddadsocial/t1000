@@ -424,3 +424,99 @@ if ( ! function_exists( 'bds_feat_listing_checkout_prompt' ) ) {
 		);
 	}
 }
+
+if ( ! function_exists( 'bds_feat_strip_tag_by_id' ) ) {
+	/**
+	 * Remove one HTML element by tag + id. Depth-counts matching close tags.
+	 *
+	 * @param string $html HTML.
+	 * @param string $tag  Tag name.
+	 * @param string $id   Element id.
+	 * @return string
+	 */
+	function bds_feat_strip_tag_by_id( $html, $tag, $id ) {
+		if ( ! is_string( $html ) || $html === '' || ! is_string( $tag ) || $tag === '' || ! is_string( $id ) || $id === '' ) {
+			return is_string( $html ) ? $html : '';
+		}
+		if ( ! preg_match( '/^[a-z][a-z0-9-]*$/', $tag ) || ! preg_match( '/^[A-Za-z][A-Za-z0-9:_-]*$/', $id ) ) {
+			return $html;
+		}
+		$pattern = '/<' . preg_quote( $tag, '/' ) . '\b[^>]*\bid=["\']' . preg_quote( $id, '/' ) . '["\'][^>]*>/i';
+		if ( ! preg_match( $pattern, $html, $match, PREG_OFFSET_CAPTURE ) ) {
+			return $html;
+		}
+		$open_start = (int) $match[0][1];
+		$gt         = $open_start + strlen( $match[0][0] ) - 1;
+		$open_needle  = '<' . $tag;
+		$close_needle = '</' . $tag . '>';
+		$depth        = 1;
+		$i            = $gt + 1;
+		$len          = strlen( $html );
+		$open_len     = strlen( $open_needle );
+		$close_len    = strlen( $close_needle );
+		while ( $i < $len && $depth > 0 ) {
+			$next_open  = stripos( $html, $open_needle, $i );
+			$next_close = stripos( $html, $close_needle, $i );
+			if ( false === $next_close ) {
+				return $html;
+			}
+			$open_is_tag = false;
+			if ( false !== $next_open && $next_open < $next_close ) {
+				$ch = $next_open + $open_len;
+				if ( $ch < $len ) {
+					$b = $html[ $ch ];
+					if ( ' ' === $b || '>' === $b || "\t" === $b || "\n" === $b || "\r" === $b ) {
+						$open_is_tag = true;
+					}
+				}
+			}
+			if ( $open_is_tag ) {
+				$depth++;
+				$i = $next_open + $open_len;
+				continue;
+			}
+			$depth--;
+			$end = $next_close + $close_len;
+			if ( 0 === $depth ) {
+				return substr( $html, 0, $open_start ) . substr( $html, $end );
+			}
+			$i = $end;
+		}
+		return $html;
+	}
+}
+
+if ( ! function_exists( 'bds_feat_rewrite_home_legacy_html' ) ) {
+	/**
+	 * Directory homepage leftover: unpark #bdd-title, drop retired WhatsApp
+	 * hero and leftover gift inventory. Gift marketplace keeps its own page.
+	 *
+	 * @param string $html HTML.
+	 * @return string
+	 */
+	function bds_feat_rewrite_home_legacy_html( $html ) {
+		if ( ! is_string( $html ) || $html === '' ) {
+			return is_string( $html ) ? $html : '';
+		}
+		$rewritten = preg_replace(
+			'/body\.home #bdd-title\{[^}]*left:-9999px[^}]*\}/',
+			'body.home #bdd-title{position:static;left:auto;width:auto;height:auto;overflow:visible}',
+			$html,
+			1
+		);
+		$html = is_string( $rewritten ) ? $rewritten : $html;
+		$html = bds_feat_strip_tag_by_id( $html, 'section', 'bds-dfc-gift' );
+		$html = preg_replace( '#<script\b[^>]*\bid=(["\'])bds-dfc-gift-place-js\1[^>]*>.*?</script>#is', '', $html, 1 );
+		if ( ! is_string( $html ) ) {
+			return '';
+		}
+		$has_current = ( false !== stripos( $html, 'id="bdd-title"' ) || false !== stripos( $html, "id='bdd-title'" ) );
+		if ( $has_current ) {
+			$probe = bds_feat_strip_tag_by_id( $html, 'section', 'bds-wa-hero' );
+			if ( false !== stripos( $probe, 'id="bdd-title"' ) || false !== stripos( $probe, "id='bdd-title'" ) ) {
+				$html = $probe;
+			}
+		}
+		return $html;
+	}
+}

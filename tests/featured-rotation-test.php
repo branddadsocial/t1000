@@ -114,10 +114,30 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.22' ), 'featured MU stamps 0.2.22' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.23' ), 'featured MU stamps 0.2.23' );
 expect( false !== strpos( $feat_src, 'bds-feat-home-legacy' ), 'homepage unhides the Directory Experience heading' );
 expect( false !== strpos( $feat_src, 'bdd-title' ), 'the parked #bdd-title heading is restored' );
 expect( false !== strpos( $feat_src, 'bds-dfc-gift' ), 'leftover homepage gift markup is removed' );
+expect( false !== strpos( $feat_src, 'bds_feat_home_legacy_buffer_start' ), 'homepage leftover is stripped from HTML, not only CSS' );
+$home_html = '<style>body.home #bdd-title{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}</style>'
+	. '<h1 id="bdd-title">Find What You Need Near You—Fast.</h1>'
+	. '<section id="bds-wa-hero" class="bds-wah"><p class="bds-wah__title" hidden>Find a business. See what it offers. Contact it.</p></section>'
+	. '<section id="bds-dfc-gift" class="bds-gsl" data-bds-gsl="1.0.9"><h2 class="bds-gsl__title" id="bds-gsl-title">Brand gift cards under face value</h2></section>'
+	. '<script id="bds-dfc-gift-place-js">void 0</script>'
+	. '<h2 id="bdd-area-title">Start With Your Location</h2>'
+	. '<a href="/gift-card-marketplace/">Shop gift cards</a>';
+$home_out = bds_feat_rewrite_home_legacy_html( $home_html );
+expect( false !== strpos( $home_out, 'id="bdd-title"' ), 'current Directory Experience heading stays' );
+expect( false !== strpos( $home_out, 'position:static' ), 'parked heading CSS is unhidden' );
+expect( false === strpos( $home_out, 'left:-9999px' ), 'off-screen heading CSS is gone' );
+expect( false === strpos( $home_out, 'Brand gift cards under face value' ), 'homepage gift inventory heading is removed' );
+expect( false === strpos( $home_out, 'id="bds-dfc-gift"' ), 'homepage gift section is removed' );
+expect( false === strpos( $home_out, 'id="bds-wa-hero"' ), 'retired WhatsApp hero is removed when current heading exists' );
+expect( false !== strpos( $home_out, 'gift-card-marketplace' ), 'gift marketplace link stays' );
+$keep_hero = bds_feat_rewrite_home_legacy_html( '<section id="bds-wa-hero"><h1 id="bdd-title">Find What You Need Near You—Fast.</h1></section>' );
+expect( false !== strpos( $keep_hero, 'id="bds-wa-hero"' ), 'WhatsApp wrapper stays if it already holds the current heading' );
+expect( false === strpos( bds_feat_rewrite_home_legacy_html( '' ), 'bds-dfc-gift' ), 'empty HTML stays empty' );
+expect( '<div id="x">keep</div>' === bds_feat_strip_tag_by_id( '<div id="x">keep</div>', 'section', 'missing' ), 'missing ids are left alone' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly</a>' ), 'leftover Subscribe now is rewritten to Subscribe monthly' );
 expect( false !== strpos( $feat_src, ':focus-visible' ), 'featured buttons keep a visible focus ring' );
 expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty worldwide lane heading has Spanish' );
