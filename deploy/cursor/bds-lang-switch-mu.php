@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Language Switch
  * Description: English / Español control for BrandDad Social and Directory. One language on screen. No Google Translate. Charge currency stays USD.
- * Version: 0.1.4
+ * Version: 0.1.5
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins.
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LANG_SWITCH_VER', '0.1.4' );
+define( 'BDS_LANG_SWITCH_VER', '0.1.5' );
 
 /**
  * Social and Directory only.
@@ -200,16 +200,36 @@ function bds_lang_head() {
 	echo '<style id="bds-lang-switch-css" data-bds-lang-switch="' . $ver . '">'
 		. 'html:not([data-bds-lang="es"]) [data-bds-copy="es"]{display:none!important}'
 		. 'html[data-bds-lang="es"] [data-bds-copy="en"]{display:none!important}'
-		. '#bds-lang-switch{position:fixed;top:12px;right:12px;z-index:1200;display:flex;gap:0;border:1px solid rgba(15,23,42,.16);border-radius:999px;overflow:hidden;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(15,23,42,.12);font:700 12px/1 Segoe UI,system-ui,sans-serif}'
+		. '#bds-lang-switch{position:fixed;top:76px;right:auto;left:12px;z-index:40;display:flex;gap:0;border:1px solid rgba(15,23,42,.16);border-radius:999px;overflow:hidden;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(15,23,42,.12);font:700 12px/1 Segoe UI,system-ui,sans-serif}'
 		. '#bds-lang-switch button{border:0;background:transparent;color:#0f172a;padding:8px 11px;cursor:pointer;min-height:44px}'
 		. '#bds-lang-switch button[aria-pressed="true"]{background:#0668d8;color:#fff}'
 		. '#bds-lang-switch button:focus-visible{outline:3px solid #0668d8;outline-offset:2px}'
-		. 'body.admin-bar #bds-lang-switch{top:46px}'
-		. '@media (max-width:782px){body.admin-bar #bds-lang-switch{top:56px}}'
+		. 'body.admin-bar #bds-lang-switch{top:122px}'
+		. '@media (max-width:782px){body.admin-bar #bds-lang-switch{top:132px}}'
+		. 'body.bds-header-recovered #site-header .site-navigation>ul{flex-wrap:wrap}'
 		. '</style>' . "\n";
 	echo '<script id="bds-lang-switch-boot" data-bds-lang-switch="' . $ver . '">(function(){try{var q=(location.search.match(/[?&]bd_lang=([^&]*)/)||[])[1];var m=document.cookie.match(/(?:^|; )bd_lang=([^;]*)/);var lang=q?decodeURIComponent(q.replace(/\\+/g," ")):(m?decodeURIComponent(m[1]):"en");lang=String(lang).toLowerCase().replace(/[^a-z]/g,"");if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);if(lang==="es")document.documentElement.setAttribute("lang","es");}catch(e){}})();</script>' . "\n";
 }
 add_action( 'wp_head', 'bds_lang_head', 0 );
+
+/**
+ * Late CSS so leftover language/currency FABs cannot sit on hamburgers.
+ * Live #bd-lc-root.bd-lc uses display:block !important at z-index 2147483000.
+ *
+ * @return void
+ */
+function bds_lang_menu_clear_css() {
+	if ( ! bds_lang_switch_host() || is_admin() ) {
+		return;
+	}
+	echo '<style id="bds-lang-switch-menu-css">'
+		. 'html body #bd-lc-root.bd-lc,html body #bd-lc-root,html body .bd-lc{display:none!important;visibility:hidden!important;pointer-events:none!important;width:0!important;height:0!important;overflow:hidden!important;z-index:-1!important;top:auto!important;right:auto!important}'
+		. '#bds-lang-switch{top:76px!important;right:auto!important;left:12px!important;z-index:40!important}'
+		. 'body.admin-bar #bds-lang-switch{top:122px!important}'
+		. '@media (max-width:782px){body.admin-bar #bds-lang-switch{top:132px!important}}'
+		. '</style>' . "\n";
+}
+add_action( 'wp_footer', 'bds_lang_menu_clear_css', 1 );
 
 /**
  * @return void

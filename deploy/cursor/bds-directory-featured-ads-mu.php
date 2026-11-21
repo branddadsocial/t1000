@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.24
+ * Version: 0.2.25
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -966,6 +966,52 @@ function bds_feat_home_legacy_css() {
 	echo '<style id="bds-feat-home-legacy">body.home #bdd-title{position:static!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important}body.home #bds-dfc-gift,body.home #bds-dfc-gift-place-js{display:none!important}body.home #bds-wa-hero:not(:has(#bdd-title)),body.home .bds-wah:not(:has(#bdd-title)){display:none!important}</style>';
 }
 add_action( 'wp_head', 'bds_feat_home_legacy_css', 41 );
+
+/**
+ * Directory compose header uses .bdd-header, but live polish CSS still
+ * targets .bdd-support-header, so nav/actions/hamburger stacked. Lay the
+ * real header out so desktop and mobile controls do not sit on each other.
+ *
+ * @return void
+ */
+function bds_feat_menu_overlap_css() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	echo '<style id="bds-feat-menu-clear">'
+		. 'body:has(.bdd-header) .theme-mobile-menu-trigger,body:has(.bdd-header) .theme-mobile-menu-overlay,body:has(.bdd-header) .theme-mobile-menu-close{display:none!important}'
+		. '.bdd-header{position:relative;z-index:5000;border-bottom:1px solid #dbe5ef;background:#fff;color:#0b172a}'
+		. '.bdd-header .bdd-shell,.bdd-header .bdd-header__inner{width:min(1180px,calc(100% - 32px));min-height:72px;display:flex;align-items:center;gap:16px;margin:0 auto;position:relative}'
+		. '.bdd-brand{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;color:#0b172a;text-decoration:none;font-weight:800;white-space:nowrap}'
+		. '.bdd-brand__mark{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#0668d8;color:#fff;font-size:13px}'
+		. '.bdd-nav{display:flex;align-items:center;justify-content:center;flex:1 1 auto;flex-wrap:wrap;gap:4px;min-width:0}'
+		. '.bdd-nav>a,.bdd-nav summary{display:inline-flex;align-items:center;min-height:44px;padding:0 10px;border-radius:8px;color:#27374a;font-weight:700;text-decoration:none;cursor:pointer;list-style:none;white-space:nowrap}'
+		. '.bdd-nav summary::-webkit-details-marker{display:none}'
+		. '.bdd-nav details{position:relative}'
+		. '.bdd-nav-menu__panel{position:absolute;top:calc(100% + 8px);left:0;z-index:6;width:230px;display:grid;gap:2px;padding:9px;border:1px solid #dbe5ef;border-radius:12px;background:#fff;box-shadow:0 16px 42px rgba(15,23,42,.14)}'
+		. '.bdd-nav-menu__panel--right{right:0;left:auto}'
+		. '.bdd-nav details:not([open])>.bdd-nav-menu__panel{display:none}'
+		. '.bdd-nav-menu__panel a,.bdd-nav-menu__panel span{min-height:42px;display:flex;align-items:center;padding:8px 10px;border-radius:8px;color:#27374a;text-decoration:none}'
+		. '.bdd-header__actions{display:flex;align-items:center;gap:8px;flex:0 0 auto;margin-left:auto;position:relative;z-index:2}'
+		. '.bdd-icon-link{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:#f4f7fa;color:#0b172a;text-decoration:none}'
+		. '.bdd-add-menu{position:relative}'
+		. '.bdd-add-menu>summary{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;cursor:pointer;list-style:none}'
+		. '.bdd-add-menu>summary::-webkit-details-marker{display:none}'
+		. '.bdd-add-menu nav{position:absolute;top:calc(100% + 8px);right:0;z-index:6;width:min(260px,calc(100vw - 24px));display:grid;gap:2px;padding:9px;border:1px solid #dbe5ef;border-radius:12px;background:#fff}'
+		. '.bdd-add-menu:not([open])>nav{display:none}'
+		. '.bdd-add-menu nav a{min-height:44px;display:flex;align-items:center;padding:8px 10px;color:#27374a;text-decoration:none}'
+		. '.bdd-mobile-menu{display:none;position:relative}'
+		. '.bdd-mobile-menu>summary{width:44px;height:44px;display:grid;place-items:center;border-radius:10px;background:#0b172a;color:#fff;cursor:pointer;list-style:none}'
+		. '.bdd-mobile-menu>summary::-webkit-details-marker{display:none}'
+		. '.bdd-mobile-menu>nav{position:absolute;top:calc(100% + 9px);right:0;z-index:7;width:min(320px,calc(100vw - 24px));max-height:calc(100vh - 100px);overflow:auto;display:grid;gap:3px;padding:12px;border:1px solid #dbe5ef;border-radius:14px;background:#fff}'
+		. '.bdd-mobile-menu:not([open])>nav{display:none}'
+		. '.bdd-mobile-menu a{min-height:44px;display:flex;align-items:center;padding:9px 11px;color:#27374a;text-decoration:none}'
+		. '.bdd-header a:focus-visible,.bdd-header summary:focus-visible,.bdd-header button:focus-visible{outline:3px solid #0668d8;outline-offset:2px}'
+		. '@media(max-width:900px){.bdd-nav{display:none}.bdd-add-menu{display:none}.bdd-mobile-menu{display:block}.bdd-header .bdd-shell,.bdd-header .bdd-header__inner{min-height:64px;gap:10px}}'
+		. '@media(max-width:420px){.bdd-header .bdd-shell,.bdd-header .bdd-header__inner{width:min(100% - 20px,1180px);gap:8px}.bdd-icon-link{width:40px;height:40px}}'
+		. '</style>';
+}
+add_action( 'wp_head', 'bds_feat_menu_overlap_css', 42 );
 
 /**
  * After the homepage paints: hide the retired WhatsApp hero when the current

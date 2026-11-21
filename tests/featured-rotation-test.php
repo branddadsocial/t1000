@@ -114,7 +114,10 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.24' ), 'featured MU stamps 0.2.24' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.25' ), 'featured MU stamps 0.2.25' );
+expect( false !== strpos( $feat_src, 'bds-feat-menu-clear' ), 'Directory header menus are laid out' );
+expect( false !== strpos( $feat_src, '.bdd-mobile-menu' ), 'mobile hamburger is a separate control' );
+expect( false !== strpos( $feat_src, '@media(max-width:900px)' ), 'desktop nav hides on small screens so it does not sit on the hamburger' );
 expect( false !== strpos( $feat_src, 'bds-feat-home-legacy' ), 'homepage unhides the Directory Experience heading' );
 expect( false !== strpos( $feat_src, 'bdd-title' ), 'the parked #bdd-title heading is restored' );
 expect( false !== strpos( $feat_src, 'bds-dfc-gift' ), 'leftover homepage gift markup is removed' );
