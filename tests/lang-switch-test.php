@@ -155,7 +155,7 @@ assert_true( false !== strpos( $switch, 'data-bds-lang-pick="en" aria-pressed="t
 require dirname( __DIR__ ) . '/deploy/bds-ai-commercial-catalog-mu.php';
 require dirname( __DIR__ ) . '/deploy/bds-ai-launch-pages-mu.php';
 $home = bds_ai_launch_markup( 'home' );
-assert_true( false !== strpos( $home, 'data-version="0.5.24"' ), 'home stamps the bilingual launch version' );
+assert_true( false !== strpos( $home, 'data-version="0.5.26"' ), 'home stamps the bilingual launch version' );
 assert_true( false !== strpos( $home, 'Business help from $29.99/month' ), 'English price line stays in the HTML' );
 assert_true( false !== strpos( $home, 'La ayuda empieza en $29.99 al mes' ), 'Spanish price line is present for the switcher' );
 assert_true( false !== strpos( $home, 'data-bds-copy="es"' ), 'Spanish launch copy is tagged' );

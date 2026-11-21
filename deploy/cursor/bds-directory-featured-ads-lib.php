@@ -273,7 +273,34 @@ if ( ! function_exists( 'bds_feat_path_needs_door' ) ) {
 		if ( false === $top ) {
 			$top = $path;
 		}
-		return in_array( $top, array( 'help', 'contact-us', 'about', 'blog', 'feedback' ), true );
+		return in_array( $top, array( 'help', 'contact-us', 'about', 'blog', 'feedback', 'events', 'jobs', 'jobs-careers', 'classifieds', 'memberships', 'membership', 'plans' ), true );
+	}
+}
+
+if ( ! function_exists( 'bds_feat_directory_surface' ) ) {
+	/**
+	 * Public Directory surfaces that need listing-door copy.
+	 *
+	 * @param mixed $path Request path.
+	 * @return string events|jobs|classifieds|blog|
+	 */
+	function bds_feat_directory_surface( $path ) {
+		$path = strtolower( trim( (string) $path, '/' ) );
+		$top  = strstr( $path, '/', true );
+		if ( false === $top ) {
+			$top = $path;
+		}
+		$map = array(
+			'events'       => 'events',
+			'jobs'         => 'jobs',
+			'jobs-careers' => 'jobs',
+			'classifieds'  => 'classifieds',
+			'blog'         => 'blog',
+			'memberships'  => 'memberships',
+			'membership'   => 'memberships',
+			'plans'        => 'memberships',
+		);
+		return isset( $map[ $top ] ) ? $map[ $top ] : '';
 	}
 }
 

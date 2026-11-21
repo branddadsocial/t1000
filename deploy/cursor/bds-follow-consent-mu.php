@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Follow Consent
  * Description: Saves an email only when the person asks BrandDad to write to them. It does not send mail.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: BrandDad
  *
  * Ingestion: public form → nonce check → email, consent, and source only.
@@ -62,7 +62,7 @@ function bds_follow_message( $source ) {
 	$notes = array(
 		'trial'   => array(
 			'subject' => 'Your 7-day Business Essentials trial',
-			'body'    => 'AI Business Essentials is $29.99 a month after the 7-day trial. Open the product page and use Start 7-day trial. The checkout page shows the terms. A Directory listing is free and separate. This does not promise customers. Reply if you want these notes to stop.',
+			'body'    => 'AI Business Essentials is $29.99 a month after the 7-day trial. Open the product page and use Start 7-day trial. Directory membership is not included. A Directory listing is free and separate. This does not promise customers. Reply if you want these notes to stop.',
 		),
 		'listing' => array(
 			'subject' => 'Your free Directory listing',

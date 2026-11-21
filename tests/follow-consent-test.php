@@ -24,6 +24,7 @@ $src = bds_follow_decision( 'a@b.co', '1', 'drop-table' );
 assert_true( 'help' === $src['source'], 'an unknown source becomes help' );
 $trial = bds_follow_message( 'trial' );
 assert_true( false !== strpos( $trial['body'], '$29.99' ) && false !== strpos( $trial['body'], '7-day' ), 'the trial note names the real price and trial' );
+assert_true( false !== strpos( $trial['body'], 'Directory membership is not included' ), 'the trial note does not grant Directory membership' );
 assert_true( false === strpos( strtolower( $trial['body'] ), 'no card' ), 'the trial note does not say no card' );
 $listing = bds_follow_message( 'listing' );
 assert_true( false !== strpos( $listing['body'], 'free' ), 'the listing note says the listing is free' );
@@ -31,7 +32,7 @@ assert_true( 'help' === bds_follow_source_for_path( '/contact-us/' ), 'a normal 
 assert_true( 'trial' === bds_follow_source_for_path( '/product/ai-business-essentials/' ), 'the essentials page uses the trial note' );
 assert_true( 'listing' === bds_follow_source_for_path( '/add-listing/' ), 'add-listing uses the listing note' );
 $src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-follow-consent-mu.php' );
-assert_true( false !== strpos( $src, 'Version: 0.1.2' ), 'follow consent stamps 0.1.2' );
+assert_true( false !== strpos( $src, 'Version: 0.1.3' ), 'follow consent stamps 0.1.3' );
 assert_true( false !== strpos( $src, 'Guardar mi correo' ), 'follow submit Spanish is tagged' );
 assert_true( false !== strpos( $src, '<span' ) && false !== strpos( $src, 'BrandDad puede escribirme' ), 'checkbox label Spanish is an inner span' );
 

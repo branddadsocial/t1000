@@ -73,7 +73,7 @@ bridge_expect( '9.99' === $skus['bds-feat-local']['monthly'], 'local featured pr
 bridge_expect( '99.99' === $skus['bds-feat-global']['monthly'], 'global featured price is 99.99' );
 
 $bridge_mu = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-codex-bridge-mu.php' );
-bridge_expect( false !== strpos( $bridge_mu, 'Version: 0.1.4' ), 'bridge MU version is 0.1.4' );
+bridge_expect( false !== strpos( $bridge_mu, 'Version: 0.1.5' ), 'bridge MU version is 0.1.5' );
 bridge_expect( false !== strpos( $bridge_mu, 'j.access' ), 'hub status reads access.mode from the live account API' );
 bridge_expect( false !== strpos( $bridge_mu, 'Directory membership is not included' ), 'trial hub copy does not grant Directory' );
 bridge_expect( false !== strpos( $bridge_mu, 'bds-billing-inspect' ), 'shop-manager billing inspect is registered' );
@@ -92,6 +92,13 @@ $pay_blob = strtolower( json_encode( $pay ) );
 bridge_expect( false === strpos( $pay_blob, 'no card' ), 'checkout copy does not say no card' );
 bridge_expect( false !== strpos( $pay_blob, 'directory membership' ), 'checkout copy does not grant Directory with the trial' );
 bridge_expect( false !== strpos( $bridge_mu, 'bds-checkout-failclosed' ), 'checkout fail-closed markup is registered' );
+
+$email = bds_codex_email_order_copy();
+$email_blob = strtolower( json_encode( $email ) );
+bridge_expect( false === strpos( $email_blob, 'no card' ), 'order email copy does not say no card' );
+bridge_expect( false !== strpos( $email_blob, 'does not start a new charge' ), 'order email copy does not invent a charge' );
+bridge_expect( false !== strpos( $email_blob, 'directory membership' ), 'order email copy does not grant Directory with the trial' );
+bridge_expect( false !== strpos( $bridge_mu, 'woocommerce_email_footer_text' ), 'order email footer filter is registered' );
 
 if ( $failed > 0 ) {
 	fwrite( STDERR, "{$failed} failed\n" );

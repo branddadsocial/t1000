@@ -197,6 +197,20 @@ if ( ! function_exists( 'bds_codex_featured_listing_prompt' ) ) {
 	}
 }
 
+if ( ! function_exists( 'bds_codex_email_order_copy' ) ) {
+	/**
+	 * Footer lines for existing Woo emails. Does not send mail or start a charge.
+	 *
+	 * @return array<int,string>
+	 */
+	function bds_codex_email_order_copy() {
+		return array(
+			'This email is about an order or account you already have. It does not start a new charge.',
+			'The 7-day trial does not include Directory membership, Featured, or the 10% member price.',
+		);
+	}
+}
+
 if ( ! function_exists( 'bds_codex_checkout_failclosed_copy' ) ) {
 	/**
 	 * Public checkout copy. Does not claim “no card”, start a charge, or grant Directory membership.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.15
+ * Version: 0.2.16
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -744,6 +744,52 @@ function bds_feat_path_ctas() {
 		echo bds_feat_plans_page_ctas(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		return;
 	}
+	$surface = function_exists( 'bds_feat_directory_surface' ) ? bds_feat_directory_surface( $path ) : '';
+	if ( 'events' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Find events, or list yours free', 'branddad' ),
+			__( 'BrandDad does not sell tickets here. A basic listing is free. Featured is a separate monthly option.', 'branddad' ),
+			'Encuentre eventos, o liste el suyo gratis',
+			'BrandDad no vende boletos aquí. Un listado básico es gratis. Featured es una opción mensual aparte.'
+		);
+		return;
+	}
+	if ( 'jobs' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Find work, or list a hiring business free', 'branddad' ),
+			__( 'BrandDad does not take a hiring fee here. A basic listing is free. Featured is a separate monthly option.', 'branddad' ),
+			'Encuentre trabajo, o liste un negocio que contrata gratis',
+			'BrandDad no cobra una tarifa de contratación aquí. Un listado básico es gratis. Featured es una opción mensual aparte.'
+		);
+		return;
+	}
+	if ( 'classifieds' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Browse classifieds, or list free', 'branddad' ),
+			__( 'A basic classified listing is free. BrandDad does not take a sale fee here. Featured is a separate monthly option.', 'branddad' ),
+			'Vea clasificados, o liste gratis',
+			'Un clasificado básico es gratis. BrandDad no cobra una comisión de venta aquí. Featured es una opción mensual aparte.'
+		);
+		return;
+	}
+	if ( 'memberships' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'See membership plans, or list free', 'branddad' ),
+			__( 'A basic listing is free. Pro, Elite, and Featured stay paid options. Membership prices on Select your plan are unchanged.', 'branddad' ),
+			'Vea planes de membresía, o liste gratis',
+			'Un listado básico es gratis. Pro, Elite y Featured siguen siendo opciones de pago. Los precios de membresía en Select your plan no cambian.'
+		);
+		return;
+	}
+	if ( 'blog' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Read BrandDad, or list your business free', 'branddad' ),
+			__( 'A basic listing is free. Featured is a separate monthly option. This page does not sell a listing.', 'branddad' ),
+			'Lea BrandDad, o liste su negocio gratis',
+			'Un listado básico es gratis. Featured es una opción mensual aparte. Esta página no vende un listado.'
+		);
+		return;
+	}
 	if ( 'add-listing' === $path ) {
 		echo bds_feat_door_band(
 			__( 'Get found, then get featured', 'branddad' ),
@@ -772,6 +818,45 @@ function bds_feat_path_ctas() {
 	}
 }
 add_action( 'wp_footer', 'bds_feat_path_ctas', 24 );
+
+/** Send /classifieds/ to the live classifieds directory type. */
+function bds_feat_classifieds_alias() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	if ( 'classifieds' !== bds_feat_request_path() ) {
+		return;
+	}
+	wp_safe_redirect( home_url( '/all-listings/?directory_type=classifieds' ), 302 );
+	exit;
+}
+add_action( 'template_redirect', 'bds_feat_classifieds_alias', 8 );
+
+/** Send leftover membership URLs to the live plans page. */
+function bds_feat_memberships_alias() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	if ( ! in_array( bds_feat_request_path(), array( 'memberships', 'membership', 'plans' ), true ) ) {
+		return;
+	}
+	wp_safe_redirect( home_url( '/select-your-plan/' ), 302 );
+	exit;
+}
+add_action( 'template_redirect', 'bds_feat_memberships_alias', 8 );
+
+/** Hide the Directorist demo refund modal on public Directory pages. Account and checkout stay untouched. */
+function bds_feat_hide_demo_refund() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	$path = bds_feat_request_path();
+	if ( 0 === strpos( $path, 'dashboard' ) || 0 === strpos( $path, 'checkout' ) || 0 === strpos( $path, 'my-account' ) ) {
+		return;
+	}
+	echo '<style id="bds-feat-hide-refund">.user-refund-modal,#dcl-claim-modal,textarea[name="payment_details"]{display:none!important}</style>';
+}
+add_action( 'wp_head', 'bds_feat_hide_demo_refund', 40 );
 
 function bds_feat_client_key() {
 	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';

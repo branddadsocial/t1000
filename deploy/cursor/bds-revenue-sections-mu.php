@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.23
+ * Version: 0.2.24
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -1000,8 +1000,13 @@ function bds_rev_offer_note_html( $slug ) {
 		}
 		$note .= ' <a class="bds-rev-button" href="' . esc_url( $url ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Subscribe monthly', 'Suscribirse cada mes' ) : '' ) . '>' . esc_html__( 'Subscribe monthly', 'branddad' ) . '</a>';
 	} else {
-		$en = sprintf( 'You asked about %1$s (%2$s). This page is an inquiry. It does not start checkout.', $offer['name'], $offer['price'] );
-		$es = sprintf( 'Preguntó por %1$s (%2$s). Esta página es una consulta. No inicia checkout.', $offer['name'], $offer['price'] );
+		if ( 'quote_only' === ( $offer['state'] ?? '' ) ) {
+			$en = sprintf( 'You asked about %1$s (%2$s). This is quote-only. Checkout stays closed until BrandDad scopes the work. It does not start a charge.', $offer['name'], $offer['price'] );
+			$es = sprintf( 'Preguntó por %1$s (%2$s). Esto es solo cotización. El checkout permanece cerrado hasta que BrandDad delimite el trabajo. No inicia un cargo.', $offer['name'], $offer['price'] );
+		} else {
+			$en = sprintf( 'You asked about %1$s (%2$s). This page is an inquiry. It does not start checkout.', $offer['name'], $offer['price'] );
+			$es = sprintf( 'Preguntó por %1$s (%2$s). Esta página es una consulta. No inicia checkout.', $offer['name'], $offer['price'] );
+		}
 		if ( function_exists( 'bds_lang_pair' ) ) {
 			$note .= bds_lang_pair( $en, $es );
 		} else {

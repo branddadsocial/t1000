@@ -153,6 +153,10 @@ rev_expect( false === strpos( $live_note, 'does not start checkout' ), 'live con
 $ask_note = bds_rev_offer_note_html( 'ai-business-monitoring' );
 rev_expect( false !== strpos( $ask_note, 'does not start checkout' ), 'staged contact note stays inquiry' );
 rev_expect( false === strpos( $ask_note, 'Subscribe monthly' ), 'staged contact note does not invent checkout' );
+$quote_note = bds_rev_offer_note_html( 'done-for-you-ai' );
+rev_expect( false !== strpos( $quote_note, 'quote-only' ), 'Done-for-You stays quote-only' );
+rev_expect( false === strpos( $quote_note, 'Subscribe monthly' ), 'quote-only contact note does not invent checkout' );
+rev_expect( false === strpos( strtolower( $quote_note ), 'no card' ), 'quote-only contact note does not say no card' );
 rev_expect( '' === bds_rev_offer_note_html( '<script>x</script>' ), 'markup offer notes print nothing' );
 rev_expect(
 	'https://directory.branddad.social/featured-advertising/' === bds_rev_menu_featured_url( 'Get Featured', 'https://directory.branddad.social/' ),

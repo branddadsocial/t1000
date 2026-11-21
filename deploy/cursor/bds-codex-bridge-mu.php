@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Codex Surface Bridge
  * Description: Cursor-owned checkout, geography, email-proof, and dashboard wiring for the Codex backend. Does not charge, send mail, or enable Codex flags.
- * Version: 0.1.4
+ * Version: 0.1.5
  * Author: BrandDad
  *
  * Secure design (auth / API / ingestion / payments):
@@ -129,6 +129,24 @@ function bds_codex_bridge_checkout_note() {
 	echo '</ul></section>';
 }
 add_action( 'woocommerce_before_checkout_form', 'bds_codex_bridge_checkout_note', 6 );
+
+/** Append fail-closed copy to existing Woo email footers. Does not send mail. */
+function bds_codex_bridge_email_footer( $text ) {
+	if ( ! bds_codex_bridge_hosts() || ! function_exists( 'bds_codex_email_order_copy' ) ) {
+		return $text;
+	}
+	$lines = bds_codex_email_order_copy();
+	$extra = implode( ' ', $lines );
+	$text  = trim( (string) $text );
+	if ( '' === $text ) {
+		return $extra;
+	}
+	if ( false !== strpos( $text, $extra ) ) {
+		return $text;
+	}
+	return $text . "\n" . $extra;
+}
+add_filter( 'woocommerce_email_footer_text', 'bds_codex_bridge_email_footer', 20 );
 
 function bds_codex_bridge_requested_listing() {
 	$raw = isset( $_GET['listing'] ) ? wp_unslash( $_GET['listing'] ) : ( isset( $_POST['_bds_feat_listing_id'] ) ? wp_unslash( $_POST['_bds_feat_listing_id'] ) : '' );

@@ -14,6 +14,7 @@ $files = array(
 	$root . '/deploy/cursor/bds-customer-surfaces-mu.php',
 	$root . '/deploy/cursor/bds-directory-featured-ads-mu.php',
 	$root . '/deploy/cursor/bds-codex-bridge-mu.php',
+	$root . '/deploy/cursor/bds-sales-help-mu.php',
 );
 
 foreach ( $files as $file ) {

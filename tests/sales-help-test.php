@@ -65,7 +65,8 @@ $bar_es = bds_sales_help_markup( $cards['start'] );
 assert_true( false !== strpos( $bar_es, 'Listar mi negocio gratis' ) && false !== strpos( $bar_es, 'data-bds-copy-es=' ), 'the helper CTA Spanish is tagged' );
 assert_true( false !== strpos( $bar_es, 'Ayúdeme a elegir' ), 'the helper summary Spanish is tagged' );
 $help_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-sales-help-mu.php' );
-assert_true( false !== strpos( $help_src, 'Version: 0.1.4' ), 'sales help stamps 0.1.4' );
+assert_true( false !== strpos( $help_src, 'Version: 0.1.5' ), 'sales help stamps 0.1.5' );
+assert_true( false !== strpos( $help_src, '#0668d8' ), 'sales help uses the approved accessible blue' );
 
 echo "sales-help ok\n";
 
