@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Membership Bridge
  * Description: Consented, signed, idempotent free Directory account provisioning from BrandDad Social checkout.
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0.1.2' );
+define( 'BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION', '0.1.3' );
 
 function bds_directory_membership_secret() {
 	$secret = defined( 'BDS_ACCOUNT_LINK_SECRET' ) ? trim( (string) BDS_ACCOUNT_LINK_SECRET ) : '';
@@ -56,6 +56,16 @@ function bds_directory_membership_host() {
 	return strtolower( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
 }
 
+/** Explicit checkout checkbox values that may provision a free Directory account. */
+function bds_directory_membership_consent_checked( $value ) {
+	return in_array( sanitize_key( (string) $value ), array( '1', 'yes', 'true', 'on' ), true );
+}
+
+/** Provisioning requires stored consent meta. Unchecked checkouts stay closed. */
+function bds_directory_membership_may_provision( $consent_meta ) {
+	return 'yes' === (string) $consent_meta;
+}
+
 /** Capture only an explicit checkbox from an eligible Essentials checkout. */
 function bds_directory_membership_capture_consent( $order, $data ) {
 	if ( ! $order instanceof WC_Order || ! function_exists( 'bds_ai_plan_from_order' ) ) {
@@ -66,7 +76,7 @@ function bds_directory_membership_capture_consent( $order, $data ) {
 		return;
 	}
 	$value = isset( $_POST['bds_directory_membership_consent'] ) ? sanitize_key( wp_unslash( $_POST['bds_directory_membership_consent'] ) ) : '';
-	if ( in_array( $value, array( '1', 'yes', 'true', 'on' ), true ) ) {
+	if ( bds_directory_membership_consent_checked( $value ) ) {
 		$order->update_meta_data( '_bds_directory_membership_consent', 'yes' );
 		$order->update_meta_data( '_bds_directory_membership_consent_at', gmdate( DATE_ATOM ) );
 	}
@@ -79,7 +89,7 @@ function bds_directory_membership_queue( $order_id, $subscription_id ) {
 		return;
 	}
 	$order = wc_get_order( absint( $order_id ) );
-	if ( ! $order || 'yes' !== (string) $order->get_meta( '_bds_directory_membership_consent', true ) ) {
+	if ( ! $order || ! bds_directory_membership_may_provision( $order->get_meta( '_bds_directory_membership_consent', true ) ) ) {
 		return;
 	}
 	$event_id = hash_hmac( 'sha256', 'free-directory|' . absint( $order_id ) . '|' . absint( $subscription_id ), bds_directory_membership_hmac_key() );
@@ -102,7 +112,7 @@ function bds_directory_membership_provision( $order_id ) {
 		return;
 	}
 	$order = wc_get_order( absint( $order_id ) );
-	if ( ! $order || 'yes' !== (string) $order->get_meta( '_bds_directory_membership_consent', true ) || 'complete' === (string) $order->get_meta( '_bds_directory_membership_status', true ) ) {
+	if ( ! $order || ! bds_directory_membership_may_provision( $order->get_meta( '_bds_directory_membership_consent', true ) ) || 'complete' === (string) $order->get_meta( '_bds_directory_membership_status', true ) ) {
 		return;
 	}
 	$email    = strtolower( sanitize_email( $order->get_billing_email() ) );

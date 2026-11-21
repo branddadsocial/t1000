@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~10:02am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~10:08am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -34,8 +34,9 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Local mapping tests: 7-day terms only, paid wins over trial, trial does not grant Directory/Featured/member price/Travel. Trial MU **0.1.2**. |
 | Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Flags not flipped here. |
 | Featured checkout | Products live. Adapter live. Local **0.2.21** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias, faq/sitemap → help. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
-| Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Directory membership HMAC **0.1.2** is fail-closed: empty key disables, timestamp >300s and body tamper refuse, `hash_equals`. Tests use a dummy local HMAC, not a Stripe or FormWise secret. Consent checkbox still required before any provision. Shop-manager Tools **Billing inspect** counts active Woo webhooks as a boolean. Stripe Dashboard delivery is owner inspect. |
-| Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.1**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
+| Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Directory membership HMAC **0.1.3** is fail-closed: empty key disables, timestamp >300s and body tamper refuse, `hash_equals`. Consent checkbox must be checked (`1`/`yes`/`true`/`on`); unchecked never provisions. Tests use a dummy local HMAC, not a Stripe or FormWise secret. Shop-manager Tools **Billing inspect** counts active Woo webhooks as a boolean. Stripe Dashboard delivery is owner inspect. |
+| Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.2**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
+| Featured grant | Adapter **0.1.2**. Allowlisted SKUs only. `product_ready` requires the catalog monthly, `_wps_sfw_product=yes`, and interval 1 month. `is_paid()` false, inactive sub, unlinked order, unowned listing, missing geo, or a stale next-payment date cannot activate. Legacy `bds_feat_activate_paid_order` hooks stay removed. Tests do not charge. |
 | Sales catalog contract | Local catalog **0.3.4**. Live Social catalog **0.4.0** — do not upload local over live. Anonymous `/sales/catalog` contract: Essentials $29.99 for_sale when published. Staged/quote-only (complete packages, DFY, music) have no checkout URL. Assistant stays closed without FormWise keys. |
 | Lead / inquiry / monitor | Flags still off (503). Lead **0.1.2** follow-up only after consent **and** verified email. Inquiries **0.1.2** honeypot `company_website` is 422 and never fetched; privacy_ack + contact_consent required. Monitor **0.1.1** SSRF: http/https, no credentials, ports 80/443 only, literal IP hosts refused, DNS A/AAAA must all be public, `wp_safe_remote_get` timeout 10 / redirection 0 / 64KB. |
 | Sales chat | Chat is 503 `assistant_unavailable` unless `BDS_SALES_ASSISTANT_ENABLED` and a non-empty `BDS_FORMWISE_EXECUTION_KEY`. Catalog GET stays public. Model links are stripped. No FormWise key invented. |
@@ -83,11 +84,20 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 
 - Identity: Social checkout customer who checked Directory consent; Directory receiver is host-locked to `directory.branddad.social`.
 - AuthN: HMAC-SHA256 over `timestamp + body hash` with a derived key. Empty `BDS_ACCOUNT_LINK_SECRET` disables the bridge (503). Tests use a dummy local HMAC, never a Stripe or FormWise key.
-- AuthZ: signature first; then event id must match the Idempotency-Key; receiver creates/reuses a subscriber only. It does not create a listing or grant Pro/Elite/Featured.
+- AuthZ: signature first; then event id must match the Idempotency-Key; receiver creates/reuses a subscriber only. It does not create a listing or grant Pro/Elite/Featured. Unchecked checkout consent (`bds_directory_membership_consent_checked`) never writes yes; `may_provision` requires stored `yes`.
 - Replay: timestamp must be within 300s; event id is 64 hex; option lock around persist.
 - Trial mapping: 7-day Essentials only. Paid wins over trial. Missing facts grant nothing. Trial does not include Directory membership, Featured, 10% member price, or Travel.
 - Featured geo: missing ISO country fails non-global billing; local/regional also need a real lat/lng.
 - Catalog: staged/quote_only have no checkout URL. Anonymous sales catalog is Essentials. Local 0.3.4 must not overwrite live 0.4.0.
+
+## Secure design (Featured SKU / is_paid grant)
+
+- Identity: signed-in Directory listing owner at add-to-cart; grant customer_id is that owner, not a client-supplied user id.
+- AuthN: WordPress session at cart. Payment truth is Woo `is_paid()` after the live gateway. Tests never create an order or charge.
+- AuthZ: allowlisted SKU (`bds-feat-*`) plus `product_ready` (catalog monthly, `_wps_sfw_product=yes`, interval 1 month). Grant also needs a linked active subscription, order user = listing owner, owned listing, geo, and a next-payment date in the future. Unpaid or inactive returns `unpaid_or_inactive` and writes no grant.
+- Listing id: `absint` from POST/GET. Ownership is the Directory eligibility helper, not the request.
+- Legacy: `bds_feat_activate_paid_order` stays unhooked so processing/completed cannot grant without the adapter gates.
+- Secrets: no Stripe or FormWise keys in source. No flag flip.
 
 ## Secure design (lead / inquiry / monitor SSRF)
 
@@ -103,8 +113,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No extra live-copy MU. No StartHost cron added.
-- Track B: lead/inquiry/monitor SSRF and consent tests; sales chat 503 without FormWise key; Airbnb one-review stays unpublished. Helpers extracted in lead **0.1.2** and inquiries **0.1.2**. Monitor stays **0.1.1**.
-- Track C: GitHub Actions `branddad-social-wp-cron` still has **one** schedule run (`44905829871`). Spawn MU stays. Do not add StartHost cron.
-- Suites: ssrf-consent, sales-chat-failclosed, airbnb-unpublished, plus sales-catalog-contract. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
+- Track B: Featured `product_ready` / SKU / `is_paid` grant unit tests. Adapter **0.1.2**. Next fail-closed: Directory membership consent checkbox never provisions unless stored `yes` (bridge **0.1.3**).
+- Suites: featured-grant, featured-geo, webhook-signature, featured-rotation. php -l clean. rafter secrets empty on the edited adapters and grant tests. `rafter run` quota remains exhausted until 2026-11-23.
 - Deploy when FM signs in (conversion MUs, unchanged): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Featured Billing Adapter
  * Description: Subscription-safe Woo billing lifecycle for Cursor-owned Directory Featured placement records.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_FEATURED_BILLING_VERSION', '0.1.1' );
+define( 'BDS_FEATURED_BILLING_VERSION', '0.1.2' );
 
 function bds_featured_billing_skus() {
 	return array(
@@ -21,19 +21,70 @@ function bds_featured_billing_skus() {
 	);
 }
 
+function bds_featured_billing_sku_offer( $sku ) {
+	$sku = sanitize_key( (string) $sku );
+	return bds_featured_billing_skus()[ $sku ] ?? array();
+}
+
+function bds_featured_billing_interval_ok( $number, $unit ) {
+	return 1 === absint( $number ) && 'month' === sanitize_key( (string) $unit );
+}
+
+function bds_featured_billing_cart_owner_ok( $logged_in, $listing_id, $owned ) {
+	return true === $logged_in && absint( $listing_id ) > 0 && true === $owned;
+}
+
+function bds_featured_billing_single_item_context( $found ) {
+	return is_array( $found ) && 1 === count( $found ) ? $found[0] : array();
+}
+
+function bds_featured_billing_price_matches_context( $context ) {
+	return is_array( $context ) && $context
+		&& 1 === absint( $context['quantity'] ?? 0 )
+		&& wc_format_decimal( $context['monthly'] ?? '', 2 ) === wc_format_decimal( $context['subtotal'] ?? '', 2 );
+}
+
+/**
+ * Grant activation stays closed unless Woo reports paid, the subscription is
+ * active and linked, the SKU/price/owner/listing match, geo is present, and
+ * the next payment date is still in the future. Does not charge.
+ *
+ * @return string Empty when activation may proceed.
+ */
+function bds_featured_billing_grant_block_reason( $is_paid, $subscription_id, $subscription_status, $linked, $context, $recurring_number, $recurring_unit, $order_user_id, $listing_owned, $geo, $period_end, $now = null ) {
+	$now = null === $now ? time() : (int) $now;
+	if ( true !== $is_paid || ! absint( $subscription_id ) || 'active' !== sanitize_key( (string) $subscription_status ) ) {
+		return 'unpaid_or_inactive';
+	}
+	if ( true !== $linked || ! bds_featured_billing_price_matches_context( $context ) || ! bds_featured_billing_interval_ok( $recurring_number, $recurring_unit ) || absint( $order_user_id ) !== absint( $context['owner_id'] ?? 0 ) || true !== $listing_owned ) {
+		return 'ownership_or_sku';
+	}
+	if ( ! is_array( $geo ) || ! $geo ) {
+		return 'missing_geo';
+	}
+	if ( absint( $period_end ) <= $now ) {
+		return 'stale_period';
+	}
+	return '';
+}
+
+function bds_featured_billing_grant_may_activate( $is_paid, $subscription_id, $subscription_status, $linked, $context, $recurring_number, $recurring_unit, $order_user_id, $listing_owned, $geo, $period_end, $now = null ) {
+	return '' === bds_featured_billing_grant_block_reason( $is_paid, $subscription_id, $subscription_status, $linked, $context, $recurring_number, $recurring_unit, $order_user_id, $listing_owned, $geo, $period_end, $now );
+}
+
 function bds_featured_billing_product_level( $product ) {
 	$sku = $product && method_exists( $product, 'get_sku' ) ? sanitize_key( (string) $product->get_sku() ) : '';
-	return (string) ( bds_featured_billing_skus()[ $sku ]['level'] ?? '' );
+	return (string) ( bds_featured_billing_sku_offer( $sku )['level'] ?? '' );
 }
 
 function bds_featured_billing_product_ready( $product ) {
 	$sku     = $product && method_exists( $product, 'get_sku' ) ? sanitize_key( (string) $product->get_sku() ) : '';
-	$offer   = bds_featured_billing_skus()[ $sku ] ?? array();
+	$offer   = bds_featured_billing_sku_offer( $sku );
 	$price   = $product && method_exists( $product, 'get_price' ) ? wc_format_decimal( $product->get_price(), 2 ) : '';
 	$enabled = $product && function_exists( 'wps_sfw_get_meta_data' ) ? (string) wps_sfw_get_meta_data( $product->get_id(), '_wps_sfw_product', true ) : '';
 	$number  = $product && function_exists( 'wps_sfw_get_meta_data' ) ? absint( wps_sfw_get_meta_data( $product->get_id(), 'wps_sfw_subscription_number', true ) ) : 0;
 	$unit    = $product && function_exists( 'wps_sfw_get_meta_data' ) ? sanitize_key( (string) wps_sfw_get_meta_data( $product->get_id(), 'wps_sfw_subscription_interval', true ) ) : '';
-	return $offer && 'yes' === $enabled && 1 === $number && 'month' === $unit && wc_format_decimal( $offer['monthly'], 2 ) === $price;
+	return $offer && 'yes' === $enabled && bds_featured_billing_interval_ok( $number, $unit ) && wc_format_decimal( $offer['monthly'], 2 ) === $price;
 }
 
 /** The Cursor activation omitted ownership, geography, renewals and revocation. */
@@ -64,7 +115,7 @@ function bds_featured_billing_add_to_cart_validation( $valid, $product_id, $quan
 		return false;
 	}
 	$listing_id = bds_featured_billing_requested_listing();
-	if ( ! is_user_logged_in() || ! $listing_id || ! bds_featured_billing_listing_owned( $listing_id, get_current_user_id() ) ) {
+	if ( ! bds_featured_billing_cart_owner_ok( is_user_logged_in(), $listing_id, bds_featured_billing_listing_owned( $listing_id, get_current_user_id() ) ) ) {
 		wc_add_notice( __( 'Sign in with the verified owner account and choose its claimed business listing before buying Featured placement.', 'branddad' ), 'error' );
 		return false;
 	}
@@ -127,7 +178,7 @@ function bds_featured_billing_order_context( $order ) {
 			'owner_id'   => absint( $item->get_meta( '_bds_feat_owner_id', true ) ),
 		);
 	}
-	return 1 === count( $found ) ? $found[0] : array();
+	return bds_featured_billing_single_item_context( $found );
 }
 
 /**
@@ -178,32 +229,44 @@ function bds_featured_billing_sync( $order_id, $subscription_id ) {
 	}
 	$order           = wc_get_order( absint( $order_id ) );
 	$subscription_id = absint( $subscription_id );
-	if ( ! $order || ! $order->is_paid() || ! $subscription_id || 'active' !== sanitize_key( (string) wps_sfw_get_meta_data( $subscription_id, 'wps_subscription_status', true ) ) ) {
+	if ( ! $order ) {
 		return false;
 	}
-	$parent_id = absint( wps_sfw_get_meta_data( $subscription_id, 'wps_parent_order', true ) );
+	$parent_id        = absint( wps_sfw_get_meta_data( $subscription_id, 'wps_parent_order', true ) );
 	$recurring_number = absint( wps_sfw_get_meta_data( $subscription_id, 'wps_sfw_subscription_number', true ) );
 	$recurring_unit   = sanitize_key( (string) wps_sfw_get_meta_data( $subscription_id, 'wps_sfw_subscription_interval', true ) );
-	$renewal   = 'yes' === (string) wps_sfw_get_meta_data( $order_id, 'wps_sfw_renewal_order', true );
-	$linked    = $order_id === $parent_id || ( $renewal && $subscription_id === absint( wps_sfw_get_meta_data( $order_id, 'wps_sfw_subscription', true ) ) );
-	$context   = bds_featured_billing_order_context( $order );
+	$renewal          = 'yes' === (string) wps_sfw_get_meta_data( $order_id, 'wps_sfw_renewal_order', true );
+	$linked           = $order_id === $parent_id || ( $renewal && $subscription_id === absint( wps_sfw_get_meta_data( $order_id, 'wps_sfw_subscription', true ) ) );
+	$context          = bds_featured_billing_order_context( $order );
 	if ( ! $context && $parent_id && $order_id !== $parent_id ) {
 		$parent_order = wc_get_order( $parent_id );
 		$context      = bds_featured_billing_order_context( $parent_order );
 	}
-	$price_matches = $context && 1 === absint( $context['quantity'] ?? 0 ) && wc_format_decimal( $context['monthly'] ?? '', 2 ) === wc_format_decimal( $context['subtotal'] ?? '', 2 );
-	if ( ! $linked || ! $context || ! $price_matches || 1 !== $recurring_number || 'month' !== $recurring_unit || absint( $order->get_user_id() ) !== $context['owner_id'] || ! bds_featured_billing_listing_owned( $context['listing_id'], $context['owner_id'] ) ) {
-		$order->add_order_note( 'Featured placement was not activated because verified listing ownership could not be confirmed.', false, false );
-		return false;
-	}
-	$geo = bds_featured_billing_geo( $context['listing_id'], $context['level'] );
-	if ( ! $geo ) {
-		$order->add_order_note( 'Featured placement needs verified listing geography before activation.', false, false );
-		return false;
-	}
-	$period_end = absint( wps_sfw_get_meta_data( $subscription_id, 'wps_next_payment_date', true ) );
-	if ( $period_end <= current_time( 'timestamp' ) ) {
-		$order->add_order_note( 'Featured placement needs an authoritative next payment date before activation.', false, false );
+	$geo            = $context ? bds_featured_billing_geo( $context['listing_id'], $context['level'] ) : array();
+	$period_end     = absint( wps_sfw_get_meta_data( $subscription_id, 'wps_next_payment_date', true ) );
+	$listing_owned  = $context ? bds_featured_billing_listing_owned( $context['listing_id'], $context['owner_id'] ) : false;
+	$reason         = bds_featured_billing_grant_block_reason(
+		(bool) $order->is_paid(),
+		$subscription_id,
+		(string) wps_sfw_get_meta_data( $subscription_id, 'wps_subscription_status', true ),
+		$linked,
+		$context,
+		$recurring_number,
+		$recurring_unit,
+		$order->get_user_id(),
+		$listing_owned,
+		$geo,
+		$period_end,
+		function_exists( 'current_time' ) ? (int) current_time( 'timestamp' ) : time()
+	);
+	if ( $reason ) {
+		if ( 'missing_geo' === $reason ) {
+			$order->add_order_note( 'Featured placement needs verified listing geography before activation.', false, false );
+		} elseif ( 'stale_period' === $reason ) {
+			$order->add_order_note( 'Featured placement needs an authoritative next payment date before activation.', false, false );
+		} elseif ( 'ownership_or_sku' === $reason ) {
+			$order->add_order_note( 'Featured placement was not activated because verified listing ownership could not be confirmed.', false, false );
+		}
 		return false;
 	}
 	$lock = bds_featured_billing_lock( $subscription_id );

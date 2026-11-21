@@ -68,7 +68,7 @@ geo_expect( '9.99' === $skus['bds-feat-local']['monthly'] && '9.99' === $levels[
 geo_expect( '19.99' === $skus['bds-feat-regional']['monthly'] && '19.99' === $levels['regional']['price'], 'regional Featured stays 19.99' );
 geo_expect( '39.99' === $skus['bds-feat-national']['monthly'] && '39.99' === $levels['national']['price'], 'national Featured stays 39.99' );
 geo_expect( '99.99' === $skus['bds-feat-global']['monthly'] && '99.99' === $levels['global']['price'], 'global Featured stays 99.99' );
-geo_expect( '0.1.1' === BDS_FEATURED_BILLING_VERSION, 'featured billing adapter stamps 0.1.1' );
+geo_expect( '0.1.2' === BDS_FEATURED_BILLING_VERSION, 'featured billing adapter stamps 0.1.2' );
 
 if ( $failed > 0 ) {
 	fwrite( STDERR, "{$failed} failed\n" );

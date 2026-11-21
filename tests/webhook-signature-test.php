@@ -62,7 +62,14 @@ sig_expect( '' === bds_directory_membership_secret(), 'missing account-link secr
 sig_expect( '' === bds_directory_membership_hmac_key(), 'missing secret yields no HMAC key' );
 sig_expect( false === strpos( $body, 'sk_' ) && false === strpos( $body, 'pk_live' ), 'the signed body does not carry a Stripe key' );
 sig_expect( false === strpos( $key, 'sk_' ) && false === strpos( $key, 'FormWise' ), 'the unit HMAC is not a live secret' );
-sig_expect( '0.1.2' === BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION, 'membership bridge stamps 0.1.2' );
+sig_expect( '0.1.3' === BDS_DIRECTORY_MEMBERSHIP_BRIDGE_VERSION, 'membership bridge stamps 0.1.3' );
+sig_expect( true === bds_directory_membership_consent_checked( '1' ), 'a checked box value is accepted' );
+sig_expect( true === bds_directory_membership_consent_checked( 'yes' ), 'a yes value is accepted' );
+sig_expect( false === bds_directory_membership_consent_checked( '' ), 'an unchecked box does not count as consent' );
+sig_expect( false === bds_directory_membership_consent_checked( 'no' ), 'an explicit no does not count as consent' );
+sig_expect( false === bds_directory_membership_may_provision( '' ), 'missing consent meta does not provision Directory' );
+sig_expect( false === bds_directory_membership_may_provision( 'no' ), 'a declined checkbox does not provision Directory' );
+sig_expect( true === bds_directory_membership_may_provision( 'yes' ), 'stored yes consent may provision a free Directory account' );
 $src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/backend/bds-directory-membership-bridge-mu.php' );
 sig_expect( false !== strpos( $src, 'bds_directory_membership_consent' ), 'provisioning still requires explicit checkout consent' );
 sig_expect( false === strpos( $src, 'sk_live' ) && false === strpos( $src, 'pk_live' ), 'the bridge does not hardcode a Stripe key' );
