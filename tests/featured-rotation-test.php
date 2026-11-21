@@ -114,7 +114,7 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.27' ), 'featured MU stamps 0.2.27' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.28' ), 'featured MU stamps 0.2.28' );
 expect( false !== strpos( $feat_src, 'bds-feat-menu-clear' ), 'Directory header menus are laid out' );
 expect( false !== strpos( $feat_src, '.bdd-mobile-menu' ), 'mobile hamburger is a separate control' );
 expect( false !== strpos( $feat_src, '@media(max-width:900px)' ), 'desktop nav hides on small screens so it does not sit on the hamburger' );
@@ -147,6 +147,8 @@ expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty wor
 expect( false !== strpos( $feat_src, 'Listar mi negocio gratis' ), 'door CTAs have Spanish' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly' ), 'featured checkout uses Subscribe monthly' );
 expect( false === strpos( $feat_src, '>Subscribe now</a>' ), 'featured checkout no longer says Subscribe now' );
+expect( false !== strpos( $feat_src, 'data-bds-copy-en="Subscribe monthly"' ), 'leftover Subscribe now swap attrs are rewritten' );
+expect( false !== strpos( $feat_src, '#bds-mt-plans' ), 'plans-page See plans jump is rewritten' );
 expect( false !== strpos( $feat_src, 'See membership plans</a>' ), 'leftover See plans is rewritten to See membership plans' );
 expect( false !== strpos( $feat_src, 'does not sell tickets' ), 'events copy does not sell tickets' );
 expect( false !== strpos( $feat_src, 'does not sell tickets or book flights' ), 'travel copy does not sell tickets' );

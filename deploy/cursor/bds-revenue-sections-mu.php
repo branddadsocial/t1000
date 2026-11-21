@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.35
+ * Version: 0.2.36
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -250,26 +250,56 @@ function bds_rev_rewrite_choose_plan( $html ) {
 
 function bds_rev_rewrite_subscribe_now( $html ) {
 	$html = (string) $html;
-	if ( false === strpos( $html, 'Subscribe now' ) ) {
+	if ( false === strpos( $html, 'Subscribe now' ) && false === strpos( $html, 'Suscribirse ahora' ) ) {
 		return $html;
 	}
 	$out = preg_replace(
+		'#(<a\b[^>]*href="[^"]*ai-business-essentials[^"]*"[^>]*data-bds-copy-en=")Subscribe now(")#',
+		'$1Start 7-day trial$2',
+		$html
+	);
+	$out = preg_replace(
+		'#(<a\b[^>]*href="[^"]*ai-business-essentials[^"]*"[^>]*data-bds-copy-es=")Suscribirse ahora(")#',
+		'$1Pruébelo 7 días$2',
+		is_string( $out ) ? $out : $html
+	);
+	$out = preg_replace(
+		'#(<a\b[^>]*href="[^"]*ai-business-essentials[^"]*"[^>]*)>Subscribe now</a>#',
+		'$1>Start 7-day trial</a>',
+		is_string( $out ) ? $out : $html
+	);
+	$out = preg_replace(
+		'#(<a\b[^>]*href="(?:https://(?:www\.)?branddad\.social)?/product/[^"]*"[^>]*data-bds-copy-en=")Subscribe now(")#',
+		'$1Subscribe monthly$2',
+		is_string( $out ) ? $out : $html
+	);
+	$out = preg_replace(
+		'#(<a\b[^>]*href="(?:https://(?:www\.)?branddad\.social)?/product/[^"]*"[^>]*data-bds-copy-es=")Suscribirse ahora(")#',
+		'$1Suscribirse cada mes$2',
+		is_string( $out ) ? $out : $html
+	);
+	$out = preg_replace(
 		'#(<a\b[^>]*href="(?:https://(?:www\.)?branddad\.social)?/product/[^"]*"[^>]*)>Subscribe now</a>#',
 		'$1>Subscribe monthly</a>',
-		$html
+		is_string( $out ) ? $out : $html
 	);
 	return is_string( $out ) ? $out : $html;
 }
 
 function bds_rev_rewrite_see_plans( $html ) {
 	$html = (string) $html;
-	if ( false === strpos( $html, 'See plans' ) ) {
+	if ( false === strpos( $html, 'See plans' ) && false === strpos( $html, 'Ver planes' ) ) {
 		return $html;
 	}
 	$out = preg_replace(
-		'#(<a\b[^>]*href="[^"]*(?:select-your-plan|registration)[^"]*"[^>]*)>See plans</a>#',
-		'$1>See membership plans</a>',
+		'#data-bds-copy-en="See plans"(\s+data-bds-copy-es=")Ver planes"#',
+		'data-bds-copy-en="See membership plans"$1Ver planes de membresía"',
 		$html
+	);
+	$out = preg_replace(
+		'#(<a\b[^>]*href="[^"]*(?:select-your-plan|registration|\#bds-mt-plans)[^"]*"[^>]*)>See plans</a>#',
+		'$1>See membership plans</a>',
+		is_string( $out ) ? $out : $html
 	);
 	return is_string( $out ) ? $out : $html;
 }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.27
+ * Version: 0.2.28
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -460,10 +460,12 @@ function bds_feat_rewrite_subscribe_now( $html ) {
 		return $html;
 	}
 	$html = (string) $html;
-	if ( false === strpos( $html, 'Subscribe now' ) ) {
+	if ( false === strpos( $html, 'Subscribe now' ) && false === strpos( $html, 'Suscribirse ahora' ) ) {
 		return $html;
 	}
-	$out = preg_replace( '#(<a\b[^>]*>)Subscribe now</a>#', '$1Subscribe monthly</a>', $html );
+	$out = preg_replace( '#data-bds-copy-en="Subscribe now"#', 'data-bds-copy-en="Subscribe monthly"', $html );
+	$out = preg_replace( '#data-bds-copy-es="Suscribirse ahora"#', 'data-bds-copy-es="Suscribirse cada mes"', is_string( $out ) ? $out : $html );
+	$out = preg_replace( '#(<a\b[^>]*>)Subscribe now</a>#', '$1Subscribe monthly</a>', is_string( $out ) ? $out : $html );
 	return is_string( $out ) ? $out : $html;
 }
 add_filter( 'the_content', 'bds_feat_rewrite_subscribe_now', 1100 );
@@ -474,10 +476,15 @@ function bds_feat_rewrite_see_plans( $html ) {
 		return $html;
 	}
 	$html = (string) $html;
-	if ( false === strpos( $html, 'See plans' ) ) {
+	if ( false === strpos( $html, 'See plans' ) && false === strpos( $html, 'Ver planes' ) ) {
 		return $html;
 	}
-	$out = preg_replace( '#(<a\b[^>]*href="[^"]*(?:select-your-plan|registration)[^"]*"[^>]*)>See plans</a>#', '$1>See membership plans</a>', $html );
+	$out = preg_replace(
+		'#data-bds-copy-en="See plans"(\s+data-bds-copy-es=")Ver planes"#',
+		'data-bds-copy-en="See membership plans"$1Ver planes de membresía"',
+		$html
+	);
+	$out = preg_replace( '#(<a\b[^>]*href="[^"]*(?:select-your-plan|registration|\#bds-mt-plans)[^"]*"[^>]*)>See plans</a>#', '$1>See membership plans</a>', is_string( $out ) ? $out : $html );
 	return is_string( $out ) ? $out : $html;
 }
 add_filter( 'the_content', 'bds_feat_rewrite_see_plans', 1101 );
