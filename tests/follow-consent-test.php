@@ -40,7 +40,9 @@ assert_true( false === strpos( strtolower( $feat_note['body'] ), 'no card' ), 't
 $music_note = bds_follow_message( 'music' );
 assert_true( false !== strpos( $music_note['body'], 'does not take payment' ), 'the music note does not take payment' );
 $src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-follow-consent-mu.php' );
-assert_true( false !== strpos( $src, 'Version: 0.1.4' ), 'follow consent stamps 0.1.4' );
+assert_true( false !== strpos( $src, 'Version: 0.1.5' ), 'follow consent stamps 0.1.5' );
+assert_true( false !== strpos( $src, '#0668d8' ), 'follow form uses the approved accessible blue' );
+assert_true( false !== strpos( $src, ':focus-visible' ), 'follow form keeps a visible focus ring' );
 assert_true( false !== strpos( $src, 'Guardar mi correo' ), 'follow submit Spanish is tagged' );
 assert_true( false !== strpos( $src, '<span' ) && false !== strpos( $src, 'BrandDad puede escribirme' ), 'checkbox label Spanish is an inner span' );
 

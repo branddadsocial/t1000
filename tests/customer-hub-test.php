@@ -60,7 +60,10 @@ hub_expect( 'Your BrandDad dashboard' === $dash['heading'], 'dashboard copy has 
 hub_expect( false !== strpos( json_encode( $dash ), 'does not start a charge' ), 'dashboard copy does not start a charge' );
 hub_expect( false !== strpos( json_encode( $dash ), 'inquiry only' ), 'dashboard copy keeps studios as inquiry' );
 $surf = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-customer-surfaces-mu.php' );
-hub_expect( false !== strpos( $surf, 'Version: 0.2.8' ), 'surfaces MU stamps 0.2.8' );
+hub_expect( false !== strpos( $surf, 'Version: 0.2.9' ), 'surfaces MU stamps 0.2.9' );
+hub_expect( false !== strpos( $surf, 'See membership plans' ), 'guest hub opens membership plans' );
+hub_expect( false !== strpos( $surf, 'select-your-plan' ), 'guest hub See membership plans goes to Select your plan' );
+hub_expect( false === strpos( $surf, '>See plans</a>' ), 'guest hub no longer says See plans' );
 hub_expect( false !== strpos( $surf, 'aria-disabled="true"' ), 'studio buttons stay disabled for assistive tech' );
 hub_expect( false !== strpos( $surf, ':focus-visible' ), 'hub links keep a visible focus ring' );
 hub_expect( false !== strpos( $surf, 'bds-hub-dashboard' ), 'directory dashboard prints the hub band' );

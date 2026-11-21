@@ -201,7 +201,13 @@ rev_expect(
 	'other Social paths stay put'
 );
 $choose = '<a class="bdai-button" href="https://branddad.social/product/ai-social-growth/">Choose this plan</a>';
-rev_expect( false !== strpos( bds_rev_rewrite_choose_plan( $choose ), '>Subscribe</a>' ), 'live plan cards say Subscribe' );
+rev_expect( false !== strpos( bds_rev_rewrite_choose_plan( $choose ), '>Subscribe monthly</a>' ), 'live plan cards say Subscribe monthly' );
+$now = '<a href="https://branddad.social/product/ai-social-growth/">Subscribe now</a>';
+rev_expect( false !== strpos( bds_rev_rewrite_subscribe_now( $now ), '>Subscribe monthly</a>' ), 'Subscribe now on a product becomes Subscribe monthly' );
+rev_expect( false === strpos( bds_rev_rewrite_subscribe_now( $now ), 'Subscribe now' ), 'product Subscribe now leftover is removed' );
+$see = '<a href="https://directory.branddad.social/select-your-plan/">See plans</a>';
+rev_expect( false !== strpos( bds_rev_rewrite_see_plans( $see ), '>See membership plans</a>' ), 'leftover See plans on Select your plan becomes See membership plans' );
+rev_expect( false === strpos( bds_rev_rewrite_see_plans( $see ), '>See plans</a>' ), 'leftover See plans label is removed' );
 $other = '<a href="https://branddad.social/product/branddad-custom-automation/">Choose this plan</a>';
 rev_expect( $other === bds_rev_rewrite_choose_plan( $other ), 'other product labels stay on their own wording' );
 $ask_html = '<p><a class="bdai-button bdai-button--light" href="https://branddad.social/contact-us/">Ask about Featured placement</a></p>';

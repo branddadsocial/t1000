@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.27
+ * Version: 0.2.28
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -242,7 +242,33 @@ function bds_rev_rewrite_choose_plan( $html ) {
 	}
 	$out = preg_replace(
 		'#(<a\b[^>]*href="https://(?:www\.)?branddad\.social/product/(?:ai-lead-assistant|ai-social-growth|ai-local-seo|ai-business-essentials)/[^"]*"[^>]*)>Choose this plan</a>#',
-		'$1>Subscribe</a>',
+		'$1>Subscribe monthly</a>',
+		$html
+	);
+	return is_string( $out ) ? $out : $html;
+}
+
+function bds_rev_rewrite_subscribe_now( $html ) {
+	$html = (string) $html;
+	if ( false === strpos( $html, 'Subscribe now' ) ) {
+		return $html;
+	}
+	$out = preg_replace(
+		'#(<a\b[^>]*href="(?:https://(?:www\.)?branddad\.social)?/product/[^"]*"[^>]*)>Subscribe now</a>#',
+		'$1>Subscribe monthly</a>',
+		$html
+	);
+	return is_string( $out ) ? $out : $html;
+}
+
+function bds_rev_rewrite_see_plans( $html ) {
+	$html = (string) $html;
+	if ( false === strpos( $html, 'See plans' ) ) {
+		return $html;
+	}
+	$out = preg_replace(
+		'#(<a\b[^>]*href="[^"]*(?:select-your-plan|registration)[^"]*"[^>]*)>See plans</a>#',
+		'$1>See membership plans</a>',
 		$html
 	);
 	return is_string( $out ) ? $out : $html;
@@ -251,6 +277,8 @@ function bds_rev_rewrite_choose_plan( $html ) {
 function bds_rev_rewrite_conversion_ctas( $html ) {
 	$html   = bds_rev_rewrite_featured_ask( $html );
 	$html   = bds_rev_rewrite_choose_plan( $html );
+	$html   = bds_rev_rewrite_subscribe_now( $html );
+	$html   = bds_rev_rewrite_see_plans( $html );
 	$pairs  = array(
 		array( 'See social plans', 'ai-social-growth', 'Subscribe to Social Growth', 'ai-social-growth' ),
 		array( 'See SEO options', 'ai-local-seo', 'Subscribe to Local SEO', 'ai-local-seo' ),

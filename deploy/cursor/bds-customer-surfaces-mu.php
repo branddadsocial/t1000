@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Surfaces
  * Description: Account hub, membership status, free-AI allowance display, studio boards, and the Partnero affiliate door. Does not charge, invent balances, or publish.
- * Version: 0.2.8
+ * Version: 0.2.9
  * Author: BrandDad
  *
  * Secure design: every account block uses the current WordPress user. Music briefs are limited to that user's posts. Affiliate money stays in Partnero. Studio buttons do not call providers.
@@ -32,8 +32,8 @@ function bds_hub_membership_html() {
 		return '';
 	}
 	if ( ! is_user_logged_in() ) {
-		$register = function_exists( 'bds_mt_upgrade_url' ) ? bds_mt_upgrade_url() : home_url( '/registration/' );
-		$list     = 'https://directory.branddad.social/add-listing/';
+		$plans = 'https://directory.branddad.social/select-your-plan/';
+		$list  = 'https://directory.branddad.social/add-listing/';
 		if ( function_exists( 'bds_po_url' ) ) {
 			$out = bds_po_url( $list );
 			if ( is_string( $out ) && '' !== $out ) {
@@ -47,7 +47,7 @@ function bds_hub_membership_html() {
 		} else {
 			$html .= '<p>A basic listing is free for one business. Sign in to see the plan already on your account. The free listing does not include the 10% member price.</p>';
 		}
-		$html .= '<a href="' . esc_url( wp_login_url( get_permalink() ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Sign in', 'Entrar' ) : '' ) . '>Sign in</a> <a href="' . esc_url( $list ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>List my business free</a> <a href="' . esc_url( $register ) . '"' . ( $sw ? bds_lang_swap_attrs( 'See plans', 'Ver planes' ) : '' ) . '>See plans</a></section>';
+		$html .= '<a href="' . esc_url( wp_login_url( get_permalink() ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Sign in', 'Entrar' ) : '' ) . '>Sign in</a> <a href="' . esc_url( $list ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>List my business free</a> <a href="' . esc_url( $plans ) . '"' . ( $sw ? bds_lang_swap_attrs( 'See membership plans', 'Ver planes de membresía' ) : '' ) . '>See membership plans</a></section>';
 		return $html;
 	}
 	$tier = function_exists( 'bds_mt_user_tier' ) ? (string) bds_mt_user_tier() : 'free';

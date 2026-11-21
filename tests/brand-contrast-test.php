@@ -17,6 +17,7 @@ $files = array(
 	$root . '/deploy/cursor/bds-sales-help-mu.php',
 	$root . '/deploy/cursor/bds-lang-switch-mu.php',
 	$root . '/deploy/cursor/bds-directory-free-listing-mu.php',
+	$root . '/deploy/cursor/bds-follow-consent-mu.php',
 );
 
 foreach ( $files as $file ) {
@@ -35,6 +36,7 @@ $focus_files = array(
 	$root . '/deploy/cursor/bds-sales-help-mu.php',
 	$root . '/deploy/cursor/bds-lang-switch-mu.php',
 	$root . '/deploy/cursor/bds-directory-free-listing-mu.php',
+	$root . '/deploy/cursor/bds-follow-consent-mu.php',
 );
 foreach ( $focus_files as $file ) {
 	$source = file_get_contents( $file );

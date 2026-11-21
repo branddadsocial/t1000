@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Follow Consent
  * Description: Saves an email only when the person asks BrandDad to write to them. It does not send mail.
- * Version: 0.1.4
+ * Version: 0.1.5
  * Author: BrandDad
  *
  * Ingestion: public form → nonce check → email, consent, and source only.
@@ -196,6 +196,7 @@ function bds_follow_form() {
 	}
 	$note = isset( $_GET['bds_follow'] ) ? sanitize_key( wp_unslash( $_GET['bds_follow'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	$sw = function_exists( 'bds_lang_swap_attrs' );
+	echo '<style id="bds-follow-css">#bds-follow-consent{max-width:720px;margin:18px auto;padding:16px 18px;border-top:1px solid #dbe5ef}#bds-follow-consent input[type="email"]{min-height:44px;padding:8px;width:100%;max-width:420px;box-sizing:border-box}#bds-follow-consent button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border:0;border-radius:10px;background:#0668d8;color:#fff;font-weight:800}#bds-follow-consent button:focus-visible,#bds-follow-consent input:focus-visible{outline:3px solid #0668d8;outline-offset:2px}</style>';
 	echo '<form id="bds-follow-consent" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 	echo '<input type="hidden" name="action" value="bds_follow_consent">';
 	wp_nonce_field( 'bds_follow_consent', 'bds_follow_nonce' );

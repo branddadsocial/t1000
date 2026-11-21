@@ -108,12 +108,14 @@ expect( 'travel' === bds_feat_listing_type_surface( 'travel' ), 'all-listings tr
 expect( 'hotels' === bds_feat_listing_type_surface( 'hotels-stays' ), 'all-listings hotels type is recognized' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.19' ), 'featured MU stamps 0.2.19' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.20' ), 'featured MU stamps 0.2.20' );
+expect( false !== strpos( $feat_src, 'Subscribe monthly</a>' ), 'leftover Subscribe now is rewritten to Subscribe monthly' );
 expect( false !== strpos( $feat_src, ':focus-visible' ), 'featured buttons keep a visible focus ring' );
 expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty worldwide lane heading has Spanish' );
 expect( false !== strpos( $feat_src, 'Listar mi negocio gratis' ), 'door CTAs have Spanish' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly' ), 'featured checkout uses Subscribe monthly' );
-expect( false === strpos( $feat_src, 'Subscribe now' ), 'featured checkout no longer says Subscribe now' );
+expect( false === strpos( $feat_src, '>Subscribe now</a>' ), 'featured checkout no longer says Subscribe now' );
+expect( false !== strpos( $feat_src, 'See membership plans</a>' ), 'leftover See plans is rewritten to See membership plans' );
 expect( false !== strpos( $feat_src, 'does not sell tickets' ), 'events copy does not sell tickets' );
 expect( false !== strpos( $feat_src, 'does not sell tickets or book flights' ), 'travel copy does not sell tickets' );
 expect( false !== strpos( $feat_src, 'does not take that payment here' ), 'gift cards stay a marketplace' );

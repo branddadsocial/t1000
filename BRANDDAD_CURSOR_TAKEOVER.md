@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~9:52am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~9:51am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -33,7 +33,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. |
 | Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Provisioning is WP Swings 7-day terms after a real checkout. |
 | Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. |
-| Featured checkout | Products live. Adapter live. Local **0.2.19** uses **Subscribe monthly**, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
+| Featured checkout | Products live. Adapter live. Local **0.2.20** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
 | Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Shop-manager Tools **Billing inspect** (local bridge 0.1.3) counts active Woo webhooks as a boolean. Stripe Dashboard delivery list is owner inspect. |
 | GitHub wp-cron schedule | Only schedule run remains `44905829871` success 2026-11-21T12:49:47Z (7:49am America/Cancun). Four earlier `workflow_dispatch` successes. Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron. |
 
@@ -42,14 +42,14 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Item | Status |
 |---|---|
 | Launch trial copy | Live 0.5.26. Buttons “Start 7-day trial” / “Try it free for 7 days.” |
-| Hub trial + account API wiring | Local bridge **0.1.6** (live still 0.1.0 until FM). Surfaces **0.2.8** trial band, studio inquiry copy, dashboard band. Live `/account-hub/` already prints the hub. |
-| Featured listing attach | Local **0.2.19** listing prompt, List my business free, events/jobs/classifieds/travel/hotels/gifts doors, sign-in and empty-search copy, classifieds alias, demo refund modal hidden. Live Featured buy still Subscribe now until FM. |
-| Revenue live CTAs | Local revenue **0.2.27**. Quote-only contact copy. Privacy/terms/press/refunds next-step band. Cookie leftover URLs open privacy. Live `/services/` still mixes Subscribe now until FM. |
+| Hub trial + account API wiring | Local bridge **0.1.6** (live still 0.1.0 until FM). Surfaces **0.2.9** guest “See membership plans” → Directory `/select-your-plan/`. Live `/account-hub/` still says See plans until FM. |
+| Featured listing attach | Local **0.2.20** listing prompt, leftover Subscribe now / See plans rewrites, events/jobs/classifieds/travel/hotels/gifts doors, sign-in and empty-search copy, classifieds alias, demo refund modal hidden. Live Featured buy still Subscribe now until FM. |
+| Revenue live CTAs | Local revenue **0.2.28**. Leftover Subscribe now / Choose this plan / See plans rewrites. Quote-only contact copy. Privacy/terms/press/refunds next-step band. Cookie leftover URLs open privacy. Live `/services/` still mixes Subscribe now until FM. |
 | Dashboards / studios | Live `/studio-boards/` on both hosts. Local copy is inquiry-only and does not start checkout. Directory `/dashboard/` gets `#bds-hub-dashboard`. |
 | Account emails | Copy only in bridge **0.1.6**. New-account and reset-password additional content. Does not `wp_mail`. |
-| Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help. Sticky help respects `prefers-reduced-motion`. |
+| Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help, follow, lang-switch, free-listing. Sticky help respects `prefers-reduced-motion`. |
 | Gift / travel / legal | Gift marketplace copy is not a BrandDad charge. Travel/hotels do not sell tickets. Social privacy/terms get the next-step band. |
-| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. Conversion **0.1.2** counts hub and door clicks. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow **0.1.4** has Featured/music/gift copy (does not send). |
+| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. Conversion **0.1.2** counts hub and door clicks. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow **0.1.5** has Featured/music/gift copy plus `#0668d8` / 44px / focus-visible (does not send). |
 | Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. |
 | Memberships / blogs | `/memberships/`, `/membership/`, `/plans/` alias to Select your plan. Directory blog door does not sell a listing. |
 | Music / quote-only | Live home already has music brief and “does not take payment.” DFY contact note is quote-only. |
@@ -62,7 +62,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.8 / featured 0.2.19 / revenue 0.2.27 / sales-help 0.1.7 / follow 0.1.4 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.20 / revenue 0.2.28 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -76,9 +76,9 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 
 ## This pass
 
-- FM still login (hwnd 197924 at `-2400`). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched.
-- Live inspect: `/press/` and `/refund_returns/` had sales-help but no guide-next. `/cookie-policy/` is dead. Directory sign-in and empty search already door.
-- Track A: revenue **0.2.27** press/refunds/cookie; featured **0.2.19** sign-in and empty-search copy; follow **0.1.4** Featured/music/gift notes; lang **0.1.4** approved blue; free-listing **0.1.6** membership-plan label.
-- Suites: featured, revenue, follow, lang-switch, free-listing, contrast, sales-help, conversion, bridge, hub passed.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.8 / featured 0.2.19 / revenue 0.2.27 / sales-help 0.1.7 / follow 0.1.4 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
+- FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone.
+- Live leftover until FM: `/services/` mixes Subscribe now; `/account-hub/` still See plans; `/featured-advertising/` Subscribe now + See plans + demo refund modal HTML; `/classifieds/` 404; `/cookie-policy/` 404; press/privacy missing `bds-rev-guide-next`.
+- Track A: hub **0.2.9** guest See membership plans → Directory Select your plan; revenue **0.2.28** leftover Subscribe now / Choose this plan / See plans → Subscribe monthly or See membership plans; featured **0.2.20** the same leftover rewrites; follow **0.1.5** form `#0668d8` / 44px / focus-visible.
+- Suites: featured, revenue, hub, follow, contrast, sales-help, conversion, lang-switch, free-listing, bridge passed. php -l clean. rafter secrets empty on the four edited MUs.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.20 / revenue 0.2.28 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.
