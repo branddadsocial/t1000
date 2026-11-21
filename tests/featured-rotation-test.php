@@ -114,7 +114,10 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.21' ), 'featured MU stamps 0.2.21' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.22' ), 'featured MU stamps 0.2.22' );
+expect( false !== strpos( $feat_src, 'bds-feat-home-legacy' ), 'homepage unhides the Directory Experience heading' );
+expect( false !== strpos( $feat_src, 'bdd-title' ), 'the parked #bdd-title heading is restored' );
+expect( false !== strpos( $feat_src, 'bds-dfc-gift' ), 'leftover homepage gift markup is removed' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly</a>' ), 'leftover Subscribe now is rewritten to Subscribe monthly' );
 expect( false !== strpos( $feat_src, ':focus-visible' ), 'featured buttons keep a visible focus ring' );
 expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty worldwide lane heading has Spanish' );

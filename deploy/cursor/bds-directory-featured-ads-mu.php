@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.21
+ * Version: 0.2.22
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -947,6 +947,42 @@ function bds_feat_hide_demo_refund() {
 	echo '<style id="bds-feat-hide-refund">.user-refund-modal,#dcl-claim-modal,textarea[name="payment_details"]{display:none!important}</style>';
 }
 add_action( 'wp_head', 'bds_feat_hide_demo_refund', 40 );
+
+/**
+ * Codex homepage leftover: #bdd-title was parked at 1px / -9999px, so the
+ * visible journey started at an H2, and cached gift-homepage markup stayed in
+ * the public DOM. Keep the current Directory Experience heading visible.
+ * Gift inventory stays on /gift-card-marketplace/.
+ *
+ * @return void
+ */
+function bds_feat_home_legacy_css() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	if ( '' !== bds_feat_request_path() ) {
+		return;
+	}
+	echo '<style id="bds-feat-home-legacy">body.home #bdd-title{position:static!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important}body.home #bds-dfc-gift,body.home #bds-dfc-gift-place-js{display:none!important}</style>';
+}
+add_action( 'wp_head', 'bds_feat_home_legacy_css', 41 );
+
+/**
+ * After the homepage paints: hide the retired WhatsApp H1 wrapper when the
+ * current Directory Experience heading is present, and drop leftover gift markup.
+ *
+ * @return void
+ */
+function bds_feat_home_legacy_js() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	if ( '' !== bds_feat_request_path() ) {
+		return;
+	}
+	echo '<script id="bds-feat-home-legacy-js">(function(){if(!document.body||!document.body.classList.contains("home"))return;var current=document.getElementById("bdd-title");var legacy=document.querySelector("h1.bds-wah__title");if(current&&legacy){var wrap=legacy.closest("#bds-wa-hero,.bds-wah,section,.elementor-top-section")||legacy;if(wrap&&!wrap.contains(current)){wrap.hidden=true;wrap.setAttribute("aria-hidden","true");}else{legacy.hidden=true;legacy.setAttribute("aria-hidden","true");}}var gift=document.getElementById("bds-dfc-gift");if(gift)gift.remove();var giftJs=document.getElementById("bds-dfc-gift-place-js");if(giftJs)giftJs.remove();})();</script>';
+}
+add_action( 'wp_footer', 'bds_feat_home_legacy_js', 33 );
 
 function bds_feat_client_key() {
 	$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : 'unknown';
