@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~10:16am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~10:20am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -30,13 +30,15 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 |---|---|
 | Stripe inspect (no reconnect) | Social Essentials product + Directory checkout-with-cart both load `wc-stripe` and `pk_live` (length 107, value not printed). No reconnect click. No charge. |
 | Stripe reconnect | **Owner blocker.** Dashboard-only if a webhook signing secret or account link is stale. |
-| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. Local execution **0.2.2**: `process_job` is `execution_not_configured` and does not POST without `BDS_FORMWISE_EXECUTION_KEY`. Subscriptions **0.5.1**: `bds_ai_subscription_readiness()['ready']` is false without the provisioning key; tier DELETE is not sent. |
+| FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. Local execution **0.2.2**: `process_job` is `execution_not_configured` and does not POST without `BDS_FORMWISE_EXECUTION_KEY`. Subscriptions **0.5.2**: readiness stays closed without the provisioning key; unpaid or mismatched orders are not the current paid order. |
 | Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Local mapping tests: 7-day terms only, paid wins over trial, trial does not grant Directory/Featured/member price/Travel. Trial MU **0.1.2**. |
 | Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. Local `bds_ai_exec_choose_access` tests: paid wins, empty facts grant nothing. Follow-up worker **0.1.2** stays off (`BDS_FOLLOWUP_ENABLED` unset): no `wp_mail`, no hourly schedule. Flags not flipped here. |
 | Featured checkout | Products live. Adapter live. Local **0.2.21** uses **Subscribe monthly**, leftover Subscribe now / See plans rewrites, listing prompt, events/jobs/classifieds/travel/gifts doors, classifieds alias, faq/sitemap → help. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
 | Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Directory membership HMAC **0.1.3** is fail-closed: empty key disables, timestamp >300s and body tamper refuse, `hash_equals`. Consent checkbox must be checked (`1`/`yes`/`true`/`on`); unchecked never provisions. Tests use a dummy local HMAC, not a Stripe or FormWise secret. Shop-manager Tools **Billing inspect** counts active Woo webhooks as a boolean. Stripe Dashboard delivery is owner inspect. |
 | Account-link | Local **0.1.3**. Empty or short `BDS_ACCOUNT_LINK_SECRET` keeps `secret_ready` false. `create_token` is `link_unavailable`; start maps that to HTTP **503**. The handoff form is hidden. Tests do not invent a secret. |
 | Lifecycle is_paid | Local **0.4.2**. `payment_confirmed` records only when Woo `is_paid()` is true. Featured also needs an allowlisted lane. Refunds record only after a matching `payment_confirmed`. Trial stays `trial_started`, not paid. No `wp_mail`. Tests do not charge. |
+| Onboarding website SSRF | Local **0.1.1**. Stored `website_url` is http/https only, no credentials, ports 80/443, no localhost/.local/.internal, no literal IPs. The function never fetches. Invalid URLs are 422. |
+| Subscription order map | Local **0.5.2**. `bds_ai_order_matches_subscription` requires the parent order or an authoritative renewal for that subscription. Unpaid or mismatched ids return 0 from `bds_ai_paid_order_id_or_zero`. Tests do not charge. |
 | Featured geo | Local 25km, regional 100km, national ISO country, global worldwide. Missing country/lat fails closed for non-global billing. Adapter **0.1.2**. Prices stay 9.99 / 19.99 / 39.99 / 99.99. |
 | Featured grant | Adapter **0.1.2**. Allowlisted SKUs only. `product_ready` requires the catalog monthly, `_wps_sfw_product=yes`, and interval 1 month. `is_paid()` false, inactive sub, unlinked order, unowned listing, missing geo, or a stale next-payment date cannot activate. Legacy `bds_feat_activate_paid_order` hooks stay removed. Tests do not charge. |
 | Sales catalog contract | Local catalog **0.3.4**. Live Social catalog **0.4.0** — do not upload local over live. Anonymous `/sales/catalog` contract: Essentials $29.99 for_sale when published. Staged/quote-only (complete packages, DFY, music) have no checkout URL. Assistant stays closed without FormWise keys. |
@@ -134,10 +136,24 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - Sales chat: FormWise is not called when the key is missing; first line of chat is 503. Output URLs are stripped.
 - Airbnb one-review: unpublished product has no buy URL. Catalog does not list the slug.
 
+## Secure design (onboarding website URL)
+
+- Identity: a signed-in customer storing a website URL on their onboarding profile. The URL is stored only.
+- AuthN: WordPress cookie on the onboarding REST. Public visitors cannot write a profile URL.
+- AuthZ: stored URLs are http/https, no userinfo, ports 80/443, no localhost/.local/.internal, no literal IPs. A filled invalid URL is 422. Empty is allowed. The helper never fetches, so a later monitor pass cannot inherit a stored SSRF vector from onboarding.
+- Secrets: no FormWise or Stripe keys. Tests do not enable flags.
+
+## Secure design (subscription unpaid / mismatch)
+
+- Identity: the Woo subscription owner. The current paid order is derived from Woo facts, not a client-supplied order id.
+- AuthN: payment truth is Woo `is_paid()`. Tests never create an order or charge.
+- AuthZ: `bds_ai_order_matches_subscription` requires the parent order or an authoritative renewal tagged to that subscription. Unpaid, mismatched, or missing ids return 0 from `bds_ai_paid_order_id_or_zero`. Provision still requires readiness, active status, and is not in a 7-day trial window unless this is a renewal.
+- Secrets: tests do not define FormWise or Stripe keys. Entitlements flag stays off.
+
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Telegram and Windows Security left alone. No extra live-copy MU. No StartHost cron added.
-- Track B: account-link empty secret is HTTP **503** (account-link **0.1.3**). Lifecycle **0.4.2** records `payment_confirmed` only after Woo `is_paid()`; Featured needs an allowlisted lane; refunds need a prior confirmed payment.
-- Suites: account-link-lifecycle. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
+- Track B: onboarding website URLs are stored fail-closed (onboarding **0.1.1**, never fetched). Subscriptions **0.5.2**: unpaid or mismatched orders are not the current paid order.
+- Suites: onboarding-subscription-failclosed; formwise-followup still green. php -l clean. rafter secrets empty on the edited MUs and new tests. `rafter run` quota remains exhausted until 2026-11-23.
 - Deploy when FM signs in (conversion MUs, unchanged): **bridge 0.1.6 / hub 0.2.9 / featured 0.2.21 / revenue 0.2.29 / sales-help 0.1.7 / follow 0.1.5 / conversion 0.1.2 / lang 0.1.4 / free-listing 0.1.6**.
 - Flags off. No charge. Not pushed.

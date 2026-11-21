@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Subscriptions
  * Description: BrandDad AI recurring billing safeguards and fail-closed FormWise entitlement lifecycle.
- * Version: 0.5.1
+ * Version: 0.5.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.5.1' );
+define( 'BDS_AI_SUBSCRIPTIONS_VERSION', '0.5.2' );
 
 /**
  * Approved offer configuration. Product ids are resolved by slug to preserve existing products.
@@ -272,21 +272,32 @@ function bds_ai_sfw_meta( $object_id, $key ) {
  * @param int $subscription_id WP Swings subscription id.
  * @return bool
  */
-function bds_ai_order_matches_subscription( $order_id, $subscription_id ) {
+function bds_ai_order_matches_subscription_ids( $order_id, $subscription_id, $parent_order_id, $is_renewal, $renewal_subscription_id ) {
 	$order_id        = absint( $order_id );
 	$subscription_id = absint( $subscription_id );
 	if ( ! $order_id || ! $subscription_id ) {
 		return false;
 	}
-
-	$parent_order_id = absint( bds_ai_sfw_meta( $subscription_id, 'wps_parent_order' ) );
-	if ( $parent_order_id && $order_id === $parent_order_id ) {
+	if ( absint( $parent_order_id ) && $order_id === absint( $parent_order_id ) ) {
 		return true;
 	}
+	return 'yes' === (string) $is_renewal && $subscription_id === absint( $renewal_subscription_id );
+}
 
-	$is_renewal              = 'yes' === (string) bds_ai_sfw_meta( $order_id, 'wps_sfw_renewal_order' );
-	$renewal_subscription_id = absint( bds_ai_sfw_meta( $order_id, 'wps_sfw_subscription' ) );
-	return $is_renewal && $subscription_id === $renewal_subscription_id;
+/** Unpaid or mismatched orders never become the current paid order id. */
+function bds_ai_paid_order_id_or_zero( $order_id, $is_paid, $matches ) {
+	$order_id = absint( $order_id );
+	return $order_id && true === $is_paid && true === $matches ? $order_id : 0;
+}
+
+function bds_ai_order_matches_subscription( $order_id, $subscription_id ) {
+	return bds_ai_order_matches_subscription_ids(
+		$order_id,
+		$subscription_id,
+		bds_ai_sfw_meta( $subscription_id, 'wps_parent_order' ),
+		bds_ai_sfw_meta( $order_id, 'wps_sfw_renewal_order' ),
+		bds_ai_sfw_meta( $order_id, 'wps_sfw_subscription' )
+	);
 }
 
 /** Latest billing order is authoritative; never fall back past a failed renewal. */
@@ -295,11 +306,11 @@ function bds_ai_subscription_current_paid_order( $subscription_id ) {
 	$last_renewal    = absint( bds_ai_sfw_meta( $subscription_id, 'wps_wsp_last_renewal_order_id' ) );
 	if ( $last_renewal ) {
 		$order = wc_get_order( $last_renewal );
-		return $order && $order->is_paid() && bds_ai_order_matches_subscription( $last_renewal, $subscription_id ) ? $last_renewal : 0;
+		return bds_ai_paid_order_id_or_zero( $last_renewal, $order && $order->is_paid(), bds_ai_order_matches_subscription( $last_renewal, $subscription_id ) );
 	}
 	$parent_id = absint( bds_ai_sfw_meta( $subscription_id, 'wps_parent_order' ) );
 	$order     = $parent_id ? wc_get_order( $parent_id ) : false;
-	return $order && $order->is_paid() && bds_ai_order_matches_subscription( $parent_id, $subscription_id ) ? $parent_id : 0;
+	return bds_ai_paid_order_id_or_zero( $parent_id, $order && $order->is_paid(), bds_ai_order_matches_subscription( $parent_id, $subscription_id ) );
 }
 
 /** Schedule a bounded provisioning retry for transient network/API failures. */

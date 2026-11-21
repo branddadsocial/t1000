@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Onboarding API
  * Description: Customer-owned onboarding state and first-task guidance for BrandDad dashboards.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ONBOARDING_API_VERSION', '0.1.0' );
+define( 'BDS_ONBOARDING_API_VERSION', '0.1.1' );
 
 function bds_onboarding_permission() {
 	if ( isset( $_SERVER['CONTENT_LENGTH'] ) && absint( $_SERVER['CONTENT_LENGTH'] ) > 16384 ) {
@@ -54,14 +54,19 @@ function bds_onboarding_public_website_url( $value ) {
 		return '';
 	}
 	$parts = wp_parse_url( $value );
-	if ( ! is_array( $parts ) || ! in_array( strtolower( (string) ( $parts['scheme'] ?? '' ) ), array( 'http', 'https' ), true ) || empty( $parts['host'] ) || isset( $parts['user'] ) || isset( $parts['pass'] ) ) {
+	if ( ! is_array( $parts ) ) {
 		return '';
 	}
-	$host = strtolower( rtrim( (string) $parts['host'], '.' ) );
-	if ( 'localhost' === $host || '.local' === substr( $host, -6 ) || '.internal' === substr( $host, -9 ) ) {
+	$scheme = strtolower( (string) ( $parts['scheme'] ?? '' ) );
+	$host   = strtolower( rtrim( (string) ( $parts['host'] ?? '' ), '.' ) );
+	$port   = absint( $parts['port'] ?? ( 'https' === $scheme ? 443 : 80 ) );
+	if ( ! in_array( $scheme, array( 'http', 'https' ), true ) || ! $host || isset( $parts['user'] ) || isset( $parts['pass'] ) ) {
 		return '';
 	}
-	if ( filter_var( $host, FILTER_VALIDATE_IP ) && ! filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+	if ( ( 'https' === $scheme && 443 !== $port ) || ( 'http' === $scheme && 80 !== $port ) ) {
+		return '';
+	}
+	if ( 'localhost' === $host || '.local' === substr( $host, -6 ) || '.internal' === substr( $host, -9 ) || filter_var( $host, FILTER_VALIDATE_IP ) ) {
 		return '';
 	}
 	return $value;
