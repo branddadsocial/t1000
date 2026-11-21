@@ -52,7 +52,18 @@ $ids = array_column( $studios, 'id' );
 hub_expect( array( 'seo', 'social', 'linkedin', 'chatbot', 'video' ) === $ids, 'studio ids include chatbot and video' );
 foreach ( $studios as $card ) {
 	hub_expect( false !== strpos( $card['detail'], 'does not generate' ), $card['id'] . ' does not claim execution' );
+	hub_expect( false !== strpos( $card['detail'], 'inquiry only' ), $card['id'] . ' stays inquiry only' );
+	hub_expect( false !== strpos( $card['detail'], 'does not start checkout' ), $card['id'] . ' does not start checkout' );
 }
+$dash = bds_hub_dashboard_copy();
+hub_expect( 'Your BrandDad dashboard' === $dash['heading'], 'dashboard copy has a heading' );
+hub_expect( false !== strpos( json_encode( $dash ), 'does not start a charge' ), 'dashboard copy does not start a charge' );
+hub_expect( false !== strpos( json_encode( $dash ), 'inquiry only' ), 'dashboard copy keeps studios as inquiry' );
+$surf = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-customer-surfaces-mu.php' );
+hub_expect( false !== strpos( $surf, 'Version: 0.2.8' ), 'surfaces MU stamps 0.2.8' );
+hub_expect( false !== strpos( $surf, 'aria-disabled="true"' ), 'studio buttons stay disabled for assistive tech' );
+hub_expect( false !== strpos( $surf, ':focus-visible' ), 'hub links keep a visible focus ring' );
+hub_expect( false !== strpos( $surf, 'bds-hub-dashboard' ), 'directory dashboard prints the hub band' );
 
 $music = bds_hub_music_rows(
 	array(

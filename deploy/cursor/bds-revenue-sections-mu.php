@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.24
+ * Version: 0.2.25
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -688,7 +688,7 @@ function bds_rev_path_needs_guide( $path ) {
 	if ( false === $top ) {
 		$top = $path;
 	}
-	return in_array( $top, array( 'help', 'contact-us', 'creator-services', 'spotify-promotion', 'ai-ads', 'about', 'about-us', 'blog', 'affiliate-program', 'learning-center', 'start-a-campaign' ), true );
+	return in_array( $top, array( 'help', 'contact-us', 'creator-services', 'spotify-promotion', 'ai-ads', 'about', 'about-us', 'blog', 'affiliate-program', 'learning-center', 'start-a-campaign', 'studio-boards', 'studio', 'seo' ), true );
 }
 
 function bds_rev_guide_footer() {
@@ -732,11 +732,11 @@ function bds_rev_onboard_html() {
 	if ( function_exists( 'bds_lang_pair' ) ) {
 		$html .= bds_lang_pair( 'Start the 7-day trial on AI Business Essentials when you want business help. Checkout shows the terms. This page does not start another charge.', 'Empiece la prueba de 7 días de AI Business Essentials si quiere ayuda. El checkout muestra los términos. Esta página no inicia otro cargo.', 'li' );
 		$html .= bds_lang_pair( 'Tell BrandDad what the business does, then read every draft before it is used. The trial does not promise customers.', 'Diga a BrandDad qué hace el negocio y lea cada borrador antes de usarlo. La prueba no promete clientes.', 'li' );
-		$html .= bds_lang_pair( 'A Directory listing is free and separate. Add one business if you want people to find it. Cancel future renewals from this account.', 'Un listado del directorio es gratis y está aparte. Agregue un negocio si quiere que lo encuentren. Cancele renovaciones futuras desde esta cuenta.', 'li' );
+		$html .= bds_lang_pair( 'A Directory listing is free and separate. Directory membership is not included. Add one business if you want people to find it. Cancel future renewals from this account.', 'Un listado del directorio es gratis y está aparte. La membresía del directorio no está incluida. Agregue un negocio si quiere que lo encuentren. Cancele renovaciones futuras desde esta cuenta.', 'li' );
 	} else {
 		$html .= '<li>' . esc_html__( 'Start the 7-day trial on AI Business Essentials when you want business help. Checkout shows the terms. This page does not start another charge.', 'branddad' ) . '</li>';
 		$html .= '<li>' . esc_html__( 'Tell BrandDad what the business does, then read every draft before it is used. The trial does not promise customers.', 'branddad' ) . '</li>';
-		$html .= '<li>' . esc_html__( 'A Directory listing is free and separate. Add one business if you want people to find it. Cancel future renewals from this account.', 'branddad' ) . '</li>';
+		$html .= '<li>' . esc_html__( 'A Directory listing is free and separate. Directory membership is not included. Add one business if you want people to find it. Cancel future renewals from this account.', 'branddad' ) . '</li>';
 	}
 	$html .= '</ol><p>';
 	if ( '' !== $trial ) {
@@ -891,6 +891,19 @@ function bds_rev_alias_dest( $path ) {
 	if ( in_array( $path, array( 'ai-packages', 'packages', 'complete-packages' ), true ) ) {
 		$base = bds_rev_services_url();
 		return $base . ( false === strpos( $base, '#' ) ? '#branddad-complete-packages' : '' );
+	}
+	if ( in_array( $path, array( 'seo', 'ai-seo', 'local-seo' ), true ) ) {
+		return bds_rev_services_url();
+	}
+	if ( in_array( $path, array( 'ai-local-seo-autopilot', 'ai-seo-growth-autopilot', 'ai-seo-pro' ), true ) ) {
+		$url = add_query_arg( 'offer', $path, home_url( '/contact-us/' ) );
+		if ( function_exists( 'bds_po_url' ) ) {
+			$out = bds_po_url( $url );
+			if ( is_string( $out ) && '' !== $out ) {
+				return $out;
+			}
+		}
+		return $url;
 	}
 	if ( in_array( $path, array( 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'done-for-you-ai' ), true ) ) {
 		$url = add_query_arg( 'offer', $path, home_url( '/contact-us/' ) );
@@ -1061,7 +1074,7 @@ function bds_rev_styles() {
 	if ( ! bds_rev_is_social() ) {
 		return;
 	}
-	echo '<style id="bds-rev-css">.bds-rev{max-width:1180px;margin:0 auto;padding:12px 20px 28px;color:#0b172a}.bds-rev h2{font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.03em}.bds-rev-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.bds-rev-card{display:flex;flex-direction:column;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-rev-price{font-size:22px;font-weight:800}.bds-rev-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}.bds-rev-button--quiet{background:#071a33}.bds-rev-note{color:#526070;font-size:13px}.bds-rev form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-rev input,.bds-rev select,.bds-rev textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-rev textarea{min-height:96px}.bds-rev-hp{position:absolute;left:-9999px}.bds-rev-card .bds-rev-button{margin-top:auto}@media(max-width:800px){.bds-rev-grid{grid-template-columns:1fr}.bds-rev{padding:8px 12px 24px}}</style>';
+	echo '<style id="bds-rev-css">.bds-rev{max-width:1180px;margin:0 auto;padding:12px 20px 28px;color:#0b172a}.bds-rev h2{font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.03em}.bds-rev-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.bds-rev-card{display:flex;flex-direction:column;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-rev-price{font-size:22px;font-weight:800}.bds-rev-button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:8px 8px 0 0;padding:0 16px;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}.bds-rev-button--quiet{background:#071a33}.bds-rev-note{color:#526070;font-size:13px}.bds-rev form p{display:flex;flex-direction:column;gap:6px;max-width:640px}.bds-rev input,.bds-rev select,.bds-rev textarea{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}.bds-rev textarea{min-height:96px}.bds-rev-hp{position:absolute;left:-9999px}.bds-rev-card .bds-rev-button{margin-top:auto}.bds-rev-button:focus-visible,.bds-rev a:focus-visible,#bds-onboard a:focus-visible{outline:3px solid #0668d8;outline-offset:2px}@media(max-width:800px){.bds-rev-grid{grid-template-columns:1fr}.bds-rev{padding:8px 12px 24px}}</style>';
 }
 add_action( 'wp_head', 'bds_rev_styles', 40 );
 

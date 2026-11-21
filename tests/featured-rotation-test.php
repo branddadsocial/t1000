@@ -103,7 +103,8 @@ expect( 'classifieds' === bds_feat_directory_surface( 'classifieds' ), 'classifi
 expect( 'memberships' === bds_feat_directory_surface( 'plans' ), 'plans maps to memberships' );
 expect( 'blog' === bds_feat_directory_surface( 'blog' ), 'blog surface is recognized' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.16' ), 'featured MU stamps 0.2.16' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.17' ), 'featured MU stamps 0.2.17' );
+expect( false !== strpos( $feat_src, ':focus-visible' ), 'featured buttons keep a visible focus ring' );
 expect( false !== strpos( $feat_src, 'Destacados en todo el mundo' ), 'empty worldwide lane heading has Spanish' );
 expect( false !== strpos( $feat_src, 'Listar mi negocio gratis' ), 'door CTAs have Spanish' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly' ), 'featured checkout uses Subscribe monthly' );

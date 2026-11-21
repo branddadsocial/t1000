@@ -25,4 +25,16 @@ foreach ( $files as $file ) {
 	contrast_expect( false === stripos( $source, '#0878ed' ), 'lower-contrast primary blue is absent: ' . basename( $file ) );
 }
 
+$focus_files = array(
+	$root . '/deploy/cursor/bds-revenue-sections-mu.php',
+	$root . '/deploy/cursor/bds-customer-surfaces-mu.php',
+	$root . '/deploy/cursor/bds-directory-featured-ads-mu.php',
+	$root . '/deploy/cursor/bds-codex-bridge-mu.php',
+	$root . '/deploy/cursor/bds-sales-help-mu.php',
+);
+foreach ( $focus_files as $file ) {
+	$source = file_get_contents( $file );
+	contrast_expect( false !== strpos( $source, ':focus-visible' ), 'visible focus ring is present: ' . basename( $file ) );
+}
+
 echo "Brand contrast tests passed.\n";

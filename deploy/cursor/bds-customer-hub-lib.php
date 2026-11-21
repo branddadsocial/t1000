@@ -94,36 +94,54 @@ if ( ! function_exists( 'bds_hub_studio_cards' ) ) {
 				'id'        => 'seo',
 				'title'     => 'SEO Autopilot',
 				'title_es'  => 'Autopiloto SEO',
-				'detail'    => 'You will connect a website, review drafts, and approve publishing here. ' . $note,
-				'detail_es' => 'Conectará un sitio, revisará borradores y aprobará la publicación aquí. ' . $note_es,
+				'detail'    => 'You will connect a website, review drafts, and approve publishing here. This board is inquiry only. It does not start checkout. ' . $note,
+				'detail_es' => 'Conectará un sitio, revisará borradores y aprobará la publicación aquí. Este tablero es solo consulta. No inicia checkout. ' . $note_es,
 			),
 			array(
 				'id'        => 'social',
 				'title'     => 'Social Studio',
 				'title_es'  => 'Estudio social',
-				'detail'    => 'The calendar will hold captions you approve before anything is sent. ' . $note,
-				'detail_es' => 'El calendario guardará textos que usted apruebe antes de enviar nada. ' . $note_es,
+				'detail'    => 'The calendar will hold captions you approve before anything is sent. This board is inquiry only. It does not start checkout. ' . $note,
+				'detail_es' => 'El calendario guardará textos que usted apruebe antes de enviar nada. Este tablero es solo consulta. No inicia checkout. ' . $note_es,
 			),
 			array(
 				'id'        => 'linkedin',
 				'title'     => 'LinkedIn Studio',
 				'title_es'  => 'Estudio LinkedIn',
-				'detail'    => 'Posts and comment drafts stay off until the account connection and platform permission exist. ' . $note,
-				'detail_es' => 'Los borradores de publicaciones y comentarios quedan apagados hasta existir la conexión y el permiso. ' . $note_es,
+				'detail'    => 'Posts and comment drafts stay off until the account connection and platform permission exist. This board is inquiry only. It does not start checkout. ' . $note,
+				'detail_es' => 'Los borradores de publicaciones y comentarios quedan apagados hasta existir la conexión y el permiso. Este tablero es solo consulta. No inicia checkout. ' . $note_es,
 			),
 			array(
 				'id'        => 'chatbot',
 				'title'     => 'Website chatbot',
 				'title_es'  => 'Chat del sitio',
-				'detail'    => 'Approved answers stay in draft until a site owner connects the assistant. ' . $note,
-				'detail_es' => 'Las respuestas aprobadas quedan en borrador hasta que el dueño conecte el asistente. ' . $note_es,
+				'detail'    => 'Approved answers stay in draft until a site owner connects the assistant. This board is inquiry only. It does not start checkout. ' . $note,
+				'detail_es' => 'Las respuestas aprobadas quedan en borrador hasta que el dueño conecte el asistente. Este tablero es solo consulta. No inicia checkout. ' . $note_es,
 			),
 			array(
 				'id'        => 'video',
 				'title'     => 'Video studio',
 				'title_es'  => 'Estudio de video',
-				'detail'    => 'No video is rendered or uploaded from this screen. ' . $note,
-				'detail_es' => 'Esta pantalla no renderiza ni sube video. ' . $note_es,
+				'detail'    => 'No video is rendered or uploaded from this screen. This board is inquiry only. It does not start checkout. ' . $note,
+				'detail_es' => 'Esta pantalla no renderiza ni sube video. Este tablero es solo consulta. No inicia checkout. ' . $note_es,
+			),
+		);
+	}
+}
+
+if ( ! function_exists( 'bds_hub_dashboard_copy' ) ) {
+	/**
+	 * Logged-in dashboard copy. Does not start a charge or claim execution.
+	 *
+	 * @return array{heading:string,lines:array<int,string>}
+	 */
+	function bds_hub_dashboard_copy() {
+		return array(
+			'heading' => 'Your BrandDad dashboard',
+			'lines'   => array(
+				'This screen does not start a charge.',
+				'A basic Directory listing is free. Featured is a separate monthly option.',
+				'SEO, Social, and LinkedIn boards stay inquiry only until Codex connects execution.',
 			),
 		);
 	}

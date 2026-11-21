@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~9:50am America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~9:55am America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -33,7 +33,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | FormWise execution/provisioning keys | **Owner blocker.** Never invent. Flags stay off. |
 | Trial API | Live `GET /wp-json/branddad/v1/trial` **401** anonymous. Provisioning is WP Swings 7-day terms after a real checkout. |
 | Entitlements | Social `BDS_AI_ENTITLEMENTS_ENABLED` already on; FormWise keys absent so lifecycle stays fail-closed. |
-| Featured checkout | Products live. Adapter live. Local **0.2.16** uses **Subscribe monthly**, listing prompt, events/jobs/classifieds doors, classifieds alias. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
+| Featured checkout | Products live. Adapter live. Local **0.2.17** uses **Subscribe monthly**, listing prompt, events/jobs/classifieds doors, classifieds alias. Live `/featured-advertising/` still says Subscribe now until File Manager deploy. Stripe present with cart. No test charge. |
 | Webhooks | Woo/WPS hooks already in trial + subscriptions + featured adapter. Shop-manager Tools **Billing inspect** (local bridge 0.1.3) counts active Woo webhooks as a boolean. Stripe Dashboard delivery list is owner inspect. |
 | GitHub wp-cron schedule | Only schedule run remains `44905829871` success 2026-11-21T12:49:47Z (7:49am America/Cancun). Four earlier `workflow_dispatch` successes. Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron. |
 
@@ -42,14 +42,17 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Item | Status |
 |---|---|
 | Launch trial copy | Live 0.5.26. Buttons “Start 7-day trial” / “Try it free for 7 days.” |
-| Hub trial + account API wiring | Local bridge **0.1.5** (live still 0.1.0 until FM). Surfaces **0.2.7** trial band + shop-manager ops inspect. Live `/account-hub/` already prints the hub. |
-| Featured listing attach | Local **0.2.16** listing prompt, List my business free, events/jobs/classifieds doors, classifieds alias, demo refund modal hidden. Live Featured buy still Subscribe now until FM. |
-| Revenue live CTAs | Local revenue **0.2.24**. Quote-only contact copy. Help next-step band. Live `/services/` still mixes Subscribe now until FM. |
+| Hub trial + account API wiring | Local bridge **0.1.6** (live still 0.1.0 until FM). Surfaces **0.2.8** trial band, studio inquiry copy, dashboard band. Live `/account-hub/` already prints the hub. |
+| Featured listing attach | Local **0.2.17** listing prompt, List my business free, events/jobs/classifieds doors, classifieds alias, demo refund modal hidden, visible focus ring. Live Featured buy still Subscribe now until FM. |
+| Revenue live CTAs | Local revenue **0.2.25**. Quote-only contact copy. Studio/SEO leftover URLs. Help next-step band. Live `/services/` still mixes Subscribe now until FM. |
+| Dashboards / studios | Live `/studio-boards/` on both hosts. Local copy is inquiry-only and does not start checkout. Directory `/dashboard/` gets `#bds-hub-dashboard`. |
+| Account emails | Copy only in bridge **0.1.6**. New-account and reset-password additional content. Does not `wp_mail`. |
+| Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help. Sticky help respects `prefers-reduced-motion`. |
 | Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. |
 | Memberships / blogs | `/memberships/`, `/membership/`, `/plans/` alias to Select your plan. Directory blog door does not sell a listing. |
 | Music / quote-only | Live home already has music brief and “does not take payment.” DFY contact note is quote-only. |
-| Mobile contrast | Sales help **0.1.5** uses `#0668d8` and 44px taps. Contrast suite includes it. |
-| Checkout fail-closed copy | Local bridge **0.1.4** `#bds-checkout-failclosed`. Does not say “no card”. Trial does not grant Directory. |
+| Mobile contrast | Sales help **0.1.6** uses `#0668d8`, 44px taps, focus rings, and reduced-motion. Contrast suite includes it. |
+| Checkout fail-closed copy | Local bridge **0.1.6** `#bds-checkout-failclosed` plus account-email copy. Does not say “no card”. Trial does not grant Directory. |
 | `$6.99` | QA rewrite “not required” plus stored Select-your-plan Activation card. Do not flatten stored prices. |
 
 ## Owner blockers (not Cursor, not Codex code)
@@ -57,7 +60,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.5 / hub 0.2.7 / featured 0.2.16 / revenue 0.2.24 / sales-help 0.1.5 / follow 0.1.3** when signed in. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.8 / featured 0.2.17 / revenue 0.2.25 / sales-help 0.1.6 / follow 0.1.3** when signed in. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -72,8 +75,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched.
-- Live: Social blog has guide-next. Home music brief does not take payment. `/events/` and `/jobs/` have doors. `/classifieds/` 404. Demo refund modal still in HTML on some Directory pages (hidden locally via CSS).
-- Track A: featured **0.2.16** classifieds/memberships aliases, events/jobs/classifieds/blog doors, hide `#dcl-claim-modal`; revenue **0.2.24** quote-only contact note; sales-help **0.1.5** accessible blue; follow **0.1.3** trial membership line; bridge **0.1.5** Woo email footer copy.
-- Suites: featured-rotation, revenue-sections, sales-help, brand-contrast, codex-bridge, follow-consent, customer-hub, conversion, free-listing, lang-switch passed.
-- Deploy when FM signs in: **bridge 0.1.5 / hub 0.2.7 / featured 0.2.16 / revenue 0.2.24 / sales-help 0.1.5 / follow 0.1.3**.
+- Live inspect: `/studio-boards/` 200 with Not connected boards. Local SEO product already Subscribe monthly. Staged SEO product URLs are not published. Dashboard is a login wall.
+- Track A: surfaces **0.2.8** dashboard band + studio inquiry; revenue **0.2.25** `/seo/` → services and staged SEO → contact inquiry; bridge **0.1.6** account-email copy; featured **0.2.17** and sales-help **0.1.6** focus rings.
+- Suites: codex-bridge, customer-hub, revenue-sections, featured-rotation, sales-help, brand-contrast, follow-consent, conversion, free-listing, lang-switch passed.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.8 / featured 0.2.17 / revenue 0.2.25 / sales-help 0.1.6 / follow 0.1.3**.
 - Flags off. No charge. Not pushed.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Surfaces
  * Description: Account hub, membership status, free-AI allowance display, studio boards, and the Partnero affiliate door. Does not charge, invent balances, or publish.
- * Version: 0.2.7
+ * Version: 0.2.8
  * Author: BrandDad
  *
  * Secure design: every account block uses the current WordPress user. Music briefs are limited to that user's posts. Affiliate money stays in Partnero. Studio buttons do not call providers.
@@ -23,7 +23,7 @@ function bds_hub_styles() {
 	if ( ! bds_hub_is_allowed_host() ) {
 		return;
 	}
-	echo '<style id="bds-hub-css">.bds-hub{max-width:980px;margin:24px auto;padding:8px 16px;color:#0b172a}.bds-hub h2{font-size:clamp(26px,4vw,36px);line-height:1.15}.bds-hub section{margin:28px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-hub a,.bds-hub button{display:inline-flex;align-items:center;min-height:44px;margin:8px 8px 0 0;padding:0 14px;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}.bds-hub button[disabled]{background:#e8eef5;color:#526070;border:0}.bds-hub li{margin:6px 0}</style>';
+	echo '<style id="bds-hub-css">.bds-hub{max-width:980px;margin:24px auto;padding:8px 16px;color:#0b172a}.bds-hub h2{font-size:clamp(26px,4vw,36px);line-height:1.15}.bds-hub section{margin:28px 0;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff}.bds-hub a,.bds-hub button{display:inline-flex;align-items:center;min-height:44px;margin:8px 8px 0 0;padding:0 14px;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}.bds-hub button[disabled]{background:#e8eef5;color:#526070;border:0}.bds-hub li{margin:6px 0}.bds-hub a:focus-visible,.bds-hub button:focus-visible,#bds-hub-dashboard a:focus-visible{outline:3px solid #0668d8;outline-offset:2px}#bds-hub-dashboard{max-width:980px;margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;color:#0b172a}</style>';
 }
 add_action( 'wp_head', 'bds_hub_styles', 40 );
 
@@ -212,6 +212,11 @@ function bds_hub_studio_html() {
 	}
 	$sw   = function_exists( 'bds_lang_swap_attrs' );
 	$html = '<section id="bds-studios"><h2' . ( $sw ? bds_lang_swap_attrs( 'SEO, Social, and LinkedIn', 'SEO, redes y LinkedIn' ) : '' ) . '>SEO, Social, and LinkedIn</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'These boards are inquiry only. They do not start checkout or publish.', 'Estos tableros son solo consulta. No inician checkout ni publican.' );
+	} else {
+		$html .= '<p>These boards are inquiry only. They do not start checkout or publish.</p>';
+	}
 	foreach ( bds_hub_studio_cards() as $card ) {
 		$title_es = isset( $card['title_es'] ) ? $card['title_es'] : $card['title'];
 		$html    .= '<article id="bds-studio-' . esc_attr( $card['id'] ) . '"><h3' . ( $sw ? bds_lang_swap_attrs( $card['title'], $title_es ) : '' ) . '>' . esc_html( $card['title'] ) . '</h3>';
@@ -220,7 +225,7 @@ function bds_hub_studio_html() {
 		} else {
 			$html .= '<p>' . esc_html( $card['detail'] ) . '</p>';
 		}
-		$html .= '<button type="button" disabled' . ( $sw ? bds_lang_swap_attrs( 'Not connected', 'No conectado' ) : '' ) . '>Not connected</button></article>';
+		$html .= '<button type="button" disabled aria-disabled="true"' . ( $sw ? bds_lang_swap_attrs( 'Not connected', 'No conectado' ) : '' ) . '>Not connected</button></article>';
 	}
 	$html .= '</section>';
 	return $html;
@@ -368,6 +373,50 @@ add_shortcode( 'bds_account_hub', 'bds_hub_account_shortcode' );
 add_shortcode( 'bds_membership_status', 'bds_hub_membership_html' );
 add_shortcode( 'bds_affiliate_landing', 'bds_hub_affiliate_html' );
 add_shortcode( 'bds_studio_boards', 'bds_hub_studio_html' );
+
+function bds_hub_request_path() {
+	$path = isset( $_SERVER['REQUEST_URI'] ) ? (string) wp_parse_url( wp_unslash( $_SERVER['REQUEST_URI'] ), PHP_URL_PATH ) : '';
+	return trim( $path, '/' );
+}
+
+function bds_hub_dashboard_html() {
+	if ( ! function_exists( 'bds_hub_dashboard_copy' ) ) {
+		return '';
+	}
+	$copy = bds_hub_dashboard_copy();
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section id="bds-hub-dashboard"><h2' . ( $sw ? bds_lang_swap_attrs( $copy['heading'], 'Su panel BrandDad' ) : '' ) . '>' . esc_html( $copy['heading'] ) . '</h2><ul>';
+	$es   = array(
+		'This screen does not start a charge.' => 'Esta pantalla no inicia un cargo.',
+		'A basic Directory listing is free. Featured is a separate monthly option.' => 'Un listado básico es gratis. Featured es una opción mensual aparte.',
+		'SEO, Social, and LinkedIn boards stay inquiry only until Codex connects execution.' => 'Los tableros de SEO, redes y LinkedIn siguen en consulta hasta que Codex conecte la ejecución.',
+	);
+	foreach ( $copy['lines'] as $line ) {
+		$line_es = isset( $es[ $line ] ) ? $es[ $line ] : $line;
+		if ( function_exists( 'bds_lang_pair' ) ) {
+			$html .= bds_lang_pair( $line, $line_es, 'li' );
+		} else {
+			$html .= '<li>' . esc_html( $line ) . '</li>';
+		}
+	}
+	$html .= '</ul><p>';
+	$html .= '<a href="' . esc_url( 'https://directory.branddad.social/add-listing/' ) . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>' . esc_html__( 'List my business free', 'branddad' ) . '</a> ';
+	$html .= '<a href="' . esc_url( 'https://directory.branddad.social/featured-advertising/' ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Get featured', 'Salir destacado' ) : '' ) . '>' . esc_html__( 'Get featured', 'branddad' ) . '</a> ';
+	$html .= '<a href="' . esc_url( home_url( '/studio-boards/' ) ) . '"' . ( $sw ? bds_lang_swap_attrs( 'Open studio boards', 'Abrir tableros' ) : '' ) . '>' . esc_html__( 'Open studio boards', 'branddad' ) . '</a>';
+	return $html . '</p></section>';
+}
+
+function bds_hub_dashboard_footer() {
+	if ( ! bds_hub_is_allowed_host() || is_admin() ) {
+		return;
+	}
+	$path = bds_hub_request_path();
+	if ( 'dashboard' !== $path && 0 !== strpos( $path, 'dashboard/' ) ) {
+		return;
+	}
+	echo bds_hub_dashboard_html(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+add_action( 'wp_footer', 'bds_hub_dashboard_footer', 24 );
 
 function bds_hub_register_pages() {
 	if ( ! bds_hub_is_allowed_host() || ! is_admin() || ! current_user_can( 'manage_options' ) ) {

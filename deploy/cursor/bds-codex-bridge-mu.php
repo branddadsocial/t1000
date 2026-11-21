@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Codex Surface Bridge
  * Description: Cursor-owned checkout, geography, email-proof, and dashboard wiring for the Codex backend. Does not charge, send mail, or enable Codex flags.
- * Version: 0.1.5
+ * Version: 0.1.6
  * Author: BrandDad
  *
  * Secure design (auth / API / ingestion / payments):
@@ -148,6 +148,25 @@ function bds_codex_bridge_email_footer( $text ) {
 }
 add_filter( 'woocommerce_email_footer_text', 'bds_codex_bridge_email_footer', 20 );
 
+/** Append account copy to existing Woo account emails. Does not send mail. */
+function bds_codex_bridge_account_email_content( $content ) {
+	if ( ! bds_codex_bridge_hosts() || ! function_exists( 'bds_codex_account_email_copy' ) ) {
+		return $content;
+	}
+	$copy  = bds_codex_account_email_copy();
+	$extra = implode( ' ', $copy['lines'] );
+	$content = trim( (string) $content );
+	if ( '' === $content ) {
+		return $extra;
+	}
+	if ( false !== strpos( $content, $extra ) ) {
+		return $content;
+	}
+	return $content . "\n" . $extra;
+}
+add_filter( 'woocommerce_email_additional_content_customer_new_account', 'bds_codex_bridge_account_email_content', 20 );
+add_filter( 'woocommerce_email_additional_content_customer_reset_password', 'bds_codex_bridge_account_email_content', 20 );
+
 function bds_codex_bridge_requested_listing() {
 	$raw = isset( $_GET['listing'] ) ? wp_unslash( $_GET['listing'] ) : ( isset( $_POST['_bds_feat_listing_id'] ) ? wp_unslash( $_POST['_bds_feat_listing_id'] ) : '' );
 	$id  = absint( $raw );
@@ -198,7 +217,7 @@ function bds_codex_bridge_styles() {
 	if ( ! bds_codex_bridge_hosts() ) {
 		return;
 	}
-	echo '<style id="bds-codex-bridge-css">#bds-codex-lead,#bds-codex-inquiry,#bds-codex-hub-extra{max-width:720px;margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;color:#0b172a}#bds-codex-lead label,#bds-codex-inquiry label,#bds-codex-hub-extra label{display:flex;flex-direction:column;gap:6px;margin:10px 0}#bds-codex-lead input,#bds-codex-lead select,#bds-codex-inquiry input,#bds-codex-inquiry textarea,#bds-codex-hub-extra input,#bds-codex-hub-extra select{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}#bds-codex-lead button,#bds-codex-inquiry button,#bds-codex-hub-extra button{min-height:44px;margin-top:8px;padding:0 16px;border:0;border-radius:10px;background:#0668d8;color:#fff;font-weight:800}#bds-codex-lead .bds-hp,#bds-codex-inquiry .bds-hp{position:absolute;left:-9999px}</style>';
+	echo '<style id="bds-codex-bridge-css">#bds-codex-lead,#bds-codex-inquiry,#bds-codex-hub-extra{max-width:720px;margin:24px auto;padding:20px;border:1px solid #dbe5ef;border-radius:16px;background:#fff;color:#0b172a}#bds-codex-lead label,#bds-codex-inquiry label,#bds-codex-hub-extra label{display:flex;flex-direction:column;gap:6px;margin:10px 0}#bds-codex-lead input,#bds-codex-lead select,#bds-codex-inquiry input,#bds-codex-inquiry textarea,#bds-codex-hub-extra input,#bds-codex-hub-extra select{min-height:44px;padding:8px;border:1px solid #dbe5ef;border-radius:8px}#bds-codex-lead button,#bds-codex-inquiry button,#bds-codex-hub-extra button{min-height:44px;margin-top:8px;padding:0 16px;border:0;border-radius:10px;background:#0668d8;color:#fff;font-weight:800}#bds-codex-lead .bds-hp,#bds-codex-inquiry .bds-hp{position:absolute;left:-9999px}#bds-codex-lead button:focus-visible,#bds-codex-inquiry button:focus-visible,#bds-codex-hub-extra button:focus-visible,#bds-checkout-failclosed a:focus-visible{outline:3px solid #0668d8;outline-offset:2px}</style>';
 }
 add_action( 'wp_head', 'bds_codex_bridge_styles', 42 );
 

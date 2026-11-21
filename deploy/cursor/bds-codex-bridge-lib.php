@@ -197,6 +197,24 @@ if ( ! function_exists( 'bds_codex_featured_listing_prompt' ) ) {
 	}
 }
 
+if ( ! function_exists( 'bds_codex_account_email_copy' ) ) {
+	/**
+	 * Copy for existing Woo account emails. This helper does not send mail.
+	 *
+	 * @return array{heading:string,lines:array<int,string>}
+	 */
+	function bds_codex_account_email_copy() {
+		return array(
+			'heading' => 'About this account email',
+			'lines'   => array(
+				'This is an account message about a login you already have. It does not start a new charge.',
+				'The 7-day trial does not include Directory membership, Featured, or the 10% member price.',
+				'A basic Directory listing is free and separate.',
+			),
+		);
+	}
+}
+
 if ( ! function_exists( 'bds_codex_email_order_copy' ) ) {
 	/**
 	 * Footer lines for existing Woo emails. Does not send mail or start a charge.

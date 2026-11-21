@@ -95,11 +95,15 @@ rev_expect( true === bds_rev_path_needs_guide( 'affiliate-program' ), 'the affil
 rev_expect( true === bds_rev_path_needs_guide( 'learning-center' ), 'the learning center gets a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'start-a-campaign' ), 'start a campaign gets a next step' );
 rev_expect( true === bds_rev_path_needs_guide( 'help' ), 'help gets a next step' );
+rev_expect( true === bds_rev_path_needs_guide( 'studio-boards' ), 'studio boards get a next step' );
+rev_expect( true === bds_rev_path_needs_guide( 'seo' ), 'seo leftover URLs get a next step' );
 rev_expect( false === bds_rev_path_needs_guide( 'pricing' ), 'the missing pricing page is not a destination' );
 rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'pricing' ), 'pricing opens the services catalog' );
 rev_expect( false !== strpos( bds_rev_alias_dest( 'music' ), '#branddad-music' ), 'music opens the brief' );
 rev_expect( false !== strpos( bds_rev_alias_dest( 'ai-packages' ), 'services' ), 'package aliases open services' );
 rev_expect( false !== strpos( bds_rev_alias_dest( 'complete-ai-starter' ), 'offer=complete-ai-starter' ), 'staged packages open an inquiry' );
+rev_expect( bds_rev_services_url() === bds_rev_alias_dest( 'seo' ), 'seo leftover URLs open the services catalog' );
+rev_expect( false !== strpos( bds_rev_alias_dest( 'ai-seo-pro' ), 'offer=ai-seo-pro' ), 'staged SEO Autopilot opens an inquiry' );
 rev_expect( '' === bds_rev_alias_dest( 'services' ), 'real catalog URLs are not redirected' );
 rev_expect( false === bds_rev_path_needs_guide( 'my-account/orders' ), 'the account area uses the onboarding screen' );
 rev_expect( true === bds_rev_path_needs_onboard( 'my-account/orders' ), 'the account area gets the onboarding screen' );
@@ -142,6 +146,7 @@ rev_expect( false === bds_rev_is_order_received( 'checkout' ), 'the payment page
 rev_expect( false !== strpos( $thanks, 'List my business free' ), 'the thank-you page offers the free listing' );
 rev_expect( false !== strpos( $thanks, 'does not start another charge' ), 'the thank-you page does not start another charge' );
 rev_expect( false !== strpos( $thanks, '7-day trial' ), 'the thank-you page explains the trial' );
+rev_expect( false !== strpos( $thanks, 'Directory membership is not included' ), 'onboarding does not grant Directory membership' );
 rev_expect( false !== strpos( $thanks, 'min-height:44px' ), 'the onboarding buttons meet the phone tap size' );
 rev_expect( false === strpos( strtolower( $thanks ), 'no card' ), 'the onboarding screen does not say no card' );
 rev_expect( false === strpos( $strip, 'Ask about this plan' ), 'homepage strip does not mix inquiry CTAs' );
