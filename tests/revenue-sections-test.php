@@ -255,7 +255,9 @@ $dup_out = bds_rev_strip_theme_entry_title_h1( $dup );
 rev_expect( false === strpos( $dup_out, '<h1 class="entry-title">About Us</h1>' ), 'theme About Us is not a second H1' );
 rev_expect( false !== strpos( $dup_out, '<h1>Practical growth systems, clearly explained.</h1>' ), 'the real about heading stays' );
 $rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.31' ), 'revenue MU stamps 0.2.31' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.32' ), 'revenue MU stamps 0.2.32' );
+rev_expect( false === strpos( $rev_src, 'wp_get_referer' ), 'music brief redirect stays on Social home' );
+rev_expect( false !== strpos( $rev_src, "home_url( '/?bds_music=saved' )" ), 'a saved brief returns to Social home' );
 
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} revenue section tests failed\n" );

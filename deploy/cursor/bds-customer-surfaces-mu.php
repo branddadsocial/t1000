@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Customer Surfaces
  * Description: Account hub, membership status, free-AI allowance display, studio boards, and the Partnero affiliate door. Does not charge, invent balances, or publish.
- * Version: 0.2.9
+ * Version: 0.2.10
  * Author: BrandDad
  *
  * Secure design: every account block uses the current WordPress user. Music briefs are limited to that user's posts. Affiliate money stays in Partnero. Studio buttons do not call providers.
@@ -478,7 +478,7 @@ function bds_hub_handle_save() {
 	$action     = isset( $_POST['save_action'] ) ? sanitize_key( wp_unslash( $_POST['save_action'] ) ) : '';
 	$post       = get_post( $listing_id );
 	if ( ! $post instanceof WP_Post || 'at_biz_dir' !== $post->post_type || 'publish' !== $post->post_status ) {
-		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : home_url( '/' ) );
+		wp_safe_redirect( home_url( '/' ) );
 		exit;
 	}
 	$result = bds_hub_saved_change( bds_hub_saved_ids(), $listing_id, $action );

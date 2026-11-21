@@ -48,7 +48,9 @@ assert_true( false === bds_follow_path_ok( 'cart' ), 'cart does not get a second
 assert_true( false === bds_follow_path_ok( 'my-account/orders' ), 'My Account does not get a second email box' );
 assert_true( false === bds_follow_path_ok( 'account-hub' ), 'account hub does not get a second email box' );
 assert_true( false === bds_follow_path_ok( 'studio-boards' ), 'studio boards do not get a second email box' );
-assert_true( false !== strpos( $src, 'Version: 0.1.6' ), 'follow consent stamps 0.1.6' );
+assert_true( false !== strpos( $src, 'Version: 0.1.7' ), 'follow consent stamps 0.1.7' );
+assert_true( false !== strpos( $src, 'bds_follow_return_url' ), 'follow return stays on this host' );
+assert_true( false !== strpos( $src, '/wp-login.php' ), 'follow return refuses wp-login' );
 assert_true( false !== strpos( $src, '#0668d8' ), 'follow form uses the approved accessible blue' );
 assert_true( false !== strpos( $src, ':focus-visible' ), 'follow form keeps a visible focus ring' );
 assert_true( false !== strpos( $src, 'Guardar mi correo' ), 'follow submit Spanish is tagged' );

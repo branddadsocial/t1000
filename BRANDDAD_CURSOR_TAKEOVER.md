@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~4:50pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~5:35pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -55,14 +55,14 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Item | Status |
 |---|---|
 | Launch trial copy | Live 0.5.26. Buttons “Start 7-day trial” / “Try it free for 7 days.” |
-| Hub trial + account API wiring | Local bridge **0.1.6** (live still 0.1.0 until FM). Surfaces **0.2.9** guest “See membership plans” → Directory `/select-your-plan/`. Live `/account-hub/` still says See plans until FM. |
+| Hub trial + account API wiring | Local bridge **0.1.6** (live still 0.1.0 until FM). Surfaces **0.2.10** guest “See membership plans” → Directory `/select-your-plan/`. Live `/account-hub/` still says See plans until FM. |
 | Featured listing attach | Local **0.2.24** listing prompt, leftover Subscribe now / See plans rewrites, events/jobs/classifieds/travel/hotels/gifts doors, sign-in and empty-search copy, classifieds alias, faq/sitemap/how-it-works → help, demo refund modal hidden, homepage HTML rewrite for `#bdd-title` / leftover gift / retired WhatsApp hero. Live Featured buy still Subscribe now until FM. |
-| Revenue live CTAs | Local revenue **0.2.31**. Shop archive prints the live plan strip. Sitemap leftover URLs open services. Leftover `/faqs/` `/faq/` open help. Leftover `/careers/` opens contact. Leftover Subscribe now / Choose this plan / See plans rewrites. Quote-only contact copy. Privacy/terms/press/refunds next-step band. Cookie leftover URLs open privacy. Studio-boards and account-hub keep their own next step (no second guide band). Live `/services/` still mixes Subscribe now until FM. |
+| Revenue live CTAs | Local revenue **0.2.32**. Music brief return stays on Social home. Shop archive prints the live plan strip. Sitemap leftover URLs open services. Leftover `/faqs/` `/faq/` open help. Leftover `/careers/` opens contact. Leftover Subscribe now / Choose this plan / See plans rewrites. Quote-only contact copy. Privacy/terms/press/refunds next-step band. Cookie leftover URLs open privacy. Studio-boards and account-hub keep their own next step (no second guide band). Live `/services/` still mixes Subscribe now until FM. |
 | Dashboards / studios | Live `/studio-boards/` on both hosts. Local copy is inquiry-only and does not start checkout. Directory `/dashboard/` gets `#bds-hub-dashboard`. |
 | Account emails | Copy only in bridge **0.1.6**. New-account and reset-password additional content. Does not `wp_mail`. |
 | Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help, follow, lang-switch, free-listing. Sticky help respects `prefers-reduced-motion`. |
 | Gift / travel / legal | Gift marketplace copy is not a BrandDad charge. Travel/hotels do not sell tickets. Social privacy/terms get the next-step band. |
-| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Follow **0.1.6** skips those same surfaces so checkout is not a second email box. Conversion **0.1.3** counts hub and door clicks and skips checkout, cart, My Account, account-hub, and studio-boards. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow still does not send. |
+| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Follow **0.1.7** skips those same surfaces so checkout is not a second email box, and return URLs refuse wp-admin/wp-login. Conversion **0.1.3** counts hub and door clicks and skips checkout, cart, My Account, account-hub, and studio-boards. Lang-switch **0.1.4** uses `#0668d8` and 44px taps. Follow still does not send. |
 | Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. Gift and flights `directory_type` queries now map to marketplace/travel copy. Featured MU stamp **0.2.24**. |
 | Memberships / blogs | `/memberships/`, `/membership/`, `/plans/` alias to Select your plan. Directory blog door does not sell a listing. |
 | Music / quote-only | Live home already has music brief and “does not take payment.” DFY contact note is quote-only. |
@@ -75,7 +75,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.9 / featured 0.2.24 / revenue 0.2.31 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.3 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.10 / featured 0.2.24 / revenue 0.2.32 / sales-help 0.1.7 / follow 0.1.7 / conversion 0.1.3 / lang 0.1.4 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -205,11 +205,11 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 ## This pass
 
 - FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Follow-up worker **0.1.3** stays off. No StartHost cron. No new live-copy plugin.
-- Track A leftover not waiting on FM to write: conversion **0.1.3** skips checkout, cart, My Account, account-hub, and studio-boards, matching sales-help **0.1.7** and follow **0.1.6**. It still cannot mark `payment_completed`. Unknown event names stay dropped.
-- Remaining Cursor-unblocked local leftovers are now in git. Live still waits on the owner actions below.
+- Track B leftover: music brief (revenue **0.2.32**) and invalid saved-listing (hub **0.2.10**) no longer follow the browser referer. Follow **0.1.7** return URLs refuse wp-admin and wp-login. Destinations stay on BrandDad home or the same-host public page.
+- Live still waits on the owner actions below. Cursor cannot upload, invent FormWise keys, reconnect Stripe, or charge.
 - GitHub wp-cron remains **two** successful schedule runs ~7 hours apart (`44905829871` 7:49am, `44943159190` 2:51pm America/Cancun). Not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
-- Suites: conversion-events. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.9 / featured 0.2.24 / revenue 0.2.31 / sales-help 0.1.7 / follow 0.1.6 / conversion 0.1.3 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2, execution 0.2.5, and follow-up worker **0.1.3** are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
+- Suites: revenue-sections, customer-hub, follow-consent. rafter secrets empty. `rafter run` quota remains exhausted until 2026-11-23.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.10 / featured 0.2.24 / revenue 0.2.32 / sales-help 0.1.7 / follow 0.1.7 / conversion 0.1.3 / lang 0.1.4 / free-listing 0.1.6**. Onboarding 0.1.2, execution 0.2.5, and follow-up worker **0.1.3** are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
 - Flags off. No charge. Not pushed.
 
 ## Owner actions (nothing else Cursor can finish without these)

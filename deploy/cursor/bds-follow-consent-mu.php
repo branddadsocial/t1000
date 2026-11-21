@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Follow Consent
  * Description: Saves an email only when the person asks BrandDad to write to them. It does not send mail.
- * Version: 0.1.6
+ * Version: 0.1.7
  * Author: BrandDad
  *
  * Ingestion: public form → nonce check → email, consent, and source only.
@@ -193,10 +193,25 @@ function bds_follow_handle() {
  * @param string $result saved or no.
  * @return void
  */
-function bds_follow_redirect( $result ) {
+function bds_follow_return_url() {
+	$home = home_url( '/' );
 	$back = wp_get_referer();
-	$back = $back ? wp_validate_redirect( $back, home_url( '/' ) ) : home_url( '/' );
-	wp_safe_redirect( add_query_arg( 'bds_follow', 'saved' === $result ? 'saved' : 'no', $back ) );
+	if ( ! is_string( $back ) || '' === $back ) {
+		return $home;
+	}
+	$safe = wp_validate_redirect( $back, $home );
+	if ( ! is_string( $safe ) || '' === $safe ) {
+		return $home;
+	}
+	$path = strtolower( (string) wp_parse_url( $safe, PHP_URL_PATH ) );
+	if ( 0 === strpos( $path, '/wp-admin' ) || 0 === strpos( $path, '/wp-login.php' ) ) {
+		return $home;
+	}
+	return $safe;
+}
+
+function bds_follow_redirect( $result ) {
+	wp_safe_redirect( add_query_arg( 'bds_follow', 'saved' === $result ? 'saved' : 'no', bds_follow_return_url() ) );
 	exit;
 }
 add_action( 'admin_post_nopriv_bds_follow_consent', 'bds_follow_handle' );
