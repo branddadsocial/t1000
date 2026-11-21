@@ -114,7 +114,7 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.23' ), 'featured MU stamps 0.2.23' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.24' ), 'featured MU stamps 0.2.24' );
 expect( false !== strpos( $feat_src, 'bds-feat-home-legacy' ), 'homepage unhides the Directory Experience heading' );
 expect( false !== strpos( $feat_src, 'bdd-title' ), 'the parked #bdd-title heading is restored' );
 expect( false !== strpos( $feat_src, 'bds-dfc-gift' ), 'leftover homepage gift markup is removed' );
@@ -154,6 +154,7 @@ expect( false !== strpos( $feat_src, 'bds-feat-hide-refund' ), 'demo refund moda
 expect( false !== strpos( $feat_src, 'directory_type=classifieds' ), 'classifieds alias opens the classifieds directory type' );
 expect( false !== strpos( $feat_src, 'bds_feat_memberships_alias' ), 'membership leftover URLs open Select your plan' );
 expect( false !== strpos( $feat_src, 'bds_feat_help_alias' ), 'faq and sitemap leftover URLs open Directory help' );
+expect( false !== strpos( $feat_src, "'how-it-works'" ), 'how-it-works leftover URLs open Directory help' );
 expect( false !== strpos( $feat_src, 'Membership prices on Select your plan are unchanged' ), 'membership copy does not flatten prices' );
 $no_list = bds_feat_listing_checkout_prompt( 0 );
 expect( false === $no_list['attached'], 'buy page without listing stays unattached' );
