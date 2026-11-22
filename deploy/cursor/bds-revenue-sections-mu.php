@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.44
+ * Version: 0.2.45
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -519,7 +519,11 @@ function bds_rev_rewrite_home_conversion( $html ) {
 		),
 		$html
 	);
-	if ( false !== strpos( $html, 'class="bdai-hero"' ) && false === strpos( $html, 'bds-rev-hero-list' ) ) {
+	$hero = '';
+	if ( preg_match( '#<section class="bdai-hero"[\s\S]*?</section>#', $html, $match ) ) {
+		$hero = $match[0];
+	}
+	if ( '' !== $hero && false === strpos( $hero, 'List my business free' ) && false === strpos( $html, 'bds-rev-hero-list' ) ) {
 		$list = '<a class="bdai-button bdai-button--light bds-rev-hero-list" href="' . esc_url( bds_rev_dir_url( '/add-listing/' ) ) . '"';
 		if ( function_exists( 'bds_lang_swap_attrs' ) ) {
 			$list .= bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' );
@@ -1350,6 +1354,25 @@ function bds_rev_alias_dest( $path ) {
 			}
 		}
 		return $url;
+	}
+	if ( in_array( $path, array( 'demo', 'book-a-demo' ), true ) ) {
+		return home_url( '/product/ai-business-essentials/' );
+	}
+	if ( in_array( $path, array( 'features', 'solutions', 'compare' ), true ) ) {
+		return bds_rev_services_url();
+	}
+	if ( in_array( $path, array( 'chatbot', 'chatbots' ), true ) ) {
+		$url = add_query_arg( 'offer', 'done-for-you-ai', home_url( '/contact-us/' ) );
+		if ( function_exists( 'bds_po_url' ) ) {
+			$out = bds_po_url( $url );
+			if ( is_string( $out ) && '' !== $out ) {
+				return $out;
+			}
+		}
+		return $url;
+	}
+	if ( in_array( $path, array( 'onboarding', 'welcome' ), true ) ) {
+		return home_url( '/account-hub/' );
 	}
 	return '';
 }
