@@ -444,7 +444,7 @@ $bot_body_out = bds_rev_rewrite_conversion_ctas( $bot_body );
 rev_expect( false === strpos( $bot_body_out, '$29.99' ), 'chatbot copy does not keep a closed checkout dollar' );
 rev_expect( false !== strpos( $bot_body_out, 'quote-only' ), 'chatbot copy says quote-only' );
 rev_expect( false !== strpos( $bot_body_out, '>Request a scoped quote</a>' ), 'chatbot CTA is still Request a scoped quote' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.49' ), 'revenue MU stamps 0.2.49' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.50' ), 'revenue MU stamps 0.2.50' );
 rev_expect( true === bds_rev_is_closed_checkout_slug( 'complete-ai-growth' ), 'Complete AI Growth checkout stays closed' );
 rev_expect( true === bds_rev_is_closed_checkout_slug( 'music-original-single' ), 'music product checkout stays closed' );
 rev_expect( true === bds_rev_is_closed_checkout_slug( 'ai-linkedin-growth' ), 'LinkedIn checkout stays closed' );
@@ -466,6 +466,31 @@ rev_expect( false !== strpos( $music_out, '>Send a music brief</a>' ), 'music pr
 rev_expect( false !== strpos( $music_out, '/#branddad-music' ), 'music product page opens the brief form' );
 $ess_page = '<div class="summary entry-summary"><h1 class="product_title entry-title">AI Business Essentials</h1><p class="price"><span>$29.99</span></p><form class="cart" method="post"><button type="submit" name="add-to-cart" value="1">Start 7-day trial</button></form></div>';
 rev_expect( $ess_page === bds_rev_rewrite_quote_product_html( $ess_page, 'ai-business-essentials' ), 'Essentials product page keeps the trial price and checkout' );
+$closed_live = '<div class="summary entry-summary"><h1 class="product_title entry-title">Complete AI Growth</h1></div><p>Prefer to talk first? Pick a time. This package is quote-only.</p>';
+$closed_live_out = bds_rev_rewrite_quote_product_html( $closed_live, 'complete-ai-growth' );
+rev_expect( false !== strpos( $closed_live_out, '>Request a scoped quote</a>' ), 'quote product still requests a scoped quote when Woo hid the cart' );
+rev_expect( false !== strpos( $closed_live_out, 'offer=complete-ai-growth' ), 'hidden-cart quote still opens contact with the offer' );
+$li = new class() {
+	public function get_slug() {
+		return 'ai-linkedin-growth';
+	}
+	public function get_id() {
+		return 53790;
+	}
+};
+$loop_closed = bds_rev_loop_add_to_cart_link( '<a href="/checkout/?add-to-cart=53790">Subscribe monthly</a>', $li );
+rev_expect( false === strpos( $loop_closed, 'add-to-cart' ), 'related LinkedIn does not keep add-to-cart' );
+rev_expect( false !== strpos( $loop_closed, '>Request a scoped quote</a>' ), 'related LinkedIn requests a scoped quote' );
+$ess = new class() {
+	public function get_slug() {
+		return 'ai-business-essentials';
+	}
+	public function get_id() {
+		return 1;
+	}
+};
+$loop_ess = '<a href="/checkout/?add-to-cart=1">Start 7-day trial</a>';
+rev_expect( $loop_ess === bds_rev_loop_add_to_cart_link( $loop_ess, $ess ), 'related Essentials keeps trial checkout' );
 rev_expect( home_url( '/contact-us/' ) === bds_rev_alias_dest( 'book-a-call' ), 'dead Social book-a-call URLs open contact' );
 rev_expect( home_url( '/contact-us/' ) === bds_rev_alias_dest( 'talk-to-sales' ), 'dead Social talk-to-sales URLs open contact' );
 rev_expect( false !== strpos( bds_rev_alias_dest( 'enterprise' ), 'offer=done-for-you-ai' ), 'dead Social enterprise URLs open the DFY quote' );
