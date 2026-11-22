@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.45
+ * Version: 0.2.46
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -504,6 +504,14 @@ function bds_rev_rewrite_home_conversion( $html ) {
 			'Hable con BrandDad sobre ayuda hecha por nosotros',
 			'data-bds-copy-en="Talk to BrandDad about done-for-you help"',
 			'data-bds-copy-es="Hable con BrandDad sobre ayuda hecha por nosotros"',
+			'Request a scoped assistant — $29.99/month',
+			'Pedir un asistente acotado — $29.99/mes',
+			'data-bds-copy-en="Request a scoped assistant — $29.99/month"',
+			'data-bds-copy-es="Pedir un asistente acotado — $29.99/mes"',
+			'Request LinkedIn Growth — $29.99/month',
+			'Pedir LinkedIn Growth — $29.99/mes',
+			'data-bds-copy-en="Request LinkedIn Growth — $29.99/month"',
+			'data-bds-copy-es="Pedir LinkedIn Growth — $29.99/mes"',
 			'>List your business</a>',
 		),
 		array(
@@ -511,6 +519,14 @@ function bds_rev_rewrite_home_conversion( $html ) {
 			'Empiece la prueba de 7 días',
 			'data-bds-copy-en="Start 7-day trial"',
 			'data-bds-copy-es="Empiece la prueba de 7 días"',
+			'Request a scoped quote',
+			'Pedir una cotización',
+			'data-bds-copy-en="Request a scoped quote"',
+			'data-bds-copy-es="Pedir una cotización"',
+			'Request a scoped quote',
+			'Pedir una cotización',
+			'data-bds-copy-en="Request a scoped quote"',
+			'data-bds-copy-es="Pedir una cotización"',
 			'Request a scoped quote',
 			'Pedir una cotización',
 			'data-bds-copy-en="Request a scoped quote"',
@@ -539,7 +555,54 @@ function bds_rev_rewrite_home_conversion( $html ) {
 			$html = $out;
 		}
 	}
+	if ( false !== strpos( $html, 'class="bdai-final"' ) && false === strpos( $html, 'id="bdai-directory-title"' ) ) {
+		$band = bds_rev_directory_listing_band();
+		$out  = preg_replace( '#(<section class="bdai-final"[\s\S]*?</section>)#', '$1' . $band, $html, 1 );
+		if ( is_string( $out ) ) {
+			$html = $out;
+		}
+	}
 	return $html;
+}
+
+/**
+ * Closing Directory door used on home. Services currently skips it.
+ *
+ * @return string
+ */
+function bds_rev_directory_listing_band() {
+	$dir = esc_url( bds_rev_dir_url( '/add-listing/' ) );
+	$sw  = function_exists( 'bds_lang_swap_attrs' );
+	$html = '<section class="bdai-directory-cta" id="bds-rev-directory-cta" aria-labelledby="bdai-directory-title"><div>';
+	$html .= '<p class="bdai-kicker"' . ( $sw ? bds_lang_swap_attrs( 'Already running a business?', '¿Ya tiene un negocio?' ) : '' ) . '>' . esc_html__( 'Already running a business?', 'branddad' ) . '</p>';
+	$html .= '<h2 id="bdai-directory-title"' . ( $sw ? bds_lang_swap_attrs( 'Own a business? Get listed free.', '¿Tiene un negocio? Listarlo es gratis.' ) : '' ) . '>' . esc_html__( 'Own a business? Get listed free.', 'branddad' ) . '</h2>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$html .= bds_lang_pair( 'Add your business so people can find you and contact you. A basic listing is free. We review it before it goes live. This does not start a paid plan.', 'Agregue su negocio para que la gente lo encuentre y lo contacte. Un listado básico es gratis. Lo revisamos antes de publicarlo. Esto no inicia un plan de pago.' );
+	} else {
+		$html .= '<p>' . esc_html__( 'Add your business so people can find you and contact you. A basic listing is free. We review it before it goes live. This does not start a paid plan.', 'branddad' ) . '</p>';
+	}
+	$html .= '</div><a class="bdai-button" href="' . $dir . '"' . ( $sw ? bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' ) : '' ) . '>' . esc_html__( 'List my business free', 'branddad' ) . '</a></section>';
+	return $html;
+}
+
+/**
+ * Services already prints the launch catalog. Do not stack a second buy grid on top of it.
+ *
+ * @param string $content Page HTML.
+ * @return string
+ */
+function bds_rev_services_follow_on( $content ) {
+	$content = (string) $content;
+	if ( false !== strpos( $content, 'id="bds-revenue-sections"' ) ) {
+		return $content;
+	}
+	if ( false !== strpos( $content, 'id="catalog-specialized"' ) || false !== strpos( $content, 'id="branddad-complete-packages"' ) ) {
+		if ( false !== strpos( $content, 'id="bds-rev-home-strip"' ) ) {
+			return $content;
+		}
+		return bds_rev_inject_before_final( $content, bds_rev_home_strip() );
+	}
+	return bds_rev_inject_before_final( $content, bds_rev_markup() );
 }
 
 function bds_rev_rewrite_conversion_ctas( $html ) {
@@ -1167,10 +1230,7 @@ function bds_rev_append_content( $content ) {
 		return $content;
 	}
 	if ( is_page( 'services' ) ) {
-		if ( false !== strpos( $content, 'id="bds-revenue-sections"' ) ) {
-			return $content;
-		}
-		return bds_rev_inject_before_final( $content, bds_rev_markup() );
+		return bds_rev_services_follow_on( $content );
 	}
 	if ( is_page( 'check-your-website' ) ) {
 		if ( false !== strpos( $content, 'id="bds-rev-home-strip"' ) ) {
