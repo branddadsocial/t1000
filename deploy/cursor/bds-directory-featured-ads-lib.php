@@ -524,6 +524,12 @@ if ( ! function_exists( 'bds_feat_rewrite_home_legacy_html' ) ) {
 		);
 		$html = is_string( $out ) ? $out : $html;
 		$out  = preg_replace(
+			'#(<a\b[^>]*)>List your business</a>#',
+			'$1>List my business free</a>',
+			$html
+		);
+		$html = is_string( $out ) ? $out : $html;
+		$out  = preg_replace(
 			'#(<a\b[^>]*href="[^"]*select-your-plan[^"]*"[^>]*)>See plans(?: and prices| &amp; prices| & prices)?(?:\s*(?:→|&rarr;))?</a>#u',
 			'$1>See membership plans</a>',
 			$html

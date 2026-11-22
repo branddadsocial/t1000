@@ -444,7 +444,9 @@ $bot_body_out = bds_rev_rewrite_conversion_ctas( $bot_body );
 rev_expect( false === strpos( $bot_body_out, '$29.99' ), 'chatbot copy does not keep a closed checkout dollar' );
 rev_expect( false !== strpos( $bot_body_out, 'quote-only' ), 'chatbot copy says quote-only' );
 rev_expect( false !== strpos( $bot_body_out, '>Request a scoped quote</a>' ), 'chatbot CTA is still Request a scoped quote' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.50' ), 'revenue MU stamps 0.2.50' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.51' ), 'revenue MU stamps 0.2.51' );
+rev_expect( false !== strpos( $rev_src, 'bds_rev_rewrite_list_dest' ), 'footer listing doors are rewritten' );
+rev_expect( false === strpos( $rev_src, "'services' !== \$path && 'contact-us' !== \$path" ), 'conversion rewrite is not limited to home services contact' );
 rev_expect( true === bds_rev_is_closed_checkout_slug( 'complete-ai-growth' ), 'Complete AI Growth checkout stays closed' );
 rev_expect( true === bds_rev_is_closed_checkout_slug( 'music-original-single' ), 'music product checkout stays closed' );
 rev_expect( true === bds_rev_is_closed_checkout_slug( 'ai-linkedin-growth' ), 'LinkedIn checkout stays closed' );
@@ -491,6 +493,12 @@ $ess = new class() {
 };
 $loop_ess = '<a href="/checkout/?add-to-cart=1">Start 7-day trial</a>';
 rev_expect( $loop_ess === bds_rev_loop_add_to_cart_link( $loop_ess, $ess ), 'related Essentials keeps trial checkout' );
+$hub = '<a class="bds-nc-primary" href="https://directory.branddad.social/add-listing/">List your business</a>'
+	. '<a href="https://directory.branddad.social/registration/?redirect_to=https%3A%2F%2Fdirectory.branddad.social%2Fadd-listing%2F&#038;utm_source=branddad_social&#038;utm_medium=footer">List my business free</a>';
+$hub_out = bds_rev_rewrite_conversion_ctas( $hub );
+rev_expect( false === strpos( $hub_out, '>List your business</a>' ), 'leftover List your business becomes List my business free' );
+rev_expect( false === strpos( $hub_out, 'registration/?redirect_to' ), 'footer listing door skips the registration bounce' );
+rev_expect( false !== strpos( $hub_out, 'https://directory.branddad.social/add-listing/' ), 'footer listing door opens add-listing' );
 rev_expect( home_url( '/contact-us/' ) === bds_rev_alias_dest( 'book-a-call' ), 'dead Social book-a-call URLs open contact' );
 rev_expect( home_url( '/contact-us/' ) === bds_rev_alias_dest( 'talk-to-sales' ), 'dead Social talk-to-sales URLs open contact' );
 rev_expect( false !== strpos( bds_rev_alias_dest( 'enterprise' ), 'offer=done-for-you-ai' ), 'dead Social enterprise URLs open the DFY quote' );

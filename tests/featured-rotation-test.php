@@ -114,7 +114,8 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.37' ), 'featured MU stamps 0.2.37' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.38' ), 'featured MU stamps 0.2.38' );
+expect( false !== strpos( $feat_src, 'bds_feat_rewrite_page_html' ), 'Directory leftover copy is rewritten on the whole page' );
 expect( false !== strpos( $feat_src, 'bds-feat-menu-clear' ), 'Directory header menus are laid out' );
 expect( false !== strpos( $feat_src, '.bdd-mobile-menu' ), 'mobile hamburger is a separate control' );
 expect( false !== strpos( $feat_src, '@media(max-width:900px)' ), 'desktop nav hides on small screens so it does not sit on the hamburger' );
@@ -130,6 +131,8 @@ $home_html = '<style>body.home #bdd-title{position:absolute;left:-9999px;width:1
 	. '<h2 id="bdd-area-title">Start With Your Location</h2>'
 	. '<a href="/gift-card-marketplace/">Shop gift cards</a>'
 	. '<a class="bdd-button" href="https://directory.branddad.social/add-listing/">List My Business</a>'
+	. '<a href="https://directory.branddad.social/add-listing/?utm_source=home_blog">List your business</a>'
+	. '<span>A basic listing is free. Paid plans include 10% off eligible services. <a href="https://directory.branddad.social/select-your-plan/?ref=house">See plans</a></span>'
 	. '<a class="bdd-owner-plans" href="https://directory.branddad.social/select-your-plan/#bdd-current-plans">See plans and prices →</a>'
 	. '<a href="https://directory.branddad.social/select-your-plan/">See plans</a>'
 	. '<a class="bds-hcta__btn" href="https://directory.branddad.social/select-your-plan/" data-bds-copy-en="See plans &amp; prices">See plans &amp; prices</a>';
@@ -143,7 +146,8 @@ expect( false === strpos( $home_out, 'id="bds-wa-hero"' ), 'retired WhatsApp her
 expect( false !== strpos( $home_out, 'gift-card-marketplace' ), 'gift marketplace link stays' );
 expect( false !== strpos( $home_out, '>List my business free</a>' ), 'Directory hero lists free' );
 expect( false === strpos( $home_out, '>List My Business</a>' ), 'Directory hero no longer hides that listing is free' );
-expect( 3 === substr_count( $home_out, '>See membership plans</a>' ), 'Directory plan CTAs say See membership plans' );
+expect( false === strpos( $home_out, '>List your business</a>' ), 'Directory leftover List your business becomes List my business free' );
+expect( 4 === substr_count( $home_out, '>See membership plans</a>' ), 'Directory plan CTAs say See membership plans' );
 expect( false === strpos( $home_out, 'See plans and prices' ), 'owner card no longer says See plans and prices' );
 expect( false === strpos( $home_out, 'See plans &amp; prices' ), 'bottom CTA no longer says See plans and prices' );
 $keep_hero = bds_feat_rewrite_home_legacy_html( '<section id="bds-wa-hero"><h1 id="bdd-title">Find What You Need Near You—Fast.</h1></section>' );

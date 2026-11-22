@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.50
+ * Version: 0.2.51
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL. Quote-only / music / staged slugs are not purchasable: product id maps to post_name on the server, Woo is_purchasable and add-to-cart validation fail closed, closed cart rows are removed, and public price HTML is emptied. Essentials and other launch_candidate / live_legacy products stay purchasable. No new endpoints. No secrets.
@@ -894,6 +894,16 @@ function bds_rev_services_follow_on( $content ) {
 	return bds_rev_inject_before_final( $content, bds_rev_markup() );
 }
 
+function bds_rev_rewrite_list_dest( $html ) {
+	$html = (string) $html;
+	$out  = preg_replace(
+		'~https://directory\.branddad\.social/registration/\?redirect_to=https%3A%2F%2Fdirectory\.branddad\.social%2Fadd-listing%2F(?:&#038;|&amp;|&)[^"\']*~',
+		'https://directory.branddad.social/add-listing/',
+		$html
+	);
+	return is_string( $out ) ? $out : $html;
+}
+
 function bds_rev_rewrite_conversion_ctas( $html ) {
 	$html   = bds_rev_rewrite_featured_ask( $html );
 	$html   = bds_rev_rewrite_choose_plan( $html );
@@ -902,6 +912,7 @@ function bds_rev_rewrite_conversion_ctas( $html ) {
 	$html   = bds_rev_rewrite_quote_packages( $html );
 	$html   = bds_rev_rewrite_home_conversion( $html );
 	$html   = bds_rev_rewrite_closed_checkout_cards( $html );
+	$html   = bds_rev_rewrite_list_dest( $html );
 	if ( function_exists( 'is_product' ) && is_product() && function_exists( 'get_post_field' ) && function_exists( 'get_queried_object_id' ) ) {
 		$html = bds_rev_rewrite_quote_product_html( $html, (string) get_post_field( 'post_name', get_queried_object_id() ) );
 	}
@@ -1909,7 +1920,8 @@ function bds_rev_heading_buffer_start() {
 add_action( 'template_redirect', 'bds_rev_heading_buffer_start', 1 );
 
 /**
- * Home, services, and contact still render leftover launch Complete AI prices until File Manager deploys this MU.
+ * Header, footer, and leftover pages still print List your business and a
+ * registration listing door. Rewrite the whole public HTML, not only home.
  *
  * @return void
  */
@@ -1920,9 +1932,10 @@ function bds_rev_quote_buffer_start() {
 	if ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) {
 		return;
 	}
-	$path      = bds_rev_request_path();
-	$is_product = function_exists( 'is_product' ) && is_product();
-	if ( '' !== $path && 'services' !== $path && 'contact-us' !== $path && ! $is_product ) {
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return;
+	}
+	if ( function_exists( 'is_feed' ) && is_feed() ) {
 		return;
 	}
 	ob_start( 'bds_rev_rewrite_conversion_ctas' );
