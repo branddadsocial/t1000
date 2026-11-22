@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.31
+ * Version: 0.2.32
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -960,6 +960,9 @@ function bds_feat_leftover_dest( $path ) {
 	$path = strtolower( trim( (string) $path, '/' ) );
 	if ( in_array( $path, array( 'gifts', 'marketplace', 'discount-gift-cards', 'cheap-gift-cards', 'giftcards', 'discount-cards' ), true ) ) {
 		return home_url( '/gift-card-marketplace/' );
+	}
+	if ( 'sell-gift-cards' === $path ) {
+		return home_url( '/sell-gift-card/' );
 	}
 	if ( in_array( $path, array( 'all-locations', 'locations' ), true ) ) {
 		return home_url( '/all-listings/' );
