@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.46
+ * Version: 0.2.47
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -92,9 +92,7 @@ function bds_rev_card( array $offer ) {
 	$quote = bds_rev_is_quote_offer( $offer['slug'] );
 	$html  = '<article class="bds-rev-card"' . ( $quote ? ' id="' . esc_attr( $offer['slug'] ) . '"' : '' ) . '><h3>' . esc_html( $offer['name'] ) . '</h3>';
 	$sw    = function_exists( 'bds_lang_swap_attrs' );
-	if ( $quote ) {
-		$html .= '<p class="bds-rev-price"' . ( $sw ? bds_lang_swap_attrs( 'On request', 'Bajo petición' ) : '' ) . '>' . esc_html__( 'On request', 'branddad' ) . '</p>';
-	} else {
+	if ( ! $quote ) {
 		$html .= '<p class="bds-rev-price">' . esc_html( $offer['price'] ) . '</p>';
 	}
 	if ( ! empty( $offer['who_es'] ) && function_exists( 'bds_lang_pair' ) ) {
@@ -343,12 +341,8 @@ function bds_rev_rewrite_quote_article( $html, $slug ) {
 		$pattern,
 		static function ( $m ) {
 			$inner = $m[2];
-			$price = '<p class="bdai-price"><strong>On request</strong></p>';
-			if ( function_exists( 'bds_lang_swap_attrs' ) ) {
-				$price = '<p class="bdai-price"><strong' . bds_lang_swap_attrs( 'On request', 'Bajo petición' ) . '>On request</strong></p>';
-			}
-			$inner = preg_replace( '#<p class="bdai-price">.*?</p>#is', $price, $inner );
-			$inner = preg_replace( '#<p class="bds-rev-price"[^>]*>.*?</p>#is', '<p class="bds-rev-price">On request</p>', is_string( $inner ) ? $inner : $m[2] );
+			$inner = preg_replace( '#<p class="bdai-price"[^>]*>.*?</p>#is', '', $inner );
+			$inner = preg_replace( '#<p class="bds-rev-price"[^>]*>.*?</p>#is', '', is_string( $inner ) ? $inner : $m[2] );
 			$inner = is_string( $inner ) ? $inner : $m[2];
 			$inner = str_replace(
 				array(

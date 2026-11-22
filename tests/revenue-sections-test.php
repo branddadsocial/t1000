@@ -80,6 +80,7 @@ rev_expect( false === strpos( $quote, '$79.99' ), 'Complete AI Starter has no do
 rev_expect( false === strpos( $quote, '$149.99' ), 'Complete AI Growth has no dollar price' );
 rev_expect( false === strpos( $quote, '$249.99' ), 'Complete AI Pro has no dollar price' );
 rev_expect( false === strpos( $quote, '$399' ), 'Done-for-You has no dollar price' );
+rev_expect( false === strpos( $quote, 'bds-rev-price' ), 'quote cards have no price line above the quote button' );
 rev_expect( false === strpos( $quote, 'Ask about this plan' ), 'quote cards do not say Ask about this plan' );
 $pos_live  = strpos( bds_rev_markup(), 'Plans you can buy now' );
 $pos_quote = strpos( bds_rev_markup(), 'Complete AI packages — scoped quote' );
@@ -248,7 +249,7 @@ $legacy_pkg = '<section id="branddad-complete-packages"><p>These bundles show th
 $legacy_out = bds_rev_rewrite_quote_packages( $legacy_pkg );
 rev_expect( false === strpos( $legacy_out, '$79.99' ), 'leftover Complete AI Starter price is stripped' );
 rev_expect( false === strpos( $legacy_out, '$399' ), 'leftover Done-for-You price is stripped' );
-rev_expect( false !== strpos( $legacy_out, 'On request' ), 'leftover Complete AI cards say On request' );
+rev_expect( false === strpos( $legacy_out, 'class="bdai-price"' ), 'leftover Complete AI cards drop the price row' );
 rev_expect( false !== strpos( $legacy_out, 'Request a scoped quote' ), 'leftover Ask before checkout becomes Request a scoped quote' );
 rev_expect( false === strpos( $legacy_out, 'Ask before checkout' ), 'leftover Ask before checkout is removed' );
 rev_expect( false !== strpos( $legacy_out, 'Request a scoped quote. Self-serve checkout stays closed' ), 'leftover package intro drops the printed price' );
@@ -263,7 +264,9 @@ rev_expect( false === strpos( $live_out, '$79.99' ), 'live Complete AI Starter p
 rev_expect( false === strpos( $live_out, '$399' ), 'live Done-for-You price is stripped' );
 rev_expect( false !== strpos( $live_out, '$79.00' ), 'music project price is left alone' );
 rev_expect( false !== strpos( $live_out, '$29.99' ), 'Essentials FAQ price is left alone' );
-rev_expect( false !== strpos( $live_out, 'On request' ), 'live Complete AI cards say On request' );
+rev_expect( 1 === preg_match( '#<article class="bdai-card" id="complete-ai-starter">(?P<body>.*?)</article>#s', $live_out, $starter_card ) ? 1 : 0, 'live Complete AI Starter card is still present' );
+rev_expect( false === strpos( isset( $starter_card['body'] ) ? $starter_card['body'] : '', 'bdai-price' ), 'live Complete AI Starter has no price at the top' );
+rev_expect( false === strpos( isset( $starter_card['body'] ) ? $starter_card['body'] : '', '$' ), 'live Complete AI Starter body has no leftover dollar' );
 rev_expect( false !== strpos( $live_out, 'Quote-only after a written scope' ), 'live Done-for-You summary drops the dollar floor' );
 rev_expect( false !== strpos( $live_out, 'Scope can change with channels' ), 'live Done-for-You limit no longer says Price' );
 rev_expect( false === strpos( $live_out, 'id="bds-rev-quote-packages"' ), 'launch complete packages are not duplicated' );
@@ -414,7 +417,7 @@ rev_expect( '' === bds_rev_alias_dest( 'consultation' ), 'the live Social /consu
 rev_expect( '' === bds_rev_alias_dest( 'ai' ), 'the live Social /ai/ Essentials redirect is not stolen' );
 rev_expect( '' === bds_rev_alias_dest( 'thank-you' ), 'the live Social /thank-you/ page is not stolen' );
 $rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.46' ), 'revenue MU stamps 0.2.46' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.47' ), 'revenue MU stamps 0.2.47' );
 rev_expect( false !== strpos( $rev_src, 'bds_rev_allowed_redirect_hosts' ), 'Social leftover doors may open Directory' );
 rev_expect( false === strpos( $rev_src, 'wp_get_referer' ), 'music brief redirect stays on Social home' );
 rev_expect( false !== strpos( $rev_src, "home_url( '/?bds_music=saved' )" ), 'a saved brief returns to Social home' );
