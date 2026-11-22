@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Language Switch
  * Description: English / Español control for BrandDad Social and Directory. One language on screen. No Google Translate. Charge currency stays USD.
- * Version: 0.1.5
+ * Version: 0.1.6
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins.
@@ -11,6 +11,7 @@
  * Secure design:
  * - Not auth. Preference cookie only. Values allowlisted to en|es.
  * - GET bd_lang is allowlisted the same way. Unknown values stay English.
+ * - Leftover geo cookies named bd_lang and the old translate cookie are ignored. The chosen language is bds_lang and only after bd_lc_manual=1 (GET persist or the EN/ES click).
  * - Cookie is not HttpOnly so the first paint can hide the other language. SameSite=Lax. Path /. Domain .branddad.social when the host is that network.
  * - No file upload, no SQL, no outbound fetch, no payment or account change.
  * - Does not run Google Translate on checkout or anywhere else.
@@ -22,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LANG_SWITCH_VER', '0.1.5' );
+define( 'BDS_LANG_SWITCH_VER', '0.1.6' );
 
 /**
  * Social and Directory only.
@@ -61,8 +62,9 @@ function bds_lang_current() {
 	if ( isset( $_GET['bd_lang'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return bds_lang_sanitize( wp_unslash( $_GET['bd_lang'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
-	if ( isset( $_COOKIE['bd_lang'] ) ) {
-		return bds_lang_sanitize( wp_unslash( $_COOKIE['bd_lang'] ) );
+	$manual = isset( $_COOKIE['bd_lc_manual'] ) ? (string) wp_unslash( $_COOKIE['bd_lc_manual'] ) : '';
+	if ( '1' === $manual && isset( $_COOKIE['bds_lang'] ) ) {
+		return bds_lang_sanitize( wp_unslash( $_COOKIE['bds_lang'] ) );
 	}
 	return 'en';
 }
@@ -87,10 +89,10 @@ function bds_lang_persist( $lang ) {
 		$opts['domain'] = '.branddad.social';
 	}
 	if ( function_exists( 'setcookie' ) ) {
-		setcookie( 'bd_lang', $lang, $opts );
+		setcookie( 'bds_lang', $lang, $opts );
 		setcookie( 'bd_lc_manual', '1', $opts );
 	}
-	$_COOKIE['bd_lang']      = $lang;
+	$_COOKIE['bds_lang']     = $lang;
 	$_COOKIE['bd_lc_manual'] = '1';
 }
 
@@ -208,7 +210,7 @@ function bds_lang_head() {
 		. '@media (max-width:782px){body.admin-bar #bds-lang-switch{top:132px}}'
 		. 'body.bds-header-recovered #site-header .site-navigation>ul{flex-wrap:wrap}'
 		. '</style>' . "\n";
-	echo '<script id="bds-lang-switch-boot" data-bds-lang-switch="' . $ver . '">(function(){try{var q=(location.search.match(/[?&]bd_lang=([^&]*)/)||[])[1];var m=document.cookie.match(/(?:^|; )bd_lang=([^;]*)/);var lang=q?decodeURIComponent(q.replace(/\\+/g," ")):(m?decodeURIComponent(m[1]):"en");lang=String(lang).toLowerCase().replace(/[^a-z]/g,"");if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);if(lang==="es")document.documentElement.setAttribute("lang","es");}catch(e){}})();</script>' . "\n";
+	echo '<script id="bds-lang-switch-boot" data-bds-lang-switch="' . $ver . '">(function(){try{var q=(location.search.match(/[?&]bd_lang=([^&]*)/)||[])[1];var man=(document.cookie.match(/(?:^|; )bd_lc_manual=([^;]*)/)||[])[1];var m=(document.cookie.match(/(?:^|; )bds_lang=([^;]*)/)||[])[1];var lang=q?decodeURIComponent(q.replace(/\\+/g," ")):(man==="1"&&m?decodeURIComponent(m):"en");lang=String(lang).toLowerCase().replace(/[^a-z]/g,"");if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);if(lang==="es")document.documentElement.setAttribute("lang","es");}catch(e){}})();</script>' . "\n";
 }
 add_action( 'wp_head', 'bds_lang_head', 0 );
 
@@ -242,6 +244,6 @@ function bds_lang_switch_markup() {
 	echo '<button type="button" data-bds-lang-pick="en" aria-pressed="true">EN</button>';
 	echo '<button type="button" data-bds-lang-pick="es" aria-pressed="false">ES</button>';
 	echo '</div>';
-	echo '<script id="bds-lang-switch-js">(function(){function cookieSet(n,v){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax;domain=.branddad.social";}catch(e){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax";}catch(err){}}}function apply(lang){if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);document.documentElement.setAttribute("lang",lang==="es"?"es":"en");cookieSet("bd_lang",lang);cookieSet("bd_lc_manual","1");document.querySelectorAll("[data-bds-copy-en]").forEach(function(el){var t=el.getAttribute(lang==="es"?"data-bds-copy-es":"data-bds-copy-en");if(!t)return;if(el.tagName==="INPUT"||el.tagName==="TEXTAREA")el.setAttribute("placeholder",t);else el.textContent=t;});document.querySelectorAll("[data-bds-copy]").forEach(function(el){el.hidden=el.getAttribute("data-bds-copy")!==lang;});document.querySelectorAll("[data-bds-lang-pick]").forEach(function(btn){btn.setAttribute("aria-pressed",btn.getAttribute("data-bds-lang-pick")===lang?"true":"false");});}var root=document.getElementById("bds-lang-switch");if(!root)return;root.addEventListener("click",function(e){var btn=e.target.closest("[data-bds-lang-pick]");if(!btn)return;apply(btn.getAttribute("data-bds-lang-pick"));});apply(document.documentElement.getAttribute("data-bds-lang")||"en");})();</script>';
+	echo '<script id="bds-lang-switch-js">(function(){function cookieSet(n,v){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax;domain=.branddad.social";}catch(e){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax";}catch(err){}}}function apply(lang,persist){if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);document.documentElement.setAttribute("lang",lang==="es"?"es":"en");if(persist){cookieSet("bds_lang",lang);cookieSet("bd_lc_manual","1");}document.querySelectorAll("[data-bds-copy-en]").forEach(function(el){var t=el.getAttribute(lang==="es"?"data-bds-copy-es":"data-bds-copy-en");if(!t)return;if(el.tagName==="INPUT"||el.tagName==="TEXTAREA")el.setAttribute("placeholder",t);else el.textContent=t;});document.querySelectorAll("[data-bds-copy]").forEach(function(el){el.hidden=el.getAttribute("data-bds-copy")!==lang;});document.querySelectorAll("[data-bds-lang-pick]").forEach(function(btn){btn.setAttribute("aria-pressed",btn.getAttribute("data-bds-lang-pick")===lang?"true":"false");});}var root=document.getElementById("bds-lang-switch");if(!root)return;root.addEventListener("click",function(e){var btn=e.target.closest("[data-bds-lang-pick]");if(!btn)return;apply(btn.getAttribute("data-bds-lang-pick"),true);});apply(document.documentElement.getAttribute("data-bds-lang")||"en",false);})();</script>';
 }
 add_action( 'wp_footer', 'bds_lang_switch_markup', 5 );

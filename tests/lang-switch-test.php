@@ -117,11 +117,11 @@ function assert_true( $cond, $message ) {
 }
 
 $_SERVER['HTTP_HOST'] = 'branddad.social';
-unset( $_GET['bd_lang'], $_COOKIE['bd_lang'] );
+unset( $_GET['bd_lang'], $_COOKIE['bd_lang'], $_COOKIE['bds_lang'], $_COOKIE['bd_lc_manual'] );
 
 require dirname( __DIR__ ) . '/deploy/cursor/bds-lang-switch-mu.php';
 
-assert_true( '0.1.5' === BDS_LANG_SWITCH_VER, 'language switch version' );
+assert_true( '0.1.6' === BDS_LANG_SWITCH_VER, 'language switch version' );
 assert_true( 'en' === bds_lang_sanitize( '<script>' ), 'unknown input becomes English' );
 assert_true( 'en' === bds_lang_sanitize( 'fr' ), 'French is not a public language' );
 assert_true( 'es' === bds_lang_sanitize( 'ES' ), 'Spanish is allowlisted' );
@@ -131,6 +131,13 @@ assert_true( 'es' === bds_lang_current(), 'GET bd_lang=es is Spanish' );
 $_GET['bd_lang'] = 'xx';
 assert_true( 'en' === bds_lang_current(), 'unknown GET stays English' );
 unset( $_GET['bd_lang'] );
+$_COOKIE['bd_lang'] = 'es';
+assert_true( 'en' === bds_lang_current(), 'leftover geo bd_lang cookie is not auto-Spanish' );
+unset( $_COOKIE['bd_lang'] );
+$_COOKIE['bds_lang']     = 'es';
+$_COOKIE['bd_lc_manual'] = '1';
+assert_true( 'es' === bds_lang_current(), 'a chosen bds_lang cookie is Spanish' );
+unset( $_COOKIE['bds_lang'], $_COOKIE['bd_lc_manual'] );
 
 $pair = bds_lang_pair( 'Hello', 'Hola', 'p', 'lead' );
 assert_true( false !== strpos( $pair, 'data-bds-copy="en"' ) && false !== strpos( $pair, 'data-bds-copy="es"' ), 'pair tags both languages' );
@@ -149,6 +156,9 @@ assert_true( false === strpos( $src, '#0372ff' ), 'the lower-contrast switcher b
 assert_true( false !== strpos( $src, ':focus-visible' ), 'the switcher keeps a visible focus ring' );
 assert_true( false !== strpos( $src, 'location.search' ), 'cached pages read the language from the browser, not from PHP' );
 assert_true( false !== strpos( $src, 'remove_query_arg' ), 'bd_lang is stripped so shared cache stays English' );
+assert_true( false !== strpos( $src, 'bds_lang' ), 'the chosen language cookie is not the leftover geo name' );
+assert_true( false !== strpos( $src, 'bd_lc_manual' ), 'Spanish requires an explicit pick' );
+assert_true( false !== strpos( $src, 'apply(lang,persist)' ) || false !== strpos( $src, 'function apply(lang,persist)' ), 'the first paint does not persist leftover geo as a pick' );
 
 ob_start();
 bds_lang_switch_markup();

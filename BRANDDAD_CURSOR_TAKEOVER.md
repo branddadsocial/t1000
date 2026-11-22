@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~7:08pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~7:10pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -62,11 +62,11 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 | Account emails | Copy only in bridge **0.1.6**. New-account and reset-password additional content. Does not `wp_mail`. |
 | Accessibility | `#0668d8` + `:focus-visible` on hub, featured, revenue, bridge, sales-help, follow, lang-switch, free-listing. Sticky help respects `prefers-reduced-motion`. |
 | Gift / travel / legal | Gift marketplace copy is not a BrandDad charge. Travel/hotels do not sell tickets. Social privacy/terms get the next-step band. |
-| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Follow **0.1.7** skips those same surfaces so checkout is not a second email box, and return URLs refuse wp-admin/wp-login. Conversion **0.1.3** counts hub and door clicks and skips checkout, cart, My Account, account-hub, and studio-boards. Lang-switch **0.1.5** uses `#0668d8` and 44px taps, sits under the header on the left, and hides leftover `#bd-lc-root`. Follow still does not send. |
+| Sales help / conversion / lang | Sales-help **0.1.7** answers Featured, music, and gift cards. It does not render on checkout, cart, My Account, account-hub, or studio-boards (those already have a next step). Follow **0.1.7** skips those same surfaces so checkout is not a second email box, and return URLs refuse wp-admin/wp-login. Conversion **0.1.3** counts hub and door clicks and skips checkout, cart, My Account, account-hub, and studio-boards. Lang-switch **0.1.6** uses `#0668d8` and 44px taps, sits under the header on the left, hides leftover `#bd-lc-root`, and ignores leftover geo `bd_lang` cookies unless the visitor picks EN/ES. Follow still does not send. |
 | Events / jobs / classifieds | Live `/events/` and `/jobs/` already door. `/classifieds/` was 404; local aliases to `all-listings/?directory_type=classifieds`. Gift and flights `directory_type` queries now map to marketplace/travel copy. Featured MU stamp **0.2.32**. |
 | Memberships / blogs | `/memberships/`, `/membership/`, `/plans/` alias to Select your plan. Directory blog door does not sell a listing. |
 | Music / quote-only | Live home already has music brief and “does not take payment.” DFY contact note is quote-only. |
-| Mobile contrast | Sales help **0.1.7** and lang-switch **0.1.5** use `#0668d8`, 44px taps, and focus rings. Contrast suite includes them. |
+| Mobile contrast | Sales help **0.1.7** and lang-switch **0.1.6** use `#0668d8`, 44px taps, and focus rings. Contrast suite includes them. |
 | Checkout fail-closed copy | Local bridge **0.1.6** `#bds-checkout-failclosed` plus account-email copy. Does not say “no card”. Trial does not grant Directory. |
 | `$6.99` | QA rewrite “not required” plus stored Select-your-plan Activation card. Do not flatten stored prices. |
 
@@ -75,7 +75,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 1. FormWise keys (execution + provisioning). Keep `BDS_FOLLOWUP_*`, lead, inquiry, monitor, sales-assistant flags off until keys exist.
 2. Stripe reconnect / webhook signing secret in Woo or Stripe Dashboard if renewals fail. Inspect-only from Cursor.
 3. SSH restore from this PC.
-4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.10 / featured 0.2.32 / revenue 0.2.39 / sales-help 0.1.7 / follow 0.1.7 / conversion 0.1.3 / lang 0.1.5 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
+4. **File Manager session.** Parked Chrome hwnd 197924 is on Client Panel login (`https://cp.clientpanel.us/login?...`). No credentials were typed. Deploy **bridge 0.1.6 / hub 0.2.10 / featured 0.2.32 / revenue 0.2.39 / sales-help 0.1.7 / follow 0.1.7 / conversion 0.1.3 / lang 0.1.6 / free-listing 0.1.6** when signed in. Do not start a new Chrome window.
 5. StartHost Scheduled Tasks still “Cron failed to add.” Do not enable while GitHub + spawn MU exist.
 6. Live test charge authorization. None given.
 
@@ -208,7 +208,8 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 - Confirmed live steal dests: `/faq/` → contact-us, `/work-with-us/` → hire-branddad, `/seo/` → SEO-101 article, `/help/` → SEO article, Directory `/membership/` 200, `/select/` 200, `/get-featured/` 200, `/sell-gift-card/` 200. Featured **0.2.32** aliases aborting `/sell-gift-cards/` to the live seller door. `/sell/` already 301s there.
 - GitHub wp-cron now **three** successful schedule runs: `44905829871` 7:49am, `44943159190` 2:51pm, `44964342477` 6:58pm America/Cancun. Still hours apart, not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
 - vexp MCP is healthy but indexed `branddad-seoestore`, not this worktree. Did not edit seoestore. rafter secrets empty. `rafter run` attempted; remote quota was exhausted until 2026-11-23.
-- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.10 / featured 0.2.32 / revenue 0.2.39 / sales-help 0.1.7 / follow 0.1.7 / conversion 0.1.3 / lang 0.1.5 / free-listing 0.1.6**. Onboarding 0.1.2, execution 0.2.5, and follow-up worker **0.1.3** are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
+- Live leftover geo sets `bd_lang=es` on responses. Lang-switch **0.1.6** ignores that cookie. Chosen language is `bds_lang` after `bd_lc_manual=1` (GET or EN/ES click). First paint stays English. HostTech still English-only.
+- Deploy when FM signs in: **bridge 0.1.6 / hub 0.2.10 / featured 0.2.32 / revenue 0.2.39 / sales-help 0.1.7 / follow 0.1.7 / conversion 0.1.3 / lang 0.1.6 / free-listing 0.1.6**. Onboarding 0.1.2, execution 0.2.5, and follow-up worker **0.1.3** are Codex backend on Social; upload with that set only if those files are in the signed-in FM tree.
 - Flags off. No charge. Not pushed.
 
 ## Owner actions (nothing else Cursor can finish without these)
