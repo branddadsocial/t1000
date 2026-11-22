@@ -2,7 +2,7 @@
 
 Authoritative Cursor takeover of remaining Social + Directory, including Codex backend already in this tree. Do not wait for Codex. Do not start a new project. Do not overwrite newer live files with older local copies.
 
-Last cycle 2026-11-21 ~7:05pm America/Cancun. Cycle: inspect → implement → test → save → continue.
+Last cycle 2026-11-21 ~7:08pm America/Cancun. Cycle: inspect → implement → test → save → continue.
 
 ## Hard rules
 
@@ -204,7 +204,7 @@ Handoff docs (`BRANDDAD_CODEX_HANDOFF.md`, `BRANDDAD_CURSOR_BLOCKERS.md`) still 
 
 ## This pass
 
-- FM still login (hwnd 197924 at `-2400`, title Sign in to Client Panel). Credentials not typed. Catalog 0.3.4 and launch 0.5.26 not touched. Follow-up worker **0.1.3** stays off. No StartHost cron. No new live-copy plugin. No charge.
+- Windows PowerShell is 5.1: use `deploy/cursor/_inspect.ps1` (no bash `&&`, no python `-c` with `-bor`). Probe leftover URLs with `curl.exe`. PHP `file_get_contents` TLS is unreliable here. FM still login (hwnd 197924, Sign in to Client Panel). Catalog 0.3.4 and launch 0.5.26 not touched. No charge.
 - Confirmed live steal dests: `/faq/` → contact-us, `/work-with-us/` → hire-branddad, `/seo/` → SEO-101 article, `/help/` → SEO article, Directory `/membership/` 200, `/select/` 200, `/get-featured/` 200, `/sell-gift-card/` 200. Featured **0.2.32** aliases aborting `/sell-gift-cards/` to the live seller door. `/sell/` already 301s there.
 - GitHub wp-cron now **three** successful schedule runs: `44905829871` 7:49am, `44943159190` 2:51pm, `44964342477` 6:58pm America/Cancun. Still hours apart, not a 5-minute cadence. Spawn MU stays. Do not add StartHost cron.
 - vexp MCP is healthy but indexed `branddad-seoestore`, not this worktree. Did not edit seoestore. rafter secrets empty. `rafter run` attempted; remote quota was exhausted until 2026-11-23.
