@@ -114,7 +114,7 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.33' ), 'featured MU stamps 0.2.33' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.34' ), 'featured MU stamps 0.2.34' );
 expect( false !== strpos( $feat_src, 'bds-feat-menu-clear' ), 'Directory header menus are laid out' );
 expect( false !== strpos( $feat_src, '.bdd-mobile-menu' ), 'mobile hamburger is a separate control' );
 expect( false !== strpos( $feat_src, '@media(max-width:900px)' ), 'desktop nav hides on small screens so it does not sit on the hamburger' );
@@ -185,6 +185,10 @@ expect( false !== strpos( $feat_src, "home_url( '/dashboard/' )" ), 'Directory m
 expect( false !== strpos( $feat_src, "'claim-listing'" ), 'Directory claim-listing leftover opens the live claim page' );
 expect( false !== strpos( $feat_src, "'featured-ads'" ), 'Directory featured-ads leftover opens Featured' );
 expect( false !== strpos( $feat_src, "home_url( '/terms-and-conditions/' )" ), 'Directory legal leftover opens terms' );
+expect( false !== strpos( $feat_src, "'new-listing'" ), 'Directory new-listing leftover opens add listing' );
+expect( false !== strpos( $feat_src, "'claim-business'" ), 'Directory claim-business leftover opens the live claim page' );
+expect( false !== strpos( $feat_src, "'elite'" ), 'Directory elite leftover opens Select your plan' );
+expect( false !== strpos( $feat_src, "'businesses'" ), 'Directory businesses leftover opens listings' );
 expect( false !== strpos( $feat_src, 'https://branddad.social/product/ai-business-essentials/' ), 'Directory trial leftover opens Social Essentials' );
 expect( false !== strpos( $feat_src, 'bds_feat_allowed_redirect_hosts' ), 'Directory leftover trial may open Social' );
 expect( false !== strpos( $feat_src, 'Membership prices on Select your plan are unchanged' ), 'membership copy does not flatten prices' );

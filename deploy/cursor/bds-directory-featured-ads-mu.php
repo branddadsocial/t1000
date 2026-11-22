@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.33
+ * Version: 0.2.34
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -1008,6 +1008,18 @@ function bds_feat_leftover_dest( $path ) {
 	}
 	if ( 'legal' === $path ) {
 		return home_url( '/terms-and-conditions/' );
+	}
+	if ( 'new-listing' === $path ) {
+		return home_url( '/add-listing/' );
+	}
+	if ( 'claim-business' === $path ) {
+		return home_url( '/claim-your-business-listing-branddad-directory/' );
+	}
+	if ( 'elite' === $path ) {
+		return home_url( '/select-your-plan/' );
+	}
+	if ( 'businesses' === $path ) {
+		return home_url( '/all-listings/' );
 	}
 	if ( 'trial' === $path ) {
 		return 'https://branddad.social/product/ai-business-essentials/';
