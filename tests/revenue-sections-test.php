@@ -64,7 +64,7 @@ rev_expect( null === bds_rev_offer_by_slug( 'not-a-real-offer' ), 'unknown offer
 rev_expect( null === bds_rev_offer_by_slug( '<script>x</script>' ), 'markup slug is rejected' );
 rev_expect( is_array( bds_rev_offer_by_slug( 'featured-local' ) ), 'featured inquiry slug is allowlisted' );
 
-list( $live, $ask ) = bds_rev_split_offer_cards();
+list( $live, $ask, $quote ) = bds_rev_split_offer_cards();
 rev_expect( false !== strpos( $live, 'Subscribe monthly' ), 'live cards use Subscribe monthly' );
 rev_expect( false === strpos( $live, 'Subscribe now' ), 'live cards no longer say Subscribe now' );
 rev_expect( false !== strpos( $live, '/product/ai-social-growth/' ), 'live Social Growth goes to the published product' );
@@ -72,9 +72,20 @@ rev_expect( false !== strpos( $live, 'ref=house' ), 'live Subscribe link keeps t
 rev_expect( false === strpos( $live, 'Ask about this plan' ), 'live grid does not mix inquiry buttons' );
 rev_expect( false !== strpos( $ask, 'Ask about this plan' ), 'closed plans stay in the inquiry grid' );
 rev_expect( false !== strpos( $ask, 'ai-business-monitoring' ), 'monitoring stays inquiry' );
-$pos_live = strpos( bds_rev_markup(), 'Plans you can buy now' );
-$pos_ask  = strpos( bds_rev_markup(), 'Upcoming plans' );
+rev_expect( false === strpos( $ask, 'complete-ai-starter' ), 'Complete AI is not mixed into the inquiry grid' );
+rev_expect( false !== strpos( $quote, 'Request a scoped quote' ), 'Complete AI cards request a scoped quote' );
+rev_expect( false !== strpos( $quote, 'Complete AI Starter' ), 'Complete AI Starter is in the quote grid' );
+rev_expect( false !== strpos( $quote, 'Done-for-You AI Management' ), 'Done-for-You is in the quote grid' );
+rev_expect( false === strpos( $quote, '$79.99' ), 'Complete AI Starter has no dollar price' );
+rev_expect( false === strpos( $quote, '$149.99' ), 'Complete AI Growth has no dollar price' );
+rev_expect( false === strpos( $quote, '$249.99' ), 'Complete AI Pro has no dollar price' );
+rev_expect( false === strpos( $quote, '$399' ), 'Done-for-You has no dollar price' );
+rev_expect( false === strpos( $quote, 'Ask about this plan' ), 'quote cards do not say Ask about this plan' );
+$pos_live  = strpos( bds_rev_markup(), 'Plans you can buy now' );
+$pos_quote = strpos( bds_rev_markup(), 'Complete AI packages — scoped quote' );
+$pos_ask   = strpos( bds_rev_markup(), 'Upcoming plans' );
 rev_expect( false !== $pos_live && false !== $pos_ask && $pos_live < $pos_ask, 'buyable plans render before inquiry' );
+rev_expect( false !== $pos_quote && $pos_live < $pos_quote && $pos_quote < $pos_ask, 'scoped-quote packages sit between buyable and inquiry' );
 rev_expect( false !== strpos( bds_rev_markup(), '/featured-advertising/' ), 'Directory featured door is present' );
 
 $strip = bds_rev_home_strip();
@@ -183,9 +194,10 @@ if ( ! function_exists( 'bds_lang_pair' ) ) {
 $guide_es = bds_rev_guide_next();
 rev_expect( false !== strpos( $guide_es, 'Un listado básico es gratis' ) && false !== strpos( $guide_es, 'data-bds-copy="es"' ), 'Spanish guide copy is tagged for the switcher' );
 rev_expect( false !== strpos( $guide_es, 'A Directory listing is free' ), 'English guide copy stays in the HTML' );
-list( $live_es, $ask_es ) = bds_rev_split_offer_cards();
+list( $live_es, $ask_es, $quote_es ) = bds_rev_split_offer_cards();
 rev_expect( false !== strpos( $live_es, 'Suscribirse cada mes' ) && false !== strpos( $live_es, 'data-bds-copy-es=' ), 'live Subscribe monthly Spanish is tagged' );
 rev_expect( false !== strpos( $ask_es, 'Preguntar por este plan' ) && false !== strpos( $ask_es, 'data-bds-copy-es=' ), 'inquiry Ask about this plan Spanish is tagged' );
+rev_expect( false !== strpos( $quote_es, 'Pedir una cotización' ) && false !== strpos( $quote_es, 'data-bds-copy-es=' ), 'quote Request a scoped quote Spanish is tagged' );
 $strip_es = bds_rev_home_strip();
 rev_expect( false !== strpos( $strip_es, 'Subscribe abre solo si el producto' ) && false !== strpos( $strip_es, 'data-bds-copy="es"' ), 'Spanish homepage strip is tagged' );
 rev_expect( false !== strpos( $strip_es, 'Suscribirse a' ) && false !== strpos( $strip_es, 'data-bds-copy-es=' ), 'homepage Subscribe-to labels are tagged Spanish' );
@@ -219,8 +231,25 @@ rev_expect( false !== strpos( $ask_note, 'does not start checkout' ), 'staged co
 rev_expect( false === strpos( $ask_note, 'Subscribe monthly' ), 'staged contact note does not invent checkout' );
 $quote_note = bds_rev_offer_note_html( 'done-for-you-ai' );
 rev_expect( false !== strpos( $quote_note, 'quote-only' ), 'Done-for-You stays quote-only' );
+rev_expect( false !== strpos( $quote_note, 'Request a scoped quote' ), 'Done-for-You contact note asks for a scoped quote' );
+rev_expect( false === strpos( $quote_note, '$399' ), 'Done-for-You contact note has no dollar price' );
 rev_expect( false === strpos( $quote_note, 'Subscribe monthly' ), 'quote-only contact note does not invent checkout' );
 rev_expect( false === strpos( strtolower( $quote_note ), 'no card' ), 'quote-only contact note does not say no card' );
+$starter_note = bds_rev_offer_note_html( 'complete-ai-starter' );
+rev_expect( false !== strpos( $starter_note, 'Request a scoped quote' ), 'Complete AI Starter contact note asks for a scoped quote' );
+rev_expect( false === strpos( $starter_note, '$79.99' ), 'Complete AI Starter contact note has no dollar price' );
+rev_expect( is_array( bds_rev_offer_by_slug( 'done-for-you-ai-management' ) ), 'launch DFY slug still opens the quote note' );
+$legacy_pkg = '<section id="branddad-complete-packages"><p>These bundles show the proposed workload and price. Self-serve checkout stays closed until shared entitlements and fulfillment are verified. Request a quote if you want BrandDad to scope one now.</p>'
+	. '<article class="bdai-card" id="complete-ai-starter"><h3>Complete AI Starter</h3><p class="bdai-price"><strong>$79.99</strong><span>/month</span></p><a href="https://branddad.social/contact-us/?offer=complete-ai-starter">Ask before checkout</a></article>'
+	. '<article class="bdai-card" id="done-for-you-ai-management"><h3>Done-for-You AI Management</h3><p class="bdai-price"><strong>from $399.00</strong><span>/month</span></p><p>Starts at $399 per month after a written scope. This is not an instant checkout product.</p></article>'
+	. '</section>';
+$legacy_out = bds_rev_rewrite_quote_packages( $legacy_pkg );
+rev_expect( false === strpos( $legacy_out, '$79.99' ), 'leftover Complete AI Starter price is stripped' );
+rev_expect( false === strpos( $legacy_out, '$399' ), 'leftover Done-for-You price is stripped' );
+rev_expect( false !== strpos( $legacy_out, 'On request' ), 'leftover Complete AI cards say On request' );
+rev_expect( false !== strpos( $legacy_out, 'Request a scoped quote' ), 'leftover Ask before checkout becomes Request a scoped quote' );
+rev_expect( false === strpos( $legacy_out, 'Ask before checkout' ), 'leftover Ask before checkout is removed' );
+rev_expect( false !== strpos( $legacy_out, 'Prices are on request after a scoped quote' ), 'leftover package intro drops the printed price' );
 rev_expect( '' === bds_rev_offer_note_html( '<script>x</script>' ), 'markup offer notes print nothing' );
 rev_expect(
 	'https://directory.branddad.social/featured-advertising/' === bds_rev_menu_featured_url( 'Get Featured', 'https://directory.branddad.social/' ),
@@ -316,7 +345,7 @@ $dup_out = bds_rev_strip_theme_entry_title_h1( $dup );
 rev_expect( false === strpos( $dup_out, '<h1 class="entry-title">About Us</h1>' ), 'theme About Us is not a second H1' );
 rev_expect( false !== strpos( $dup_out, '<h1>Practical growth systems, clearly explained.</h1>' ), 'the real about heading stays' );
 $rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.41' ), 'revenue MU stamps 0.2.41' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.42' ), 'revenue MU stamps 0.2.42' );
 rev_expect( false !== strpos( $rev_src, 'bds_rev_allowed_redirect_hosts' ), 'Social leftover doors may open Directory' );
 rev_expect( false === strpos( $rev_src, 'wp_get_referer' ), 'music brief redirect stays on Social home' );
 rev_expect( false !== strpos( $rev_src, "home_url( '/?bds_music=saved' )" ), 'a saved brief returns to Social home' );
