@@ -517,6 +517,33 @@ if ( ! function_exists( 'bds_feat_rewrite_home_legacy_html' ) ) {
 				$html = $probe;
 			}
 		}
+		$out = preg_replace(
+			'#(<a\b[^>]*href="[^"]*add-listing[^"]*"[^>]*)>List My Business</a>#',
+			'$1>List my business free</a>',
+			$html
+		);
+		$html = is_string( $out ) ? $out : $html;
+		$out  = preg_replace(
+			'#(<a\b[^>]*href="[^"]*select-your-plan[^"]*"[^>]*)>See plans(?: and prices| &amp; prices| & prices)?(?:\s*(?:→|&rarr;))?</a>#u',
+			'$1>See membership plans</a>',
+			$html
+		);
+		$html = is_string( $out ) ? $out : $html;
+		$html = str_replace(
+			array(
+				'data-bds-copy-en="See plans &amp; prices"',
+				'data-bds-copy-en="See plans & prices"',
+				'data-bds-copy-en="See plans and prices"',
+				'data-bds-copy-es="Ver planes y precios"',
+			),
+			array(
+				'data-bds-copy-en="See membership plans"',
+				'data-bds-copy-en="See membership plans"',
+				'data-bds-copy-en="See membership plans"',
+				'data-bds-copy-es="Ver planes de membresía"',
+			),
+			$html
+		);
 		return $html;
 	}
 }

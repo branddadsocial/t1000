@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.43
+ * Version: 0.2.44
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -480,12 +480,71 @@ function bds_rev_rewrite_quote_packages( $html ) {
 	return is_string( $out ) ? $out : $html;
 }
 
+/**
+ * Front-page conversion: first screen lists free, Compare plans opens live products, help rows start the trial.
+ *
+ * @param string $html Page HTML.
+ * @return string
+ */
+function bds_rev_rewrite_home_conversion( $html ) {
+	$html = (string) $html;
+	$out  = preg_replace(
+		'#(<a\b[^>]*href=")\#branddad-ai-plans(")#',
+		'$1#branddad-ai-solutions$2',
+		$html
+	);
+	$html = is_string( $out ) ? $out : $html;
+	$html = str_replace(
+		array(
+			'Try it in Essentials — $29.99/month',
+			'Pruébelo en Essentials — $29.99/mes',
+			'data-bds-copy-en="Try it in Essentials — $29.99/month"',
+			'data-bds-copy-es="Pruébelo en Essentials — $29.99/mes"',
+			'Talk to BrandDad about done-for-you help',
+			'Hable con BrandDad sobre ayuda hecha por nosotros',
+			'data-bds-copy-en="Talk to BrandDad about done-for-you help"',
+			'data-bds-copy-es="Hable con BrandDad sobre ayuda hecha por nosotros"',
+			'>List your business</a>',
+		),
+		array(
+			'Start 7-day trial',
+			'Empiece la prueba de 7 días',
+			'data-bds-copy-en="Start 7-day trial"',
+			'data-bds-copy-es="Empiece la prueba de 7 días"',
+			'Request a scoped quote',
+			'Pedir una cotización',
+			'data-bds-copy-en="Request a scoped quote"',
+			'data-bds-copy-es="Pedir una cotización"',
+			'>List my business free</a>',
+		),
+		$html
+	);
+	if ( false !== strpos( $html, 'class="bdai-hero"' ) && false === strpos( $html, 'bds-rev-hero-list' ) ) {
+		$list = '<a class="bdai-button bdai-button--light bds-rev-hero-list" href="' . esc_url( bds_rev_dir_url( '/add-listing/' ) ) . '"';
+		if ( function_exists( 'bds_lang_swap_attrs' ) ) {
+			$list .= bds_lang_swap_attrs( 'List my business free', 'Listar mi negocio gratis' );
+		}
+		$list .= '>List my business free</a>';
+		$out   = preg_replace(
+			'#(<section class="bdai-hero"[\s\S]*?<div class="bdai-actions"><a class="bdai-button"[^>]*>Try it free for 7 days</a>)#',
+			'$1' . $list,
+			$html,
+			1
+		);
+		if ( is_string( $out ) ) {
+			$html = $out;
+		}
+	}
+	return $html;
+}
+
 function bds_rev_rewrite_conversion_ctas( $html ) {
 	$html   = bds_rev_rewrite_featured_ask( $html );
 	$html   = bds_rev_rewrite_choose_plan( $html );
 	$html   = bds_rev_rewrite_subscribe_now( $html );
 	$html   = bds_rev_rewrite_see_plans( $html );
 	$html   = bds_rev_rewrite_quote_packages( $html );
+	$html   = bds_rev_rewrite_home_conversion( $html );
 	$pairs  = array(
 		array( 'See social plans', 'ai-social-growth', 'Subscribe to Social Growth', 'ai-social-growth' ),
 		array( 'See SEO options', 'ai-local-seo', 'Subscribe to Local SEO', 'ai-local-seo' ),
@@ -786,9 +845,9 @@ function bds_rev_home_strip() {
 	$html  = '<section class="bds-rev" id="bds-rev-home-strip">';
 	$html .= '<h2' . ( $sw ? bds_lang_swap_attrs( 'Buy a live plan or get featured', 'Compre un plan en vivo o salga destacado' ) : '' ) . '>' . esc_html__( 'Buy a live plan or get featured', 'branddad' ) . '</h2>';
 	if ( function_exists( 'bds_lang_pair' ) ) {
-		$html .= bds_lang_pair( 'Subscribe opens only for products already for sale. Featured is a Directory request until that Woo product exists. Music stays a brief, not a sale.', 'Subscribe abre solo si el producto ya está a la venta. Featured es una solicitud del directorio hasta que exista ese producto Woo. La música sigue siendo un brief, no una venta.' );
+		$html .= bds_lang_pair( 'Subscribe opens only for products already for sale. Featured checkout is open on Directory. Music stays a brief, not a sale.', 'Subscribe abre solo si el producto ya está a la venta. Featured ya tiene checkout en el directorio. La música sigue siendo un brief, no una venta.' );
 	} else {
-		$html .= '<p>' . esc_html__( 'Subscribe opens only for products already for sale. Featured is a Directory request until that Woo product exists. Music stays a brief, not a sale.', 'branddad' ) . '</p>';
+		$html .= '<p>' . esc_html__( 'Subscribe opens only for products already for sale. Featured checkout is open on Directory. Music stays a brief, not a sale.', 'branddad' ) . '</p>';
 	}
 	$html .= '<p>';
 	foreach ( bds_rev_offers() as $offer ) {
@@ -1381,7 +1440,7 @@ function bds_rev_quote_buffer_start() {
 	if ( '' !== $path && 'services' !== $path && 'contact-us' !== $path ) {
 		return;
 	}
-	ob_start( 'bds_rev_rewrite_quote_packages' );
+	ob_start( 'bds_rev_rewrite_conversion_ctas' );
 }
 add_action( 'template_redirect', 'bds_rev_quote_buffer_start', 2 );
 

@@ -94,6 +94,8 @@ rev_expect( false !== strpos( $strip, 'Subscribe to' ), 'homepage strip sells li
 rev_expect( false !== strpos( $strip, '/product/ai-social-growth/' ), 'homepage strip uses the published Social Growth URL' );
 rev_expect( false !== strpos( $strip, '/featured-advertising/' ), 'homepage strip sells featured' );
 rev_expect( false !== strpos( $strip, 'List my business free' ), 'homepage strip uses the free-listing label' );
+rev_expect( false !== strpos( $strip, 'Featured checkout is open on Directory' ), 'homepage strip says Featured checkout is live' );
+rev_expect( false === strpos( $strip, 'Featured is a Directory request' ), 'homepage strip does not say Featured Woo is missing' );
 $guide = bds_rev_guide_next();
 rev_expect( false !== strpos( $guide, 'id="bds-rev-guide-next"' ), 'guides get a next step' );
 rev_expect( false !== strpos( $guide, 'List my business free' ), 'the guide next step lists for free' );
@@ -360,8 +362,25 @@ $dup = '<h1 class="entry-title">About Us</h1><h1>Practical growth systems, clear
 $dup_out = bds_rev_strip_theme_entry_title_h1( $dup );
 rev_expect( false === strpos( $dup_out, '<h1 class="entry-title">About Us</h1>' ), 'theme About Us is not a second H1' );
 rev_expect( false !== strpos( $dup_out, '<h1>Practical growth systems, clearly explained.</h1>' ), 'the real about heading stays' );
+$home_conv = '<section class="bdai-hero"><div class="bdai-actions"><a class="bdai-button" href="https://branddad.social/product/ai-business-essentials/">Try it free for 7 days</a><a class="bdai-button bdai-button--light" href="#branddad-ai-solutions">See what you get</a></div></section>'
+	. '<a class="bdai-text-link" href="https://branddad.social/product/ai-business-essentials/" data-bds-copy-en="Try it in Essentials — $29.99/month">Try it in Essentials — $29.99/month</a>'
+	. '<a class="bdai-button bdai-button--light" href="#branddad-ai-plans" data-bds-copy-en="Compare plans">Compare plans</a>'
+	. '<a class="bdai-text-link" href="https://branddad.social/contact-us/?offer=done-for-you-ai">Talk to BrandDad about done-for-you help</a>'
+	. '<a class="bds-nc-secondary" href="https://directory.branddad.social/add-listing/">List your business</a>';
+$home_conv_out = bds_rev_rewrite_home_conversion( $home_conv );
+rev_expect( false !== strpos( $home_conv_out, 'bds-rev-hero-list' ), 'hero gets a List my business free button' );
+rev_expect( false !== strpos( $home_conv_out, 'directory.branddad.social/add-listing/' ), 'hero listing door opens Directory add-listing' );
+rev_expect( false !== strpos( $home_conv_out, '>Start 7-day trial</a>' ), 'help-grid Essentials row starts the 7-day trial' );
+rev_expect( false === strpos( $home_conv_out, 'Try it in Essentials' ), 'help-grid no longer sells Essentials as a priced row' );
+rev_expect( false !== strpos( $home_conv_out, 'href="#branddad-ai-solutions"' ), 'Compare plans opens live products' );
+rev_expect( false === strpos( $home_conv_out, '#branddad-ai-plans' ), 'Compare plans does not jump to Studio credits' );
+rev_expect( false !== strpos( $home_conv_out, '>Request a scoped quote</a>' ), 'Done-for-You talk link requests a scoped quote' );
+rev_expect( false === strpos( $home_conv_out, 'Talk to BrandDad about done-for-you help' ), 'old Done-for-You talk CTA is removed' );
+rev_expect( false !== strpos( $home_conv_out, '>List my business free</a>' ), 'network List your business becomes List my business free' );
+$home_conv_again = bds_rev_rewrite_home_conversion( $home_conv_out );
+rev_expect( 1 === substr_count( $home_conv_again, 'bds-rev-hero-list' ), 'hero listing door is not injected twice' );
 $rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.43' ), 'revenue MU stamps 0.2.43' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.44' ), 'revenue MU stamps 0.2.44' );
 rev_expect( false !== strpos( $rev_src, 'bds_rev_allowed_redirect_hosts' ), 'Social leftover doors may open Directory' );
 rev_expect( false === strpos( $rev_src, 'wp_get_referer' ), 'music brief redirect stays on Social home' );
 rev_expect( false !== strpos( $rev_src, "home_url( '/?bds_music=saved' )" ), 'a saved brief returns to Social home' );
