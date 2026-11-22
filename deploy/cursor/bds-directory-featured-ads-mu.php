@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.36
+ * Version: 0.2.37
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -976,7 +976,7 @@ function bds_feat_leftover_dest( $path ) {
 	if ( 'cookies' === $path || 'cookie-policy' === $path ) {
 		return home_url( '/privacy-policy/' );
 	}
-	if ( in_array( $path, array( 'list-your-business', 'add-business', 'list-business', 'submit-listing', 'post-a-job', 'post-job', 'get-started', 'free-listing' ), true ) ) {
+	if ( in_array( $path, array( 'list-your-business', 'add-business', 'list-business', 'submit-listing', 'post-a-job', 'post-job', 'get-started', 'free-listing', 'list-now', 'list-free', 'register-business' ), true ) ) {
 		return home_url( '/add-listing/' );
 	}
 	if ( 'advertise-with-us' === $path ) {
@@ -1003,7 +1003,7 @@ function bds_feat_leftover_dest( $path ) {
 	if ( 'claim-listing' === $path ) {
 		return home_url( '/claim-your-business-listing-branddad-directory/' );
 	}
-	if ( 'featured-ads' === $path ) {
+	if ( in_array( $path, array( 'featured-ads', 'featured-listing', 'advertising', 'boost', 'promote' ), true ) ) {
 		return home_url( '/featured-advertising/' );
 	}
 	if ( 'legal' === $path ) {

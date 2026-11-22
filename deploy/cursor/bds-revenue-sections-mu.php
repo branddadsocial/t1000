@@ -2,10 +2,10 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.48
+ * Version: 0.2.49
  * Author: BrandDad
  *
- * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
+ * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL. Quote-only / music / staged slugs are not purchasable: product id maps to post_name on the server, Woo is_purchasable and add-to-cart validation fail closed, closed cart rows are removed, and public price HTML is emptied. Essentials and other launch_candidate / live_legacy products stay purchasable. No new endpoints. No secrets.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -56,6 +56,9 @@ function bds_rev_music_packages() {
 }
 
 function bds_rev_offer_url( $slug ) {
+	if ( bds_rev_is_closed_checkout_slug( $slug ) ) {
+		return '';
+	}
 	$url = '';
 	if ( function_exists( 'bds_ai_commercial_checkout_url' ) ) {
 		$got = bds_ai_commercial_checkout_url( $slug );
@@ -83,6 +86,60 @@ function bds_rev_is_quote_offer( $slug ) {
 		(string) $slug,
 		array( 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'done-for-you-ai', 'done-for-you-ai-management', 'ai-website-chatbot', 'ai-linkedin-growth' ),
 		true
+	);
+}
+
+/**
+ * Quote-only and music products stay off Woo checkout even when the live catalog still prints a price.
+ *
+ * @param string $slug Product slug.
+ * @return bool
+ */
+function bds_rev_is_closed_checkout_slug( $slug ) {
+	$slug = sanitize_title( (string) $slug );
+	if ( '' === $slug ) {
+		return false;
+	}
+	if ( bds_rev_is_quote_offer( $slug ) || 0 === strpos( $slug, 'music-' ) ) {
+		return true;
+	}
+	if ( function_exists( 'bds_ai_commercial_offer' ) ) {
+		$offer = bds_ai_commercial_offer( $slug );
+		if ( is_array( $offer ) && isset( $offer['launch_state'] ) && in_array( (string) $offer['launch_state'], array( 'quote_only', 'staged' ), true ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function bds_rev_product_slug_from_product( $product ) {
+	$id = 0;
+	if ( is_object( $product ) && method_exists( $product, 'get_id' ) ) {
+		$id = (int) $product->get_id();
+	} elseif ( is_numeric( $product ) ) {
+		$id = (int) $product;
+	}
+	if ( $id < 1 || ! function_exists( 'get_post_field' ) ) {
+		return '';
+	}
+	return sanitize_title( (string) get_post_field( 'post_name', $id ) );
+}
+
+/**
+ * Next step for a closed product: music brief or scoped quote. Never a charge.
+ *
+ * @param string $slug Product slug.
+ * @return array{0:string,1:string,2:string}
+ */
+function bds_rev_closed_checkout_cta( $slug ) {
+	$slug = sanitize_title( (string) $slug );
+	if ( 0 === strpos( $slug, 'music-' ) ) {
+		return array( home_url( '/#branddad-music' ), 'Send a music brief', 'Enviar un brief de música' );
+	}
+	return array(
+		add_query_arg( 'offer', $slug, home_url( '/contact-us/' ) ),
+		'Request a scoped quote',
+		'Pedir una cotización',
 	);
 }
 
@@ -633,6 +690,61 @@ function bds_rev_rewrite_closed_checkout_cards( $html ) {
 }
 
 /**
+ * Live Woo still prints $149.99 and Subscribe monthly on quote-only product pages.
+ *
+ * @param string $html Page HTML.
+ * @param string $slug Product slug.
+ * @return string
+ */
+function bds_rev_rewrite_quote_product_html( $html, $slug ) {
+	$html = (string) $html;
+	$slug = sanitize_title( (string) $slug );
+	if ( ! bds_rev_is_closed_checkout_slug( $slug ) ) {
+		return $html;
+	}
+	$out = preg_replace(
+		'#(<div class="summary entry-summary">[\s\S]*?<h1[^>]*>[\s\S]*?</h1>)<p class="price">[\s\S]*?</p>#',
+		'$1',
+		$html,
+		1
+	);
+	$html = is_string( $out ) ? $out : $html;
+	list( $href, $en, $es ) = bds_rev_closed_checkout_cta( $slug );
+	$sw   = function_exists( 'bds_lang_swap_attrs' );
+	$cta  = '<p class="bds-rev-quote-product"><a class="button alt" href="' . esc_url( $href ) . '"';
+	if ( $sw ) {
+		$cta .= bds_lang_swap_attrs( $en, $es );
+	}
+	$cta .= '>' . esc_html( $en ) . '</a></p>';
+	if ( function_exists( 'bds_lang_pair' ) ) {
+		$note = 0 === strpos( $slug, 'music-' )
+			? bds_lang_pair( 'Send a music brief. Checkout stays closed until BrandDad confirms scope and licensing.', 'Envíe un brief de música. El checkout permanece cerrado hasta confirmar alcance y licencias.', 'p', 'bds-rev-note' )
+			: bds_lang_pair( 'This is quote-only. Request a scoped quote. It does not start a charge.', 'Esto es solo cotización. Pida una cotización. No inicia un cargo.', 'p', 'bds-rev-note' );
+		$cta .= $note;
+	} else {
+		$cta .= '<p class="bds-rev-note">' . esc_html( 0 === strpos( $slug, 'music-' ) ? 'Send a music brief. Checkout stays closed until BrandDad confirms scope and licensing.' : 'This is quote-only. Request a scoped quote. It does not start a charge.' ) . '</p>';
+	}
+	$out = preg_replace( '#<form class="cart"[^>]*>.*?</form>#is', $cta, $html, 1 );
+	$html = is_string( $out ) ? $out : $html;
+	foreach ( array(
+		'#<div id="wc-stripe-express-checkout-element"[^>]*>.*?</div>#is',
+		'#<div class="ppc-button-wrapper">.*?</div>#is',
+		'#<div class="bdsu-product-value">.*?</div>#is',
+		'#<p class="bds-mnd-note"[^>]*>.*?</p>#is',
+	) as $pattern ) {
+		$out = preg_replace( $pattern, '', $html, 1 );
+		if ( is_string( $out ) ) {
+			$html = $out;
+		}
+	}
+	return str_replace(
+		'Prefer to talk first? Pick a time — then buy this service when you are ready.',
+		'Prefer to talk first? Pick a time. This package is quote-only.',
+		$html
+	);
+}
+
+/**
  * Front-page conversion: first screen lists free, Compare plans opens live products, help rows start the trial.
  *
  * @param string $html Page HTML.
@@ -773,6 +885,9 @@ function bds_rev_rewrite_conversion_ctas( $html ) {
 	$html   = bds_rev_rewrite_quote_packages( $html );
 	$html   = bds_rev_rewrite_home_conversion( $html );
 	$html   = bds_rev_rewrite_closed_checkout_cards( $html );
+	if ( function_exists( 'is_product' ) && is_product() && function_exists( 'get_post_field' ) && function_exists( 'get_queried_object_id' ) ) {
+		$html = bds_rev_rewrite_quote_product_html( $html, (string) get_post_field( 'post_name', get_queried_object_id() ) );
+	}
 	$pairs  = array(
 		array( 'See social plans', 'ai-social-growth', 'Subscribe to Social Growth', 'ai-social-growth' ),
 		array( 'See SEO options', 'ai-local-seo', 'Subscribe to Local SEO', 'ai-local-seo' ),
@@ -950,6 +1065,76 @@ function bds_rev_product_strip( $content ) {
 	return $content . $plain . bds_rev_home_strip();
 }
 add_filter( 'the_content', 'bds_rev_product_strip', 1001 );
+
+function bds_rev_product_is_purchasable( $purchasable, $product = null ) {
+	if ( ! bds_rev_is_social() ) {
+		return $purchasable;
+	}
+	$slug = bds_rev_product_slug_from_product( $product );
+	if ( '' !== $slug && bds_rev_is_closed_checkout_slug( $slug ) ) {
+		return false;
+	}
+	return $purchasable;
+}
+add_filter( 'woocommerce_is_purchasable', 'bds_rev_product_is_purchasable', 99, 2 );
+add_filter( 'woocommerce_variation_is_purchasable', 'bds_rev_product_is_purchasable', 99, 2 );
+
+function bds_rev_closed_price_html( $price, $product = null ) {
+	if ( ! bds_rev_is_social() ) {
+		return $price;
+	}
+	$slug = bds_rev_product_slug_from_product( $product );
+	return ( '' !== $slug && bds_rev_is_closed_checkout_slug( $slug ) ) ? '' : $price;
+}
+add_filter( 'woocommerce_get_price_html', 'bds_rev_closed_price_html', 99, 2 );
+
+function bds_rev_validate_closed_add_to_cart( $passed, $product_id = 0 ) {
+	if ( ! bds_rev_is_social() ) {
+		return $passed;
+	}
+	$slug = bds_rev_product_slug_from_product( $product_id );
+	if ( '' !== $slug && bds_rev_is_closed_checkout_slug( $slug ) ) {
+		return false;
+	}
+	return $passed;
+}
+add_filter( 'woocommerce_add_to_cart_validation', 'bds_rev_validate_closed_add_to_cart', 5, 2 );
+
+function bds_rev_strip_closed_cart() {
+	if ( ! bds_rev_is_social() || is_admin() || ! function_exists( 'WC' ) ) {
+		return;
+	}
+	$wc = WC();
+	if ( ! is_object( $wc ) || ! isset( $wc->cart ) || ! is_object( $wc->cart ) || ! method_exists( $wc->cart, 'get_cart' ) || ! method_exists( $wc->cart, 'remove_cart_item' ) ) {
+		return;
+	}
+	foreach ( $wc->cart->get_cart() as $key => $item ) {
+		$pid  = isset( $item['product_id'] ) ? (int) $item['product_id'] : 0;
+		$slug = bds_rev_product_slug_from_product( $pid );
+		if ( '' !== $slug && bds_rev_is_closed_checkout_slug( $slug ) ) {
+			$wc->cart->remove_cart_item( $key );
+		}
+	}
+}
+add_action( 'woocommerce_check_cart_items', 'bds_rev_strip_closed_cart', 1 );
+add_action( 'template_redirect', 'bds_rev_strip_closed_cart', 1 );
+
+function bds_rev_block_closed_add_to_cart() {
+	if ( ! bds_rev_is_social() || is_admin() || ! isset( $_REQUEST['add-to-cart'] ) ) {
+		return;
+	}
+	$pid = function_exists( 'absint' ) ? absint( $_REQUEST['add-to-cart'] ) : abs( (int) $_REQUEST['add-to-cart'] );
+	$slug = bds_rev_product_slug_from_product( $pid );
+	if ( '' === $slug || ! bds_rev_is_closed_checkout_slug( $slug ) ) {
+		return;
+	}
+	list( $dest ) = bds_rev_closed_checkout_cta( $slug );
+	if ( function_exists( 'wp_safe_redirect' ) ) {
+		wp_safe_redirect( $dest, 302 );
+		exit;
+	}
+}
+add_action( 'wp_loaded', 'bds_rev_block_closed_add_to_cart', 5 );
 
 function bds_rev_featured_inquiry_offers() {
 	return array(
@@ -1595,6 +1780,25 @@ function bds_rev_alias_dest( $path ) {
 	if ( in_array( $path, array( 'onboarding', 'welcome' ), true ) ) {
 		return home_url( '/account-hub/' );
 	}
+	if ( in_array( $path, array( 'book-a-call', 'talk-to-sales' ), true ) ) {
+		return home_url( '/contact-us/' );
+	}
+	if ( in_array( $path, array( 'enterprise', 'agency' ), true ) ) {
+		$url = add_query_arg( 'offer', 'done-for-you-ai', home_url( '/contact-us/' ) );
+		if ( function_exists( 'bds_po_url' ) ) {
+			$out = bds_po_url( $url );
+			if ( is_string( $out ) && '' !== $out ) {
+				return $out;
+			}
+		}
+		return $url;
+	}
+	if ( 'music-brief' === $path ) {
+		return home_url( '/#branddad-music' );
+	}
+	if ( in_array( $path, array( 'case-studies', 'testimonials' ), true ) ) {
+		return home_url( '/about-us/' );
+	}
 	return '';
 }
 
@@ -1680,8 +1884,9 @@ function bds_rev_quote_buffer_start() {
 	if ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) {
 		return;
 	}
-	$path = bds_rev_request_path();
-	if ( '' !== $path && 'services' !== $path && 'contact-us' !== $path ) {
+	$path      = bds_rev_request_path();
+	$is_product = function_exists( 'is_product' ) && is_product();
+	if ( '' !== $path && 'services' !== $path && 'contact-us' !== $path && ! $is_product ) {
 		return;
 	}
 	ob_start( 'bds_rev_rewrite_conversion_ctas' );

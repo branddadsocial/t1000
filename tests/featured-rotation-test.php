@@ -114,7 +114,7 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.36' ), 'featured MU stamps 0.2.36' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.37' ), 'featured MU stamps 0.2.37' );
 expect( false !== strpos( $feat_src, 'bds-feat-menu-clear' ), 'Directory header menus are laid out' );
 expect( false !== strpos( $feat_src, '.bdd-mobile-menu' ), 'mobile hamburger is a separate control' );
 expect( false !== strpos( $feat_src, '@media(max-width:900px)' ), 'desktop nav hides on small screens so it does not sit on the hamburger' );
@@ -185,6 +185,13 @@ expect( false !== strpos( $feat_src, "home_url( '/all-listings/' )" ), 'Director
 expect( false !== strpos( $feat_src, "home_url( '/all-categories/' )" ), 'Directory categories leftover opens all-categories' );
 expect( false !== strpos( $feat_src, "home_url( '/add-listing/' )" ), 'Directory list-your-business leftover opens add listing' );
 expect( false !== strpos( $feat_src, "'free-listing'" ), 'Directory free-listing leftover opens add listing' );
+expect( false !== strpos( $feat_src, "'list-now'" ), 'Directory list-now leftover opens add listing' );
+expect( false !== strpos( $feat_src, "'list-free'" ), 'Directory list-free leftover opens add listing' );
+expect( false !== strpos( $feat_src, "'register-business'" ), 'Directory register-business leftover opens add listing' );
+expect( false !== strpos( $feat_src, "'advertising'" ), 'Directory advertising leftover opens Featured' );
+expect( false !== strpos( $feat_src, "'featured-listing'" ), 'Directory featured-listing leftover opens Featured' );
+expect( false !== strpos( $feat_src, "'boost'" ), 'Directory boost leftover opens Featured' );
+expect( false !== strpos( $feat_src, "'promote'" ), 'Directory promote leftover opens Featured' );
 expect( false === strpos( $feat_src, "'advertise'" ), 'live Directory /advertise/ dashboard is not stolen' );
 expect( false === strpos( $feat_src, "'pricing'" ), 'live Directory /pricing/ Select-your-plan redirect is not stolen' );
 expect( false !== strpos( $feat_src, "home_url( '/select-your-plan/' )" ), 'Directory subscribe leftover opens Select your plan' );
