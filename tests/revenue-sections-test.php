@@ -53,6 +53,7 @@ function rev_expect( $cond, $message ) {
 $html = bds_rev_music_form( bds_rev_music_packages() );
 rev_expect( false !== strpos( $html, 'value="original-single"' ), 'array packages still render option values' );
 rev_expect( false !== strpos( $html, 'Original Single' ), 'array packages still render option labels' );
+rev_expect( false === strpos( $html, '$79' ), 'music brief options do not print a project dollar' );
 rev_expect( false === strpos( $html, '>Array<' ), 'package select is not the word Array' );
 
 $html2 = bds_rev_music_form();
@@ -72,8 +73,13 @@ rev_expect( false !== strpos( $live, 'ref=house' ), 'live Subscribe link keeps t
 rev_expect( false === strpos( $live, 'Ask about this plan' ), 'live grid does not mix inquiry buttons' );
 rev_expect( false !== strpos( $ask, 'Ask about this plan' ), 'closed plans stay in the inquiry grid' );
 rev_expect( false !== strpos( $ask, 'ai-business-monitoring' ), 'monitoring stays inquiry' );
+rev_expect( false === strpos( $ask, 'bds-rev-price' ), 'inquiry cards have no fake checkout price' );
+rev_expect( false === strpos( $ask, '$9.99' ), 'inquiry cards do not print a dollar' );
 rev_expect( false === strpos( $ask, 'complete-ai-starter' ), 'Complete AI is not mixed into the inquiry grid' );
+rev_expect( false === strpos( $ask, 'ai-website-chatbot' ), 'chatbot is not mixed into the inquiry grid' );
 rev_expect( false !== strpos( $quote, 'Request a scoped quote' ), 'Complete AI cards request a scoped quote' );
+rev_expect( false !== strpos( $quote, 'AI Website Chatbot' ), 'chatbot sits with the quote packages' );
+rev_expect( false !== strpos( $quote, 'AI LinkedIn Growth' ), 'LinkedIn sits with the quote packages' );
 rev_expect( false !== strpos( $quote, 'Complete AI Starter' ), 'Complete AI Starter is in the quote grid' );
 rev_expect( false !== strpos( $quote, 'Done-for-You AI Management' ), 'Done-for-You is in the quote grid' );
 rev_expect( false === strpos( $quote, '$79.99' ), 'Complete AI Starter has no dollar price' );
@@ -262,7 +268,7 @@ $live_pkg = '<section id="branddad-complete-packages"><p>These bundles show the 
 $live_out = bds_rev_rewrite_quote_packages( $live_pkg );
 rev_expect( false === strpos( $live_out, '$79.99' ), 'live Complete AI Starter price is stripped' );
 rev_expect( false === strpos( $live_out, '$399' ), 'live Done-for-You price is stripped' );
-rev_expect( false !== strpos( $live_out, '$79.00' ), 'music project price is left alone' );
+rev_expect( false !== strpos( $live_out, '$79.00' ), 'quote rewrite leaves music dollars for the closed-card pass' );
 rev_expect( false !== strpos( $live_out, '$29.99' ), 'Essentials FAQ price is left alone' );
 rev_expect( 1 === preg_match( '#<article class="bdai-card" id="complete-ai-starter">(?P<body>.*?)</article>#s', $live_out, $starter_card ) ? 1 : 0, 'live Complete AI Starter card is still present' );
 rev_expect( false === strpos( isset( $starter_card['body'] ) ? $starter_card['body'] : '', 'bdai-price' ), 'live Complete AI Starter has no price at the top' );
@@ -417,7 +423,28 @@ rev_expect( '' === bds_rev_alias_dest( 'consultation' ), 'the live Social /consu
 rev_expect( '' === bds_rev_alias_dest( 'ai' ), 'the live Social /ai/ Essentials redirect is not stolen' );
 rev_expect( '' === bds_rev_alias_dest( 'thank-you' ), 'the live Social /thank-you/ page is not stolen' );
 $rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.47' ), 'revenue MU stamps 0.2.47' );
+$closed = '<article class="bdai-card" id="complete-ai-starter"><h3>Complete AI Starter</h3><p class="bdai-price"><strong>$79.99</strong></p><a href="/contact-us/?offer=complete-ai-starter">Request a scoped quote</a></article>'
+	. '<article class="bdai-card" id="music-original-single"><h3>BrandDad Music — Original Single</h3><p class="bdai-price"><strong>$79.00</strong><span>project</span></p><a href="https://branddad.social/contact-us/?offer=music-original-single">Request a scoped quote</a></article>'
+	. '<article><h3>One Airbnb review case</h3><p class="bdai-price"><strong>$9.99</strong></p><a href="/product/branddad-ai-review-dispute-assistant/">View the one-review service</a><p class="bdai-readiness">Secure checkout opens after the final payment test.</p></article>'
+	. '<article><h3>AI Business Essentials</h3><p class="bdai-price"><strong>$29.99</strong></p><a href="/product/ai-business-essentials/">Start 7-day trial</a></article>'
+	. '<article><h3>Creator campaigns</h3><p class="bdai-price"><strong>From $5.00</strong></p><a href="/product/real-influencers-engagements-ig-fb-tiktok-youtube-more/">Buy this service</a></article>'
+	. '<article><h3>Airbnb Review Appeal Assistant — One Review</h3><a href="/contact-us/?offer=branddad-ai-review-dispute-assistant">Request a quote</a></article>';
+$closed_out = bds_rev_rewrite_conversion_ctas( $closed );
+rev_expect( false === strpos( $closed_out, '$79.99' ), 'quote cards still have no Complete AI dollar' );
+rev_expect( false === strpos( $closed_out, '$79.00' ), 'music cards drop the project dollar' );
+rev_expect( false !== strpos( $closed_out, '>Send a music brief</a>' ), 'music cards send a brief instead of a quote' );
+rev_expect( false !== strpos( $closed_out, 'href="#branddad-music"' ), 'music cards open the brief form' );
+rev_expect( false === strpos( $closed_out, '$9.99' ), 'closed Airbnb help does not print a buy price' );
+rev_expect( false !== strpos( $closed_out, '$29.99' ), 'Essentials still shows the live trial price' );
+rev_expect( false !== strpos( $closed_out, 'From $5.00' ), 'live specialty buy cards keep their price' );
+rev_expect( false !== strpos( $closed_out, '>Request a scoped quote</a>' ), 'leftover Request a quote becomes Request a scoped quote' );
+rev_expect( false === strpos( $closed_out, '>Request a quote</a>' ), 'leftover Request a quote is removed' );
+$bot_body = '<article><h3>Website chatbot</h3><p>The $29.99 chatbot is not open for checkout. Current assistant cost is too high for that public allowance.</p><a href="https://branddad.social/contact-us/?offer=ai-website-chatbot">Request a scoped assistant — $29.99/month</a></article>';
+$bot_body_out = bds_rev_rewrite_conversion_ctas( $bot_body );
+rev_expect( false === strpos( $bot_body_out, '$29.99' ), 'chatbot copy does not keep a closed checkout dollar' );
+rev_expect( false !== strpos( $bot_body_out, 'quote-only' ), 'chatbot copy says quote-only' );
+rev_expect( false !== strpos( $bot_body_out, '>Request a scoped quote</a>' ), 'chatbot CTA is still Request a scoped quote' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.48' ), 'revenue MU stamps 0.2.48' );
 rev_expect( false !== strpos( $rev_src, 'bds_rev_allowed_redirect_hosts' ), 'Social leftover doors may open Directory' );
 rev_expect( false === strpos( $rev_src, 'wp_get_referer' ), 'music brief redirect stays on Social home' );
 rev_expect( false !== strpos( $rev_src, "home_url( '/?bds_music=saved' )" ), 'a saved brief returns to Social home' );

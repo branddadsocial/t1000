@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.47
+ * Version: 0.2.48
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -81,7 +81,7 @@ function bds_rev_offer_url( $slug ) {
 function bds_rev_is_quote_offer( $slug ) {
 	return in_array(
 		(string) $slug,
-		array( 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'done-for-you-ai', 'done-for-you-ai-management' ),
+		array( 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'done-for-you-ai', 'done-for-you-ai-management', 'ai-website-chatbot', 'ai-linkedin-growth' ),
 		true
 	);
 }
@@ -92,7 +92,7 @@ function bds_rev_card( array $offer ) {
 	$quote = bds_rev_is_quote_offer( $offer['slug'] );
 	$html  = '<article class="bds-rev-card"' . ( $quote ? ' id="' . esc_attr( $offer['slug'] ) . '"' : '' ) . '><h3>' . esc_html( $offer['name'] ) . '</h3>';
 	$sw    = function_exists( 'bds_lang_swap_attrs' );
-	if ( ! $quote ) {
+	if ( '' !== $url ) {
 		$html .= '<p class="bds-rev-price">' . esc_html( $offer['price'] ) . '</p>';
 	}
 	if ( ! empty( $offer['who_es'] ) && function_exists( 'bds_lang_pair' ) ) {
@@ -422,7 +422,7 @@ function bds_rev_rewrite_quote_article( $html, $slug ) {
 
 function bds_rev_rewrite_quote_packages( $html ) {
 	$html = (string) $html;
-	foreach ( array( 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'done-for-you-ai-management', 'done-for-you-ai' ) as $slug ) {
+	foreach ( array( 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'done-for-you-ai-management', 'done-for-you-ai', 'ai-website-chatbot', 'ai-linkedin-growth' ) as $slug ) {
 		$html = bds_rev_rewrite_quote_article( $html, $slug );
 	}
 	$html = str_replace(
@@ -475,6 +475,164 @@ function bds_rev_rewrite_quote_packages( $html ) {
 }
 
 /**
+ * A dollar on a quote/ask card looks like checkout. Strip it unless the card already sells.
+ *
+ * @param string $inner Article inner HTML.
+ * @return string
+ */
+function bds_rev_strip_card_price_row( $inner ) {
+	$out = preg_replace( '#<p class="bdai-price"[^>]*>.*?</p>#is', '', (string) $inner );
+	$out = preg_replace( '#<p class="bds-rev-price"[^>]*>.*?</p>#is', '', is_string( $out ) ? $out : $inner );
+	return is_string( $out ) ? $out : (string) $inner;
+}
+
+function bds_rev_article_has_live_buy( $inner ) {
+	$inner = (string) $inner;
+	return false !== strpos( $inner, 'Subscribe monthly' )
+		|| false !== strpos( $inner, 'Start 7-day trial' )
+		|| false !== strpos( $inner, 'Try it free for 7 days' )
+		|| false !== strpos( $inner, '>Get featured</a>' )
+		|| false !== strpos( $inner, 'Buy this service' )
+		|| false !== strpos( $inner, 'Get help with one review' );
+}
+
+function bds_rev_article_is_closed_checkout( $inner ) {
+	$inner = (string) $inner;
+	return false !== strpos( $inner, 'Request a scoped quote' )
+		|| false !== strpos( $inner, 'Ask before checkout' )
+		|| false !== strpos( $inner, 'Ask about this plan' )
+		|| false !== strpos( $inner, '>Request a quote</a>' )
+		|| false !== strpos( $inner, 'View the one-review service' )
+		|| false !== strpos( $inner, 'Secure checkout opens after' )
+		|| false !== strpos( $inner, 'not open for self-serve checkout' )
+		|| false !== strpos( $inner, 'Checkout opens after' )
+		|| false !== strpos( $inner, 'class="bdai-soon"' );
+}
+
+/**
+ * Music is a brief, not a sale. Send people to the brief form.
+ *
+ * @param string $inner Article inner HTML.
+ * @return string
+ */
+function bds_rev_rewrite_music_article_inner( $inner ) {
+	$inner = bds_rev_strip_card_price_row( $inner );
+	$inner = str_replace(
+		array(
+			'Starts at $199 per month after the usage, release, and revision scope are written down.',
+			'Quote-only after the usage, release, and revision scope are written down.',
+			'Desde $199 al mes cuando el uso, el lanzamiento y las revisiones quedan por escrito.',
+			'Solo cotización cuando el uso, el lanzamiento y las revisiones quedan por escrito.',
+			'Starts at $199 per month',
+			'Quote-only after a written music scope',
+			'Desde $199 al mes',
+			'Solo cotización',
+			'from $199.00',
+			'$199.00',
+			'$799.00',
+			'$449.00',
+			'$249.00',
+			'$129.00',
+			'$79.00',
+		),
+		array(
+			'Quote-only after the usage, release, and revision scope are written down.',
+			'Quote-only after the usage, release, and revision scope are written down.',
+			'Solo cotización cuando el uso, el lanzamiento y las revisiones quedan por escrito.',
+			'Solo cotización cuando el uso, el lanzamiento y las revisiones quedan por escrito.',
+			'Quote-only after a written music scope',
+			'Quote-only after a written music scope',
+			'Solo cotización',
+			'Solo cotización',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'',
+		),
+		$inner
+	);
+	$inner = str_replace(
+		array(
+			'Request a scoped quote',
+			'Ask before checkout',
+			'Ask about this plan',
+			'Pedir una cotización',
+			'Pregunte antes de pagar',
+			'Preguntar por este plan',
+		),
+		array(
+			'Send a music brief',
+			'Send a music brief',
+			'Send a music brief',
+			'Enviar un brief de música',
+			'Enviar un brief de música',
+			'Enviar un brief de música',
+		),
+		$inner
+	);
+	$out = preg_replace(
+		'#(<a\b[^>]*href=")[^"]*("[^>]*>Send a music brief</a>)#',
+		'$1#branddad-music$2',
+		$inner
+	);
+	$inner = is_string( $out ) ? $out : $inner;
+	$out   = preg_replace(
+		'#(<a\b[^>]*href=")[^"]*("[^>]*>Enviar un brief de música</a>)#',
+		'$1#branddad-music$2',
+		$inner
+	);
+	return is_string( $out ) ? $out : $inner;
+}
+
+/**
+ * Live catalog still prints dollars on quote, music, and closed checkout cards.
+ *
+ * @param string $html Page HTML.
+ * @return string
+ */
+function bds_rev_rewrite_closed_checkout_cards( $html ) {
+	$html = (string) $html;
+	$out  = preg_replace_callback(
+		'#(<article\b[^>]*>)(.*?)(</article>)#is',
+		static function ( $m ) {
+			$open  = $m[1];
+			$inner = $m[2];
+			if ( false !== strpos( $open, 'id="music-' ) || false !== strpos( $open, "id='music-" ) ) {
+				$inner = bds_rev_rewrite_music_article_inner( $inner );
+			} elseif ( bds_rev_article_is_closed_checkout( $inner ) && ! bds_rev_article_has_live_buy( $inner ) ) {
+				$inner = bds_rev_strip_card_price_row( $inner );
+			}
+			return $open . $inner . $m[3];
+		},
+		$html
+	);
+	$html = is_string( $out ) ? $out : $html;
+	$out  = preg_replace(
+		'#(<a\b[^>]*>)Request a quote(</a>)#',
+		'$1Request a scoped quote$2',
+		$html
+	);
+	$html = is_string( $out ) ? $out : $html;
+	return str_replace(
+		array(
+			'data-bds-copy-en="Request a quote"',
+			'data-bds-copy-es="Pedir cotización"',
+			'>Pedir cotización</a>',
+		),
+		array(
+			'data-bds-copy-en="Request a scoped quote"',
+			'data-bds-copy-es="Pedir una cotización"',
+			'>Pedir una cotización</a>',
+		),
+		$html
+	);
+}
+
+/**
  * Front-page conversion: first screen lists free, Compare plans opens live products, help rows start the trial.
  *
  * @param string $html Page HTML.
@@ -506,6 +664,10 @@ function bds_rev_rewrite_home_conversion( $html ) {
 			'Pedir LinkedIn Growth — $29.99/mes',
 			'data-bds-copy-en="Request LinkedIn Growth — $29.99/month"',
 			'data-bds-copy-es="Pedir LinkedIn Growth — $29.99/mes"',
+			'The $29.99 chatbot is not open for checkout. Current assistant cost is too high for that public allowance.',
+			'El chatbot de $29.99 no está abierto a checkout. El costo actual del asistente es demasiado alto para esa tarifa pública.',
+			'AI LinkedIn Growth is $29.99 for profile and post drafts. Automated comments run only inside authorized platform limits.',
+			'AI LinkedIn Growth es $29.99 por borradores de perfil y publicaciones. Los comentarios automáticos solo corren dentro de los límites autorizados.',
 			'>List your business</a>',
 		),
 		array(
@@ -525,6 +687,10 @@ function bds_rev_rewrite_home_conversion( $html ) {
 			'Pedir una cotización',
 			'data-bds-copy-en="Request a scoped quote"',
 			'data-bds-copy-es="Pedir una cotización"',
+			'The website chatbot is quote-only. Request a scoped quote. It does not start checkout.',
+			'El chatbot es solo cotización. Pida una cotización. No inicia checkout.',
+			'AI LinkedIn Growth is quote-only. Request a scoped quote for profile and post drafts. Automated comments run only inside authorized platform limits.',
+			'AI LinkedIn Growth es solo cotización. Pida una cotización para borradores de perfil y publicaciones. Los comentarios automáticos solo corren dentro de los límites autorizados.',
 			'>List my business free</a>',
 		),
 		$html
@@ -606,6 +772,7 @@ function bds_rev_rewrite_conversion_ctas( $html ) {
 	$html   = bds_rev_rewrite_see_plans( $html );
 	$html   = bds_rev_rewrite_quote_packages( $html );
 	$html   = bds_rev_rewrite_home_conversion( $html );
+	$html   = bds_rev_rewrite_closed_checkout_cards( $html );
 	$pairs  = array(
 		array( 'See social plans', 'ai-social-growth', 'Subscribe to Social Growth', 'ai-social-growth' ),
 		array( 'See SEO options', 'ai-local-seo', 'Subscribe to Local SEO', 'ai-local-seo' ),
@@ -949,7 +1116,7 @@ function bds_rev_music_options_html( $packages = null ) {
 		if ( ! is_array( $pack ) || ! isset( $pack[0], $pack[1] ) ) {
 			continue;
 		}
-		$html .= '<option value="' . esc_attr( (string) $slug ) . '">' . esc_html( $pack[0] . ' — ' . $pack[1] ) . '</option>';
+		$html .= '<option value="' . esc_attr( (string) $slug ) . '">' . esc_html( $pack[0] ) . '</option>';
 	}
 	return $html;
 }
@@ -1572,8 +1739,8 @@ function bds_rev_offer_note_html( $slug ) {
 			$note .= '<p>' . esc_html( $en ) . '</p>';
 		}
 	} else {
-		$en = sprintf( 'You asked about %1$s (%2$s). This page is an inquiry. It does not start checkout.', $offer['name'], $offer['price'] );
-		$es = sprintf( 'Preguntó por %1$s (%2$s). Esta página es una consulta. No inicia checkout.', $offer['name'], $offer['price'] );
+		$en = sprintf( 'You asked about %1$s. This page is an inquiry. It does not start checkout.', $offer['name'] );
+		$es = sprintf( 'Preguntó por %1$s. Esta página es una consulta. No inicia checkout.', $offer['name'] );
 		if ( function_exists( 'bds_lang_pair' ) ) {
 			$note .= bds_lang_pair( $en, $es );
 		} else {
