@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.42
+ * Version: 0.2.43
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL.
@@ -343,13 +343,23 @@ function bds_rev_rewrite_quote_article( $html, $slug ) {
 		$pattern,
 		static function ( $m ) {
 			$inner = $m[2];
-			$inner = preg_replace( '#<p class="bdai-price">.*?</p>#is', '<p class="bdai-price"><strong>On request</strong></p>', $inner );
+			$price = '<p class="bdai-price"><strong>On request</strong></p>';
+			if ( function_exists( 'bds_lang_swap_attrs' ) ) {
+				$price = '<p class="bdai-price"><strong' . bds_lang_swap_attrs( 'On request', 'Bajo petición' ) . '>On request</strong></p>';
+			}
+			$inner = preg_replace( '#<p class="bdai-price">.*?</p>#is', $price, $inner );
 			$inner = preg_replace( '#<p class="bds-rev-price"[^>]*>.*?</p>#is', '<p class="bds-rev-price">On request</p>', is_string( $inner ) ? $inner : $m[2] );
 			$inner = is_string( $inner ) ? $inner : $m[2];
 			$inner = str_replace(
 				array(
 					'Starts at $399 per month after a written scope. This is not an instant checkout product.',
+					'Quote-only after a written scope. This is not an instant checkout product.',
 					'Desde $399 al mes después de un alcance escrito. No es un producto de checkout inmediato.',
+					'Solo cotización después de un alcance escrito. No es un producto de checkout inmediato.',
+					'Price can increase with channels, locations, and usage',
+					'Scope can change with channels, locations, and usage',
+					'El precio puede subir con canales, ubicaciones y uso',
+					'El alcance puede cambiar con canales, ubicaciones y uso',
 					'$79.99/month',
 					'$79.99/mes',
 					'$79.99',
@@ -363,12 +373,40 @@ function bds_rev_rewrite_quote_article( $html, $slug ) {
 					'Desde $399',
 					'$399.00',
 					'From $399/month',
+					'from $399.00',
 					'from $399/month',
 					'From $399',
 					'from $399',
 					'$399',
 				),
-				'',
+				array(
+					'Quote-only after a written scope. This is not an instant checkout product.',
+					'Quote-only after a written scope. This is not an instant checkout product.',
+					'Solo cotización después de un alcance escrito. No es un producto de checkout inmediato.',
+					'Solo cotización después de un alcance escrito. No es un producto de checkout inmediato.',
+					'Scope can change with channels, locations, and usage',
+					'Scope can change with channels, locations, and usage',
+					'El alcance puede cambiar con canales, ubicaciones y uso',
+					'El alcance puede cambiar con canales, ubicaciones y uso',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+				),
 				$inner
 			);
 			$inner = str_replace(
@@ -395,14 +433,40 @@ function bds_rev_rewrite_quote_packages( $html ) {
 	}
 	$html = str_replace(
 		'These bundles show the proposed workload and price. Self-serve checkout stays closed until shared entitlements and fulfillment are verified. Request a quote if you want BrandDad to scope one now.',
-		'These bundles show the proposed workload. Prices are on request after a scoped quote. Self-serve checkout stays closed until BrandDad scopes the work.',
+		'These bundles show the proposed workload. Request a scoped quote. Self-serve checkout stays closed until BrandDad scopes the work.',
 		$html
 	);
 	$html = str_replace(
 		'Estos paquetes muestran la carga y el precio propuesto. El checkout permanece cerrado hasta verificar entregas y derechos. Pida una cotización si quiere que BrandDad lo delimite ahora.',
-		'Estos paquetes muestran la carga propuesta. El precio es bajo petición después de una cotización. El checkout permanece cerrado hasta que BrandDad delimite el trabajo.',
+		'Estos paquetes muestran la carga propuesta. Pida una cotización. El checkout permanece cerrado hasta que BrandDad delimite el trabajo.',
 		$html
 	);
+	$html = str_replace(
+		'Bigger plans cost more, and a basic Directory listing is free.',
+		'Complete AI packages are quoted separately, and a basic Directory listing is free.',
+		$html
+	);
+	$html = str_replace(
+		'Los planes más grandes cuestan más, y un listado básico del directorio es gratis.',
+		'Los paquetes Complete AI se cotizan aparte, y un listado básico del directorio es gratis.',
+		$html
+	);
+	$html = str_replace(
+		'Bigger packages. Ask before you buy.',
+		'Complete AI packages. Request a scoped quote.',
+		$html
+	);
+	$html = str_replace(
+		'Paquetes más grandes. Pregunte antes de comprar.',
+		'Paquetes Complete AI. Pida una cotización.',
+		$html
+	);
+	if ( false !== strpos( $html, 'id="branddad-complete-packages"' ) ) {
+		$stripped = preg_replace( '#<section\b[^>]*\bid="bds-rev-quote-packages"[^>]*>.*?</section>#is', '', $html );
+		if ( is_string( $stripped ) ) {
+			$html = $stripped;
+		}
+	}
 	$out = preg_replace(
 		'#(<a\b[^>]*href="[^"]*offer=(?:complete-ai-starter|complete-ai-growth|complete-ai-pro|done-for-you-ai)[^"]*"[^>]*)>Ask before checkout</a>#',
 		'$1>Request a scoped quote</a>',
@@ -674,7 +738,7 @@ function bds_rev_markup() {
 			<a class="bds-rev-button" href="<?php echo $featured; ?>"<?php echo $sw ? bds_lang_swap_attrs( 'Get featured', 'Salir destacado' ) : ''; ?>>Get featured</a>
 			<a class="bds-rev-button bds-rev-button--quiet" href="<?php echo $browse; ?>"<?php echo $sw ? bds_lang_swap_attrs( 'See the Directory', 'Ver el directorio' ) : ''; ?>>See the Directory</a>
 		</section>
-		<?php if ( '' !== $quote ) : ?>
+		<?php if ( '' !== $quote && ! function_exists( 'bds_ai_launch_catalog_cards' ) ) : ?>
 		<section aria-labelledby="bds-rev-quote" id="bds-rev-quote-packages">
 			<h2 id="bds-rev-quote"<?php echo $sw ? bds_lang_swap_attrs( 'Complete AI packages — scoped quote', 'Paquetes Complete AI — cotización' ) : ''; ?>><?php esc_html_e( 'Complete AI packages — scoped quote', 'branddad' ); ?></h2>
 			<?php

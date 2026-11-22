@@ -249,7 +249,23 @@ rev_expect( false === strpos( $legacy_out, '$399' ), 'leftover Done-for-You pric
 rev_expect( false !== strpos( $legacy_out, 'On request' ), 'leftover Complete AI cards say On request' );
 rev_expect( false !== strpos( $legacy_out, 'Request a scoped quote' ), 'leftover Ask before checkout becomes Request a scoped quote' );
 rev_expect( false === strpos( $legacy_out, 'Ask before checkout' ), 'leftover Ask before checkout is removed' );
-rev_expect( false !== strpos( $legacy_out, 'Prices are on request after a scoped quote' ), 'leftover package intro drops the printed price' );
+rev_expect( false !== strpos( $legacy_out, 'Request a scoped quote. Self-serve checkout stays closed' ), 'leftover package intro drops the printed price' );
+$live_pkg = '<section id="branddad-complete-packages"><p>These bundles show the proposed workload and price. Self-serve checkout stays closed until shared entitlements and fulfillment are verified. Request a quote if you want BrandDad to scope one now.</p>'
+	. '<article class="bdai-card" id="complete-ai-starter"><h3>Complete AI Starter</h3><p class="bdai-price"><strong>$79.99</strong><span data-bds-copy-en="/month" data-bds-copy-es="/mes">/month</span></p><a data-bds-copy-en="Request a scoped quote" href="/contact-us/?offer=complete-ai-starter">Request a scoped quote</a></article>'
+	. '<article class="bdai-card" id="done-for-you-ai-management"><h3>Done-for-You AI Management</h3><p class="bdai-price"><strong>from $399.00</strong><span>/month</span></p><p>Starts at $399 per month after a written scope. This is not an instant checkout product.</p><li>Price can increase with channels, locations, and usage</li></article>'
+	. '</section><section id="bds-rev-quote-packages"><h2>Complete AI packages — scoped quote</h2></section>'
+	. '<article id="music-original-single"><p class="bdai-price"><strong>$79.00</strong></p></article>'
+	. '<p>AI Business Essentials is $29.99 a month. That price is for that plan. Bigger plans cost more, and a basic Directory listing is free.</p>';
+$live_out = bds_rev_rewrite_quote_packages( $live_pkg );
+rev_expect( false === strpos( $live_out, '$79.99' ), 'live Complete AI Starter price is stripped' );
+rev_expect( false === strpos( $live_out, '$399' ), 'live Done-for-You price is stripped' );
+rev_expect( false !== strpos( $live_out, '$79.00' ), 'music project price is left alone' );
+rev_expect( false !== strpos( $live_out, '$29.99' ), 'Essentials FAQ price is left alone' );
+rev_expect( false !== strpos( $live_out, 'On request' ), 'live Complete AI cards say On request' );
+rev_expect( false !== strpos( $live_out, 'Quote-only after a written scope' ), 'live Done-for-You summary drops the dollar floor' );
+rev_expect( false !== strpos( $live_out, 'Scope can change with channels' ), 'live Done-for-You limit no longer says Price' );
+rev_expect( false === strpos( $live_out, 'id="bds-rev-quote-packages"' ), 'launch complete packages are not duplicated' );
+rev_expect( false !== strpos( $live_out, 'Complete AI packages are quoted separately' ), 'FAQ does not say bigger plans cost more' );
 rev_expect( '' === bds_rev_offer_note_html( '<script>x</script>' ), 'markup offer notes print nothing' );
 rev_expect(
 	'https://directory.branddad.social/featured-advertising/' === bds_rev_menu_featured_url( 'Get Featured', 'https://directory.branddad.social/' ),
@@ -345,7 +361,7 @@ $dup_out = bds_rev_strip_theme_entry_title_h1( $dup );
 rev_expect( false === strpos( $dup_out, '<h1 class="entry-title">About Us</h1>' ), 'theme About Us is not a second H1' );
 rev_expect( false !== strpos( $dup_out, '<h1>Practical growth systems, clearly explained.</h1>' ), 'the real about heading stays' );
 $rev_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-revenue-sections-mu.php' );
-rev_expect( false !== strpos( $rev_src, 'Version: 0.2.42' ), 'revenue MU stamps 0.2.42' );
+rev_expect( false !== strpos( $rev_src, 'Version: 0.2.43' ), 'revenue MU stamps 0.2.43' );
 rev_expect( false !== strpos( $rev_src, 'bds_rev_allowed_redirect_hosts' ), 'Social leftover doors may open Directory' );
 rev_expect( false === strpos( $rev_src, 'wp_get_referer' ), 'music brief redirect stays on Social home' );
 rev_expect( false !== strpos( $rev_src, "home_url( '/?bds_music=saved' )" ), 'a saved brief returns to Social home' );
