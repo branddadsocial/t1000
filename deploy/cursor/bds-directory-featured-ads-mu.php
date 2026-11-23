@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.38
+ * Version: 0.2.39
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -1163,8 +1163,19 @@ function bds_feat_rewrite_page_html( $html ) {
 	}
 	$html = bds_feat_rewrite_subscribe_now( $html );
 	$html = bds_feat_rewrite_see_plans( $html );
+	if ( function_exists( 'bds_feat_rewrite_leftover_labels' ) ) {
+		$html = bds_feat_rewrite_leftover_labels( $html );
+	}
 	return $html;
 }
+
+function bds_feat_leftover_js() {
+	if ( ! bds_feat_is_directory() || is_admin() ) {
+		return;
+	}
+	echo '<script id="bds-feat-leftover-js">(function(){var as=document.querySelectorAll("a");for(var i=0;i<as.length;i++){var t=(as[i].textContent||"").replace(/\\s+/g," ").trim();if(t==="See plans"||t==="See plans and prices"||t==="See plans & prices")as[i].textContent="See membership plans";if(t==="List your business"||t==="List My Business")as[i].textContent="List my business free";if(t==="Subscribe now")as[i].textContent="Subscribe monthly";}})();</script>';
+}
+add_action( 'wp_footer', 'bds_feat_leftover_js', 99 );
 
 function bds_feat_home_legacy_buffer_start() {
 	if ( ! bds_feat_is_directory() || is_admin() ) {

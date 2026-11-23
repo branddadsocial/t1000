@@ -114,8 +114,9 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.38' ), 'featured MU stamps 0.2.38' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.39' ), 'featured MU stamps 0.2.39' );
 expect( false !== strpos( $feat_src, 'bds_feat_rewrite_page_html' ), 'Directory leftover copy is rewritten on the whole page' );
+expect( false !== strpos( $feat_src, 'bds-feat-leftover-js' ), 'Directory leftover labels are rewritten after late widgets' );
 expect( false !== strpos( $feat_src, 'bds-feat-menu-clear' ), 'Directory header menus are laid out' );
 expect( false !== strpos( $feat_src, '.bdd-mobile-menu' ), 'mobile hamburger is a separate control' );
 expect( false !== strpos( $feat_src, '@media(max-width:900px)' ), 'desktop nav hides on small screens so it does not sit on the hamburger' );
@@ -153,6 +154,9 @@ expect( false === strpos( $home_out, 'See plans &amp; prices' ), 'bottom CTA no 
 $keep_hero = bds_feat_rewrite_home_legacy_html( '<section id="bds-wa-hero"><h1 id="bdd-title">Find What You Need Near You—Fast.</h1></section>' );
 expect( false !== strpos( $keep_hero, 'id="bds-wa-hero"' ), 'WhatsApp wrapper stays if it already holds the current heading' );
 expect( false === strpos( bds_feat_rewrite_home_legacy_html( '' ), 'bds-dfc-gift' ), 'empty HTML stays empty' );
+$note = '<span>A basic listing is free. Paid plans include 10% off eligible services. <a href="https://directory.branddad.social/select-your-plan/?ref=mcdqf8t1iinf">See plans</a></span>';
+expect( false === strpos( bds_feat_rewrite_leftover_labels( $note ), '>See plans</a>' ), 'membership note See plans is rewritten without regex' );
+expect( false !== strpos( bds_feat_rewrite_leftover_labels( $note ), '>See membership plans</a>' ), 'membership note says See membership plans' );
 expect( '<div id="x">keep</div>' === bds_feat_strip_tag_by_id( '<div id="x">keep</div>', 'section', 'missing' ), 'missing ids are left alone' );
 expect( false !== strpos( $feat_src, 'Subscribe monthly</a>' ), 'leftover Subscribe now is rewritten to Subscribe monthly' );
 expect( false !== strpos( $feat_src, ':focus-visible' ), 'featured buttons keep a visible focus ring' );

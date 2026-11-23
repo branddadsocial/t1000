@@ -494,10 +494,52 @@ if ( ! function_exists( 'bds_feat_rewrite_home_legacy_html' ) ) {
 	 * @param string $html HTML.
 	 * @return string
 	 */
+	function bds_feat_rewrite_leftover_labels( $html ) {
+		if ( ! is_string( $html ) || $html === '' ) {
+			return is_string( $html ) ? $html : '';
+		}
+		return str_replace(
+			array(
+				'>See plans</a>',
+				'>See plans and prices</a>',
+				'>See plans &amp; prices</a>',
+				'>See plans & prices</a>',
+				'>See plans →</a>',
+				'data-bds-copy-en="See plans"',
+				'data-bds-copy-en="See plans and prices"',
+				'data-bds-copy-en="See plans &amp; prices"',
+				'data-bds-copy-en="See plans & prices"',
+				'>List your business</a>',
+				'>List My Business</a>',
+				'>Subscribe now</a>',
+				'data-bds-copy-en="Subscribe now"',
+				'data-bds-copy-es="Suscribirse ahora"',
+			),
+			array(
+				'>See membership plans</a>',
+				'>See membership plans</a>',
+				'>See membership plans</a>',
+				'>See membership plans</a>',
+				'>See membership plans</a>',
+				'data-bds-copy-en="See membership plans"',
+				'data-bds-copy-en="See membership plans"',
+				'data-bds-copy-en="See membership plans"',
+				'data-bds-copy-en="See membership plans"',
+				'>List my business free</a>',
+				'>List my business free</a>',
+				'>Subscribe monthly</a>',
+				'data-bds-copy-en="Subscribe monthly"',
+				'data-bds-copy-es="Suscribirse cada mes"',
+			),
+			$html
+		);
+	}
+
 	function bds_feat_rewrite_home_legacy_html( $html ) {
 		if ( ! is_string( $html ) || $html === '' ) {
 			return is_string( $html ) ? $html : '';
 		}
+		$html = bds_feat_rewrite_leftover_labels( $html );
 		$rewritten = preg_replace(
 			'/body\.home #bdd-title\{[^}]*left:-9999px[^}]*\}/',
 			'body.home #bdd-title{position:static;left:auto;width:auto;height:auto;overflow:visible}',
