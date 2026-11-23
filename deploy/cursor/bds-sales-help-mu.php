@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Sales Help
  * Description: A short helper with checked prices and real links. It does not start a new AI engine or change an account.
- * Version: 0.1.7
+ * Version: 0.1.8
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins. The
@@ -274,7 +274,7 @@ function bds_sales_help_markup( array $card ) {
 	$es   = bds_sales_help_card( $key, 'es' );
 	$sw   = function_exists( 'bds_lang_swap_attrs' );
 	$html  = '<section id="bds-sales-help" aria-label="Help me choose">';
-	$html .= '<style>#bds-sales-help{position:sticky;bottom:0;z-index:30;background:#fff;border-top:1px solid #d9e2dc;padding:10px 14px}#bds-sales-help form{display:flex;gap:8px;flex-wrap:wrap}#bds-sales-help input{flex:1 1 180px;min-height:44px;padding:8px}#bds-sales-help button,#bds-sales-help a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border:0;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}#bds-sales-help a:focus-visible,#bds-sales-help button:focus-visible,#bds-sales-help summary:focus-visible{outline:3px solid #0668d8;outline-offset:2px}@media (prefers-reduced-motion:reduce){#bds-sales-help{position:static}}</style>';
+	$html .= '<style>#bds-sales-help{position:static;background:#fff;border-top:1px solid #d9e2dc;padding:10px 14px}#bds-sales-help form{display:flex;gap:8px;flex-wrap:wrap}#bds-sales-help input{flex:1 1 180px;min-height:44px;padding:8px}#bds-sales-help button,#bds-sales-help a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 14px;border:0;border-radius:10px;background:#0668d8;color:#fff;font-weight:800;text-decoration:none}#bds-sales-help a:focus-visible,#bds-sales-help button:focus-visible,#bds-sales-help summary:focus-visible{outline:3px solid #0668d8;outline-offset:2px}@media (prefers-reduced-motion:reduce){#bds-sales-help{position:static}}</style>';
 	$html .= '<p><a href="' . esc_url( $en['href'] ) . '"' . ( $sw ? bds_lang_swap_attrs( $en['label'], $es['label'] ) : '' ) . '>' . esc_html( $en['label'] ) . '</a></p>';
 	$html .= '<details><summary' . ( $sw ? bds_lang_swap_attrs( 'Help me choose', 'Ayúdeme a elegir' ) : '' ) . '>Help me choose</summary>';
 	if ( function_exists( 'bds_lang_pair' ) ) {

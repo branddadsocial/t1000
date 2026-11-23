@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Language Switch
  * Description: English / Español control for BrandDad Social and Directory. One language on screen. No Google Translate. Charge currency stays USD.
- * Version: 0.1.6
+ * Version: 0.1.7
  * Author: BrandDad
  *
  * Deploy on branddad.social and directory.branddad.social mu-plugins.
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_LANG_SWITCH_VER', '0.1.6' );
+define( 'BDS_LANG_SWITCH_VER', '0.1.7' );
 
 /**
  * Social and Directory only.
@@ -202,13 +202,20 @@ function bds_lang_head() {
 	echo '<style id="bds-lang-switch-css" data-bds-lang-switch="' . $ver . '">'
 		. 'html:not([data-bds-lang="es"]) [data-bds-copy="es"]{display:none!important}'
 		. 'html[data-bds-lang="es"] [data-bds-copy="en"]{display:none!important}'
-		. '#bds-lang-switch{position:fixed;top:76px;right:auto;left:12px;z-index:40;display:flex;gap:0;border:1px solid rgba(15,23,42,.16);border-radius:999px;overflow:hidden;background:rgba(255,255,255,.94);box-shadow:0 8px 24px rgba(15,23,42,.12);font:700 12px/1 Segoe UI,system-ui,sans-serif}'
-		. '#bds-lang-switch button{border:0;background:transparent;color:#0f172a;padding:8px 11px;cursor:pointer;min-height:44px}'
+		. '#bds-lang-switch{position:static;display:inline-flex;flex:0 0 auto;align-items:center;gap:0;margin:0;border:1px solid rgba(15,23,42,.16);border-radius:999px;overflow:hidden;background:#fff;font:700 12px/1 Segoe UI,system-ui,sans-serif;z-index:2}'
+		. '#bds-lang-switch button{border:0;background:transparent;color:#0f172a;padding:8px 11px;cursor:pointer;min-height:44px;min-width:44px}'
 		. '#bds-lang-switch button[aria-pressed="true"]{background:#0668d8;color:#fff}'
 		. '#bds-lang-switch button:focus-visible{outline:3px solid #0668d8;outline-offset:2px}'
-		. 'body.admin-bar #bds-lang-switch{top:122px}'
-		. '@media (max-width:782px){body.admin-bar #bds-lang-switch{top:132px}}'
-		. 'body.bds-header-recovered #site-header .site-navigation>ul{flex-wrap:wrap}'
+		. '#site-header.site-header{display:flex;align-items:center;flex-wrap:wrap;gap:8px;position:relative}'
+		. '#site-header .site-branding{flex:0 1 auto;min-width:0;max-width:min(240px,46vw)}'
+		. '#site-header .site-branding img,#site-header .custom-logo{max-height:44px;width:auto;height:auto;max-width:100%}'
+		. '#site-header .site-navigation{flex:1 1 auto;min-width:0}'
+		. '#site-header .site-navigation>ul{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-width:0}'
+		. '#site-header #bds-menu-toggle{flex:0 0 44px}'
+		. 'li.bds-lang-menu-item,li#menu-item-bds-lang{list-style:none;display:flex;align-items:center;margin-left:auto}'
+		. 'html body #google_translate_element,html body .goog-te-banner-frame,html body .skiptranslate,html body iframe.skiptranslate,html body .goog-te-gadget,html body .VIpgJd-ZVi9od-ORHb-OEVmcd{display:none!important;visibility:hidden!important;height:0!important;width:0!important;overflow:hidden!important}'
+		. 'html body{top:0!important}'
+		. '@media (max-width:900px){#site-header .site-navigation>ul{width:100%}}'
 		. '</style>' . "\n";
 	echo '<script id="bds-lang-switch-boot" data-bds-lang-switch="' . $ver . '">(function(){try{var q=(location.search.match(/[?&]bd_lang=([^&]*)/)||[])[1];var man=(document.cookie.match(/(?:^|; )bd_lc_manual=([^;]*)/)||[])[1];var m=(document.cookie.match(/(?:^|; )bds_lang=([^;]*)/)||[])[1];var lang=q?decodeURIComponent(q.replace(/\\+/g," ")):(man==="1"&&m?decodeURIComponent(m):"en");lang=String(lang).toLowerCase().replace(/[^a-z]/g,"");if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);if(lang==="es")document.documentElement.setAttribute("lang","es");}catch(e){}})();</script>' . "\n";
 }
@@ -225,10 +232,10 @@ function bds_lang_menu_clear_css() {
 		return;
 	}
 	echo '<style id="bds-lang-switch-menu-css">'
-		. 'html body #bd-lc-root.bd-lc,html body #bd-lc-root,html body .bd-lc{display:none!important;visibility:hidden!important;pointer-events:none!important;width:0!important;height:0!important;overflow:hidden!important;z-index:-1!important;top:auto!important;right:auto!important}'
-		. '#bds-lang-switch{top:76px!important;right:auto!important;left:12px!important;z-index:40!important}'
-		. 'body.admin-bar #bds-lang-switch{top:122px!important}'
-		. '@media (max-width:782px){body.admin-bar #bds-lang-switch{top:132px!important}}'
+		. 'html body #bd-lc-root.bd-lc,html body #bd-lc-root,html body .bd-lc,html body .bd-lc-gt{display:none!important;visibility:hidden!important;pointer-events:none!important;width:0!important;height:0!important;overflow:hidden!important;z-index:-1!important;top:auto!important;right:auto!important}'
+		. '#bds-lang-switch{position:static!important;top:auto!important;right:auto!important;left:auto!important;bottom:auto!important}'
+		. 'html body #google_translate_element,html body .goog-te-banner-frame,html body iframe.skiptranslate{display:none!important;visibility:hidden!important}'
+		. 'html body{top:0!important}'
 		. '</style>' . "\n";
 }
 add_action( 'wp_footer', 'bds_lang_menu_clear_css', 1 );
@@ -244,6 +251,20 @@ function bds_lang_switch_markup() {
 	echo '<button type="button" data-bds-lang-pick="en" aria-pressed="true">EN</button>';
 	echo '<button type="button" data-bds-lang-pick="es" aria-pressed="false">ES</button>';
 	echo '</div>';
-	echo '<script id="bds-lang-switch-js">(function(){function cookieSet(n,v){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax;domain=.branddad.social";}catch(e){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax";}catch(err){}}}function apply(lang,persist){if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);document.documentElement.setAttribute("lang",lang==="es"?"es":"en");if(persist){cookieSet("bds_lang",lang);cookieSet("bd_lc_manual","1");}document.querySelectorAll("[data-bds-copy-en]").forEach(function(el){var t=el.getAttribute(lang==="es"?"data-bds-copy-es":"data-bds-copy-en");if(!t)return;if(el.tagName==="INPUT"||el.tagName==="TEXTAREA")el.setAttribute("placeholder",t);else el.textContent=t;});document.querySelectorAll("[data-bds-copy]").forEach(function(el){el.hidden=el.getAttribute("data-bds-copy")!==lang;});document.querySelectorAll("[data-bds-lang-pick]").forEach(function(btn){btn.setAttribute("aria-pressed",btn.getAttribute("data-bds-lang-pick")===lang?"true":"false");});}var root=document.getElementById("bds-lang-switch");if(!root)return;root.addEventListener("click",function(e){var btn=e.target.closest("[data-bds-lang-pick]");if(!btn)return;apply(btn.getAttribute("data-bds-lang-pick"),true);});apply(document.documentElement.getAttribute("data-bds-lang")||"en",false);})();</script>';
+	echo '<script id="bds-lang-switch-js">(function(){function cookieSet(n,v){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax;domain=.branddad.social";}catch(e){try{document.cookie=n+"="+encodeURIComponent(v)+";path=/;max-age=31536000;SameSite=Lax";}catch(err){}}}function apply(lang,persist){if(lang!=="es")lang="en";document.documentElement.setAttribute("data-bds-lang",lang);document.documentElement.setAttribute("lang",lang==="es"?"es":"en");if(persist){cookieSet("bds_lang",lang);cookieSet("bd_lc_manual","1");}document.querySelectorAll("[data-bds-copy-en]").forEach(function(el){var t=el.getAttribute(lang==="es"?"data-bds-copy-es":"data-bds-copy-en");if(!t)return;if(el.tagName==="INPUT"||el.tagName==="TEXTAREA")el.setAttribute("placeholder",t);else el.textContent=t;});document.querySelectorAll("[data-bds-copy]").forEach(function(el){el.hidden=el.getAttribute("data-bds-copy")!==lang;});document.querySelectorAll("[data-bds-lang-pick]").forEach(function(btn){btn.setAttribute("aria-pressed",btn.getAttribute("data-bds-lang-pick")===lang?"true":"false");});}function park(){var nodes=document.querySelectorAll("#bds-lang-switch");if(!nodes.length)return;var sw=nodes[0];for(var i=1;i<nodes.length;i++){if(nodes[i].parentNode)nodes[i].parentNode.removeChild(nodes[i]);}var mobile=document.querySelector(".bdd-header .bdd-mobile-menu");var actions=document.querySelector(".bdd-header .bdd-header__actions");if(actions&&mobile){if(sw.parentNode!==actions||sw.nextElementSibling!==mobile){actions.insertBefore(sw,mobile);}return;}var toggle=document.getElementById("bds-menu-toggle");if(toggle&&toggle.parentNode){if(sw.parentNode!==toggle.parentNode||sw.nextElementSibling!==toggle){toggle.parentNode.insertBefore(sw,toggle);}return;}var ul=document.querySelector("#site-header #menu-main-menu,#site-header .site-navigation>ul");if(!ul)return;var li=document.getElementById("menu-item-bds-lang");if(!li){li=document.createElement("li");li.id="menu-item-bds-lang";li.className="menu-item bds-lang-menu-item";}if(sw.parentNode!==li)li.appendChild(sw);if(li.parentNode!==ul)ul.appendChild(li);}var root=document.getElementById("bds-lang-switch");if(!root)return;root.addEventListener("click",function(e){var btn=e.target.closest("[data-bds-lang-pick]");if(!btn)return;apply(btn.getAttribute("data-bds-lang-pick"),true);});apply(document.documentElement.getAttribute("data-bds-lang")||"en",false);park();if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",park);window.addEventListener("load",park);})();</script>';
 }
+
+/**
+ * Leftover Google Translate banners sit on menus. Official switcher is EN/ES.
+ *
+ * @return void
+ */
+function bds_lang_kill_translate() {
+	if ( ! bds_lang_switch_host() || is_admin() ) {
+		return;
+	}
+	echo '<script id="bds-lang-kill-translate">(function(){window.bdLcGoogleTranslateInit=function(){};window.googleTranslateElementInit=function(){};document.querySelectorAll("#google_translate_element,iframe.skiptranslate,.goog-te-banner-frame,.goog-te-gadget,.bd-lc-gt").forEach(function(el){if(el&&el.parentNode)el.parentNode.removeChild(el);});if(document.body)document.body.style.top="0px";})();</script>';
+}
+add_action( 'wp_footer', 'bds_lang_kill_translate', 99 );
+
 add_action( 'wp_footer', 'bds_lang_switch_markup', 5 );

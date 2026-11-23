@@ -121,7 +121,7 @@ unset( $_GET['bd_lang'], $_COOKIE['bd_lang'], $_COOKIE['bds_lang'], $_COOKIE['bd
 
 require dirname( __DIR__ ) . '/deploy/cursor/bds-lang-switch-mu.php';
 
-assert_true( '0.1.6' === BDS_LANG_SWITCH_VER, 'language switch version' );
+assert_true( '0.1.7' === BDS_LANG_SWITCH_VER, 'language switch version' );
 assert_true( 'en' === bds_lang_sanitize( '<script>' ), 'unknown input becomes English' );
 assert_true( 'en' === bds_lang_sanitize( 'fr' ), 'French is not a public language' );
 assert_true( 'es' === bds_lang_sanitize( 'ES' ), 'Spanish is allowlisted' );
@@ -149,7 +149,13 @@ $src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-lang-switch-m
 assert_true( false === strpos( $src, 'googtrans' ), 'the switcher does not use Google Translate' );
 assert_true( false === strpos( $src, 'id="bd-lc-root"' ), 'the switcher does not reuse the killed widget id' );
 assert_true( false !== strpos( $src, 'html body #bd-lc-root.bd-lc' ), 'the leftover language FAB is hidden off the menus' );
-assert_true( false !== strpos( $src, 'left:12px' ), 'EN/ES sits left, not on the hamburger' );
+assert_true( false === strpos( $src, '#bds-lang-switch{position:fixed' ), 'EN/ES is not a fixed overlay on the page' );
+assert_true( false !== strpos( $src, 'position:static' ), 'EN/ES sits in document flow' );
+assert_true( false !== strpos( $src, 'function park()' ), 'EN/ES is moved into the live menus' );
+assert_true( false !== strpos( $src, 'bdd-mobile-menu' ), 'Directory EN/ES sits in the header actions before the hamburger' );
+assert_true( false !== strpos( $src, 'menu-item-bds-lang' ), 'Social EN/ES becomes a menu item' );
+assert_true( false !== strpos( $src, 'google_translate_element' ), 'leftover Google Translate is hidden off the menus' );
+assert_true( false !== strpos( $src, 'bdLcGoogleTranslateInit' ), 'leftover Google Translate init is disabled' );
 assert_true( false !== strpos( $src, 'id="bds-lang-switch"' ), 'the switcher uses a live id' );
 assert_true( false !== strpos( $src, '#0668d8' ), 'the switcher uses the approved accessible blue' );
 assert_true( false === strpos( $src, '#0372ff' ), 'the lower-contrast switcher blue is gone' );

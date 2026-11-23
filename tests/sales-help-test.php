@@ -80,7 +80,8 @@ assert_true( false === bds_sales_help_path_ok( 'cart' ), 'cart does not get a se
 assert_true( false === bds_sales_help_path_ok( 'my-account/orders' ), 'My Account does not get a second assistant' );
 assert_true( false === bds_sales_help_path_ok( 'account-hub' ), 'account hub does not stack the helper on studio boards' );
 assert_true( false === bds_sales_help_path_ok( 'studio-boards' ), 'studio boards do not get a second assistant' );
-assert_true( false !== strpos( $help_src, 'Version: 0.1.7' ), 'sales help stamps 0.1.7' );
+assert_true( false !== strpos( $help_src, 'Version: 0.1.8' ), 'sales help stamps 0.1.8' );
+assert_true( false !== strpos( $help_src, '#bds-sales-help{position:static' ), 'sales help does not overlay the page' );
 assert_true( false !== strpos( $help_src, '#0668d8' ), 'sales help uses the approved accessible blue' );
 assert_true( false !== strpos( $help_src, ':focus-visible' ), 'sales help keeps a visible focus ring' );
 assert_true( false !== strpos( $help_src, 'prefers-reduced-motion' ), 'sticky help respects reduced motion' );

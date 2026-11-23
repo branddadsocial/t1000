@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.41
+ * Version: 0.2.42
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -1149,8 +1149,10 @@ function bds_feat_menu_overlap_css() {
 		. '.bdd-mobile-menu:not([open])>nav{display:none}'
 		. '.bdd-mobile-menu a{min-height:44px;display:flex;align-items:center;padding:9px 11px;color:#27374a;text-decoration:none}'
 		. '.bdd-header a:focus-visible,.bdd-header summary:focus-visible,.bdd-header button:focus-visible{outline:3px solid #0668d8;outline-offset:2px}'
-		. '@media(max-width:900px){.bdd-nav{display:none}.bdd-add-menu{display:none}.bdd-mobile-menu{display:block}.bdd-header .bdd-shell,.bdd-header .bdd-header__inner{min-height:64px;gap:10px}}'
-		. '@media(max-width:420px){.bdd-header .bdd-shell,.bdd-header .bdd-header__inner{width:min(100% - 20px,1180px);gap:8px}.bdd-icon-link{width:40px;height:40px}}'
+		. '.bdd-header__actions #bds-lang-switch{flex:0 0 auto;position:static}'
+		. '.bdd-mobile-menu nav #bds-lang-switch{margin:6px 0}'
+		. '@media(max-width:900px){.bdd-nav{display:none}.bdd-add-menu{display:none}.bdd-mobile-menu{display:block}.bdd-header .bdd-shell,.bdd-header .bdd-header__inner{min-height:64px;gap:8px;flex-wrap:nowrap}.bdd-brand__name{max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bdd-header__actions{flex-wrap:nowrap;gap:6px}}'
+		. '@media(max-width:420px){.bdd-header .bdd-shell,.bdd-header .bdd-header__inner{width:min(100% - 20px,1180px);gap:6px}.bdd-icon-link{width:40px;height:40px}.bdd-brand__name{max-width:34vw}}'
 		. '</style>';
 }
 add_action( 'wp_head', 'bds_feat_menu_overlap_css', 42 );
