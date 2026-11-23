@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Revenue Sections
  * Description: Adds the missing Social catalog, package, music-brief, and Directory advertising sections. Checkout stays closed unless the commercial catalog already exposes a live product URL.
- * Version: 0.2.51
+ * Version: 0.2.52
  * Author: BrandDad
  *
  * Secure design: public music briefs are untrusted text. Fields are allowlisted, length-capped, and stored as private posts. A honeypot and a per-IP transient cap abuse. No card data is collected. Package price is never taken from the browser. Contact `offer` is sanitize_title against the hard-coded catalog plus featured inquiry slugs. Checkout URLs come only from the commercial catalog when a published product exists. The homepage strip only emits Subscribe when that catalog already returns a URL. Quote-only / music / staged slugs are not purchasable: product id maps to post_name on the server, Woo is_purchasable and add-to-cart validation fail closed, closed cart rows are removed, and public price HTML is emptied. Essentials and other launch_candidate / live_legacy products stay purchasable. No new endpoints. No secrets.
@@ -1715,7 +1715,13 @@ function bds_rev_alias_dest( $path ) {
 	if ( 'jobs' === $path ) {
 		return 'https://directory.branddad.social/all-listings/?directory_type=jobs-careers';
 	}
-	if ( 'classifieds' === $path ) {
+	if ( in_array( $path, array( 'groups', 'group', 'whatsapp-groups', 'whatsapp-group', 'community', 'communities', 'whatsapp' ), true ) ) {
+		return 'https://directory.branddad.social/all-listings/?directory_type=whatsapp-groups';
+	}
+	if ( in_array( $path, array( 'events', 'meetups', 'meetup' ), true ) ) {
+		return 'https://directory.branddad.social/all-listings/?directory_type=events';
+	}
+	if ( 'classifieds' === $path || 'classified' === $path ) {
 		return 'https://directory.branddad.social/all-listings/?directory_type=classifieds';
 	}
 	if ( 'get-featured' === $path || 'advertise-with-us' === $path ) {

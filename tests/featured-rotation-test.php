@@ -95,6 +95,11 @@ expect( false === bds_feat_path_needs_door( 'single-category/coffee-shops' ), 'c
 expect( true === bds_feat_path_needs_door( 'events' ), 'events gets a listing door' );
 expect( true === bds_feat_path_needs_door( 'jobs' ), 'jobs gets a listing door' );
 expect( true === bds_feat_path_needs_door( 'classifieds' ), 'classifieds gets a listing door' );
+expect( true === bds_feat_path_needs_door( 'groups' ), 'WhatsApp groups gets a listing door' );
+expect( true === bds_feat_path_needs_door( 'whatsapp-groups' ), 'whatsapp-groups leftover URLs get a listing door' );
+expect( true === bds_feat_path_needs_door( 'community' ), 'community leftover URLs get a listing door' );
+expect( true === bds_feat_path_needs_door( 'meetups' ), 'meetups leftover URLs get a listing door' );
+expect( true === bds_feat_path_needs_door( 'classified' ), 'classified leftover URLs get a listing door' );
 expect( true === bds_feat_path_needs_door( 'memberships' ), 'memberships gets a listing door' );
 expect( true === bds_feat_path_needs_door( 'blog' ), 'blog gets a listing door' );
 expect( true === bds_feat_path_needs_door( 'about-us' ), 'about-us gets a listing door' );
@@ -103,6 +108,12 @@ expect( true === bds_feat_path_needs_door( 'faq' ), 'faq leftover URLs get a lis
 expect( 'events' === bds_feat_directory_surface( 'events' ), 'events surface is recognized' );
 expect( 'jobs' === bds_feat_directory_surface( 'jobs-careers' ), 'jobs-careers maps to jobs' );
 expect( 'classifieds' === bds_feat_directory_surface( 'classifieds' ), 'classifieds surface is recognized' );
+expect( 'groups' === bds_feat_directory_surface( 'whatsapp-groups' ), 'whatsapp-groups maps to groups' );
+expect( 'groups' === bds_feat_directory_surface( 'communities' ), 'communities leftover maps to groups' );
+expect( 'events' === bds_feat_directory_surface( 'meetups' ), 'meetups leftover maps to events' );
+expect( 'classifieds' === bds_feat_directory_surface( 'classified' ), 'classified leftover maps to classifieds' );
+expect( 'groups' === bds_feat_listing_type_surface( 'whatsapp-groups' ), 'all-listings whatsapp-groups type is recognized' );
+expect( '' === bds_feat_directory_surface( 'whatsapp' ), 'the live WhatsApp article path is not a groups surface' );
 expect( 'memberships' === bds_feat_directory_surface( 'plans' ), 'plans maps to memberships' );
 expect( 'blog' === bds_feat_directory_surface( 'blog' ), 'blog surface is recognized' );
 expect( 'gifts' === bds_feat_directory_surface( 'gift-card-marketplace' ), 'gift marketplace maps to gifts' );
@@ -114,7 +125,7 @@ expect( 'gifts' === bds_feat_listing_type_surface( 'gift-cards' ), 'all-listings
 expect( 'gifts' === bds_feat_listing_type_surface( 'gift-card-marketplace' ), 'all-listings gift marketplace type uses marketplace copy' );
 expect( '' === bds_feat_listing_type_surface( '<script>' ), 'unsafe directory types fail closed' );
 $feat_src = file_get_contents( dirname( __DIR__ ) . '/deploy/cursor/bds-directory-featured-ads-mu.php' );
-expect( false !== strpos( $feat_src, 'Version: 0.2.39' ), 'featured MU stamps 0.2.39' );
+expect( false !== strpos( $feat_src, 'Version: 0.2.41' ), 'featured MU stamps 0.2.41' );
 expect( false !== strpos( $feat_src, 'bds_feat_rewrite_page_html' ), 'Directory leftover copy is rewritten on the whole page' );
 expect( false !== strpos( $feat_src, 'bds-feat-leftover-js' ), 'Directory leftover labels are rewritten after late widgets' );
 expect( false !== strpos( $feat_src, 'bds-feat-menu-clear' ), 'Directory header menus are laid out' );
@@ -168,6 +179,12 @@ expect( false !== strpos( $feat_src, 'data-bds-copy-en="Subscribe monthly"' ), '
 expect( false !== strpos( $feat_src, '#bds-mt-plans' ), 'plans-page See plans jump is rewritten' );
 expect( false !== strpos( $feat_src, 'See membership plans</a>' ), 'leftover See plans is rewritten to See membership plans' );
 expect( false !== strpos( $feat_src, 'does not sell tickets' ), 'events copy does not sell tickets' );
+expect( false !== strpos( $feat_src, 'does not host the group chat' ), 'WhatsApp groups copy does not host the chat' );
+expect( false !== strpos( $feat_src, 'directory_type=whatsapp-groups' ), 'groups leftover URLs open the WhatsApp groups directory type' );
+expect( false !== strpos( $feat_src, "'whatsapp-groups'" ), 'whatsapp-groups leftover URLs are mapped' );
+expect( false !== strpos( $feat_src, "'communities'" ), 'community leftover URLs open WhatsApp groups' );
+expect( false !== strpos( $feat_src, "'meetup'" ), 'meetup leftover URLs open events' );
+expect( false === strpos( $feat_src, "'whatsapp'" ), 'live Directory /whatsapp/ article is not stolen' );
 expect( false !== strpos( $feat_src, 'does not sell tickets or book flights' ), 'travel copy does not sell tickets' );
 expect( false !== strpos( $feat_src, 'does not take that payment here' ), 'gift cards stay a marketplace' );
 expect( false !== strpos( $feat_src, 'Sign in to list free' ), 'sign-in still offers the free listing' );

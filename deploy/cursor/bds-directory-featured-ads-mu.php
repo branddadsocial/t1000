@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Featured Ads
  * Description: Placement inventory, complimentary trials, partnership grants, and fair rotation. Paid reservations stay inactive until WooCommerce confirms payment. No automatic charges.
- * Version: 0.2.39
+ * Version: 0.2.41
  * Author: BrandDad
  *
  * Deploy: wp-content/mu-plugins/bds-directory-featured-ads-mu.php
@@ -802,6 +802,15 @@ function bds_feat_path_ctas() {
 		);
 		return;
 	}
+	if ( 'groups' === $surface ) {
+		echo bds_feat_door_band(
+			__( 'Find WhatsApp groups, or list yours free', 'branddad' ),
+			__( 'BrandDad does not host the group chat. Join happens on WhatsApp with a real group the owner listed. A basic listing is free. Featured is a separate monthly option.', 'branddad' ),
+			'Encuentre grupos de WhatsApp, o liste el suyo gratis',
+			'BrandDad no hospeda el chat del grupo. Se entra en WhatsApp con un grupo real que el dueño listó. Un listado básico es gratis. Featured es una opción mensual aparte.'
+		);
+		return;
+	}
 	if ( 'jobs' === $surface ) {
 		echo bds_feat_door_band(
 			__( 'Find work, or list a hiring business free', 'branddad' ),
@@ -960,6 +969,18 @@ function bds_feat_leftover_dest( $path ) {
 	$path = strtolower( trim( (string) $path, '/' ) );
 	if ( in_array( $path, array( 'gifts', 'marketplace', 'discount-gift-cards', 'cheap-gift-cards', 'giftcards', 'discount-cards' ), true ) ) {
 		return home_url( '/gift-card-marketplace/' );
+	}
+	if ( in_array( $path, array( 'groups', 'group', 'whatsapp-groups', 'whatsapp-group', 'wa-groups', 'communities', 'community' ), true ) ) {
+		return home_url( '/all-listings/?directory_type=whatsapp-groups' );
+	}
+	if ( in_array( $path, array( 'list-group', 'list-whatsapp-group', 'post-a-group', 'post-group' ), true ) ) {
+		return home_url( '/add-listing/?directory_type=whatsapp-groups' );
+	}
+	if ( in_array( $path, array( 'meetups', 'meetup' ), true ) ) {
+		return home_url( '/all-listings/?directory_type=events' );
+	}
+	if ( 'classified' === $path ) {
+		return home_url( '/all-listings/?directory_type=classifieds' );
 	}
 	if ( 'sell-gift-cards' === $path ) {
 		return home_url( '/sell-gift-card/' );
