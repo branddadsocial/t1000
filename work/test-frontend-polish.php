@@ -38,6 +38,7 @@ $checks = array(
 	'has_mobile_cta'=> false !== strpos( $page, 'data-bds-open-assistant' ),
 	'health_renderer'=> function_exists( 'bds_fp_render_health_page' ),
 	'health_css'     => false !== strpos( bds_fp_health_page_css(), 'bds-fp-health-nav' ),
+	'health_helper'  => '<script>function bdsFpHealthEsc(v){return v;}bdsFpHealthEsc("ok");</script>' === bds_fp_prepare_health_widget( '<script>function bdsHealthEsc(v){return v;}bdsHealthEsc("ok");</script>' ),
 );
 
 $_SERVER['REQUEST_URI'] = '/add-listing/';

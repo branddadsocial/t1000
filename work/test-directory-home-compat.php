@@ -3,6 +3,9 @@ namespace BrandDad\DirectoryExperience {
 	function is_public_redesign_enabled() {
 		return (bool) $GLOBALS['replacement_enabled'];
 	}
+	function render_home() {
+		return '<main class="bdd"><h1>Find local businesses</h1></main>';
+	}
 }
 
 namespace {
@@ -10,9 +13,17 @@ namespace {
 	$GLOBALS['replacement_enabled'] = true;
 	$GLOBALS['compat_hooks'] = array();
 	$GLOBALS['compat_removals'] = array();
+	$_SERVER['HTTP_HOST'] = 'directory.branddad.social';
+	$_SERVER['REQUEST_URI'] = '/?ref=test';
 
 	function add_action( $hook, $callback, $priority ) {
 		$GLOBALS['compat_hooks'][ $hook ][ $priority ] = $callback;
+	}
+	function wp_parse_url( $url, $component ) {
+		return parse_url( $url, $component );
+	}
+	function is_front_page() {
+		return true;
 	}
 	function remove_action( $hook, $callback, $priority ) {
 		$GLOBALS['compat_removals'][] = array( 'action', $hook, $callback, $priority );
@@ -25,6 +36,23 @@ namespace {
 	}
 
 	require dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php';
+
+	if ( ! bds_directory_home_compat_should_render() ) {
+		fwrite( STDERR, "Exact Directory root did not pass the renderer gate.\n" );
+		exit( 1 );
+	}
+	$_SERVER['REQUEST_URI'] = '/all-listings/';
+	if ( bds_directory_home_compat_should_render() ) {
+		fwrite( STDERR, "A non-home Directory route passed the renderer gate.\n" );
+		exit( 1 );
+	}
+	$_SERVER['REQUEST_URI'] = '/';
+	$_SERVER['HTTP_HOST'] = 'branddad.social';
+	if ( bds_directory_home_compat_should_render() ) {
+		fwrite( STDERR, "The Social host passed the Directory renderer gate.\n" );
+		exit( 1 );
+	}
+	$_SERVER['HTTP_HOST'] = 'directory.branddad.social';
 
 	$callback = $GLOBALS['compat_hooks']['wp'][PHP_INT_MAX - 1] ?? null;
 	if ( ! is_callable( $callback ) ) {

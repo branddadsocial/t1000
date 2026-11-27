@@ -17,6 +17,24 @@ defined( 'ABSPATH' ) || exit;
 define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.1' );
 
 /**
+ * Isolate the recovered health widget from a legacy whole-page script scrubber.
+ *
+ * The older navigation cleanup identifies the widget by this helper name, but
+ * its broad expression starts at the document's first script tag. Renaming the
+ * helper and every local reference preserves the widget while preventing that
+ * unrelated cleanup from removing the page header and hero.
+ *
+ * @param string $widget Rendered shortcode HTML.
+ * @return string
+ */
+function bds_fp_prepare_health_widget( $widget ) {
+	if ( ! is_string( $widget ) || '' === $widget ) {
+		return is_string( $widget ) ? $widget : '';
+	}
+	return str_replace( 'bdsHealthEsc', 'bdsFpHealthEsc', $widget );
+}
+
+/**
  * Render the public Health Check before legacy theme/output-buffer callbacks.
  *
  * This route has no normal WordPress page object. Disabling its legacy renderer
@@ -45,6 +63,7 @@ function bds_fp_render_health_page() {
 	$widget     = shortcode_exists( 'bds_business_health_check' )
 		? do_shortcode( '[bds_business_health_check minimal_header="1"]' )
 		: '<p class="bds-fp-health-error">The website check is temporarily unavailable. Please try again shortly.</p>';
+	$widget     = bds_fp_prepare_health_widget( $widget );
 	$widget_css = function_exists( 'bds_health_css' ) ? bds_health_css() : '';
 	$charset    = get_bloginfo( 'charset' );
 	$lang       = get_bloginfo( 'language' );
