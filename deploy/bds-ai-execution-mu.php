@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.3.0' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.3.1' );
 
 /**
  * Published workflows verified in the BrandDad Social FormWise workspace.
@@ -83,6 +83,8 @@ function bds_ai_exec_tool_catalog() {
 			'kind'        => 'flow',
 			'remote_id'   => '3d3deeff-cc55-43a3-b96e-4969df4296cc',
 			'credit_cost' => 5,
+			'one_time_product_slug' => 'website-speed-optimization',
+			'plan_access' => true,
 			'trial'       => true,
 			'fields'      => array(
 				'what_kind_of_website_help_is_needed_' => array( 'type' => 'enum', 'required' => true, 'options' => array( 'Repair', 'Speed', 'Conversion', 'Ongoing care' ) ),
@@ -129,6 +131,17 @@ function bds_ai_exec_tool_catalog() {
 			),
 		),
 	);
+}
+
+/** Return the exact WooCommerce product slugs that grant one AI job. */
+function bds_ai_exec_one_time_product_slugs() {
+	$slugs = array();
+	foreach ( bds_ai_exec_tool_catalog() as $tool ) {
+		if ( ! empty( $tool['one_time_product_slug'] ) ) {
+			$slugs[] = sanitize_title( (string) $tool['one_time_product_slug'] );
+		}
+	}
+	return array_values( array_unique( array_filter( $slugs ) ) );
 }
 
 /** Register private job records. */
@@ -407,7 +420,7 @@ function bds_ai_exec_case_entitlement( $user_id, $product_slug ) {
 			}
 		}
 	}
-	return new WP_Error( 'case_purchase_required', 'Buy one Airbnb review case, or finish the case you already started.', array( 'status' => 403 ) );
+	return new WP_Error( 'case_purchase_required', 'Buy this one-time AI service, or finish the job you already started.', array( 'status' => 403 ) );
 }
 
 /** Reserve one purchased case before scheduling provider work. */
@@ -486,8 +499,9 @@ function bds_ai_exec_case_order_is_paid( $user_id, $order_id, $item_id, $product
 /** Persist immutable one-case product identity on new order lines. */
 function bds_ai_exec_case_capture_order_item( $item, $cart_item_key, $values, $order ) {
 	$product = isset( $values['data'] ) && $values['data'] instanceof WC_Product ? $values['data'] : null;
-	if ( $item instanceof WC_Order_Item_Product && $product instanceof WC_Product && 'branddad-ai-review-dispute-assistant' === sanitize_title( $product->get_slug() ) ) {
-		$item->add_meta_data( '_bds_ai_case_product_slug', 'branddad-ai-review-dispute-assistant', true );
+	$slug    = $product instanceof WC_Product ? sanitize_title( $product->get_slug() ) : '';
+	if ( $item instanceof WC_Order_Item_Product && in_array( $slug, bds_ai_exec_one_time_product_slugs(), true ) ) {
+		$item->add_meta_data( '_bds_ai_case_product_slug', $slug, true );
 	}
 }
 add_action( 'woocommerce_checkout_create_order_line_item', 'bds_ai_exec_case_capture_order_item', 10, 4 );
@@ -499,7 +513,7 @@ function bds_ai_exec_case_requires_checkout_account( $required ) {
 	}
 	foreach ( WC()->cart->get_cart() as $cart_item ) {
 		$product = isset( $cart_item['data'] ) && $cart_item['data'] instanceof WC_Product ? $cart_item['data'] : null;
-		if ( $product instanceof WC_Product && 'branddad-ai-review-dispute-assistant' === sanitize_title( $product->get_slug() ) ) {
+		if ( $product instanceof WC_Product && in_array( sanitize_title( $product->get_slug() ), bds_ai_exec_one_time_product_slugs(), true ) ) {
 			return true;
 		}
 	}
@@ -509,7 +523,7 @@ add_filter( 'woocommerce_checkout_registration_required', 'bds_ai_exec_case_requ
 add_filter(
 	'woocommerce_is_sold_individually',
 	static function ( $sold_individually, $product ) {
-		return $product instanceof WC_Product && 'branddad-ai-review-dispute-assistant' === sanitize_title( $product->get_slug() ) ? true : $sold_individually;
+		return $product instanceof WC_Product && in_array( sanitize_title( $product->get_slug() ), bds_ai_exec_one_time_product_slugs(), true ) ? true : $sold_individually;
 	},
 	20,
 	2
@@ -609,30 +623,35 @@ function bds_ai_exec_create_job( WP_REST_Request $request ) {
 		$order_id    = 0;
 		$order_item_id = 0;
 		$plan        = array();
-		// Paid/trial access has deterministic precedence. A customer cannot spend
-		// free Directory allowances while a paid or trial allowance is active.
+		// A customer who bought a one-time job receives that job first. Tools that
+		// explicitly allow plan access can fall back to a paid/trial allowance when
+		// no unused one-time line exists. Directory-free access remains last.
+		$plan = bds_ai_exec_active_plan( $user_id );
 		if ( ! empty( $tools[ $tool_key ]['one_time_product_slug'] ) ) {
 			$entitlement = bds_ai_exec_case_entitlement( $user_id, $tools[ $tool_key ]['one_time_product_slug'] );
-			if ( is_wp_error( $entitlement ) ) {
+			if ( is_wp_error( $entitlement ) && ( empty( $tools[ $tool_key ]['plan_access'] ) || empty( $plan ) ) ) {
 				return $entitlement;
 			}
-			$reservation = bds_ai_exec_case_reserve( $user_id, $entitlement );
-			$order_id = absint( $entitlement['order_id'] );
-			$order_item_id = absint( $entitlement['item_id'] );
-			$access_mode = 'one_time_case';
-		} elseif ( $plan = bds_ai_exec_active_plan( $user_id ) ) {
+			if ( ! is_wp_error( $entitlement ) ) {
+				$reservation = bds_ai_exec_case_reserve( $user_id, $entitlement );
+				$order_id = absint( $entitlement['order_id'] );
+				$order_item_id = absint( $entitlement['item_id'] );
+				$access_mode = 'one_time_case';
+			}
+		}
+		if ( 'one_time_case' !== $access_mode && $plan ) {
 			$access_mode = sanitize_key( (string) ( $plan['access_mode'] ?? 'paid' ) );
 			if ( 'trial' === ( $plan['access_mode'] ?? '' ) && empty( $tools[ $tool_key ]['trial'] ) ) {
 				return new WP_Error( 'trial_tool_unavailable', 'This tool is not included in the trial.', array( 'status' => 403 ) );
 			}
 			$reservation = bds_ai_exec_paid_reserve( $user_id, $plan, $tools[ $tool_key ]['credit_cost'] );
-		} elseif ( 'directory_free' === $access_mode ) {
+		} elseif ( 'one_time_case' !== $access_mode && 'directory_free' === $access_mode ) {
 		$listing_id = absint( $request->get_param( 'listing_id' ) );
 		if ( empty( $tools[ $tool_key ]['free_key'] ) || ! function_exists( 'bds_dir_free_ai_reserve' ) ) {
 			return new WP_Error( 'free_access_unavailable', 'This tool is not available with free Directory access.', array( 'status' => 403 ) );
 		}
 		$reservation = bds_dir_free_ai_reserve( $listing_id, $user_id, $tools[ $tool_key ]['free_key'], 1 );
-		} else {
+		} elseif ( 'one_time_case' !== $access_mode ) {
 			return new WP_Error( 'subscription_required', 'An active eligible subscription is required.', array( 'status' => 403 ) );
 		}
 		if ( is_wp_error( $reservation ) ) {

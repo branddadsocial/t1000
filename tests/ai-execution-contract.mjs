@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-ai-execution-mu.php', 'utf8');
 
 const checks = [
-  ['version is pinned', /BDS_AI_EXECUTION_VERSION', '0\.3\.0'/],
+  ['version is pinned', /BDS_AI_EXECUTION_VERSION', '0\.3\.1'/],
   ['provider origin is fixed', /https:\/\/builder\.formwise\.ai\/api\/v1\/flows\//],
   ['only verified workflow UUIDs are in the catalog', /0cc9b6ff-309a-49f7-9a47-dd66c926208a[\s\S]*86c87c94-2054-4641-87e1-2a70a0a9b1d4[\s\S]*2e9921a0-5996-4bc9-a053-49fab3a7fc58[\s\S]*571f6f9c-7f7a-4b44-9e32-5d5b2fe11c6e/],
   ['provider key is server-only', /defined\( 'BDS_FORMWISE_EXECUTION_KEY' \)/],
@@ -18,9 +18,10 @@ const checks = [
   ['paid credits are reserved atomically', /function bds_ai_exec_paid_reserve[\s\S]*bds_ai_exec_lock/],
   ['paid ledger is tied to subscription renewal cycle', /_bds_ai_allowance_cycle[\s\S]*allowance_cycle[\s\S]*bds_ai_exec_paid_ledger_key/],
   ['free credits reserve before execution', /bds_dir_free_ai_reserve/],
-  ['paid and trial access take precedence over Directory free allowances', /A customer cannot spend[\s\S]*bds_ai_exec_active_plan\( \$user_id \)[\s\S]*elseif \( 'directory_free' === \$access_mode \)/],
+  ['paid and trial access take precedence over Directory free allowances', /bds_ai_exec_active_plan\( \$user_id \)[\s\S]*'one_time_case' !== \$access_mode && 'directory_free' === \$access_mode/],
   ['failed work releases both allowance sources', /bds_dir_free_ai_release[\s\S]*bds_ai_exec_paid_finish\( \$user_id, \$plan, \$reservation, false \)/],
   ['successful work commits both allowance sources', /bds_dir_free_ai_commit[\s\S]*bds_ai_exec_paid_finish\( \$user_id, \$plan, \$reservation, true \)/],
+  ['one-time products are allowlisted from the server catalog', /function bds_ai_exec_one_time_product_slugs[\s\S]*one_time_product_slug/],
   ['idempotency is required and body-bound', /Idempotency-Key[\s\S]*hash_hmac\( 'sha256', \$idempotency \. '\|' \. \$body_hash/],
   ['job ownership comes from the authenticated session', /get_current_user_id\(\) !== absint\( \$post->post_author \)/],
   ['outbound redirects are disabled', /'redirection'\s*=>\s*0/],

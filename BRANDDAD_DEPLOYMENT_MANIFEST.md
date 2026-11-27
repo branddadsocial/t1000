@@ -34,6 +34,8 @@ Install only after exact-file backups and database backup verification:
 - `bds-account-link-mu.php`
 - `bds-ai-commercial-catalog-mu.php`
 - `bds-ai-execution-mu.php`
+- `bds-ai-website-plan-offer-mu.php`
+- `bds-services-catalog-mu.php`
 - `bds-ai-launch-pages-mu.php`
 - `bds-ai-subscriptions-mu.php`
 - `bds-ai-trial-mu.php`

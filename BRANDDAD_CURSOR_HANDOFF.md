@@ -23,6 +23,8 @@ Updated: 2026-11-20
 
 ## New backend interfaces available for integration
 
+- AI Website Improvement Plan: the exact Social product slug is `website-speed-optimization`, price `$19.99` one time, with customer workspace `/my-account/website-plan/`. One paid order line grants one `website_plan` job. Link paid customers to that account endpoint; do not embed FormWise branding or request passwords. The optional implementation request is intent only until a separately approved secure site connection and change adapter exist.
+
 - Tool picker: `GET /wp-json/branddad/v1/ai/tools`.
 - Start AI job: `POST /wp-json/branddad/v1/ai/jobs` with REST nonce and `Idempotency-Key`.
 - Poll AI job: `GET /wp-json/branddad/v1/ai/jobs/{id}`.

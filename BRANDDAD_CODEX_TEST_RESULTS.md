@@ -1,5 +1,12 @@
 # BrandDad Codex test results
 
+## 2026-11-26 AI Website Improvement Plan
+
+- Local verification: 42/42 Node contract files passed, 42/42 deployment PHP files linted, the focused frontend renderer passed 15/15 checks, and both repositories passed `git diff --check` apart from Git's expected CRLF notices.
+- Rafter local secret scanning found no secret. Required remote `rafter run` was attempted and rejected because the free fast-scan allowance is already 16/16; paid Plus was not used.
+- Manual Rafter web/API/LLM review found no unresolved critical issue: identity is the existing session; order and job ownership are enforced server-side; one-time products are exact catalog allowlists; the form uses a nonce and bounded schema; the provider origin/workflow are fixed; redirects are disabled; output is bounded, stripped, and escaped; and the model has no website-write tool. See `BRANDDAD_AI_WEBSITE_PLAN_SECURE_DESIGN.md`.
+- Production deployment and live no-charge checkout smoke remain to be recorded below; no card was charged and no FormWise credit was spent by these local tests.
+
 ## 2026-11-21 Directory response-integrity recovery acceptance
 
 - StartHost replacement evidence: upload `1/1` completed for `branddad-directory-experience.php`; read-only hosted source inspection shows `<?php`, plugin version `0.68.15`, and the fixed Directory Suite URL inside the constant rather than before the PHP boundary.
