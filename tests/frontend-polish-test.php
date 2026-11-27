@@ -39,7 +39,11 @@ $checks = array(
 		&& false !== strpos( $page, 'Complete Management + Promotion Pro' )
 		&& false !== strpos( $page, 'No paid promotion or media spend is included or required.' )
 		&& false !== strpos( $page, 'advertising spend and creator fees are separate' )
-		&& false !== strpos( $page, 'LinkedIn content support' ),
+		&& false !== strpos( $page, 'LinkedIn content support' )
+		&& false !== strpos( $page, 'Approved replies to comments and direct messages' )
+		&& false !== strpos( $page, 'Business-email reply and lead follow-up support' )
+		&& false !== strpos( $page, 'Website chatbot knowledge updates' )
+		&& false !== strpos( $page, 'Website monitoring and a basic monthly SEO check' ),
 	'has_special'  => false !== strpos( $page, 'Airbnb Review Appeal — One Assisted Submission' )
 		&& false !== strpos( $page, 'IMDb Submission Service — One Contribution' )
 		&& false !== strpos( $page, 'Billboard Vendor Submission — One Inquiry' )

@@ -31,7 +31,7 @@ require dirname( __DIR__ ) . '/deploy/zzzz-bds-dfy-packages-mu.php';
 
 $html   = bds_dfy_packages_filter( '<p>Before</p>' );
 $checks = array(
-	'overlay version'        => false !== strpos( $html, 'data-bds-dfy-packages="1.2.0"' ),
+	'overlay version'        => false !== strpos( $html, 'data-bds-dfy-packages="1.2.1"' ),
 	'base without promotion' => false !== strpos( $html, 'Done-for-You Complete Management' ) && false !== strpos( $html, '$399/month' ) && false !== strpos( $html, 'No paid promotion or media spend is included or required.' ),
 	'starter package'        => false !== strpos( $html, 'Complete Management + Promotion Starter' ),
 	'growth package'         => false !== strpos( $html, 'Complete Management + Promotion Growth' ),
@@ -39,7 +39,9 @@ $checks = array(
 	'prices'                 => false !== strpos( $html, '$599/month total' ) && false !== strpos( $html, '$699/month total' ) && false !== strpos( $html, '$849/month total' ),
 	'promotion caps'         => false !== strpos( $html, 'up to 4 customer-approved' ) && false !== strpos( $html, 'up to 8 customer-approved' ) && false !== strpos( $html, 'up to 12 customer-approved' ),
 	'linkedin'               => false !== strpos( $html, 'LinkedIn content support' ),
-	'optional upgrade'       => false !== strpos( $html, 'Optional official promotion management' ) && false !== strpos( $html, 'Paid promotion is always optional.' ),
+	'complete scope'         => false !== strpos( $html, 'Monthly plan and content calendar' ) && false !== strpos( $html, 'Approved replies to comments and direct messages' ) && false !== strpos( $html, 'Business-email reply and lead follow-up support' ) && false !== strpos( $html, 'Website chatbot knowledge updates' ) && false !== strpos( $html, 'Lead capture, qualification, follow-up' ) && false !== strpos( $html, 'Professional review-response assistance' ) && false !== strpos( $html, 'Website monitoring and a basic monthly SEO check' ),
+	'scope conditional'      => false !== strpos( $html, 'supported channels, account connections, approval rules, and usage limits in writing before work starts' ),
+	'optional upgrade'       => false !== strpos( $html, 'Optional official promotion management' ) && false !== strpos( $html, 'Promotion is optional—not required to use Complete Management.' ),
 	'official channels'      => false !== strpos( $html, 'supported official platforms' ) && false !== strpos( $html, 'documented creator campaigns' ),
 	'costs separated'        => false !== strpos( $html, 'advertising spend and creator fees are separate' ),
 	'honest reporting'       => false !== strpos( $html, 'organic reach and impressions' ) && false !== strpos( $html, 'paid reach, impressions, clicks and spend' ) && false !== strpos( $html, 'Pending or unverified activity is not counted as completed.' ),
