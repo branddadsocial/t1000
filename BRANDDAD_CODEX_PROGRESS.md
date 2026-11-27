@@ -550,3 +550,12 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Desktop, 390px, and 320px acceptance passed with one visible H1, no horizontal overflow, usable navigation, and no visible `FormWise` provider branding. The canonical mobile product page retained its title, price, and purchase control.
 - No cart, checkout, order, payment, subscription, customer record, email, or FormWise execution was created during this deployment and verification.
 - Local release gates passed: 43/43 Node contracts, 48/48 deployment PHP syntax checks, 5/5 standalone PHP behavior tests, focused frontend renderer 17/17, release checksums, and `git diff --check`. Local secret scans were clean. Mandatory remote `rafter run --mode fast` remains quota-blocked at 16/16; paid Plus was not used.
+
+## 2026-11-27 — automatic scheduler recovery verification
+
+- Verified through GitHub's authoritative workflow inventory that `BrandDad Social wp-cron` (`425477211`) is active on `main` and has repeated successful automatic `event=schedule` runs. Sampled run logs returned `http_status=200`, including the latest 2026-11-27 executions.
+- Verified the live WooCommerce Action Scheduler read-only: 5,583 total actions, 1,398 complete, 4,166 historical failed, and 19 pending. Every visible pending action is scheduled in the future; none of the sampled pending rows is overdue.
+- Verified recent subscription and WooCommerce work is processing automatically. The latest rows show WP Swings renewal/expiration checks and a WooCommerce product-attribute update starting and completing through WP-Cron on 2026-11-27.
+- Rechecked StartHost's Scheduled Tasks page. It still has zero saved tasks, while the service overview still carries the false-positive malware flag and ticket `898665003` remains `Awaiting Staff Reply`. No host task was created, tested, or run.
+- GitHub's declared five-minute cron is not delivered at an exact five-minute cadence, so it remains a temporary single-runner fallback. Do not add or activate a StartHost runner until the GitHub fallback is disabled.
+- No action was manually run, cancelled, deleted, or retried. No order, payment, refund, subscription, customer, email, support message, or hosting configuration was changed during this verification.

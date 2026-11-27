@@ -810,6 +810,14 @@ Updated: 2026-11-19
 - Post-deployment local regression passed **42/42 Node contracts** and **42/42 deployment PHP syntax checks**. File-scoped local secret scans found no secrets. Required remote `rafter run --mode fast` had already been attempted and was blocked solely by the account's 16/16 scan quota; paid Plus was not used.
 - Automatic implementation remains intentionally fail-closed: purchasing the plan creates an owner-scoped AI planning job. Applying supported fixes requires a separately authorized secure site connection and explicit approval of the proposed changes; the system does not collect passwords or silently edit customer websites.
 
+## 2026-11-27 — automatic scheduler and queue acceptance
+
+- GitHub Actions workflow `425477211` is active on `main` and now records repeated automatic `event=schedule` successes. The latest sampled automatic run completed successfully and logged `http_status=200` for `https://branddad.social/wp-cron.php`.
+- StartHost Scheduled Tasks still reports zero saved tasks. The package remains false-positive flagged and ticket `898665003` remains `Awaiting Staff Reply`; native cron and PHP-mail restoration are still provider-owned blockers.
+- Live WooCommerce Action Scheduler read-back: 5,583 total / 1,398 complete / 4,166 historical failed / 19 pending. The sampled pending rows are future-dated, including the next 30-minute WP Swings checks and later daily WooCommerce maintenance; no sampled action is past due.
+- Recent completed rows prove automatic processing through WP-Cron: WP Swings renewal/expiration checks completed at 13:28, 13:39, 14:02, and 14:14 UTC on 2026-11-27, and the latest WooCommerce product-attribute update completed at 14:14 UTC.
+- No row action (`Run`, `Cancel`, or `Delete`) was used. No cron task, payment, order, subscription, customer, support message, or hosting setting was created or changed.
+
 ## 2026-11-27 — AI-first service recommendation regression
 
 - Added AI-first checker routing for the already-approved BrandDad offers: performance signals → AI Website Improvement Plan `$19.99` one time; SEO/local-search signals → AI Local SEO Starter `$19.99/month`; profile-copy gaps → AI Studio Starter `$14.99/month`.
