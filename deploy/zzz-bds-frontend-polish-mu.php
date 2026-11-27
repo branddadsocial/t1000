@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.8
+ * Version: 1.0.9
  * Author: BrandDad
  *
  * Secure design:
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.8' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.9' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -163,10 +163,21 @@ function bds_fp_service_card( array $service ) {
  * @return string
  */
 function bds_fp_business_autopilot_cards( $contact ) {
-	if ( ! function_exists( 'bds_ai_commercial_catalog' ) ) {
-		return '';
-	}
-	$catalog = (array) bds_ai_commercial_catalog();
+	/*
+	 * The public explanation must not disappear if the locked catalog loads
+	 * after this presentation layer on a particular host. These values mirror
+	 * the approved quote-only records in bds-ai-commercial-catalog-mu.php; they
+	 * never create a product, checkout, entitlement, or payment path.
+	 */
+	$fallback = array(
+		'complete-ai-starter' => array( 'name' => 'Complete AI Starter', 'monthly' => '79.99', 'launch_state' => 'quote_only' ),
+		'complete-ai-growth' => array( 'name' => 'Complete AI Growth', 'monthly' => '149.99', 'launch_state' => 'quote_only' ),
+		'complete-ai-pro' => array( 'name' => 'Complete AI Pro', 'monthly' => '249.99', 'launch_state' => 'quote_only' ),
+		'done-for-you-ai-management' => array( 'name' => 'Done-for-You AI Management', 'monthly' => '399.00', 'launch_state' => 'quote_only' ),
+	);
+	$catalog = function_exists( 'bds_ai_commercial_catalog' )
+		? (array) bds_ai_commercial_catalog()
+		: $fallback;
 	$copy    = array(
 		'complete-ai-starter' => 'A smaller monthly workload for content drafts, basic SEO help, lead capture, and website chat.',
 		'complete-ai-growth'  => 'More content, connected channels, website chat, lead follow-up help, and reporting.',
@@ -175,7 +186,7 @@ function bds_fp_business_autopilot_cards( $contact ) {
 	);
 	$out = '';
 	foreach ( $copy as $key => $summary ) {
-		$row = isset( $catalog[ $key ] ) && is_array( $catalog[ $key ] ) ? $catalog[ $key ] : array();
+		$row = isset( $catalog[ $key ] ) && is_array( $catalog[ $key ] ) ? $catalog[ $key ] : $fallback[ $key ];
 		if ( empty( $row['name'] ) || empty( $row['monthly'] ) || 'quote_only' !== ( $row['launch_state'] ?? '' ) ) {
 			continue;
 		}
