@@ -574,3 +574,12 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - StartHost reported all three reviewed uploads completed: `zzz-bds-frontend-polish-mu.php`, `bds-customer-hub-lib.php`, and `bds-customer-surfaces-mu.php`.
 - Live 390px acceptance found one checker menu, all five common destinations after opening it, one visible H1, zero broken images, no visible provider name, and no horizontal overflow. The signed-in Account Hub showed the neutral AI labels and no visible `FormWise` text. Services reports `data-bds-frontend-polish="1.0.7"` and retained the same clean mobile acceptance.
 - Public regression requests returned HTTP 200 for Social Home, Services, Website Checker, Account Hub, the canonical AI Website Improvement Plan, and the repaired Spotify stylesheet. No cart, checkout, order, payment, subscription, customer record, credential, AI execution, or provider credit changed.
+
+## 2026-11-27 — Directory facet heading conflict repair
+
+- Traced the missing mobile results heading to the later Directory QA heading-normalization pass, which demoted the faceted title after it was rendered.
+- Released and deployed Directory Facet Browse `1.1.4`. It restores the location-aware facet title as the sole visible H1 using `textContent`, removes accidental hidden state, and demotes only the hidden legacy Directorist archive H1.
+- StartHost reported `1/1 Uploads` and `Completed`. The exact production file was temporarily unlocked for upload and restored to permission `444`; the live row reports 70.87 KB and the 27 November 11:27 timestamp.
+- Live Playa del Carmen acceptance reports facet version `1.1.4`, one visible H1 (`Food & Beverage in Playa del Carmen`), matching local businesses, no horizontal overflow at 390px, zero broken images, one Directory Concierge, and no visible FormWise branding.
+- Live city-gate acceptance reports one visible H1 (`Food & Beverage — pick a city`), zero visible listings before location selection, no horizontal overflow at 390px, zero broken images, and one Directory Concierge.
+- PHP syntax and all seven focused heading contracts passed. Local Rafter secrets scanning found no secrets; the required remote fast scan was attempted and remains unavailable because the account is at 16/16 scans. The manual OWASP pass found no security issue in this DOM-only `textContent` repair.

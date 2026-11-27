@@ -39,3 +39,8 @@ Production readiness: controlled soft-launch surfaces are operational; unrestric
 - [~] Live Stripe was reconnected to the existing BrandDadSocial account with payments, payouts, and webhooks enabled and test mode off. A safe signed-webhook purchase/provisioning/renewal/cancellation/refund lifecycle remains required before unrestricted paid launch.
 - [!] Required remote Rafter fast review remains quota-blocked at 16/16. Local secret scans and regression gates are clean; paid Plus was not used without approval.
 - [!] Real provider fulfillment acceptance remains incomplete for the products that depend on external AI or publishing services. Do not describe an untested provider action as automatic fulfillment.
+
+## 2026-11-27 Directory facet heading acceptance
+
+- [x] Keep one visible, location-aware H1 on Directory facet pages after all competing heading cleanup runs. Facet Browse `1.1.4` is live; 390px Playa results and city-gate acceptance both passed without overflow, broken images, duplicate concierge, or provider branding.
+- [x] Preserve location-first disclosure: the Food & Beverage gate exposes city choices and zero visible businesses until a city is selected; Playa del Carmen then exposes matching local business cards.

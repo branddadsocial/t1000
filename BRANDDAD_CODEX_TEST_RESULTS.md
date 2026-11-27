@@ -893,3 +893,13 @@ Updated: 2026-11-19
 | Services regression | PASS — frontend marker `1.0.7`, one H1, zero broken images, no provider branding, no overflow |
 | Public HTTP regression | PASS — Home, Services, Checker, Account Hub, canonical website plan, and Spotify CSS returned HTTP 200 |
 | Transaction/provider safety | PASS — no cart, checkout, order, payment, subscription, customer, credential, AI run, or provider-credit mutation |
+
+## 2026-11-27 — Directory facet H1 production acceptance
+
+- Release: `bds-directory-facet-browse-mu.php` `1.1.4`, commit `79efc56`.
+- Local: PHP syntax passed; focused Node contract passed 7/7; `git diff --check` found no content error.
+- Security: local secret scan passed. Remote `rafter run` was attempted and rejected only because the fast-scan allowance is 16/16. Manual review confirmed untrusted page text is copied only through `textContent`; no HTML injection, endpoint, credential, authorization, payment, dependency, or data-write surface was added.
+- Production upload: StartHost `Completed` 1/1; exact target restored to permission `444`.
+- Playa results, 390x844: facet `1.1.4`; exactly one visible H1 `Food & Beverage in Playa del Carmen`; 12 listing cards in the loaded page; Playa del Carmen text present; `scrollWidth=clientWidth=375`; zero broken images; one `#bdd-ai`; zero visible FormWise references.
+- City gate, 390x844: exactly one visible H1 `Food & Beverage — pick a city`; zero visible listing cards; `scrollWidth=clientWidth=375`; zero broken images; one `#bdd-ai`.
+- No cart, checkout, order, payment, subscription, customer record, email, AI execution, or cache deletion occurred.

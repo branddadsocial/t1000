@@ -240,3 +240,13 @@ Nothing unchecked above may be described as fully operational.
 - [x] Deploy customer surfaces `0.2.11` with provider-neutral owner-inspection wording while preserving fail-closed key and flag checks.
 - [x] Verify the signed-in Account Hub shows AI execution/provisioning labels and no visible `FormWise` text.
 - [x] Verify the six priority Social surfaces used in this release return HTTP 200 and that no transactional or provider state changed.
+
+## 2026-11-27 Directory facet heading gate
+
+- [x] Deploy Facet Browse `1.1.4` to the Directory production MU-plugin directory and restore file permission `444`.
+- [x] Verify the live component reports version `1.1.4`.
+- [x] Verify Playa del Carmen Food & Beverage results have exactly one visible location-aware H1 and visible local listings.
+- [x] Verify the Food & Beverage city gate has exactly one visible H1 and zero visible listings before a city is chosen.
+- [x] Verify both flows at 390x844 with no horizontal overflow, no broken images, and one Directory Concierge.
+- [x] Verify no public FormWise provider name appears on the sampled result flow.
+- [!] Remote Rafter fast scan was attempted but remains quota-blocked at 16/16; local secrets and manual OWASP review are clean.
