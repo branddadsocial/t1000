@@ -608,7 +608,7 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Closed the accepted-quote gap: after a written scope is accepted, staff creates a pending admin WooCommerce order for `done-for-you-ai-management` and sends WooCommerce's native order-payment link. Only an admin-created, Woo-confirmed paid order can create its private staff task.
 - Removed staff-task creation from `woocommerce_checkout_order_created`. One-time order-line metadata is still captured at checkout, but fulfillment starts only after `WC_Order::is_paid()` succeeds on a paid-state hook.
 - Added a durable atomic order claim and order audit metadata so gateway/status retries and duplicate payment notifications create exactly one private staff task.
-- Isolated staging acceptance used **Press Release Submission — One Submission Round** (`branddad-ai-press-release-pack`) with a synthetic no-gateway order. Unpaid created zero tasks; paid created one; replayed payment/status events remained one. The accepted Done-for-You quote path also created one task, and all synthetic records were cleaned.
+- Isolated staging acceptance used **Press Release Submission — One Submission Round**. The original synthetic fixture used a non-production slug and was superseded after live identity verification; the corrected fixture and fulfillment map use the actual Woo product slug `ai-press-release-pack`. Unpaid/paid/replay behavior must be rechecked on that corrected identity before the hosted evidence is considered current.
 - Production checkout, live customer orders, product visibility, prices, gateways, and JustAnotherPanel were untouched.
 
 ## 2026-11-27 — official promotion package correction

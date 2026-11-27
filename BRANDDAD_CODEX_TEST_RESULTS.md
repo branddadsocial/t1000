@@ -935,7 +935,7 @@ Updated: 2026-11-19
 |---|---|
 | Commit `5af7c07` | PASS — documentation only; no functional purchase-flow change |
 | Done-for-You history | PASS — quote-only since `6c1f930`; Contact Us renderer since `9bb789d` |
-| Exact staging product | `branddad-ai-press-release-pack` — Press Release Submission — One Submission Round |
+| Exact staging product | SUPERSEDED — original synthetic slug did not match production; corrected acceptance target is `ai-press-release-pack` |
 | Unpaid order | PASS — zero private staff tasks and zero task marker |
 | Confirmed paid order | PASS — exactly one private staff task |
 | Duplicate paid events | PASS — repeated payment-complete and completed-status events left exactly one task |

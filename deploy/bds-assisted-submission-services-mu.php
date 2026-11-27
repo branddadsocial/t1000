@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Assisted Submission Services
  * Description: Defines the bounded submission scope and WooCommerce fulfillment metadata for BrandDad's one-time submission services.
- * Version: 0.2.1
+ * Version: 0.2.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.2.1' );
+define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.2.2' );
 
 /**
  * Public scope is allowlisted here; prices and service identity never come from the browser.
@@ -32,7 +32,7 @@ function bds_submit_services() {
 			),
 			'limitations' => 'Never send a password, government ID, booking ID, medical information, or unrelated private information. Airbnb makes the final decision.',
 		),
-		'branddad-ai-imdb-submission-pack' => array(
+		'ai-imdb-submission-pack' => array(
 			'name'        => 'IMDb Submission Service — One Contribution',
 			'price'       => '$29.99 one time',
 			'mode'        => 'branddad_submits',
@@ -45,7 +45,7 @@ function bds_submit_services() {
 			),
 			'limitations' => 'IMDb controls eligibility and the final decision. BrandDad cannot guarantee acceptance, a page, or a credit.',
 		),
-		'branddad-ai-billboard-creative-pack' => array(
+		'ai-billboard-creative-pack' => array(
 			'name'        => 'Billboard Vendor Submission — One Inquiry',
 			'price'       => '$49.99 one time',
 			'mode'        => 'branddad_submits',
@@ -58,7 +58,7 @@ function bds_submit_services() {
 			),
 			'limitations' => 'This price does not include screen inventory, production, media buying, or placement. Availability, price, and placement are not guaranteed.',
 		),
-		'branddad-ai-press-release-pack' => array(
+		'ai-press-release-pack' => array(
 			'name'        => 'Press Release Submission — One Submission Round',
 			'price'       => '$39.99 one time',
 			'mode'        => 'branddad_submits',
@@ -170,16 +170,10 @@ function bds_submit_home_legacy_patch() {
 		'Pay once. Describe the announcement. Receive a press release and media pitch emails to send yourself. This is writing help, not a wire distribution buy.' => 'Pay once. BrandDad writes one factual release and completes one approved submission round. Paid wire distribution and placement fees are separate; coverage is not guaranteed.',
 		'Buy this AI service' => 'Buy this submission service',
 	);
-	$paths = array(
-		'/product/ai-imdb-submission-pack/'      => '/product/branddad-ai-imdb-submission-pack/',
-		'/product/ai-billboard-creative-pack/' => '/product/branddad-ai-billboard-creative-pack/',
-		'/product/ai-press-release-pack/'       => '/product/branddad-ai-press-release-pack/',
-	);
 	?>
 	<script id="bds-assisted-submission-home-patch" data-version="<?php echo esc_attr( BDS_ASSISTED_SUBMISSION_VERSION ); ?>">
 	(function(){
 		var copy=<?php echo wp_json_encode( $copy ); ?>;
-		var paths=<?php echo wp_json_encode( $paths ); ?>;
 		function patch(){
 			var root=document.getElementById('branddad-ai-help');
 			if(!root)return;
@@ -190,12 +184,6 @@ function bds_submit_home_legacy_patch() {
 					if(node.nodeValue.indexOf(from)!==-1)node.nodeValue=node.nodeValue.split(from).join(copy[from]);
 				});
 			}
-			root.querySelectorAll('a[href]').forEach(function(link){
-				try{
-					var url=new URL(link.href,location.origin);
-					if(url.origin===location.origin&&paths[url.pathname]){url.pathname=paths[url.pathname];link.href=url.toString();}
-				}catch(error){}
-			});
 			root.setAttribute('data-bds-submission-copy',<?php echo wp_json_encode( BDS_ASSISTED_SUBMISSION_VERSION ); ?>);
 		}
 		if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patch,{once:true});else patch();

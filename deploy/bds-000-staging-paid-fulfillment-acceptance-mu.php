@@ -50,7 +50,7 @@ function bds_staging_paid_task_save_report( $checks, $errors ) {
 		BDS_STAGING_PAID_TASK_REPORT,
 		array(
 			'version'      => BDS_STAGING_PAID_TASK_VERSION,
-			'product'      => 'branddad-ai-press-release-pack',
+			'product'      => 'ai-press-release-pack',
 			'complete'     => count( $checks ) === count( array_filter( $checks ) ) && empty( $errors ),
 			'checks'       => $checks,
 			'error_codes'  => array_values( array_unique( array_filter( $errors ) ) ),
@@ -100,7 +100,7 @@ function bds_staging_paid_task_order( $product, $slug, $created_via ) {
 		$order->delete( true );
 		return null;
 	}
-	if ( 'branddad-ai-press-release-pack' === $slug ) {
+	if ( 'ai-press-release-pack' === $slug ) {
 		$item->add_meta_data( '_bds_submission_service_slug', $slug, true );
 		$item->add_meta_data( '_bds_submission_mode', 'branddad_submits', true );
 		$item->add_meta_data( '_bds_submission_status', 'awaiting_customer_details', true );
@@ -162,14 +162,14 @@ function bds_staging_paid_task_run() {
 		}
 
 		$press_created = false;
-		$press = bds_staging_paid_task_product( 'branddad-ai-press-release-pack', 'Press Release Submission — Staging Acceptance', '39.99', $press_created );
+		$press = bds_staging_paid_task_product( 'ai-press-release-pack', 'Press Release Submission — Staging Acceptance', '39.99', $press_created );
 		$product_records[] = array( $press, $press_created );
-		$checks['press_release_product_ready'] = $press instanceof WC_Product && 'branddad-ai-press-release-pack' === (string) $press->get_slug();
+		$checks['press_release_product_ready'] = $press instanceof WC_Product && 'ai-press-release-pack' === (string) $press->get_slug();
 		if ( ! $checks['press_release_product_ready'] ) {
 			throw new RuntimeException( 'press_product_unavailable' );
 		}
 
-		$press_order = bds_staging_paid_task_order( $press, 'branddad-ai-press-release-pack', 'checkout' );
+		$press_order = bds_staging_paid_task_order( $press, 'ai-press-release-pack', 'checkout' );
 		if ( ! $press_order instanceof WC_Order ) {
 			throw new RuntimeException( 'press_order_unavailable' );
 		}

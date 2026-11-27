@@ -34,11 +34,11 @@ function submit_expect( $condition, $message ) {
 $services = bds_submit_services();
 submit_expect( 4 === count( $services ), 'four bounded submission services exist' );
 submit_expect( '$9.99 one time' === $services['branddad-ai-review-dispute-assistant']['price'], 'Airbnb price is preserved' );
-submit_expect( '$29.99 one time' === $services['branddad-ai-imdb-submission-pack']['price'], 'IMDb price is preserved' );
-submit_expect( '$49.99 one time' === $services['branddad-ai-billboard-creative-pack']['price'], 'billboard price is preserved' );
-submit_expect( '$39.99 one time' === $services['branddad-ai-press-release-pack']['price'], 'press price is preserved' );
+submit_expect( '$29.99 one time' === $services['ai-imdb-submission-pack']['price'], 'IMDb price is preserved' );
+submit_expect( '$49.99 one time' === $services['ai-billboard-creative-pack']['price'], 'billboard price is preserved' );
+submit_expect( '$39.99 one time' === $services['ai-press-release-pack']['price'], 'press price is preserved' );
 submit_expect( 'customer_assisted' === $services['branddad-ai-review-dispute-assistant']['mode'], 'Airbnb requires an eligible customer-assisted final submission' );
-submit_expect( 'branddad_submits' === $services['branddad-ai-imdb-submission-pack']['mode'], 'BrandDad submits IMDb contribution' );
+submit_expect( 'branddad_submits' === $services['ai-imdb-submission-pack']['mode'], 'BrandDad submits IMDb contribution' );
 
 foreach ( $services as $slug => $service ) {
 	$html = bds_submit_product_html( $service );
@@ -59,12 +59,10 @@ submit_expect( false !== strpos( $fixed, 'Buy this submission service' ), 'legac
 ob_start();
 bds_submit_home_legacy_patch();
 $home_patch = ob_get_clean();
-submit_expect( false !== strpos( $home_patch, 'data-version="0.2.1"' ), 'late homepage patch exposes the current submission-copy version' );
+submit_expect( false !== strpos( $home_patch, 'data-version="0.2.2"' ), 'late homepage patch exposes the current submission-copy version' );
 submit_expect( false !== strpos( $home_patch, 'branddad-ai-help' ), 'late homepage patch is limited to the exact legacy section' );
 submit_expect( false !== strpos( $home_patch, 'IMDb Submission Service — One Contribution' ), 'late homepage patch contains approved submission wording' );
-submit_expect( false !== strpos( $home_patch, '/product/branddad-ai-imdb-submission-pack/' ), 'late homepage patch repairs the stale IMDb product path' );
-submit_expect( false !== strpos( $home_patch, '/product/branddad-ai-billboard-creative-pack/' ), 'late homepage patch repairs the stale billboard product path' );
-submit_expect( false !== strpos( $home_patch, '/product/branddad-ai-press-release-pack/' ), 'late homepage patch repairs the stale press product path' );
+submit_expect( false === strpos( $home_patch, '/product/branddad-ai-imdb-submission-pack/' ), 'late homepage patch does not invent a second IMDb product path' );
 
 class BdsSubmitTestProduct {
 	private $slug;
@@ -100,8 +98,8 @@ class BdsSubmitTestOrder {
 }
 
 $item = new BdsSubmitTestItem();
-bds_submit_order_line_item( $item, 'key', array( 'data' => new BdsSubmitTestProduct( 'branddad-ai-imdb-submission-pack' ) ), null );
-submit_expect( 'branddad-ai-imdb-submission-pack' === $item->meta['_bds_submission_service_slug'], 'immutable service slug is recorded' );
+bds_submit_order_line_item( $item, 'key', array( 'data' => new BdsSubmitTestProduct( 'ai-imdb-submission-pack' ) ), null );
+submit_expect( 'ai-imdb-submission-pack' === $item->meta['_bds_submission_service_slug'], 'immutable service slug is recorded' );
 submit_expect( 'branddad_submits' === $item->meta['_bds_submission_mode'], 'submission mode is recorded' );
 submit_expect( 'awaiting_customer_details' === $item->meta['_bds_submission_status'], 'initial fulfillment status is fail-closed' );
 submit_expect( 'yes' === $item->meta['_bds_customer_approval_required'], 'customer approval is required' );
