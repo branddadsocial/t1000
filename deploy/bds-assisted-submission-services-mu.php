@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Assisted Submission Services
  * Description: Defines the bounded submission scope and WooCommerce fulfillment metadata for BrandDad's one-time submission services.
- * Version: 0.2.0
+ * Version: 0.2.1
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.2.0' );
+define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.2.1' );
 
 /**
  * Public scope is allowlisted here; prices and service identity never come from the browser.
@@ -150,6 +150,62 @@ function bds_submit_rewrite_legacy_copy( $content ) {
 	return str_replace( array_keys( $replacements ), array_values( $replacements ), (string) $content );
 }
 add_filter( 'the_content', 'bds_submit_rewrite_legacy_copy', PHP_INT_MAX - 1 );
+
+/**
+ * Repair the legacy homepage cards that are injected after the_content filters.
+ * All matches and destinations are exact, server-owned constants.
+ */
+function bds_submit_home_legacy_patch() {
+	if ( is_admin() || ! function_exists( 'is_front_page' ) || ! is_front_page() ) {
+		return;
+	}
+	$copy = array(
+		'AI Review Appeal — One Case' => 'Airbnb Review Appeal — One Assisted Submission',
+		'Pay once. Answer a short form. Receive a policy-based appeal, a short version, and a public reply to copy and send yourself. Removal is not guaranteed.' => 'Pay once. Send the review and evidence. BrandDad prepares the policy-based request and assists while you submit it from your eligible Airbnb account. You approve the final submission. Airbnb decides; removal is not guaranteed.',
+		'AI IMDb Submission Pack' => 'IMDb Submission Service — One Contribution',
+		'Pay once. Send your credits and links. Receive a bio, credits list, and the exact text to paste into IMDb. IMDb decides; a listing is not guaranteed.' => 'Pay once. Send accurate credits and public source links. BrandDad prepares and submits one eligible IMDb contribution after you approve the facts. IMDb decides; acceptance is not guaranteed.',
+		'AI Billboard Creative Pack' => 'Billboard Vendor Submission — One Inquiry',
+		'Pay once. Receive 8-second and 15-second scripts, on-screen copy, and an outreach email for a screen vendor. This does not buy Times Square inventory.' => 'Pay once. BrandDad prepares the short creative and submits one approved availability and pricing inquiry to a selected screen vendor. Screen inventory and media-buy costs are separate.',
+		'AI Press Release Pack' => 'Press Release Submission — One Submission Round',
+		'Pay once. Describe the announcement. Receive a press release and media pitch emails to send yourself. This is writing help, not a wire distribution buy.' => 'Pay once. BrandDad writes one factual release and completes one approved submission round. Paid wire distribution and placement fees are separate; coverage is not guaranteed.',
+		'Buy this AI service' => 'Buy this submission service',
+	);
+	$paths = array(
+		'/product/ai-imdb-submission-pack/'      => '/product/branddad-ai-imdb-submission-pack/',
+		'/product/ai-billboard-creative-pack/' => '/product/branddad-ai-billboard-creative-pack/',
+		'/product/ai-press-release-pack/'       => '/product/branddad-ai-press-release-pack/',
+	);
+	?>
+	<script id="bds-assisted-submission-home-patch" data-version="<?php echo esc_attr( BDS_ASSISTED_SUBMISSION_VERSION ); ?>">
+	(function(){
+		var copy=<?php echo wp_json_encode( $copy ); ?>;
+		var paths=<?php echo wp_json_encode( $paths ); ?>;
+		function patch(){
+			var root=document.getElementById('branddad-ai-help');
+			if(!root)return;
+			var walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+			var node;
+			while((node=walker.nextNode())){
+				Object.keys(copy).forEach(function(from){
+					if(node.nodeValue.indexOf(from)!==-1)node.nodeValue=node.nodeValue.split(from).join(copy[from]);
+				});
+			}
+			root.querySelectorAll('a[href]').forEach(function(link){
+				try{
+					var url=new URL(link.href,location.origin);
+					if(url.origin===location.origin&&paths[url.pathname]){url.pathname=paths[url.pathname];link.href=url.toString();}
+				}catch(error){}
+			});
+			root.setAttribute('data-bds-submission-copy',<?php echo wp_json_encode( BDS_ASSISTED_SUBMISSION_VERSION ); ?>);
+		}
+		if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',patch,{once:true});else patch();
+		setTimeout(patch,500);
+		setTimeout(patch,1500);
+	})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'bds_submit_home_legacy_patch', PHP_INT_MAX );
 
 /** Store a bounded, immutable fulfillment contract on each eligible order line. */
 function bds_submit_order_line_item( $item, $cart_item_key, $values, $order ) {

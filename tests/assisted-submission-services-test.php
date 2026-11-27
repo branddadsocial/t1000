@@ -10,6 +10,9 @@ function esc_html( $value ) { return htmlspecialchars( (string) $value, ENT_QUOT
 function esc_html__( $value ) { return (string) $value; }
 function esc_attr( $value ) { return esc_html( $value ); }
 function is_product() { return false; }
+function is_admin() { return false; }
+function is_front_page() { return true; }
+function wp_json_encode( $value ) { return json_encode( $value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ); }
 function absint( $value ) { return abs( (int) $value ); }
 function do_action() {}
 
@@ -52,6 +55,16 @@ submit_expect( false !== strpos( $fixed, 'Press Release Submission — One Submi
 submit_expect( false !== strpos( $fixed, 'completes one approved submission round' ), 'legacy press card promises bounded submission' );
 submit_expect( false === strpos( $fixed, 'send yourself' ), 'legacy self-submission wording is removed' );
 submit_expect( false !== strpos( $fixed, 'Buy this submission service' ), 'legacy CTA sells the submission service' );
+
+ob_start();
+bds_submit_home_legacy_patch();
+$home_patch = ob_get_clean();
+submit_expect( false !== strpos( $home_patch, 'data-version="0.2.1"' ), 'late homepage patch exposes the current submission-copy version' );
+submit_expect( false !== strpos( $home_patch, 'branddad-ai-help' ), 'late homepage patch is limited to the exact legacy section' );
+submit_expect( false !== strpos( $home_patch, 'IMDb Submission Service — One Contribution' ), 'late homepage patch contains approved submission wording' );
+submit_expect( false !== strpos( $home_patch, '/product/branddad-ai-imdb-submission-pack/' ), 'late homepage patch repairs the stale IMDb product path' );
+submit_expect( false !== strpos( $home_patch, '/product/branddad-ai-billboard-creative-pack/' ), 'late homepage patch repairs the stale billboard product path' );
+submit_expect( false !== strpos( $home_patch, '/product/branddad-ai-press-release-pack/' ), 'late homepage patch repairs the stale press product path' );
 
 class BdsSubmitTestProduct {
 	private $slug;
