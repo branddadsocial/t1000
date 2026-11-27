@@ -34,9 +34,10 @@ $checks = array(
 	'single_h1'    => 1 === substr_count( strtolower( $page ), '<h1' ),
 	'plain_brand'  => false === stripos( $page, 'FormWise' ),
 	'has_plans'    => false !== strpos( $page, 'AI Business Essentials' ),
-	'has_autopilot'=> false !== strpos( $page, 'BrandDad Business Autopilot' )
-		&& false !== strpos( $page, 'Done-for-You AI Management' )
-		&& false !== strpos( $page, 'BrandDad Engagement Autopilot' ),
+	'has_autopilot'=> false !== strpos( $page, 'Done-for-You Essential Engagement' )
+		&& false !== strpos( $page, 'Done-for-You Complete Growth' )
+		&& false !== strpos( $page, 'Done-for-You Maximum Visibility' )
+		&& false !== strpos( $page, 'LinkedIn content support' ),
 	'has_special'  => false !== strpos( $page, 'AI Review Dispute Assistant' ),
 	'has_directory'=> false !== strpos( $page, 'List my business free' ),
 	'has_mobile_cta'=> false !== strpos( $page, 'data-bds-open-assistant' ),

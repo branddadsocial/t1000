@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.10
+ * Version: 1.0.11
  * Author: BrandDad
  *
  * Secure design:
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.10' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.11' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -156,53 +156,41 @@ function bds_fp_service_card( array $service ) {
 }
 
 /**
- * Render the existing quote-only Complete AI package family as one clear
- * Business Autopilot offer without changing the locked commercial catalog.
+ * Render the approved Done-for-You presentation without opening checkout.
+ *
+ * Security boundary: these cards are trusted public copy only. They create no
+ * order, entitlement, provider request, credential, or payment. Fulfillment
+ * stays fail-closed until the server-side integration and renewal tests pass.
  *
  * @param string $contact Trusted BrandDad contact URL.
  * @return string
  */
 function bds_fp_business_autopilot_cards( $contact ) {
-	/*
-	 * The public explanation must not disappear if the locked catalog loads
-	 * after this presentation layer on a particular host. These values mirror
-	 * the approved quote-only records in bds-ai-commercial-catalog-mu.php; they
-	 * never create a product, checkout, entitlement, or payment path.
-	 */
-	$fallback = array(
-		'complete-ai-starter' => array( 'name' => 'Complete AI Starter', 'monthly' => '79.99', 'launch_state' => 'quote_only' ),
-		'complete-ai-growth' => array( 'name' => 'Complete AI Growth', 'monthly' => '149.99', 'launch_state' => 'quote_only' ),
-		'complete-ai-pro' => array( 'name' => 'Complete AI Pro', 'monthly' => '249.99', 'launch_state' => 'quote_only' ),
-		'done-for-you-ai-management' => array( 'name' => 'Done-for-You AI Management', 'monthly' => '399.00', 'launch_state' => 'quote_only' ),
-	);
-	$catalog = function_exists( 'bds_ai_commercial_catalog' )
-		? (array) bds_ai_commercial_catalog()
-		: $fallback;
-	$copy    = array(
-		'complete-ai-starter' => 'A smaller monthly workload for content drafts, basic SEO help, lead capture, and website chat.',
-		'complete-ai-growth'  => 'More content, connected channels, website chat, lead follow-up help, and reporting.',
-		'complete-ai-pro'     => 'The largest standard workload for active businesses using more channels and automation.',
-		'done-for-you-ai-management' => 'The managed option for businesses that want BrandDad to operate an agreed online-business workload with human oversight.',
+	$packages = array(
+		array(
+			'name'    => 'Done-for-You Essential Engagement',
+			'price'   => '$599/month',
+			'summary' => 'Up to 12 approved posts each month, audience-growth assistance, early engagement for eligible posts, conversation help, LinkedIn content support, and a clear monthly summary.',
+			'label'   => 'Choose Essential',
+		),
+		array(
+			'name'    => 'Done-for-You Complete Growth',
+			'price'   => '$699/month',
+			'eyebrow' => 'Best value',
+			'summary' => 'Up to 20 approved posts each month, US Focused or Worldwide audience growth, early engagement, relevant reply help, LinkedIn content support, lead follow-up, website chat, and monthly reporting.',
+			'label'   => 'Choose Complete Growth',
+		),
+		array(
+			'name'    => 'Done-for-You Maximum Visibility',
+			'price'   => '$849/month',
+			'summary' => 'Up to 30 approved posts each month, the highest included growth and engagement allowance, LinkedIn content support, conversation help, lead follow-up, website chat, and priority monthly review.',
+			'label'   => 'Choose Maximum Visibility',
+		),
 	);
 	$out = '';
-	foreach ( $copy as $key => $summary ) {
-		$row = isset( $catalog[ $key ] ) && is_array( $catalog[ $key ] ) ? $catalog[ $key ] : array();
-		if ( empty( $row['name'] ) || empty( $row['monthly'] ) || 'quote_only' !== ( $row['launch_state'] ?? '' ) ) {
-			$row = $fallback[ $key ];
-		}
-		if ( empty( $row['name'] ) || empty( $row['monthly'] ) || 'quote_only' !== ( $row['launch_state'] ?? '' ) ) {
-			continue;
-		}
-		$out .= bds_fp_service_card(
-			array(
-				'url'     => $contact,
-				'name'    => (string) $row['name'],
-				'price'   => ( 'done-for-you-ai-management' === $key ? 'From $' : '$' ) . number_format( (float) $row['monthly'], 2 ) . '/month',
-				'eyebrow' => 'done-for-you-ai-management' === $key ? 'Full managed option' : '',
-				'summary' => $summary,
-				'label'   => 'Scope this package',
-			)
-		);
+	foreach ( $packages as $package ) {
+		$package['url'] = $contact;
+		$out .= bds_fp_service_card( $package );
 	}
 	return $out;
 }
@@ -270,7 +258,7 @@ function bds_fp_services_content() {
 		. '<section class="bds-fp-hero"><p class="bds-fp-eyebrow">Affordable AI and hands-on business help</p><h1>Choose what you need. See the price. Start without the agency runaround.</h1><p>Tell us the result you want: more leads, better content, stronger local visibility, a clearer website, or help with one specific job. Every service explains what you receive before you pay.</p><div class="bds-fp-actions"><a class="bds-fp-button" href="#bds-fp-plans">Compare monthly plans</a><button class="bds-fp-button bds-fp-button--light" type="button" data-bds-open-assistant>Ask BrandDad AI</button></div><ul><li>Plain-language guidance</li><li>Clear limits and pricing</li><li>You approve important work</li></ul></section>'
 		. '<section class="bds-fp-section"><p class="bds-fp-eyebrow">Start with the outcome</p><h2>What would help your business most right now?</h2><div class="bds-fp-paths"><a href="#bds-fp-plans"><strong>Bring in and follow up with leads</strong><span>Lead capture, replies, and simple follow-up help.</span></a><a href="#bds-fp-plans"><strong>Keep marketing consistent</strong><span>Social content, LinkedIn help, and everyday business writing.</span></a><a href="#bds-fp-web"><strong>Improve my website or local visibility</strong><span>Website fixes, SEO help, Google profile support, and monitoring.</span></a><a href="#bds-fp-specialty"><strong>Handle one specific project</strong><span>Review appeals, press materials, creative packs, and specialist work.</span></a></div></section>'
 		. ( '' !== $plans_html ? '<section class="bds-fp-section" id="bds-fp-plans"><p class="bds-fp-eyebrow">Monthly business help</p><h2>Useful help every month—starting at $19.99.</h2><p>AI Business Essentials is the simplest all-around choice. Pick a specialist plan only when that is the main job you need done.</p><div class="bds-fp-grid">' . $plans_html . '</div></section>' : '' )
-		. ( '' !== $autopilot_html ? '<section class="bds-fp-section bds-fp-section--soft" id="bds-fp-business-autopilot"><p class="bds-fp-eyebrow">Run more of the business in one place</p><h2>BrandDad Business Autopilot</h2><p>Connect the supported channels you use. BrandDad can help plan and publish approved social posts, prepare replies to comments, messages, and email, answer common website questions, capture leads, and prepare follow-ups. Smaller tiers provide set monthly workloads. <strong>Done-for-You AI Management</strong> is the full managed option. Every connection, allowance, approval rule, and human-review limit is confirmed before billing.</p><div class="bds-fp-grid">' . $autopilot_html . '</div><article class="bds-fp-card bds-fp-autopilot-addon"><p class="bds-fp-eyebrow">Optional add-on</p><h3>BrandDad Engagement Autopilot</h3><p>Help eligible posts reach more relevant people through authentic, platform-compliant engagement and distribution. This add-on is separate from managing the business. It does not use fake likes or bots and cannot guarantee a higher feed position.</p><a class="bds-fp-link" href="' . $contact . '">Ask about the engagement add-on <span aria-hidden="true">&rarr;</span></a></article></section>' : '' )
+		. ( '' !== $autopilot_html ? '<section class="bds-fp-section bds-fp-section--soft" id="bds-fp-business-autopilot"><p class="bds-fp-eyebrow">Done-for-you social growth</p><h2>We help your posts get seen—and handle the conversations for you.</h2><p>Running a business is already a full-time job. BrandDad helps keep your social media active, gives eligible posts a stronger start through the BDS Network, and helps answer relevant questions using your approved business information. Choose <strong>US Focused</strong> or <strong>Worldwide</strong>. LinkedIn content and professional conversation support can be included as one of your connected channels.</p><div class="bds-fp-grid">' . $autopilot_html . '</div><article class="bds-fp-card bds-fp-autopilot-addon"><p class="bds-fp-eyebrow">Simple monthly setup</p><h3>You run the business. We help keep it visible.</h3><p>Tell us what the business does, choose the audience, and approve the important information. BrandDad handles the agreed monthly workload and shows you what was completed. Platform placement, reach, followers, leads, and sales are not guaranteed.</p><a class="bds-fp-link" href="' . $contact . '">Let BrandDad run it <span aria-hidden="true">&rarr;</span></a></article></section>' : '' )
 		. ( '' !== $studio_html ? '<section class="bds-fp-section bds-fp-section--soft"><p class="bds-fp-eyebrow">Self-service workspace</p><h2>Use BrandDad AI when you need it.</h2><p>Choose a credit plan, see the cost before each tool runs, and review every result before you use it.</p><div class="bds-fp-grid">' . $studio_html . '</div></section>' : '' )
 		. ( '' !== $specialty_html ? '<section class="bds-fp-section" id="bds-fp-specialty"><p class="bds-fp-eyebrow">One-time help</p><h2>Pay for one focused job.</h2><p>These services solve a defined problem without starting a monthly subscription.</p><div class="bds-fp-grid">' . $specialty_html . '</div></section>' : '' )
 		. ( '' !== $web_html ? '<section class="bds-fp-section bds-fp-section--soft" id="bds-fp-web"><p class="bds-fp-eyebrow">Website and local growth</p><h2>Fix the parts customers see first.</h2><p>Choose a clearly scoped service. Larger or unusual work is confirmed before payment.</p><div class="bds-fp-grid">' . $web_html . '</div></section>' : '' )
