@@ -61,6 +61,15 @@ namespace {
 	}
 
 	$source = file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php' );
+	ob_start();
+	bds_directory_home_compat_heading_guard();
+	$heading_guard = ob_get_clean();
+	if ( false === strpos( $heading_guard, "getElementById('bdd-title')" )
+		|| false === strpos( $heading_guard, "querySelector('h1.bds-wah__title')" )
+		|| false !== strpos( $heading_guard, 'innerHTML' ) ) {
+		fwrite( STDERR, "The Directory heading guard is missing or re-renders HTML unsafely.\n" );
+		exit( 1 );
+	}
 	$register_position = strpos( $source, '\\BrandDad\\DirectoryExperience\\register_assets();' );
 	$render_position = strpos( $source, '$home = \\BrandDad\\DirectoryExperience\\render_home();' );
 	$head_position = strpos( $source, 'wp_head();' );

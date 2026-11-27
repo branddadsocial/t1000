@@ -44,6 +44,8 @@ $checks = array(
 	'logo_fallback'  => 'https://branddad.social/wp-content/uploads/2023/04/3-1-1.webp' === bds_fp_social_logo_url(),
 	'price_text_fix' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '.bds-oneshot-price>span' ),
 	'shared_mobile_menu' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '#bds-nav-fix-bar .bds-nav-fix-mobile' ),
+	'bounded_services' => false === strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), 'calc(50% - 50vw)' )
+		&& false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '.bds-fp-section--soft{margin:0;' ),
 	'health_helper'  => '<script>function bdsFpHealthEsc(v){return v;}bdsFpHealthEsc("ok");</script>' === bds_fp_prepare_health_widget( '<script>function bdsHealthEsc(v){return v;}bdsHealthEsc("ok");</script>' ),
 );
 

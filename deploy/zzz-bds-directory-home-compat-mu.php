@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Homepage Compatibility
  * Description: Preserves the complete Directory homepage document while the replacement experience remains composer-backed.
- * Version: 1.1.6
+ * Version: 1.1.7
  * Author: BrandDad
  */
 
@@ -62,6 +62,45 @@ function bds_directory_home_compat_mobile_css() {
 }
 
 /**
+ * Keep the visible replacement hero as the document H1 after legacy footer
+ * scripts finish normalizing duplicate headings.
+ *
+ * The legacy Directory composer leaves a hidden H1 in the DOM and then turns
+ * every later H1 into an H2. This guard runs last in the recovered document,
+ * demotes only that known hidden legacy heading, and promotes #bdd-title by
+ * moving its existing child nodes. It does not parse or re-render HTML.
+ */
+function bds_directory_home_compat_heading_guard() {
+	?>
+	<script id="bds-directory-home-heading-guard">
+	(function () {
+		var current = document.getElementById('bdd-title');
+		if (!current) return;
+
+		var legacy = document.querySelector('h1.bds-wah__title');
+		if (legacy) {
+			var legacyHeading = document.createElement('h2');
+			legacyHeading.className = legacy.className || '';
+			if (legacy.id) legacyHeading.id = legacy.id;
+			while (legacy.firstChild) legacyHeading.appendChild(legacy.firstChild);
+			legacy.parentNode.replaceChild(legacyHeading, legacy);
+		}
+
+		if (current.tagName.toLowerCase() !== 'h1') {
+			var heading = document.createElement('h1');
+			heading.id = 'bdd-title';
+			heading.className = current.className || '';
+			if (current.getAttribute('aria-label')) heading.setAttribute('aria-label', current.getAttribute('aria-label'));
+			if (current.getAttribute('aria-describedby')) heading.setAttribute('aria-describedby', current.getAttribute('aria-describedby'));
+			while (current.firstChild) heading.appendChild(current.firstChild);
+			current.parentNode.replaceChild(heading, current);
+		}
+	})();
+	</script>
+	<?php
+}
+
+/**
  * Render the existing replacement homepage before colliding legacy buffers run.
  *
  * This is the same document shell as the replacement plugin's front-page
@@ -100,6 +139,7 @@ function bds_directory_home_compat_render() {
 	echo '>';
 	echo $home; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	wp_footer();
+	bds_directory_home_compat_heading_guard();
 	echo '</body></html>';
 	exit;
 }
