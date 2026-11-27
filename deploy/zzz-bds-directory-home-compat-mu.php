@@ -11,9 +11,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Preserve legacy homepage composition until the replacement owns rendering.
  *
- * Runs immediately before the legacy semantic buffer. At this point WordPress
- * has resolved the main query and all standard plugins have loaded, so both the
- * homepage test and the replacement feature flag are authoritative.
+ * Runs on `wp` immediately before the broken yield callback. At this point
+ * WordPress has resolved the main query, but the callback has not yet removed
+ * the legacy homepage section hooks.
  *
  * @return void
  */
@@ -29,4 +29,4 @@ function bds_directory_home_compat_yield_to_replacement() {
 		remove_action( 'wp', 'bds_dfc_yield_to_replacement_home', PHP_INT_MAX );
 	}
 }
-add_action( 'template_redirect', 'bds_directory_home_compat_yield_to_replacement', -10000 );
+add_action( 'wp', 'bds_directory_home_compat_yield_to_replacement', PHP_INT_MAX - 1 );

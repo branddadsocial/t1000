@@ -36,6 +36,8 @@ $checks = array(
 	'has_special'  => false !== strpos( $page, 'AI Review Dispute Assistant' ),
 	'has_directory'=> false !== strpos( $page, 'List my business free' ),
 	'has_mobile_cta'=> false !== strpos( $page, 'data-bds-open-assistant' ),
+	'health_renderer'=> function_exists( 'bds_fp_render_health_page' ),
+	'health_css'     => false !== strpos( bds_fp_health_page_css(), 'bds-fp-health-nav' ),
 );
 
 $_SERVER['REQUEST_URI'] = '/add-listing/';

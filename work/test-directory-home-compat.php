@@ -26,7 +26,7 @@ namespace {
 
 	require dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php';
 
-	$callback = $GLOBALS['compat_hooks']['template_redirect'][-10000] ?? null;
+	$callback = $GLOBALS['compat_hooks']['wp'][PHP_INT_MAX - 1] ?? null;
 	if ( ! is_callable( $callback ) ) {
 		fwrite( STDERR, "Compatibility hook was not registered.\n" );
 		exit( 1 );

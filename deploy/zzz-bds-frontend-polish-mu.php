@@ -17,19 +17,61 @@ defined( 'ABSPATH' ) || exit;
 define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.1' );
 
 /**
- * Keep the website-check page inside the normal theme document.
+ * Render the public Health Check before legacy theme/output-buffer callbacks.
  *
- * The legacy dedicated renderer calls get_header(), prints the page, and exits
- * during template_redirect. On this stack an older outer output buffer can
- * flush those fragments into the document head. The normal page lifecycle and
- * the_content replacement below produce one valid document instead.
+ * This route has no normal WordPress page object. Disabling its legacy renderer
+ * therefore produces an empty 200 response, while running that renderer inside
+ * the older buffer stack can move the body into <head>. Emit one complete,
+ * self-contained document before either path can run.
  */
-function bds_fp_disable_legacy_health_renderer() {
-	remove_action( 'template_redirect', 'bds_health_maybe_render_tool_page', 1 );
+function bds_fp_render_health_page() {
+	if ( ! bds_fp_is_social() || ! function_exists( 'bds_health_is_social_tool_request' ) || ! bds_health_is_social_tool_request() ) {
+		return;
+	}
+
+	status_header( 200 );
+	if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+		define( 'DONOTCACHEPAGE', true );
+	}
+	if ( ! headers_sent() ) {
+		nocache_headers();
+		header( 'Content-Type: text/html; charset=UTF-8' );
+		header( 'X-BDS-Health-Page: recovery-1' );
+	}
+
+	$home       = esc_url( home_url( '/' ) );
+	$services   = esc_url( home_url( '/services/' ) );
+	$essentials = esc_url( home_url( '/product/ai-business-essentials/' ) );
+	$directory  = esc_url( 'https://directory.branddad.social/' );
+	$widget     = shortcode_exists( 'bds_business_health_check' )
+		? do_shortcode( '[bds_business_health_check minimal_header="1"]' )
+		: '<p class="bds-fp-health-error">The website check is temporarily unavailable. Please try again shortly.</p>';
+	$widget_css = function_exists( 'bds_health_css' ) ? bds_health_css() : '';
+	$charset    = get_bloginfo( 'charset' );
+	$lang       = get_bloginfo( 'language' );
+
+	echo '<!doctype html><html lang="' . esc_attr( $lang ? $lang : 'en-US' ) . '"><head>';
+	echo '<meta charset="' . esc_attr( $charset ? $charset : 'UTF-8' ) . '">';
+	echo '<meta name="viewport" content="width=device-width,initial-scale=1">';
+	echo '<title>Check your website | BrandDad Social</title>';
+	echo '<meta name="description" content="Run a free BrandDad website check and get clear next steps without confusing jargon or scare scores.">';
+	echo '<link rel="canonical" href="' . esc_url( home_url( '/check-your-website/' ) ) . '">';
+	echo '<style>' . $widget_css . bds_fp_health_page_css() . '</style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '</head><body class="bds-fp-health-page">';
+	echo '<header class="bds-fp-health-nav"><a class="bds-fp-health-brand" href="' . $home . '" aria-label="BrandDad Social home"><span aria-hidden="true">b</span><strong>BrandDad Social</strong></a>';
+	echo '<nav aria-label="Primary"><a href="' . $services . '">Services</a><a href="' . $directory . '">Directory</a><a class="bds-fp-health-nav-cta" href="' . $essentials . '">Get ongoing help</a></nav></header>';
+	echo '<main><section class="bds-fp-health-hero"><p class="bds-fp-health-kicker">Free AI website check</p><h1>See what is holding your website back</h1><p>Enter your website address. BrandDad checks public signals and turns them into clear next steps—without confusing jargon, scare scores, or ranking promises.</p></section>';
+	echo '<section class="bds-fp-health-tool" aria-label="Website check">' . $widget . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo '<section class="bds-fp-health-next"><div><p class="bds-fp-health-kicker">Need help after the check?</p><h2>Turn the results into a simple action plan.</h2><p>Start with the lowest-priced service that fits the problem, or use AI Business Essentials for ongoing website, SEO, review, and content help.</p></div><div class="bds-fp-health-actions"><a class="bds-fp-health-button" href="' . $essentials . '">See AI Business Essentials</a><a class="bds-fp-health-button bds-fp-health-button--light" href="' . $services . '">Explore all services</a></div></section>';
+	echo '</main><footer><p>© ' . esc_html( gmdate( 'Y' ) ) . ' BrandDad Social. Big-business tools. Small-business prices.</p></footer></body></html>';
+	exit;
 }
-add_action( 'muplugins_loaded', 'bds_fp_disable_legacy_health_renderer', PHP_INT_MAX );
-add_action( 'plugins_loaded', 'bds_fp_disable_legacy_health_renderer', PHP_INT_MAX );
-add_action( 'template_redirect', 'bds_fp_disable_legacy_health_renderer', -100000 );
+add_action( 'template_redirect', 'bds_fp_render_health_page', -100000 );
+
+/** Return standalone Health Check page styles. */
+function bds_fp_health_page_css() {
+	return 'html{box-sizing:border-box}*,*:before,*:after{box-sizing:inherit}body.bds-fp-health-page{margin:0;background:#f7f9fc;color:#0f172a;font-family:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}.bds-fp-health-nav{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:76px;padding:12px max(22px,calc((100vw - 1180px)/2));background:#07192d;color:#fff}.bds-fp-health-brand,.bds-fp-health-nav nav,.bds-fp-health-nav a{display:flex;align-items:center}.bds-fp-health-brand{gap:10px;color:#fff;text-decoration:none}.bds-fp-health-brand span{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#fff;color:#0b74ff;font-size:27px;font-weight:950}.bds-fp-health-nav nav{gap:22px}.bds-fp-health-nav nav a{color:#dceafb;font-weight:750;text-decoration:none}.bds-fp-health-nav .bds-fp-health-nav-cta{min-height:42px;padding:0 15px;border-radius:10px;background:#fff;color:#0759c7}.bds-fp-health-hero{padding:clamp(62px,9vw,112px) 22px 28px;background:radial-gradient(800px 360px at 10% 0%,rgba(11,116,255,.28),transparent 60%),linear-gradient(145deg,#07192d,#0d3155);color:#fff;text-align:center}.bds-fp-health-hero h1{max-width:920px;margin:8px auto 20px;color:#fff;font-size:clamp(2.45rem,6vw,5rem);line-height:.98;letter-spacing:-.045em}.bds-fp-health-hero>p:not(.bds-fp-health-kicker){max-width:720px;margin:0 auto;color:#d9e9fb;font-size:clamp(1.05rem,2vw,1.25rem);line-height:1.65}.bds-fp-health-kicker{margin:0 0 10px;color:#3f83c8;font-size:.78rem;font-weight:900;letter-spacing:.11em;text-transform:uppercase}.bds-fp-health-hero .bds-fp-health-kicker{color:#76b9ff}.bds-fp-health-tool{max-width:980px;margin:0 auto;padding:30px 22px 18px}.bds-fp-health-tool .bds-health{margin:0 auto}.bds-fp-health-next{display:flex;align-items:center;justify-content:space-between;gap:34px;max-width:1136px;margin:28px auto 70px;padding:clamp(28px,5vw,50px);border-radius:24px;background:#e8f2ff}.bds-fp-health-next h2{max-width:700px;margin:0 0 12px;font-size:clamp(1.9rem,4vw,3rem);line-height:1.05;letter-spacing:-.035em}.bds-fp-health-next>div>p:not(.bds-fp-health-kicker){max-width:700px;color:#475569;line-height:1.65}.bds-fp-health-actions{display:flex;flex:0 0 auto;flex-direction:column;gap:10px}.bds-fp-health-button{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 18px;border:1px solid #0759c7;border-radius:12px;background:#0759c7;color:#fff;font-weight:850;text-decoration:none}.bds-fp-health-button--light{background:#fff;color:#0759c7}body.bds-fp-health-page footer{padding:28px 22px;background:#07192d;color:#c9d9ea;text-align:center}@media(max-width:760px){.bds-fp-health-nav{min-height:68px}.bds-fp-health-nav nav>a:not(.bds-fp-health-nav-cta){display:none}.bds-fp-health-brand strong{font-size:.95rem}.bds-fp-health-next{display:block;margin:22px 16px 50px}.bds-fp-health-actions{margin-top:22px}.bds-fp-health-button{width:100%}}';
+}
 
 /** Return the normalized request host. */
 function bds_fp_host() {
