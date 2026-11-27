@@ -50,6 +50,12 @@ namespace {
 		exit( 1 );
 	}
 
+	$mobile_css = bds_directory_home_compat_mobile_css();
+	if ( false === strpos( $mobile_css, '#bds-lang-switch{display:none!important}' ) ) {
+		fwrite( STDERR, "The phone header does not suppress the extra language controls.\n" );
+		exit( 1 );
+	}
+
 	$source = file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php' );
 	$register_position = strpos( $source, '\\BrandDad\\DirectoryExperience\\register_assets();' );
 	$render_position = strpos( $source, '$home = \\BrandDad\\DirectoryExperience\\render_home();' );
