@@ -231,3 +231,12 @@ Nothing unchecked above may be described as fully operational.
 - [x] Verify the canonical mobile product retains title, price, and purchase action.
 - [x] Verify no cart, order, payment, subscription, or customer state was created or changed.
 - [!] Required remote Rafter fast review is still blocked by the 16/16 quota; paid Plus was not authorized or used.
+
+## 2026-11-27 Social header and white-label gate
+
+- [x] Deploy frontend polish `1.0.7` and remove the checker-only duplicate mobile menu without changing the checker form or shared site navigation.
+- [x] Verify one 390px checker menu exposes Services, Get Featured, Account, Contact, and List my business free.
+- [x] Verify Checker and Services each have one visible H1, no broken images, no horizontal overflow, and no visible provider branding.
+- [x] Deploy customer surfaces `0.2.11` with provider-neutral owner-inspection wording while preserving fail-closed key and flag checks.
+- [x] Verify the signed-in Account Hub shows AI execution/provisioning labels and no visible `FormWise` text.
+- [x] Verify the six priority Social surfaces used in this release return HTTP 200 and that no transactional or provider state changed.

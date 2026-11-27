@@ -565,3 +565,12 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Traced the only failed Social Services internal asset to `wp-content/plugins/branddad-seoestore/assets/spotify.css`. The production file existed and matched the expected 4,148-byte asset, but its host permission was `600`; the neighboring JavaScript and guide assets were correctly readable at `644`.
 - After exact owner confirmation, changed only `spotify.css` from `600` to `644` in the authenticated StartHost File Manager. No file content, plugin code, account, catalog, cart, checkout, order, payment, subscription, or customer record changed.
 - Verified the production row now reports `644`. A fresh public request returns HTTP 200 and 4,148 bytes for the stylesheet; the paired JavaScript returns HTTP 200 and 1,032 bytes; and the Social Services page remains HTTP 200.
+
+## 2026-11-27 — checker navigation and white-label cleanup
+
+- The rendered 390px audit found a real checker-only header defect: the standalone website checker exposed both the shared injected mobile menu and its own complete header menu. The checker itself, logo, form, and conversion copy were otherwise intact.
+- Released frontend polish `1.0.7`, hiding only the orphaned shared menu on the standalone checker document while preserving its native BrandDad logo and the common Services, Get Featured, Account, Contact, and List my business free doors.
+- Reworded the shop-manager-only Billing Inspect output from the underlying provider name to provider-neutral **AI execution**, **AI provisioning**, and **AI provider** language. The operational booleans and fail-closed behavior are unchanged; no credential value is rendered.
+- StartHost reported all three reviewed uploads completed: `zzz-bds-frontend-polish-mu.php`, `bds-customer-hub-lib.php`, and `bds-customer-surfaces-mu.php`.
+- Live 390px acceptance found one checker menu, all five common destinations after opening it, one visible H1, zero broken images, no visible provider name, and no horizontal overflow. The signed-in Account Hub showed the neutral AI labels and no visible `FormWise` text. Services reports `data-bds-frontend-polish="1.0.7"` and retained the same clean mobile acceptance.
+- Public regression requests returned HTTP 200 for Social Home, Services, Website Checker, Account Hub, the canonical AI Website Improvement Plan, and the repaired Spotify stylesheet. No cart, checkout, order, payment, subscription, customer record, credential, AI execution, or provider credit changed.

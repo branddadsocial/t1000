@@ -877,3 +877,19 @@ Updated: 2026-11-19
 | Paired JavaScript | PASS — HTTP 200, 1,032 bytes |
 | Services regression | PASS — HTTP 200, 213,839 bytes |
 | Content/data safety | PASS — no file-content, product, cart, checkout, order, payment, subscription, or customer mutation |
+
+## 2026-11-27 — checker navigation and provider-label acceptance
+
+| Check | Result |
+|---|---|
+| Frontend polish source | PASS — `1.0.7`, PHP lint clean, 18/18 focused assertions |
+| Customer surface source | PASS — PHP lint clean for both files; customer hub test passed |
+| Local secret scans | PASS — no secrets detected in the three deployment files |
+| StartHost upload | PASS — 3/3 files reported `Completed` |
+| Checker 390px header | PASS — exactly one visible menu control |
+| Checker menu destinations | PASS — Services, Get Featured, Account, Contact, and List my business free each visible once after opening |
+| Checker layout | PASS — one visible H1, zero broken images, no provider branding, no horizontal overflow |
+| Account Hub white label | PASS — `AI execution key` and `AI provisioning key` visible to the shop manager; no visible `FormWise` text |
+| Services regression | PASS — frontend marker `1.0.7`, one H1, zero broken images, no provider branding, no overflow |
+| Public HTTP regression | PASS — Home, Services, Checker, Account Hub, canonical website plan, and Spotify CSS returned HTTP 200 |
+| Transaction/provider safety | PASS — no cart, checkout, order, payment, subscription, customer, credential, AI run, or provider-credit mutation |

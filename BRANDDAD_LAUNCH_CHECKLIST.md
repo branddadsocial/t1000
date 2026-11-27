@@ -27,6 +27,8 @@ Production readiness: controlled soft-launch surfaces are operational; unrestric
 - [x] Frontend cleanup: the production Directory homepage compatibility release keeps the current hero as the single visible H1, suppresses the retired duplicate hero, leaves gift inventory off the homepage, and passed 390px/1440px acceptance without horizontal overflow or duplicate concierge surfaces.
 - [x] Frontend contrast cleanup: the reviewed `#0668D8` primary-action treatment is deployed on the launch surfaces; desktop and 320px/390px mobile acceptance passed without provider branding, overflow, or unreadable primary actions.
 - [x] Repair the blocked Social Spotify stylesheet: production permission changed from `600` to `644`; the CSS now returns HTTP 200 and the Services page remains HTTP 200.
+- [x] Remove the checker-only duplicate mobile menu and verify the common five-door navigation at 390px. Frontend polish `1.0.7` is live with one menu, one H1, no broken images, and no overflow.
+- [x] Keep the owner Billing Inspect white-labeled: provider-neutral AI labels are live and the signed-in surface contains no visible `FormWise` name.
 - [x] Deploy the reviewed shared backend package: all 15 expected `branddad/v1` routes are registered on production; the former `rest_no_route` note was stale.
 - [x] Recheck public HTTPS/indexing plumbing: both HTTP hosts 301 to their HTTPS equivalents, TLS verification succeeds, audited production pages have matching canonicals and no `noindex`, and both robots/sitemap endpoints return HTTP 200.
 
