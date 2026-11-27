@@ -184,4 +184,3 @@ function bds_submit_order_created( $order ) {
 	}
 }
 add_action( 'woocommerce_checkout_order_created', 'bds_submit_order_created', 20, 1 );
-

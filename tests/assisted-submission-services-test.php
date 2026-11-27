@@ -89,4 +89,3 @@ if ( $failed ) {
 }
 
 echo "assisted submission tests passed\n";
-
