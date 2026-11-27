@@ -6,6 +6,7 @@ namespace BrandDad\DirectoryExperience {
 	function render_home() {
 		return '<main class="bdd"><h1>Find local businesses</h1></main>';
 	}
+	function register_assets() {}
 }
 
 namespace {
@@ -22,9 +23,6 @@ namespace {
 	function wp_parse_url( $url, $component ) {
 		return parse_url( $url, $component );
 	}
-	function is_front_page() {
-		return true;
-	}
 	function remove_action( $hook, $callback, $priority ) {
 		$GLOBALS['compat_removals'][] = array( 'action', $hook, $callback, $priority );
 	}
@@ -38,9 +36,10 @@ namespace {
 	require dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php';
 
 	$source = file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php' );
+	$register_position = strpos( $source, '\\BrandDad\\DirectoryExperience\\register_assets();' );
 	$render_position = strpos( $source, '$home = \\BrandDad\\DirectoryExperience\\render_home();' );
 	$head_position = strpos( $source, 'wp_head();' );
-	if ( false === $render_position || false === $head_position || $render_position > $head_position ) {
+	if ( false === $register_position || false === $render_position || false === $head_position || $register_position > $render_position || $render_position > $head_position ) {
 		fwrite( STDERR, "The replacement must enqueue its assets before wp_head().\n" );
 		exit( 1 );
 	}

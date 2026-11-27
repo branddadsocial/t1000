@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Homepage Compatibility
  * Description: Preserves the complete Directory homepage document while the replacement experience remains composer-backed.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: BrandDad
  */
 
@@ -27,10 +27,9 @@ function bds_directory_home_compat_path() {
 function bds_directory_home_compat_should_render() {
 	return 'directory.branddad.social' === bds_directory_home_compat_host()
 		&& '/' === bds_directory_home_compat_path()
-		&& function_exists( 'is_front_page' )
-		&& is_front_page()
 		&& function_exists( '\\BrandDad\\DirectoryExperience\\is_public_redesign_enabled' )
 		&& \BrandDad\DirectoryExperience\is_public_redesign_enabled()
+		&& function_exists( '\\BrandDad\\DirectoryExperience\\register_assets' )
 		&& function_exists( '\\BrandDad\\DirectoryExperience\\render_home' );
 }
 
@@ -48,14 +47,15 @@ function bds_directory_home_compat_render() {
 
 	status_header( 200 );
 	if ( ! headers_sent() ) {
-		header( 'X-BDS-Directory-Home: recovery-3' );
+		header( 'X-BDS-Directory-Home: recovery-4' );
 	}
 
 	/*
-	 * Build the replacement before wp_head(). Its renderer enqueues the
-	 * protected Directory stylesheet and scripts while creating the fragment;
+	 * Register the protected plugin's assets, then build the replacement before
+	 * wp_head(). Its renderer enqueues those assets while creating the fragment;
 	 * generating it later leaves the document complete but unstyled.
 	 */
+	\BrandDad\DirectoryExperience\register_assets();
 	$home = \BrandDad\DirectoryExperience\render_home();
 
 	echo '<!doctype html><html ';

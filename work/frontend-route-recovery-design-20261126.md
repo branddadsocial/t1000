@@ -34,9 +34,10 @@ nothing and WordPress continues normally.
 - No request body, database identifier, file path, or arbitrary template name is
   accepted by the recovery renderer.
 - The Directory route gate requires the exact `directory.branddad.social` host,
-  exact `/` path, WordPress's resolved front-page state, and the replacement
-  plugin's own enabled flag. Query parameters do not select templates or alter
-  rendered markup.
+  exact `/` path, and the replacement plugin's own enabled flag. The exact root
+  is authoritative because this installation does not expose `/` through
+  WordPress's `is_front_page()` state. Query parameters do not select templates
+  or alter rendered markup.
 - The existing homepage fragment is generated before `wp_head()` so its own
   registered stylesheet and scripts enter WordPress's output queue in time;
   no asset URL is accepted from the request.
