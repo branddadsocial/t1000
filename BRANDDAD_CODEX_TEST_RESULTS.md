@@ -796,3 +796,16 @@ Updated: 2026-11-19
 - Local regression after the revision: 41/41 Node contract files, 40/40 `deploy/` PHP syntax checks, and 4/4 standalone PHP tests passed. `git diff --check` reported only the existing LF-to-CRLF warning for the design document.
 - Rafter: local secrets scan passed with no detected secrets. Required `rafter run --mode fast` was attempted and rejected because the account is at 16/16 fast scans. Paid Plus was not used.
 - No card, payment gateway, production order, customer email, or production checkout activation occurred.
+
+## 2026-11-27 — AI website plan production acceptance
+
+- Deployed the reviewed Social MU-plugin updates for AI execution `0.3.2`, the website-plan offer `0.1.1`, the services catalog `1.2.1`, and frontend polish `1.0.4` through the authenticated StartHost file manager. Each upload completed successfully.
+- The canonical WooCommerce product now renders as **AI Website Improvement Plan** at **$19.99 one time**, with a visible **Buy AI plan** control and plain-language scope. The former **Available by quote**, **Request a scoped quote**, and **BrandDad SmartSites Website Optimizer** presentation was absent.
+- The legacy `/product/website-speed-optimization/` route resolves to the canonical AI Website Improvement Plan product and displays the current title, price, and purchase control.
+- A live run of the public website checker against `https://branddad.social/` returned a score and recommended **AI Website Improvement Plan — $19.99** for weak performance signals. The stale **Website Speed Optimization — $149** recommendation was absent. The recommendation explains that secure WordPress connection and customer approval are required before supported changes can be applied; hosting, CDN, paid-plugin, and custom-code work remain separately scoped.
+- The Social Services page exposes frontend-polish marker `1.0.4`, the $19.99 one-time website plan, and its **Buy AI plan** link. No public `FormWise` provider name was visible on the audited Services, checker, or product pages.
+- Anonymous access to `/wp-json/branddad/v1/ai/tools` returned `rest_forbidden` with HTTP status `401`, confirming the customer tool catalog remains fail-closed outside an authenticated session.
+- Responsive browser acceptance passed at 390px and 320px widths. The product title, price, purchase control, logo, and compact menu remained available. The opened 320px menu exposed Services, Get Featured, Account, Contact, and List my business free with the intended destinations.
+- No cart, checkout, order, payment, subscription, customer message, or FormWise execution was created during production verification.
+- Post-deployment local regression passed **42/42 Node contracts** and **42/42 deployment PHP syntax checks**. File-scoped local secret scans found no secrets. Required remote `rafter run --mode fast` had already been attempted and was blocked solely by the account's 16/16 scan quota; paid Plus was not used.
+- Automatic implementation remains intentionally fail-closed: purchasing the plan creates an owner-scoped AI planning job. Applying supported fixes requires a separately authorized secure site connection and explicit approval of the proposed changes; the system does not collect passwords or silently edit customer websites.
