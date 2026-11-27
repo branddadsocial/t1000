@@ -583,3 +583,13 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Live Playa del Carmen acceptance reports facet version `1.1.4`, one visible H1 (`Food & Beverage in Playa del Carmen`), matching local businesses, no horizontal overflow at 390px, zero broken images, one Directory Concierge, and no visible FormWise branding.
 - Live city-gate acceptance reports one visible H1 (`Food & Beverage — pick a city`), zero visible listings before location selection, no horizontal overflow at 390px, zero broken images, and one Directory Concierge.
 - PHP syntax and all seven focused heading contracts passed. Local Rafter secrets scanning found no secrets; the required remote fast scan was attempted and remains unavailable because the account is at 16/16 scans. The manual OWASP pass found no security issue in this DOM-only `textContent` repair.
+
+## 2026-11-27 — optional Done-for-You visibility packaging
+
+- Restored a clear $399/month Done-for-You Complete Management qualification offer that does not include or require BDS Network engagement.
+- Reframed $599/$699/$849 as optional Essential, Growth, and Maximum visibility bundles whose displayed totals include Complete Management.
+- Kept LinkedIn content support, customer-conversation help, lead follow-up, website chat, and evidence-based monthly reporting in the core management explanation.
+- Added a private, inert BDS Network catalog covering supplier ids 3335, 10118, 6367, 6118, 10144, 5922, 10119, 8751, 8752, 8753, 7124, 7127, 6818, 7125, and 7128. US Focused and Worldwide primaries are explicit; 7125 and 7128 are manual fallbacks only.
+- Added monthly internal caps and estimated supplier ceilings for profitability planning. Automatic provider execution remains disabled and every visibility tier is `manual_review_only` until payment, provider-policy, idempotency, cancellation, refund, and result acceptance pass.
+- Added customer-safe metric labels that keep content creation, publication, campaign-assisted metrics, conversations, and leads separate. Pending or unverified quantities are not counted as completed results.
+- Added `bds-network` to the existing private verified provider-cost allowlist; actual contribution reporting still requires reconciled cost events.

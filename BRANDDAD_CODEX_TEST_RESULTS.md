@@ -903,3 +903,13 @@ Updated: 2026-11-19
 - Playa results, 390x844: facet `1.1.4`; exactly one visible H1 `Food & Beverage in Playa del Carmen`; 12 listing cards in the loaded page; Playa del Carmen text present; `scrollWidth=clientWidth=375`; zero broken images; one `#bdd-ai`; zero visible FormWise references.
 - City gate, 390x844: exactly one visible H1 `Food & Beverage — pick a city`; zero visible listing cards; `scrollWidth=clientWidth=375`; zero broken images; one `#bdd-ai`.
 - No cart, checkout, order, payment, subscription, customer record, email, AI execution, or cache deletion occurred.
+
+## 2026-11-27 — Done-for-You optional visibility tests
+
+- `php -l` passed for the private engagement catalog, the public overlay, and canonical frontend polish.
+- `dfy-engagement-catalog-test.php` passed 14/14 checks: base plan isolation, public totals, add-on prices, post caps, all supplied ids, regional primaries, manual fallbacks, fail-closed execution modes, cost ceilings, invalid mapping denial, and customer-safe metrics.
+- `dfy-packages-overlay-test.php` passed 16/16 checks, including the $399 no-engagement plan, optional visibility language, honest reporting, private supplier ids, and contact-only conversion.
+- `business-autopilot-services-contract.mjs`, `provider-cost-ledger-contract.mjs`, and `frontend-polish-test.php` passed.
+- `git diff --check` found no content error; only pre-existing Windows line-ending notices remain.
+- `rafter secrets .` found no secrets. Required remote `rafter run --mode fast` was attempted and blocked because the account remains at 16/16 scans.
+- Manual OWASP review: all public copy is static and escaped; the private catalog registers no route, performs no network call, accepts no request input, and creates no payment or order. Supplier ids and costs are absent from rendered HTML. No dependency, credential, authentication, SQL, file-upload, deletion, or outbound-fetch surface was added.

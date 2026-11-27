@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.11
+ * Version: 1.0.12
  * Author: BrandDad
  *
  * Secure design:
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.11' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.12' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -168,22 +168,22 @@ function bds_fp_service_card( array $service ) {
 function bds_fp_business_autopilot_cards( $contact ) {
 	$packages = array(
 		array(
-			'name'    => 'Done-for-You Essential Engagement',
-			'price'   => '$599/month',
-			'summary' => 'Up to 12 approved posts each month, audience-growth assistance, early engagement for eligible posts, conversation help, LinkedIn content support, and a clear monthly summary.',
-			'label'   => 'Choose Essential',
+			'name'    => 'Complete Management + Essential Visibility',
+			'price'   => '$599/month total',
+			'summary' => 'Everything in Complete Management plus optional BDS Network visibility support for up to 12 eligible posts each month. Choose US Focused or Worldwide.',
+			'label'   => 'Choose Essential Visibility',
 		),
 		array(
-			'name'    => 'Done-for-You Complete Growth',
-			'price'   => '$699/month',
+			'name'    => 'Complete Management + Growth Visibility',
+			'price'   => '$699/month total',
 			'eyebrow' => 'Best value',
-			'summary' => 'Up to 20 approved posts each month, US Focused or Worldwide audience growth, early engagement, relevant reply help, LinkedIn content support, lead follow-up, website chat, and monthly reporting.',
-			'label'   => 'Choose Complete Growth',
+			'summary' => 'Everything in Complete Management plus optional BDS Network visibility support for up to 20 eligible posts each month. Choose US Focused or Worldwide.',
+			'label'   => 'Choose Growth Visibility',
 		),
 		array(
-			'name'    => 'Done-for-You Maximum Visibility',
-			'price'   => '$849/month',
-			'summary' => 'Up to 30 approved posts each month, the highest included growth and engagement allowance, LinkedIn content support, conversation help, lead follow-up, website chat, and priority monthly review.',
+			'name'    => 'Complete Management + Maximum Visibility',
+			'price'   => '$849/month total',
+			'summary' => 'Complete Management with up to 30 approved posts total, our highest optional BDS Network visibility allowance, and a priority monthly review. Choose US Focused or Worldwide.',
 			'label'   => 'Choose Maximum Visibility',
 		),
 	);
@@ -258,7 +258,7 @@ function bds_fp_services_content() {
 		. '<section class="bds-fp-hero"><p class="bds-fp-eyebrow">Affordable AI and hands-on business help</p><h1>Choose what you need. See the price. Start without the agency runaround.</h1><p>Tell us the result you want: more leads, better content, stronger local visibility, a clearer website, or help with one specific job. Every service explains what you receive before you pay.</p><div class="bds-fp-actions"><a class="bds-fp-button" href="#bds-fp-plans">Compare monthly plans</a><button class="bds-fp-button bds-fp-button--light" type="button" data-bds-open-assistant>Ask BrandDad AI</button></div><ul><li>Plain-language guidance</li><li>Clear limits and pricing</li><li>You approve important work</li></ul></section>'
 		. '<section class="bds-fp-section"><p class="bds-fp-eyebrow">Start with the outcome</p><h2>What would help your business most right now?</h2><div class="bds-fp-paths"><a href="#bds-fp-plans"><strong>Bring in and follow up with leads</strong><span>Lead capture, replies, and simple follow-up help.</span></a><a href="#bds-fp-plans"><strong>Keep marketing consistent</strong><span>Social content, LinkedIn help, and everyday business writing.</span></a><a href="#bds-fp-web"><strong>Improve my website or local visibility</strong><span>Website fixes, SEO help, Google profile support, and monitoring.</span></a><a href="#bds-fp-specialty"><strong>Handle one specific project</strong><span>Review appeals, press materials, creative packs, and specialist work.</span></a></div></section>'
 		. ( '' !== $plans_html ? '<section class="bds-fp-section" id="bds-fp-plans"><p class="bds-fp-eyebrow">Monthly business help</p><h2>Useful help every month—starting at $19.99.</h2><p>AI Business Essentials is the simplest all-around choice. Pick a specialist plan only when that is the main job you need done.</p><div class="bds-fp-grid">' . $plans_html . '</div></section>' : '' )
-		. ( '' !== $autopilot_html ? '<section class="bds-fp-section bds-fp-section--soft" id="bds-fp-business-autopilot"><p class="bds-fp-eyebrow">Done-for-you social growth</p><h2>We help your posts get seen—and handle the conversations for you.</h2><p>Running a business is already a full-time job. BrandDad helps keep your social media active, gives eligible posts a stronger start through the BDS Network, and helps answer relevant questions using your approved business information. Choose <strong>US Focused</strong> or <strong>Worldwide</strong>. LinkedIn content and professional conversation support can be included as one of your connected channels.</p><div class="bds-fp-grid">' . $autopilot_html . '</div><article class="bds-fp-card bds-fp-autopilot-addon"><p class="bds-fp-eyebrow">Simple monthly setup</p><h3>You run the business. We help keep it visible.</h3><p>Tell us what the business does, choose the audience, and approve the important information. BrandDad handles the agreed monthly workload and shows you what was completed. Platform placement, reach, followers, leads, and sales are not guaranteed.</p><a class="bds-fp-link" href="' . $contact . '">Let BrandDad run it <span aria-hidden="true">&rarr;</span></a></article></section>' : '' )
+		. ( '' !== $autopilot_html ? '<section class="bds-fp-section bds-fp-section--soft" id="bds-fp-business-autopilot"><p class="bds-fp-eyebrow">Done-for-you business management</p><h2>Complete management first. Add extra visibility only if you want it.</h2><p>BrandDad can keep your social content moving, support LinkedIn, help with customer conversations, follow up with leads, and keep website chat useful. You do not have to buy BDS Network engagement.</p><article class="bds-fp-card bds-fp-autopilot-addon"><p class="bds-fp-eyebrow">Complete management without engagement</p><h3>Done-for-You Complete Management</h3><p class="bds-fp-price">$399/month</p><p>Up to 20 approved social posts each month, LinkedIn content support, conversation and reply help using your approved business information, lead follow-up, website chat, and a clear monthly report. No BDS Network engagement is included or required.</p><a class="bds-fp-link" href="' . $contact . '">Choose Complete Management <span aria-hidden="true">&rarr;</span></a></article><p class="bds-fp-eyebrow" style="margin-top:32px">Optional BDS Network visibility upgrades</p><p>Keep the $399 plan by itself, or add eligible-post visibility for a <strong>US Focused</strong> or <strong>Worldwide</strong> audience. The totals below include Complete Management.</p><div class="bds-fp-grid">' . $autopilot_html . '</div><article class="bds-fp-card bds-fp-autopilot-addon"><p class="bds-fp-eyebrow">Clear monthly proof</p><h3>See what BrandDad completed and what the campaigns delivered.</h3><p>Your report separates content completed, eligible visibility campaigns confirmed, campaign-assisted reach, impressions, saves, reposts and conversations when those measurements are available, plus recorded leads. Pending or unverified activity is not counted as completed. Platform placement, reach, followers, leads, and sales are not guaranteed.</p><a class="bds-fp-link" href="' . $contact . '">Ask which option fits <span aria-hidden="true">&rarr;</span></a></article></section>' : '' )
 		. ( '' !== $studio_html ? '<section class="bds-fp-section bds-fp-section--soft"><p class="bds-fp-eyebrow">Self-service workspace</p><h2>Use BrandDad AI when you need it.</h2><p>Choose a credit plan, see the cost before each tool runs, and review every result before you use it.</p><div class="bds-fp-grid">' . $studio_html . '</div></section>' : '' )
 		. ( '' !== $specialty_html ? '<section class="bds-fp-section" id="bds-fp-specialty"><p class="bds-fp-eyebrow">One-time help</p><h2>Pay for one focused job.</h2><p>These services solve a defined problem without starting a monthly subscription.</p><div class="bds-fp-grid">' . $specialty_html . '</div></section>' : '' )
 		. ( '' !== $web_html ? '<section class="bds-fp-section bds-fp-section--soft" id="bds-fp-web"><p class="bds-fp-eyebrow">Website and local growth</p><h2>Fix the parts customers see first.</h2><p>Choose a clearly scoped service. Larger or unusual work is confirmed before payment.</p><div class="bds-fp-grid">' . $web_html . '</div></section>' : '' )
