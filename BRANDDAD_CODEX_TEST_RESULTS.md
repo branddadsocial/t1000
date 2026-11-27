@@ -970,3 +970,20 @@ Updated: 2026-11-19
 | Production state | UNCHANGED — no upload, cart, order, payment, subscription, refund, customer, or provider mutation |
 | Complete release regression | PASS — 57/57 files (11 PHP, 46 Node) |
 | Release integrity | PASS — obsolete inactive `bds-network` allowlist entry removed; current provider-cost module matches the existing approved SHA-256 manifest |
+
+## 2026-11-27 — one-time service live identity acceptance
+
+| Check | Result |
+|---|---|
+| Exact live slugs | PASS — Airbnb `branddad-ai-review-dispute-assistant`; IMDb `ai-imdb-submission-pack`; billboard `ai-billboard-creative-pack`; press `ai-press-release-pack` |
+| Assisted Submission version | PASS — `0.2.3` active on all four product pages |
+| Frontend version | PASS — `1.0.16` active on Services |
+| Homepage cards | PASS — all four names, prices, and valid destinations present; no duplicate press card |
+| Services cards | PASS — all four bounded submission services present |
+| Product pages | PASS — one visible H1, current scope copy, and one-time purchase form preserved on each |
+| Broken images | PASS — zero across homepage, Services, and the four product pages |
+| Horizontal overflow | PASS — zero at the 1265px live acceptance viewport |
+| Payment safety | PASS — no cart, checkout, payment, order, refund, or gateway execution used during acceptance |
+| Full release regression | PASS — 58/58 test files |
+| Rafter remote fast | BLOCKED — existing account quota remains 16/16; no paid Plus scan was run |
+| Manual web security review | PASS — fixed server-owned identities; paid-state recheck remains authoritative; atomic task claim unchanged; output escaped or built with trusted DOM nodes; no new endpoint, SQL, auth, secret, dependency, or outbound request |

@@ -630,3 +630,11 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Local focused regression passed for the quote guard, Services renderer, official-promotion hotfix, package overlay, promotion catalog, paid fulfillment, business-autopilot contract, AI-first Services catalog, and website-plan one-time contract.
 - Rafter local secret scanning passed. The required remote fast scan was attempted and remains quota-blocked at 16/16; paid Plus was not used. No staging or production file has been uploaded in this preparation step.
 - Consolidated release regression now passes 57/57 test files: 11 PHP behavior suites and 46 Node contracts, including release checksums. The prior manifest failure closed by removing the obsolete `bds-network` provider allowance, restoring the existing approved hash without changing the manifest.
+
+## 2026-11-27 — live one-time service identity and homepage completion
+
+- Verified the four real WooCommerce product identities on production and replaced three invented `branddad-ai-*` paths with the live `ai-imdb-submission-pack`, `ai-billboard-creative-pack`, and `ai-press-release-pack` slugs. Airbnb remains `branddad-ai-review-dispute-assistant`.
+- Deployed Assisted Submission Services `0.2.3` and Frontend Polish `1.0.16`. The homepage, Services, and all four product pages now use the same names, prices, scope, and valid product destinations.
+- Restored the press-release card omitted by the legacy homepage renderer using trusted DOM construction and an exact existing-link duplicate guard. The fallback hotfix is inert whenever the primary `0.2.3` patch has already restored the card.
+- Production acceptance at 1265px found one visible H1 per page, zero broken images, zero horizontal overflow, all four homepage and Services cards, the correct live product links, and purchase forms preserved only on the four priced one-time products.
+- No cart, order, payment, subscription, customer record, price, or gateway was created or changed. Full local regression passes 58/58 test files.
