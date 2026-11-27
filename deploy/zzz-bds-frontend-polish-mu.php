@@ -14,7 +14,20 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.0' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.1' );
+
+/**
+ * Keep the website-check page inside the normal theme document.
+ *
+ * The legacy dedicated renderer calls get_header(), prints the page, and exits
+ * during template_redirect. On this stack an older outer output buffer can
+ * flush those fragments into the document head. The normal page lifecycle and
+ * the_content replacement below produce one valid document instead.
+ */
+function bds_fp_disable_legacy_health_renderer() {
+	remove_action( 'template_redirect', 'bds_health_maybe_render_tool_page', 1 );
+}
+add_action( 'muplugins_loaded', 'bds_fp_disable_legacy_health_renderer', PHP_INT_MAX );
 
 /** Return the normalized request host. */
 function bds_fp_host() {

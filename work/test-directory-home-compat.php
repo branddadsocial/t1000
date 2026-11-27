@@ -33,9 +33,8 @@ namespace {
 	}
 
 	call_user_func( $callback );
-	$semantic = array( 'action', 'template_redirect', 'bds_dfc_semantic_buffer_start', -9999 );
-	if ( ! in_array( $semantic, $GLOBALS['compat_removals'], true ) || count( $GLOBALS['compat_removals'] ) !== 16 ) {
-		fwrite( STDERR, "Expected legacy homepage hooks were not removed.\n" );
+	if ( count( $GLOBALS['compat_removals'] ) !== 0 ) {
+		fwrite( STDERR, "Homepage composer was removed before an independent replacement renderer existed.\n" );
 		exit( 1 );
 	}
 
@@ -43,7 +42,7 @@ namespace {
 	$GLOBALS['compat_removals'] = array();
 	call_user_func( $callback );
 	if ( count( $GLOBALS['compat_removals'] ) !== 0 ) {
-		fwrite( STDERR, "Legacy fallback hooks were removed while replacement was disabled.\n" );
+		fwrite( STDERR, "Legacy homepage hooks were unexpectedly removed.\n" );
 		exit( 1 );
 	}
 
