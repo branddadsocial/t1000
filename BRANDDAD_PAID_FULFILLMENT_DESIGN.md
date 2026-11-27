@@ -73,6 +73,7 @@ Security decisions:
 - Checkout validation also rejects a guarded item already present in a stale cart without deleting or changing that cart.
 - Existing orders, subscriptions, renewals, refunds, and staff-created admin orders are not mutated or cancelled.
 - The canonical Done-for-You page removes the standard public add-to-cart form and renders current written-scope copy plus a Contact BrandDad action.
+- The exact retired Services block is hidden by its fixed `#bds-jap-fp` marker while the current official-promotion section remains visible. This is a presentation cleanup; the server-side cart checks remain authoritative.
 - Retired growth-product GET pages redirect to the current Services management section; the redirect performs no purchase or write.
 - The repair adds no endpoint, credential, remote request, dependency, customer message, or payment call.
 

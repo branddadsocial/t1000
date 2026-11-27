@@ -89,6 +89,10 @@ function bds_dfy_quote_guard_is_main_product() {
 	return 'done-for-you-ai-management' === sanitize_title( (string) get_post_field( 'post_name', get_queried_object_id() ) );
 }
 
+function bds_dfy_quote_guard_is_services_page() {
+	return ! is_admin() && function_exists( 'is_page' ) && is_page( 'services' );
+}
+
 /** Current quote-first explanation rendered beside the product title. */
 function bds_dfy_quote_guard_summary() {
 	if ( ! bds_dfy_quote_guard_is_main_product() ) {
@@ -115,10 +119,16 @@ add_action( 'wp', 'bds_dfy_quote_guard_single_product', PHP_INT_MAX );
 
 /** Hide the known stale callback output while its legacy plugin remains installed. */
 function bds_dfy_quote_guard_css() {
-	if ( ! bds_dfy_quote_guard_is_main_product() ) {
+	$is_product  = bds_dfy_quote_guard_is_main_product();
+	$is_services = bds_dfy_quote_guard_is_services_page();
+	if ( ! $is_product && ! $is_services ) {
 		return;
 	}
-	echo '<style id="bds-dfy-quote-guard-css">#bds-jap-fp,#bds-jap-fp + p,#bds-jap-fp + p + .bds-fp-grid{display:none!important}.bds-dfy-quote{margin:24px 0;padding:24px;border:1px solid #dbe5ef;border-radius:18px;background:#f4f8fc;color:#10243a}.bds-dfy-quote h2{color:#10243a!important;font-size:1.6rem}.bds-dfy-quote li{margin:8px 0}.bds-dfy-quote-link{display:inline-flex!important;align-items:center;justify-content:center;min-height:48px;padding:0 18px!important;border-radius:10px!important;background:#0668d8!important;color:#fff!important;text-decoration:none!important;font-weight:800}</style>';
+	echo '<style id="bds-dfy-quote-guard-css" data-bds-dfy-quote-guard="' . esc_attr( BDS_DFY_QUOTE_GUARD_VERSION ) . '">#bds-jap-fp,#bds-jap-fp + p,#bds-jap-fp + p + .bds-fp-grid{display:none!important}';
+	if ( $is_product ) {
+		echo '.bds-dfy-quote{margin:24px 0;padding:24px;border:1px solid #dbe5ef;border-radius:18px;background:#f4f8fc;color:#10243a}.bds-dfy-quote h2{color:#10243a!important;font-size:1.6rem}.bds-dfy-quote li{margin:8px 0}.bds-dfy-quote-link{display:inline-flex!important;align-items:center;justify-content:center;min-height:48px;padding:0 18px!important;border-radius:10px!important;background:#0668d8!important;color:#fff!important;text-decoration:none!important;font-weight:800}';
+	}
+	echo '</style>';
 }
 add_action( 'wp_head', 'bds_dfy_quote_guard_css', PHP_INT_MAX );
 

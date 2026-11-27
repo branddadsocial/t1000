@@ -4,6 +4,7 @@ define( 'ABSPATH', __DIR__ );
 $dfy_actions = array();
 $dfy_filters = array();
 $dfy_notices = array();
+$dfy_page = '';
 function add_action( $hook, $callback, $priority = 10 ) { global $dfy_actions; $dfy_actions[ $hook ][ $priority ][] = $callback; }
 function add_filter( $hook, $callback, $priority = 10 ) { global $dfy_filters; $dfy_filters[ $hook ][ $priority ][] = $callback; }
 function sanitize_title( $value ) { return strtolower( preg_replace( '/[^a-z0-9-]+/i', '-', trim( (string) $value ) ) ); }
@@ -18,6 +19,7 @@ function wc_add_notice( $message, $type ) { global $dfy_notices; $dfy_notices[] 
 function wc_has_notice() { return false; }
 function is_admin() { return false; }
 function is_product() { return false; }
+function is_page( $slug ) { global $dfy_page; return $slug === $dfy_page; }
 function get_post_field() { return ''; }
 function get_queried_object_id() { return 0; }
 
@@ -80,6 +82,17 @@ dfy_guard_expect( '<a>Add</a>' === $normal_link, 'unrelated loop CTA is unchange
 dfy_guard_expect( isset( $dfy_filters['woocommerce_add_to_cart_validation'][PHP_INT_MAX] ), 'server-side cart validation is registered last' );
 dfy_guard_expect( isset( $dfy_actions['woocommerce_check_cart_items'][PHP_INT_MAX] ), 'stale-cart checkout validation is registered last' );
 dfy_guard_expect( isset( $dfy_actions['template_redirect'][1] ), 'retired public page redirect is registered early' );
+
+$dfy_page = 'services';
+ob_start();
+bds_dfy_quote_guard_css();
+$services_css = ob_get_clean();
+dfy_guard_expect( false !== strpos( $services_css, '#bds-jap-fp' ) && false !== strpos( $services_css, 'data-bds-dfy-quote-guard="0.1.0"' ), 'services page hides only the exact retired package marker block' );
+$dfy_page = 'about-us';
+ob_start();
+bds_dfy_quote_guard_css();
+$unrelated_css = ob_get_clean();
+dfy_guard_expect( '' === $unrelated_css, 'unrelated pages receive no quote-guard CSS' );
 
 if ( $failed ) { exit( 1 ); }
 echo "Done-for-You quote guard tests passed\n";
