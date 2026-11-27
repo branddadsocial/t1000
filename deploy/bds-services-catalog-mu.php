@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Services Catalog
  * Description: Canonical agency/local service definitions, product page sections, and Health Check recommendations. No rank promises; no fake reviews.
- * Version: 1.2.1
+ * Version: 1.3.0
  *
  * Deploy:
  *   branddad.social → wp-content/mu-plugins/bds-services-catalog-mu.php
@@ -20,6 +20,9 @@
  * v1.2.1 — Align the website checker with the live $19.99 AI optimizer product.
  *          FormWise plans the work; site changes require a verified connection,
  *          explicit approval, verification, and rollback support.
+ * v1.3.0 — Prefer the lowest-priced suitable white-label AI diagnostic before
+ *          hands-on implementation. Keep account edits, submissions, outreach,
+ *          and technical changes human or approval-gated.
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( defined( 'BDS_SVC_CAT_VER' ) ) {
 	return;
 }
-define( 'BDS_SVC_CAT_VER', '1.2.1' );
+define( 'BDS_SVC_CAT_VER', '1.3.0' );
 
 /**
  * Canonical service catalog (SKU keys).
@@ -78,6 +81,31 @@ function bds_svc_catalog() {
 			'blurb'    => 'AI analyzes the public signals, explains the highest-value fixes, and prepares a prioritized plan. Connect WordPress and approve supported changes before BrandDad applies and verifies them. Hosting, CDN, paid-plugin, and custom-code work is quoted separately.',
 			'issues'   => array( 'slow_ttfb', 'no_compression', 'large_assets', 'perf_poor' ),
 			'secure_intake' => true,
+			'recommendation_priority' => 100,
+		),
+		'ai-local-seo'                    => array(
+			'slug'     => 'ai-local-seo',
+			'title'    => 'AI Local SEO Starter',
+			'price'    => 19.99,
+			'type'     => 'subscription',
+			'period'   => 'month',
+			'cat'      => 'local-web-services',
+			'url'      => $social . '/product/ai-local-seo/',
+			'blurb'    => 'BrandDad AI turns public website and local-search signals into one clear monthly action plan. You review every recommendation; rankings and automatic website edits are not promised.',
+			'issues'   => array( 'gbp_incomplete', 'gbp_missing', 'nap_inconsistent', 'seo_meta', 'seo_headings', 'no_sitemap', 'no_robots', 'no_schema', 'thin_content', 'local_visibility', 'citations_weak', 'local_content', 'directory_gap', 'unclaimed_listing' ),
+			'recommendation_priority' => 100,
+		),
+		'branddad-ai-studio-starter'       => array(
+			'slug'     => 'branddad-ai-studio-starter',
+			'title'    => 'BrandDad AI Studio — Starter',
+			'price'    => 14.99,
+			'type'     => 'subscription',
+			'period'   => 'month',
+			'cat'      => 'ai-services',
+			'url'      => $social . '/product/branddad-ai-studio-starter/',
+			'blurb'    => 'Use the white-label BrandDad AI workspace to draft clearer profile copy, bios, offers, and customer-facing business writing. You review everything before using it.',
+			'issues'   => array( 'social_incomplete', 'social_inconsistent', 'confusing_offer' ),
+			'recommendation_priority' => 100,
 		),
 		'fix-my-website'                     => array(
 			'slug'     => 'fix-my-website',
@@ -99,6 +127,7 @@ function bds_svc_catalog() {
 			'url'      => $social . '/product/website-seo-audit/',
 			'blurb'    => 'Explainable technical + on-page audit with prioritized fixes. We do not promise Google rankings.',
 			'issues'   => array( 'seo_meta', 'seo_headings', 'no_sitemap', 'no_robots', 'no_schema', 'thin_content' ),
+			'recommendable' => false,
 		),
 		'website-seo-fixes'                 => array(
 			'slug'     => 'website-seo-fixes',
@@ -212,6 +241,9 @@ function bds_svc_recommend_for_issues( $issue_codes ) {
 		if ( ! $hits ) {
 			continue;
 		}
+		if ( isset( $svc['recommendable'] ) && ! $svc['recommendable'] ) {
+			continue;
+		}
 		// Outreach / cold-contact never recommended.
 		if ( false !== strpos( $key, 'outreach' ) ) {
 			continue;
@@ -232,12 +264,21 @@ function bds_svc_recommend_for_issues( $issue_codes ) {
 			'blurb'  => $svc['blurb'],
 			'why'    => 'Addresses: ' . implode( ', ', array_map( 'bds_svc_issue_label', $hits ) ) . '.',
 			'hits'   => count( $hits ),
+			'priority' => isset( $svc['recommendation_priority'] ) ? (int) $svc['recommendation_priority'] : 0,
 		);
 	}
 	usort(
 		$scored,
 		static function ( $a, $b ) {
-			return (int) $b['hits'] - (int) $a['hits'];
+			$priority = (int) $b['priority'] - (int) $a['priority'];
+			if ( 0 !== $priority ) {
+				return $priority;
+			}
+			$hits = (int) $b['hits'] - (int) $a['hits'];
+			if ( 0 !== $hits ) {
+				return $hits;
+			}
+			return (float) $a['price'] <=> (float) $b['price'];
 		}
 	);
 	// Cap — no spam upsells.

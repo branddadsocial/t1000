@@ -333,6 +333,16 @@ Worktree: `C:\Users\iamtd\Documents\Codex\branddad-codex-final-20261119`
 - Public sales-assistant proxy.
 - Subscription bridge and free-AI ledger copied into the clean integration branch.
 
+## 2026-11-27 AI-first website-check recommendations
+
+- Reconciled the website checker with the approved white-label AI catalog instead of allowing high-priced legacy diagnostics to outrank current AI products.
+- Performance signals now prefer the $19.99 one-time AI Website Improvement Plan; website/local-search signals prefer AI Local SEO Starter at $19.99/month; profile-copy gaps prefer AI Studio Starter at $14.99/month.
+- The old $179 Website SEO Audit remains preserved for historical records but is excluded from new checker recommendations. Critical availability, HTTPS, form, and repair work remains hands-on because it requires authorized technical access rather than model output alone.
+- Added deterministic recommendation priority, hit-count, and lower-price ordering with a four-result cap. Public copy stays BrandDad-only and does not expose the FormWise provider.
+- Focused PHP behavior acceptance passed for SEO, performance, profile-copy, and critical-repair cases. The static contract passed 14/14 assertions, PHP syntax passed, and `git diff --check` reported only the expected line-ending notice.
+- Rafter local secret scanning found no secrets. The mandatory remote fast scan was attempted again on the exact branch on 2026-11-27 and remained blocked at 16/16; no paid Plus scan was used.
+- This update is reviewed locally and is not production evidence until the exact file is uploaded and the live checker is rerun.
+
 ## Next unblocked backend work
 
 1. Add WordPress staging fixtures for request-idempotent replay, trial conversion, Directory bridge replay, browser-session nonce/onboarding concurrency, real Woo refund lifecycle, unsubscribe, and HPOS subscription discovery.

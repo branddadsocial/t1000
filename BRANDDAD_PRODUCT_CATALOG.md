@@ -23,3 +23,5 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 | BrandDad Music | $79/$129/$249/$449/$799/from $199 | Brief intake only; payment closed until licensing/cost/delivery confirmed |
 
 Historical products/orders remain preserved even when retired from new-customer purchase flows.
+
+Website-check recommendations are AI-first where the work is genuinely analysis, planning, or writing: performance signals lead to the $19.99 AI Website Improvement Plan; SEO and local-search signals lead to the $19.99/month AI Local SEO Starter; and profile-copy gaps lead to the $14.99/month AI Studio Starter. The former $179 Website SEO Audit is retained for historical records but is no longer recommended by the checker. Account edits, submissions, outreach, repairs, and technical changes remain hands-on or approval-gated because a language model alone cannot safely perform them.

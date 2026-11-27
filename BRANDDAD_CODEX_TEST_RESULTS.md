@@ -809,3 +809,12 @@ Updated: 2026-11-19
 - No cart, checkout, order, payment, subscription, customer message, or FormWise execution was created during production verification.
 - Post-deployment local regression passed **42/42 Node contracts** and **42/42 deployment PHP syntax checks**. File-scoped local secret scans found no secrets. Required remote `rafter run --mode fast` had already been attempted and was blocked solely by the account's 16/16 scan quota; paid Plus was not used.
 - Automatic implementation remains intentionally fail-closed: purchasing the plan creates an owner-scoped AI planning job. Applying supported fixes requires a separately authorized secure site connection and explicit approval of the proposed changes; the system does not collect passwords or silently edit customer websites.
+
+## 2026-11-27 — AI-first service recommendation regression
+
+- Added AI-first checker routing for the already-approved BrandDad offers: performance signals → AI Website Improvement Plan `$19.99` one time; SEO/local-search signals → AI Local SEO Starter `$19.99/month`; profile-copy gaps → AI Studio Starter `$14.99/month`.
+- The former `$179` Website SEO Audit is preserved but excluded from new checker recommendations. Critical site availability, HTTPS, form, and repair signals continue to route to hands-on help because those actions require authorized technical access.
+- Recommendation ordering now uses explicit AI suitability first, matched issue count second, and lower price third. Results remain capped at four.
+- Focused static contract: 14/14 assertions passed. Focused PHP behavior: 9/9 assertions passed. Full local regression: 43/43 Node contracts, 42/42 deployment PHP syntax checks, and 5/5 standalone PHP behavior tests passed.
+- Local secret scanning found no secrets. Required remote `rafter run --mode fast` was retried against the exact remote branch and remained blocked at 16/16; paid Plus was not used.
+- This recommendation revision is local and committed-source evidence only until production upload and live checker rerun are complete.
