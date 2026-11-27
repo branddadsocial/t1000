@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'BDS_DIR_LOOK_LOCK_VERSION', '0.1.46' );
-define( 'BDS_DIR_LOOK_LOCK_GEN', 'prod1124menu1' );
+define( 'BDS_DIR_LOOK_LOCK_GEN', 'prod1126polish1' );
 define( 'BDS_DIR_LOOK_LOCK_BACKUP', '.bds-look-lock-20261123-v10' );
 
 function bds_dir_look_lock_host() {
