@@ -35,7 +35,6 @@ function bds_fp_render_health_page() {
 	}
 	if ( ! headers_sent() ) {
 		nocache_headers();
-		header( 'Content-Type: text/html; charset=UTF-8' );
 		header( 'X-BDS-Health-Page: recovery-1' );
 	}
 
