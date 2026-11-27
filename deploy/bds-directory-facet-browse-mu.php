@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Facet Browse
  * Description: One faceted Browse Listings system — city ↔ category/service with AND filters, real published counts, no duplicate city pickers, no 404 on city-gate.
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author: BrandDad
  *
  * Deploy MU: directory.branddad.social/wp-content/mu-plugins/bds-directory-facet-browse-mu.php
@@ -13,6 +13,8 @@
  * - Public read-only facets; no auth/session writes. Partnero ref preserved via bds_po_url.
  * - No new public write endpoints in this MU.
  *
+ * v1.1.4 — Restore the faceted-results H1 after the Directory's global heading
+ *            cleanup runs, and demote the hidden legacy archive title.
  * v1.1.3 — The primary faceted-results title is the page H1 so location and
  *          category result pages have one clear accessible/SEO heading.
  * v1.1.2 — Typed browse uses mapped categories as source of truth (Austin hotels
@@ -50,7 +52,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( defined( 'BDS_FACET_BROWSE_VER' ) ) {
 	return;
 }
-define( 'BDS_FACET_BROWSE_VER', '1.1.3' );
+define( 'BDS_FACET_BROWSE_VER', '1.1.4' );
 
 add_action( 'init', 'bds_facet_browse_takeover', 25 );
 add_action( 'pre_get_posts', 'bds_facet_browse_empty_listings_only', 9 );
@@ -1848,6 +1850,29 @@ body.bds-facet-gate .directorist-content-active .directorist-listing-single{disp
 }
 </style>
 <script id="bds-facet-browse-js">(function(){
+  function ensurePrimaryHeading(){
+    var panel=document.getElementById('bds-facet-browse');
+    if(!panel) return;
+    var title=panel.querySelector('.bds-facet__title');
+    if(!title) return;
+    if(title.tagName!=='H1'){
+      var restored=document.createElement('h1');
+      restored.className='bds-facet__title';
+      restored.textContent=title.textContent||'';
+      if(title.parentNode) title.parentNode.replaceChild(restored,title);
+      title=restored;
+    }
+    title.hidden=false;
+    title.removeAttribute('hidden');
+    title.removeAttribute('aria-hidden');
+    title.style.removeProperty('display');
+    document.querySelectorAll('h1.directorist-archive-title').forEach(function(legacy){
+      var secondary=document.createElement('h2');
+      secondary.className=(legacy.className||'')+' bds-facet__legacy-title';
+      secondary.textContent=legacy.textContent||'';
+      if(legacy.parentNode) legacy.parentNode.replaceChild(secondary,legacy);
+    });
+  }
   function cardId(el){
     var id=el.getAttribute('data-id')||el.getAttribute('data-post-id')||el.getAttribute('listing_id')||'';
     if(id) return String(id);
@@ -1893,6 +1918,7 @@ body.bds-facet-gate .directorist-content-active .directorist-listing-single{disp
       else host.parentNode.insertBefore(panel, host);
       panel.setAttribute('data-placed','1');
     }
+    ensurePrimaryHeading();
     hideIneligible();
     var type='', loc='';
     try{
@@ -1926,8 +1952,10 @@ body.bds-facet-gate .directorist-content-active .directorist-listing-single{disp
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', place);
   else place();
   setTimeout(place, 300);
+  setTimeout(ensurePrimaryHeading, 500);
   setTimeout(hideIneligible, 400);
   setTimeout(place, 1200);
+  setTimeout(ensurePrimaryHeading, 1500);
 })();</script>
 	<?php
 	echo ob_get_clean(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
