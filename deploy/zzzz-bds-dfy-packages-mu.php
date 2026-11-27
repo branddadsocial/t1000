@@ -95,4 +95,3 @@ function bds_dfy_packages_install() {
 
 bds_dfy_packages_install();
 add_action( 'wp', 'bds_dfy_packages_install', PHP_INT_MAX );
-

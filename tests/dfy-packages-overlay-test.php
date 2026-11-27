@@ -53,4 +53,3 @@ if ( $failed ) {
 }
 
 echo 'Done-for-You overlay checks passed: ' . count( $checks ) . PHP_EOL;
-
