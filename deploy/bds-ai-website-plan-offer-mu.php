@@ -268,4 +268,3 @@ function bds_ai_website_plan_thankyou( $order_id ) {
 	}
 }
 add_action( 'woocommerce_thankyou', 'bds_ai_website_plan_thankyou', 20 );
-
