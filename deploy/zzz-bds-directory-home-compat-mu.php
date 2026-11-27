@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Homepage Compatibility
  * Description: Preserves the complete Directory homepage document while the replacement experience remains composer-backed.
- * Version: 1.1.5
+ * Version: 1.1.6
  * Author: BrandDad
  */
 
@@ -52,7 +52,8 @@ function bds_directory_home_compat_clear_buffers() {
 
 /** Keep the compact phone header to the four intended controls. */
 function bds_directory_home_compat_mobile_css() {
-	return '@media (max-width:820px){'
+	return 'html body .bdd .bdd-brand__mark{color:transparent!important;border:0!important;border-radius:0!important;background-color:transparent!important;background-image:url("/wp-content/uploads/8.png"),url("/wp-content/plugins/branddad-directory-experience/assets/branddad-logo-compact.png")!important;background-position:center!important;background-repeat:no-repeat!important;background-size:contain!important}'
+		. '@media (max-width:820px){'
 		. 'html body .bdd #bds-lang-switch{display:none!important}'
 		. 'html body .bdd .bdd-header__inner{gap:8px}'
 		. 'html body .bdd .bdd-brand{min-width:0;flex:1 1 auto;overflow:hidden}'
@@ -75,7 +76,7 @@ function bds_directory_home_compat_render() {
 	bds_directory_home_compat_clear_buffers();
 	status_header( 200 );
 	if ( ! headers_sent() ) {
-		header( 'X-BDS-Directory-Home: recovery-7' );
+		header( 'X-BDS-Directory-Home: recovery-8' );
 	}
 
 	/*

@@ -55,6 +55,10 @@ namespace {
 		fwrite( STDERR, "The phone header does not suppress the extra language controls.\n" );
 		exit( 1 );
 	}
+	if ( false === strpos( $mobile_css, '/wp-content/uploads/8.png' ) ) {
+		fwrite( STDERR, "The Directory brand mark does not use the supplied logo asset.\n" );
+		exit( 1 );
+	}
 
 	$source = file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php' );
 	$register_position = strpos( $source, '\\BrandDad\\DirectoryExperience\\register_assets();' );

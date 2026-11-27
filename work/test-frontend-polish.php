@@ -38,6 +38,10 @@ $checks = array(
 	'has_mobile_cta'=> false !== strpos( $page, 'data-bds-open-assistant' ),
 	'health_renderer'=> function_exists( 'bds_fp_render_health_page' ),
 	'health_css'     => false !== strpos( bds_fp_health_page_css(), 'bds-fp-health-nav' ),
+	'health_menu'    => false !== strpos( bds_fp_health_page_css(), 'bds-fp-health-menu' ),
+	'logo_fallback'  => 'https://branddad.social/wp-content/uploads/2023/04/3-1-1.webp' === bds_fp_social_logo_url(),
+	'price_text_fix' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '.bds-oneshot-price>span' ),
+	'shared_mobile_menu' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '#bds-nav-fix-bar .bds-nav-fix-mobile' ),
 	'health_helper'  => '<script>function bdsFpHealthEsc(v){return v;}bdsFpHealthEsc("ok");</script>' === bds_fp_prepare_health_widget( '<script>function bdsHealthEsc(v){return v;}bdsHealthEsc("ok");</script>' ),
 );
 
