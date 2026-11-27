@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Assisted Submission Services
  * Description: Defines the bounded submission scope and WooCommerce fulfillment metadata for BrandDad's one-time submission services.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.1.0' );
+define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.2.0' );
 
 /**
  * Public scope is allowlisted here; prices and service identity never come from the browser.
@@ -170,17 +170,113 @@ function bds_submit_order_line_item( $item, $cart_item_key, $values, $order ) {
 }
 add_action( 'woocommerce_checkout_create_order_line_item', 'bds_submit_order_line_item', 10, 4 );
 
-/** Add one private staff instruction to a new order containing a submission service. */
-function bds_submit_order_created( $order ) {
-	if ( ! is_object( $order ) || ! is_callable( array( $order, 'get_items' ) ) || ! is_callable( array( $order, 'add_order_note' ) ) ) {
-		return;
+/** Resolve an order line to a server-owned product slug. */
+function bds_submit_order_item_slug( $item ) {
+	if ( ! is_object( $item ) ) {
+		return '';
 	}
+	if ( is_callable( array( $item, 'get_meta' ) ) ) {
+		$stored = sanitize_title( (string) $item->get_meta( '_bds_submission_service_slug', true ) );
+		if ( '' !== $stored ) {
+			return $stored;
+		}
+	}
+	if ( ! is_callable( array( $item, 'get_product' ) ) ) {
+		return '';
+	}
+	$product = $item->get_product();
+	return is_object( $product ) && is_callable( array( $product, 'get_slug' ) )
+		? sanitize_title( (string) $product->get_slug() )
+		: '';
+}
+
+/**
+ * Return the paid fulfillment work represented by an order.
+ *
+ * Done-for-You remains quote-first. Its task is eligible only when staff created
+ * the Woo order in admin after agreeing the written scope; browser checkout can
+ * never turn that quote-only catalog record into a task.
+ *
+ * @return array<string,string> Slug => task label.
+ */
+function bds_submit_order_fulfillment_services( $order ) {
+	if ( ! is_object( $order ) || ! is_callable( array( $order, 'get_items' ) ) ) {
+		return array();
+	}
+	$services    = bds_submit_services();
+	$created_via = is_callable( array( $order, 'get_created_via' ) ) ? sanitize_key( (string) $order->get_created_via() ) : '';
+	$found       = array();
 	foreach ( (array) $order->get_items() as $item ) {
-		if ( ! is_object( $item ) || ! is_callable( array( $item, 'get_meta' ) ) || '' === (string) $item->get_meta( '_bds_submission_service_slug', true ) ) {
+		$slug = bds_submit_order_item_slug( $item );
+		if ( isset( $services[ $slug ] ) ) {
+			$found[ $slug ] = (string) $services[ $slug ]['name'];
 			continue;
 		}
-		$order->add_order_note( 'BrandDad submission service: request only the necessary facts and public evidence, prepare the submission, obtain customer approval, then submit once within the purchased scope. Never request a password. Third-party fees are not included.' );
-		return;
+		if ( 'done-for-you-ai-management' === $slug && 'admin' === $created_via ) {
+			$found[ $slug ] = 'Done-for-You AI Management — accepted written scope';
+		}
 	}
+	return $found;
 }
-add_action( 'woocommerce_checkout_order_created', 'bds_submit_order_created', 20, 1 );
+
+/** A durable, HPOS-independent idempotency claim for one task per paid order. */
+function bds_submit_staff_task_claim_key( $order_id ) {
+	return 'bds_submit_task_' . substr( hash( 'sha256', 'v1|order|' . absint( $order_id ) ), 0, 40 );
+}
+
+/**
+ * Create one private staff fulfillment task only after Woo confirms payment.
+ *
+ * The persistent option claim is atomic in WordPress and remains after success,
+ * so duplicate gateway notifications and overlapping status hooks cannot create
+ * a second note. Order metadata stores the resulting note id for staff/audits.
+ */
+function bds_submit_maybe_create_paid_staff_task( $order_or_id ) {
+	$order = is_object( $order_or_id ) ? $order_or_id : ( function_exists( 'wc_get_order' ) ? wc_get_order( absint( $order_or_id ) ) : null );
+	if ( ! is_object( $order )
+		|| ! is_callable( array( $order, 'get_id' ) )
+		|| ! is_callable( array( $order, 'is_paid' ) )
+		|| ! is_callable( array( $order, 'add_order_note' ) )
+		|| ! is_callable( array( $order, 'get_meta' ) )
+		|| ! is_callable( array( $order, 'update_meta_data' ) )
+		|| ! is_callable( array( $order, 'save' ) )
+		|| ! $order->is_paid() ) {
+		return false;
+	}
+
+	$order_id = absint( $order->get_id() );
+	$services = bds_submit_order_fulfillment_services( $order );
+	if ( ! $order_id || empty( $services ) || '' !== (string) $order->get_meta( '_bds_submission_staff_task_note_id', true ) ) {
+		return false;
+	}
+
+	$claim_key = bds_submit_staff_task_claim_key( $order_id );
+	if ( ! add_option( $claim_key, gmdate( DATE_ATOM ), '', false ) ) {
+		return false;
+	}
+
+	$note = 'BrandDad paid fulfillment task: ' . implode( '; ', array_values( $services ) ) . '. Payment is confirmed. ';
+	if ( isset( $services['done-for-you-ai-management'] ) ) {
+		$note .= 'Verify the accepted written scope, complete onboarding, and schedule only the agreed work. ';
+	}
+	if ( count( array_intersect_key( $services, bds_submit_services() ) ) > 0 ) {
+		$note .= 'Request only the necessary facts and public evidence, prepare the submission, obtain customer approval, then submit once within the purchased scope. Never request a password. Third-party fees are not included.';
+	}
+
+	$note_id = $order->add_order_note( trim( $note ), false, false );
+	if ( ! $note_id ) {
+		delete_option( $claim_key );
+		return false;
+	}
+
+	$order->update_meta_data( '_bds_submission_staff_task_note_id', absint( $note_id ) );
+	$order->update_meta_data( '_bds_submission_staff_task_created_at', gmdate( DATE_ATOM ) );
+	$order->update_meta_data( '_bds_submission_staff_task_version', BDS_ASSISTED_SUBMISSION_VERSION );
+	$order->save();
+	do_action( 'bds_submission_staff_task_created', $order_id, absint( $note_id ), array_keys( $services ) );
+	return true;
+}
+
+add_action( 'woocommerce_payment_complete', 'bds_submit_maybe_create_paid_staff_task', 20, 1 );
+add_action( 'woocommerce_order_status_processing', 'bds_submit_maybe_create_paid_staff_task', 20, 1 );
+add_action( 'woocommerce_order_status_completed', 'bds_submit_maybe_create_paid_staff_task', 20, 1 );

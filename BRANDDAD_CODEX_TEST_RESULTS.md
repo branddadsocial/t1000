@@ -928,3 +928,25 @@ Updated: 2026-11-19
 - Production upload: the three corrected MU files reported 3/3 `Completed`; the additive hotfix reported 1/1 `Completed`.
 - Production desktop acceptance: frontend marker `1.0.14`; one H1; no horizontal overflow; all four plan totals present; Promotion Starter/Growth/Pro, optional-promotion, and separate-cost language present; no BDS Network, legacy Visibility package, or visible FormWise text.
 - Production 390px acceptance: one visible H1; five visible management/promotion cards and five visible actions; shared menu visible; zero broken images; `scrollWidth=clientWidth=375`.
+
+## 2026-11-27 — paid fulfillment and accepted-quote acceptance
+
+| Check | Result |
+|---|---|
+| Commit `5af7c07` | PASS — documentation only; no functional purchase-flow change |
+| Done-for-You history | PASS — quote-only since `6c1f930`; Contact Us renderer since `9bb789d` |
+| Exact staging product | `branddad-ai-press-release-pack` — Press Release Submission — One Submission Round |
+| Unpaid order | PASS — zero private staff tasks and zero task marker |
+| Confirmed paid order | PASS — exactly one private staff task |
+| Duplicate paid events | PASS — repeated payment-complete and completed-status events left exactly one task |
+| Accepted quote | PASS — paid admin-created `done-for-you-ai-management` order created exactly one scoped staff task |
+| Browser-created quote order | PASS — denied; public checkout cannot activate quote-only fulfillment |
+| Gateway safety | PASS — staging fixture used `bds_staging_synthetic_no_gateway`; no gateway call or transaction |
+| Fixture cleanup | PASS — synthetic orders, products, and claims removed |
+| Local PHP behavior | PASS — `tests/assisted-submission-services-test.php` |
+| Staging contract | PASS — 12/12 assertions |
+| Staging report | PASS — `complete=true`, all 13 checks true, no error codes |
+| Production safety | PASS — no production checkout, customer order, payment, product, or gateway mutation |
+| Rafter secrets | PASS — no secrets detected |
+| Rafter remote fast | BLOCKED — account remains at 16/16; paid Plus was not used |
+| Manual OWASP/ASVS review | PASS — server-owned product identity; canonical Woo paid-state recheck; atomic order claim; browser-created quote orders denied; staging route exact-host and boolean-only |

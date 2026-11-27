@@ -2,13 +2,20 @@
 define( 'ABSPATH', __DIR__ );
 
 function add_filter() {}
-function add_action() {}
+$submit_actions = array();
+function add_action( $hook, $callback ) { global $submit_actions; $submit_actions[ $hook ] = $callback; }
 function sanitize_title( $value ) { return strtolower( preg_replace( '/[^a-z0-9-]+/i', '-', trim( (string) $value ) ) ); }
 function sanitize_key( $value ) { return strtolower( preg_replace( '/[^a-z0-9_-]+/i', '', (string) $value ) ); }
 function esc_html( $value ) { return htmlspecialchars( (string) $value, ENT_QUOTES, 'UTF-8' ); }
 function esc_html__( $value ) { return (string) $value; }
 function esc_attr( $value ) { return esc_html( $value ); }
 function is_product() { return false; }
+function absint( $value ) { return abs( (int) $value ); }
+function do_action() {}
+
+$submit_options = array();
+function add_option( $key, $value ) { global $submit_options; if ( array_key_exists( $key, $submit_options ) ) { return false; } $submit_options[ $key ] = $value; return true; }
+function delete_option( $key ) { global $submit_options; unset( $submit_options[ $key ] ); return true; }
 
 require dirname( __DIR__ ) . '/deploy/bds-assisted-submission-services-mu.php';
 
@@ -54,15 +61,29 @@ class BdsSubmitTestProduct {
 
 class BdsSubmitTestItem {
 	public $meta = array();
+	private $product;
+	public function __construct( $product = null ) { $this->product = $product; }
 	public function add_meta_data( $key, $value, $unique = false ) { $this->meta[ $key ] = $value; }
 	public function get_meta( $key, $single = true ) { return isset( $this->meta[ $key ] ) ? $this->meta[ $key ] : ''; }
+	public function get_product() { return $this->product; }
 }
 
 class BdsSubmitTestOrder {
 	public $items = array();
 	public $notes = array();
+	public $meta = array();
+	public $paid = false;
+	public $created_via = 'checkout';
+	private $id;
+	public function __construct( $id = 1001 ) { $this->id = $id; }
+	public function get_id() { return $this->id; }
 	public function get_items() { return $this->items; }
-	public function add_order_note( $note ) { $this->notes[] = $note; }
+	public function add_order_note( $note ) { $this->notes[] = $note; return count( $this->notes ); }
+	public function is_paid() { return $this->paid; }
+	public function get_created_via() { return $this->created_via; }
+	public function get_meta( $key, $single = true ) { return isset( $this->meta[ $key ] ) ? $this->meta[ $key ] : ''; }
+	public function update_meta_data( $key, $value ) { $this->meta[ $key ] = $value; }
+	public function save() { return $this->id; }
 }
 
 $item = new BdsSubmitTestItem();
@@ -77,11 +98,39 @@ $unrelated = new BdsSubmitTestItem();
 bds_submit_order_line_item( $unrelated, 'key', array( 'data' => new BdsSubmitTestProduct( 'unrelated-product' ) ), null );
 submit_expect( array() === $unrelated->meta, 'unrelated products receive no submission metadata' );
 
-$order = new BdsSubmitTestOrder();
+$order = new BdsSubmitTestOrder( 1001 );
 $order->items[] = $item;
-bds_submit_order_created( $order );
-submit_expect( 1 === count( $order->notes ), 'staff receives one bounded fulfillment instruction' );
+submit_expect( false === bds_submit_maybe_create_paid_staff_task( $order ), 'unpaid checkout creates no staff task' );
+submit_expect( 0 === count( $order->notes ), 'unpaid order contains no fulfillment note' );
+submit_expect( '' === (string) $order->get_meta( '_bds_submission_staff_task_note_id', true ), 'unpaid order has no task marker' );
+
+$order->paid = true;
+submit_expect( true === bds_submit_maybe_create_paid_staff_task( $order ), 'confirmed payment creates the staff task' );
+submit_expect( 1 === count( $order->notes ), 'confirmed payment creates exactly one fulfillment note' );
 submit_expect( false !== strpos( $order->notes[0], 'Never request a password' ), 'staff note forbids password collection' );
+submit_expect( 1 === absint( $order->get_meta( '_bds_submission_staff_task_note_id', true ) ), 'paid task note id is recorded' );
+submit_expect( false === bds_submit_maybe_create_paid_staff_task( $order ), 'duplicate payment notification is idempotent' );
+submit_expect( 1 === count( $order->notes ), 'duplicate payment notification creates no second task' );
+
+$manual_quote = new BdsSubmitTestOrder( 1002 );
+$manual_quote->paid = true;
+$manual_quote->created_via = 'admin';
+$manual_quote->items[] = new BdsSubmitTestItem( new BdsSubmitTestProduct( 'done-for-you-ai-management' ) );
+submit_expect( true === bds_submit_maybe_create_paid_staff_task( $manual_quote ), 'paid admin order for accepted Done-for-You quote creates a task' );
+submit_expect( 1 === count( $manual_quote->notes ), 'accepted quote produces one paid fulfillment task' );
+submit_expect( false !== strpos( $manual_quote->notes[0], 'accepted written scope' ), 'quote task names the accepted scope boundary' );
+
+$public_quote = new BdsSubmitTestOrder( 1003 );
+$public_quote->paid = true;
+$public_quote->created_via = 'checkout';
+$public_quote->items[] = new BdsSubmitTestItem( new BdsSubmitTestProduct( 'done-for-you-ai-management' ) );
+submit_expect( false === bds_submit_maybe_create_paid_staff_task( $public_quote ), 'browser checkout cannot activate quote-only fulfillment' );
+submit_expect( 0 === count( $public_quote->notes ), 'quote-only browser order creates no staff task' );
+
+submit_expect( ! isset( $submit_actions['woocommerce_checkout_order_created'] ), 'checkout creation is not a fulfillment trigger' );
+submit_expect( 'bds_submit_maybe_create_paid_staff_task' === $submit_actions['woocommerce_payment_complete'], 'payment completion is a fulfillment trigger' );
+submit_expect( 'bds_submit_maybe_create_paid_staff_task' === $submit_actions['woocommerce_order_status_processing'], 'paid processing status is a recovery trigger' );
+submit_expect( 'bds_submit_maybe_create_paid_staff_task' === $submit_actions['woocommerce_order_status_completed'], 'paid completed status is a recovery trigger' );
 
 if ( $failed ) {
 	fwrite( STDERR, "{$failed} assisted submission tests failed\n" );

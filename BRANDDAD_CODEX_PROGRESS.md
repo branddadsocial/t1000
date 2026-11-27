@@ -601,6 +601,16 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Public copy now states what is included, who submits, what is excluded, and that removal, approval, placement, publication, coverage, reach, and sales are not guaranteed.
 - Added `BRANDDAD_ASSISTED_SUBMISSION_SECURE_DESIGN.md` and focused PHP acceptance covering the four prices/scopes, legacy copy replacement, approval language, order metadata, unrelated-product isolation, and password prohibition.
 
+## 2026-11-27 — paid fulfillment boundary and quote handoff
+
+- Audited commit `5af7c072afbfa1d6302eebb37d0945829e862e75`: it changed only progress/test documentation and did not alter product buttons, checkout, payments, or fulfillment hooks.
+- Git history confirms Done-for-You AI Management was `quote_only` from its first catalog commit (`6c1f930`) and its first public renderer (`9bb789d`) intentionally used Contact Us / **Scope this package**. No working public checkout was replaced.
+- Closed the accepted-quote gap: after a written scope is accepted, staff creates a pending admin WooCommerce order for `done-for-you-ai-management` and sends WooCommerce's native order-payment link. Only an admin-created, Woo-confirmed paid order can create its private staff task.
+- Removed staff-task creation from `woocommerce_checkout_order_created`. One-time order-line metadata is still captured at checkout, but fulfillment starts only after `WC_Order::is_paid()` succeeds on a paid-state hook.
+- Added a durable atomic order claim and order audit metadata so gateway/status retries and duplicate payment notifications create exactly one private staff task.
+- Isolated staging acceptance used **Press Release Submission — One Submission Round** (`branddad-ai-press-release-pack`) with a synthetic no-gateway order. Unpaid created zero tasks; paid created one; replayed payment/status events remained one. The accepted Done-for-You quote path also created one task, and all synthetic records were cleaned.
+- Production checkout, live customer orders, product visibility, prices, gateways, and JustAnotherPanel were untouched.
+
 ## 2026-11-27 — official promotion package correction
 
 - Retired the private supplier-panel catalog and all public BDS Network wording. No panel service ids, panel credentials, or generic provider-order path remain in the active Done-for-You package contract.
