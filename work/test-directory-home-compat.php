@@ -37,6 +37,14 @@ namespace {
 
 	require dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php';
 
+	$source = file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php' );
+	$render_position = strpos( $source, '$home = \\BrandDad\\DirectoryExperience\\render_home();' );
+	$head_position = strpos( $source, 'wp_head();' );
+	if ( false === $render_position || false === $head_position || $render_position > $head_position ) {
+		fwrite( STDERR, "The replacement must enqueue its assets before wp_head().\n" );
+		exit( 1 );
+	}
+
 	if ( ! bds_directory_home_compat_should_render() ) {
 		fwrite( STDERR, "Exact Directory root did not pass the renderer gate.\n" );
 		exit( 1 );

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Homepage Compatibility
  * Description: Preserves the complete Directory homepage document while the replacement experience remains composer-backed.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: BrandDad
  */
 
@@ -48,8 +48,15 @@ function bds_directory_home_compat_render() {
 
 	status_header( 200 );
 	if ( ! headers_sent() ) {
-		header( 'X-BDS-Directory-Home: recovery-2' );
+		header( 'X-BDS-Directory-Home: recovery-3' );
 	}
+
+	/*
+	 * Build the replacement before wp_head(). Its renderer enqueues the
+	 * protected Directory stylesheet and scripts while creating the fragment;
+	 * generating it later leaves the document complete but unstyled.
+	 */
+	$home = \BrandDad\DirectoryExperience\render_home();
 
 	echo '<!doctype html><html ';
 	language_attributes();
@@ -58,7 +65,7 @@ function bds_directory_home_compat_render() {
 	echo '</head><body ';
 	body_class( 'branddad-directory-redesign' );
 	echo '>';
-	echo \BrandDad\DirectoryExperience\render_home(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo $home; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	wp_footer();
 	echo '</body></html>';
 	exit;
