@@ -28,6 +28,8 @@ function bds_fp_disable_legacy_health_renderer() {
 	remove_action( 'template_redirect', 'bds_health_maybe_render_tool_page', 1 );
 }
 add_action( 'muplugins_loaded', 'bds_fp_disable_legacy_health_renderer', PHP_INT_MAX );
+add_action( 'plugins_loaded', 'bds_fp_disable_legacy_health_renderer', PHP_INT_MAX );
+add_action( 'template_redirect', 'bds_fp_disable_legacy_health_renderer', -100000 );
 
 /** Return the normalized request host. */
 function bds_fp_host() {

@@ -19,12 +19,14 @@ defined( 'ABSPATH' ) || exit;
  */
 function bds_directory_home_compat_yield_to_replacement() {
 	/*
-	 * The legacy composer currently owns the final homepage document and also
-	 * carries the replacement experience markup. Removing its hooks leaves a
-	 * successful HTTP response with an empty body. Keep it active until the
-	 * replacement has an independent renderer; the look-lock layer removes the
-	 * obsolete visual fragments after the complete document exists.
+	 * The replacement feature flag is currently enabled without an independent
+	 * renderer. The legacy composer's own wp callback therefore removes every
+	 * homepage section and leaves a successful response with an empty body.
+	 * Prevent that one yield callback; keep the actual composer hooks intact so
+	 * the look-lock layer receives and polishes a complete document.
 	 */
-	return;
+	if ( function_exists( 'bds_dfc_is_home' ) && bds_dfc_is_home() ) {
+		remove_action( 'wp', 'bds_dfc_yield_to_replacement_home', PHP_INT_MAX );
+	}
 }
 add_action( 'template_redirect', 'bds_directory_home_compat_yield_to_replacement', -10000 );

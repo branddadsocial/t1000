@@ -33,16 +33,17 @@ namespace {
 	}
 
 	call_user_func( $callback );
-	if ( count( $GLOBALS['compat_removals'] ) !== 0 ) {
-		fwrite( STDERR, "Homepage composer was removed before an independent replacement renderer existed.\n" );
+	$yield = array( 'action', 'wp', 'bds_dfc_yield_to_replacement_home', PHP_INT_MAX );
+	if ( ! in_array( $yield, $GLOBALS['compat_removals'], true ) || count( $GLOBALS['compat_removals'] ) !== 1 ) {
+		fwrite( STDERR, "The broken replacement yield callback was not disabled.\n" );
 		exit( 1 );
 	}
 
 	$GLOBALS['replacement_enabled'] = false;
 	$GLOBALS['compat_removals'] = array();
 	call_user_func( $callback );
-	if ( count( $GLOBALS['compat_removals'] ) !== 0 ) {
-		fwrite( STDERR, "Legacy homepage hooks were unexpectedly removed.\n" );
+	if ( ! in_array( $yield, $GLOBALS['compat_removals'], true ) || count( $GLOBALS['compat_removals'] ) !== 1 ) {
+		fwrite( STDERR, "Compatibility callback did not preserve the legacy homepage renderer.\n" );
 		exit( 1 );
 	}
 
