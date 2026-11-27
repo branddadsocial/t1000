@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = fs.readFileSync(path.join(root, 'deploy', 'zzz-bds-frontend-polish-mu.php'), 'utf8');
 
 const checks = {
-  release_version: source.includes('Version: 1.0.9') && source.includes("BDS_FRONTEND_POLISH_VERSION', '1.0.9'"),
+  release_version: source.includes('Version: 1.0.10') && source.includes("BDS_FRONTEND_POLISH_VERSION', '1.0.10'"),
   locked_catalog_reused: source.includes('bds_ai_commercial_catalog()') && source.includes("'quote_only'"),
   catalog_load_fallback: source.includes("'complete-ai-starter' => array( 'name' => 'Complete AI Starter'") && source.includes(': $fallback;'),
   package_family_visible: source.includes('BrandDad Business Autopilot'),
