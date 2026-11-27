@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Assisted Submission Services
  * Description: Defines the bounded submission scope and WooCommerce fulfillment metadata for BrandDad's one-time submission services.
- * Version: 0.2.2
+ * Version: 0.2.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.2.2' );
+define( 'BDS_ASSISTED_SUBMISSION_VERSION', '0.2.3' );
 
 /**
  * Public scope is allowlisted here; prices and service identity never come from the browser.
@@ -183,6 +183,17 @@ function bds_submit_home_legacy_patch() {
 				Object.keys(copy).forEach(function(from){
 					if(node.nodeValue.indexOf(from)!==-1)node.nodeValue=node.nodeValue.split(from).join(copy[from]);
 				});
+			}
+			var grid=root.querySelector('.bdai-use-grid');
+			if(grid&&!grid.querySelector('a[href*="/product/ai-press-release-pack/"]')){
+				var card=document.createElement('article');card.className='bds-oneshot-card';
+				var title=document.createElement('h3');title.textContent='Press Release Submission — One Submission Round';card.appendChild(title);
+				var price=document.createElement('p');price.className='bdai-price bds-oneshot-price';
+				var amount=document.createElement('strong');amount.textContent='$39.99';price.appendChild(amount);
+				var period=document.createElement('span');period.textContent=' one time';price.appendChild(period);card.appendChild(price);
+				var summary=document.createElement('p');summary.textContent='Pay once. BrandDad writes one factual release and completes one approved submission round. Paid wire distribution and placement fees are separate; coverage is not guaranteed.';card.appendChild(summary);
+				var link=document.createElement('a');link.className='bdai-button';link.href='/product/ai-press-release-pack/?ref=mcdqf8t1iinf';link.textContent='Buy this submission service';card.appendChild(link);
+				grid.appendChild(card);
 			}
 			root.setAttribute('data-bds-submission-copy',<?php echo wp_json_encode( BDS_ASSISTED_SUBMISSION_VERSION ); ?>);
 		}

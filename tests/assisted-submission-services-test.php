@@ -59,10 +59,12 @@ submit_expect( false !== strpos( $fixed, 'Buy this submission service' ), 'legac
 ob_start();
 bds_submit_home_legacy_patch();
 $home_patch = ob_get_clean();
-submit_expect( false !== strpos( $home_patch, 'data-version="0.2.2"' ), 'late homepage patch exposes the current submission-copy version' );
+submit_expect( false !== strpos( $home_patch, 'data-version="0.2.3"' ), 'late homepage patch exposes the current submission-copy version' );
 submit_expect( false !== strpos( $home_patch, 'branddad-ai-help' ), 'late homepage patch is limited to the exact legacy section' );
 submit_expect( false !== strpos( $home_patch, 'IMDb Submission Service — One Contribution' ), 'late homepage patch contains approved submission wording' );
 submit_expect( false === strpos( $home_patch, '/product/branddad-ai-imdb-submission-pack/' ), 'late homepage patch does not invent a second IMDb product path' );
+submit_expect( false !== strpos( $home_patch, "link.href='/product/ai-press-release-pack/" ), 'late homepage patch restores the missing live press-release card' );
+submit_expect( false === strpos( $home_patch, 'innerHTML' ), 'late homepage patch constructs the trusted card without an HTML injection sink' );
 
 class BdsSubmitTestProduct {
 	private $slug;
