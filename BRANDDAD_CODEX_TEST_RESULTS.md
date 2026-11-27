@@ -951,3 +951,20 @@ Updated: 2026-11-19
 | Rafter secrets | PASS — no secrets detected |
 | Rafter remote fast | BLOCKED — account remains at 16/16; paid Plus was not used |
 | Manual OWASP/ASVS review | PASS — server-owned product identity; canonical Woo paid-state recheck; atomic order claim; browser-created quote orders denied; staging route exact-host and boolean-only |
+
+## 2026-11-27 — Done-for-You public quote guard
+
+| Check | Result |
+|---|---|
+| PHP syntax | PASS — quote guard and focused harness |
+| Exact allowlist | PASS — one canonical quote-only slug plus six retired growth slugs; unrelated products miss |
+| Direct add-to-cart | PASS — canonical, retired, parent, and variation combinations fail closed |
+| Stale cart | PASS — checkout receives a blocking error; the cart itself is not deleted or changed |
+| Unrelated products | PASS — original validation result and loop CTA are preserved |
+| Services renderer | PASS — Complete Management remains $399/month, promotion optional, and Contact-not-checkout |
+| Paid fulfillment regression | PASS — unpaid zero tasks, paid one task, duplicate events no second task |
+| One-time/AI regressions | PASS — assisted submissions, AI-first Services, and website-plan contracts remain green |
+| Secrets | PASS — no secrets detected |
+| Remote Rafter fast | BLOCKED — 16/16 quota; paid Plus not used |
+| Manual web security review | PASS — no new route/auth/SQL/dependency/outbound request; exact server-owned identity; static escaped output; fail-closed business-flow checks |
+| Production state | UNCHANGED — no upload, cart, order, payment, subscription, refund, customer, or provider mutation |

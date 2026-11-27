@@ -81,6 +81,7 @@ Updated: 2026-11-27
 - A recoverable fixed-target cache-refresh helper is locally designed, implemented, linted, contract-tested, manually reviewed, and secret-scanned. Version `0.1.1` moves only the three still-stale specialty HTML objects to fixed `.bak` destinations and deliberately excludes the already-healthy homepage. Mandatory `rafter run --mode fast` remains blocked at 16/16, so the deletion-capable helper is not approved for production upload; paid Plus was not used.
 - The version `0.1.1` helper is available on the unmerged remote branch `codex/final-backend-20261119` at commit `46d7809`, making the exact code scannable after reset. The required remote fast scan was attempted after the push and rejected at 16/16. Rafter reports the free quota reset at 2026-11-23 20:03:31 UTC; the account has no Plus allowance. Do not deploy a different local or remote commit under a later scan result.
 - **Rafter remote quota:** file-specific secret scans pass, but required remote fast scans are blocked at 16/16 for the billing period. Paid Plus was not run.
+- **Done-for-You public quote guard:** the exact-slug repair is locally linted, behavior-tested, regression-tested, secret-scanned, and manually reviewed. Production still serves the older product-page purchase controls. Do not upload or call the repair complete until the exact committed remote revision passes the required Rafter gate; the current fast-scan quota is 16/16 and paid Plus is not approved.
 
 ## Not blockers to local development
 

@@ -54,3 +54,33 @@ Trust boundaries are browser to WordPress, gateway callback to WooCommerce, and 
 ## Residual risk
 
 The paid-task handler relies on WooCommerce and the installed payment gateway to verify payment correctly. A compromised administrator can mark an order paid; that is an existing WooCommerce administrative power, not a new capability. Quote acceptance remains a staff process rather than a public API so it cannot be automated without a separately reviewed authorization and audit design.
+
+## Public quote-only purchase guard
+
+The live Services page and commercial catalog identify Done-for-You management as quote-first, but an older public product-page callback can still render retired Instagram growth products and Woo purchase controls. The repair is an additive, exact-slug guard; it does not edit or delete a Woo product, order, subscription, or customer record.
+
+```text
+Public product request -> exact server-owned slug allowlist -> quote page/contact
+Direct add-to-cart      -> exact server-owned slug allowlist -> reject + contact notice
+Accepted written quote -> staff-created admin order -> native Woo order-pay link
+Paid admin order        -> existing paid-state/idempotent staff-task boundary
+```
+
+Security decisions:
+
+- Only `done-for-you-ai-management` and the six retired `bds-ig-growth-*` slugs are guarded. IDs and slugs are not accepted from request data.
+- New cart additions are rejected server-side, including guarded parent/variation combinations. Hiding a button is presentation only and is not the security control.
+- Checkout validation also rejects a guarded item already present in a stale cart without deleting or changing that cart.
+- Existing orders, subscriptions, renewals, refunds, and staff-created admin orders are not mutated or cancelled.
+- The canonical Done-for-You page removes the standard public add-to-cart form and renders current written-scope copy plus a Contact BrandDad action.
+- Retired growth-product GET pages redirect to the current Services management section; the redirect performs no purchase or write.
+- The repair adds no endpoint, credential, remote request, dependency, customer message, or payment call.
+
+Threat/abuse cases:
+
+- Direct `?add-to-cart=` or crafted cart request: server-side validation rejects the guarded product.
+- Stale cached product link: the destination cannot be added to a new cart after the guard loads.
+- Existing subscriber renewal: no cart validation path is used and no subscription record is changed.
+- Guessed unrelated product: exact allowlist miss leaves the product untouched.
+
+Residual risk: a previously cached HTML page may continue to display retired wording until that cache object expires, but the server-side cart rejection still prevents a new purchase. Cache refresh is a separate recoverable deployment step and must not delete global caches.

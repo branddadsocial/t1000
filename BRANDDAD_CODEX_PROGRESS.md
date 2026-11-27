@@ -621,3 +621,11 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Live acceptance found the canonical frontend at `1.0.14` but the host still executing the old overlay at `1.1.0` after in-place replacement. Added `zzzzz-bds-dfy-official-promotion-hotfix-mu.php` as an additive, later-loading MU plugin that removes only the stale overlay callback and renders the current canonical Services page; it does not delete a file, mutate data, or clear global caches.
 - StartHost reported the initial 3/3 uploads and the additive hotfix 1/1 upload completed. Production Services now renders canonical frontend `1.0.14`, the $399 base and $599/$699/$849 Promotion Starter/Growth/Pro offers, separate advertising/creator costs, and no BDS Network or old Visibility-package language.
 - Live 390px acceptance found one visible H1, all five management/promotion cards and their five actions visible, zero broken images, a visible shared menu, and `scrollWidth === clientWidth` with no horizontal overflow.
+
+## 2026-11-27 — Done-for-You public quote guard preparation
+
+- Confirmed production drift: the Services renderer and authoritative catalog describe Complete Management as quote-first, but the live product page still renders a retired supplier-era package block and public subscription controls.
+- Added an exact-slug, additive WooCommerce guard for `done-for-you-ai-management` and the six retired `bds-ig-growth-*` products. It removes the canonical public purchase form, replaces loop purchase actions with Contact BrandDad, redirects retired child-product pages, rejects direct add-to-cart attempts, and blocks a guarded item already present in a stale cart.
+- Historical products, orders, subscriptions, renewals, refunds, customer records, and the accepted-quote admin-order workflow are not changed. Unrelated products retain their existing cart and checkout behavior.
+- Local focused regression passed for the quote guard, Services renderer, official-promotion hotfix, package overlay, promotion catalog, paid fulfillment, business-autopilot contract, AI-first Services catalog, and website-plan one-time contract.
+- Rafter local secret scanning passed. The required remote fast scan was attempted and remains quota-blocked at 16/16; paid Plus was not used. No staging or production file has been uploaded in this preparation step.
