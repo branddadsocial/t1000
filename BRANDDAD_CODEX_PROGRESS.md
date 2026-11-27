@@ -592,7 +592,7 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Added a private, inert BDS Network catalog covering supplier ids 3335, 10118, 6367, 6118, 10144, 5922, 10119, 8751, 8752, 8753, 7124, 7127, 6818, 7125, and 7128. US Focused and Worldwide primaries are explicit; 7125 and 7128 are manual fallbacks only.
 - Added monthly internal caps and estimated supplier ceilings for profitability planning. Automatic provider execution remains disabled and every visibility tier is `manual_review_only` until payment, provider-policy, idempotency, cancellation, refund, and result acceptance pass.
 - Added customer-safe metric labels that keep content creation, publication, campaign-assisted metrics, conversations, and leads separate. Pending or unverified quantities are not counted as completed results.
-- Added `bds-network` to the existing private verified provider-cost allowlist; actual contribution reporting still requires reconciled cost events.
+- The experimental `bds-network` provider-cost allowance was later removed with the retired panel catalog. Active provider-cost accounting retains only the established allowlist; no supplier-panel execution path remains.
 ## 2026-11-27 one-time assisted submission services
 
 - Repositioned the four one-time offers as bounded submission services instead of draft-only packs: Airbnb Review Appeal — One Assisted Submission ($9.99), IMDb Submission Service — One Contribution ($29.99), Billboard Vendor Submission — One Inquiry ($49.99), and Press Release Submission — One Submission Round ($39.99).
@@ -629,3 +629,4 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Historical products, orders, subscriptions, renewals, refunds, customer records, and the accepted-quote admin-order workflow are not changed. Unrelated products retain their existing cart and checkout behavior.
 - Local focused regression passed for the quote guard, Services renderer, official-promotion hotfix, package overlay, promotion catalog, paid fulfillment, business-autopilot contract, AI-first Services catalog, and website-plan one-time contract.
 - Rafter local secret scanning passed. The required remote fast scan was attempted and remains quota-blocked at 16/16; paid Plus was not used. No staging or production file has been uploaded in this preparation step.
+- Consolidated release regression now passes 57/57 test files: 11 PHP behavior suites and 46 Node contracts, including release checksums. The prior manifest failure closed by removing the obsolete `bds-network` provider allowance, restoring the existing approved hash without changing the manifest.

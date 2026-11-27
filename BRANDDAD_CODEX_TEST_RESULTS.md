@@ -968,3 +968,5 @@ Updated: 2026-11-19
 | Remote Rafter fast | BLOCKED — 16/16 quota; paid Plus not used |
 | Manual web security review | PASS — no new route/auth/SQL/dependency/outbound request; exact server-owned identity; static escaped output; fail-closed business-flow checks |
 | Production state | UNCHANGED — no upload, cart, order, payment, subscription, refund, customer, or provider mutation |
+| Complete release regression | PASS — 57/57 files (11 PHP, 46 Node) |
+| Release integrity | PASS — obsolete inactive `bds-network` allowlist entry removed; current provider-cost module matches the existing approved SHA-256 manifest |

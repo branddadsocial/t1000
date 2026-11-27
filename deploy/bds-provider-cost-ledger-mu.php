@@ -25,7 +25,7 @@ function bds_provider_cost_register_type() {
 add_action( 'init', 'bds_provider_cost_register_type' );
 
 function bds_provider_cost_allowed_providers() {
-	$providers = array( 'formwise', 'stripe', 'woocommerce', 'hosting', 'email', 'whatsapp', 'social-publisher', 'bds-network', 'seo-provider', 'video-renderer', 'music-fulfillment' );
+	$providers = array( 'formwise', 'stripe', 'woocommerce', 'hosting', 'email', 'whatsapp', 'social-publisher', 'seo-provider', 'video-renderer', 'music-fulfillment' );
 	$providers = apply_filters( 'bds_provider_cost_allowed_providers', $providers );
 	return array_values( array_unique( array_filter( array_map( 'sanitize_key', is_array( $providers ) ? $providers : array() ) ) ) );
 }
