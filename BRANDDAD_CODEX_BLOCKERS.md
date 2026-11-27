@@ -5,6 +5,15 @@
 
 Updated: 2026-11-21
 
+## 2026-11-27 live recheck
+
+- Social mobile presentation at 390px is currently clean: the prior circular product-photo artifacts are absent, the BrandDad logo is present, the conversion hero is readable, the one-time AI service cards are normal rectangular cards, and exactly one floating AI launcher is visible.
+- Social Home, Services, Shop, Business Essentials, Account Hub, and Contact expose the same Services / Get Featured / Account / Contact / List my business free destinations. Desktop/mobile copies are present in the shared component but only the applicable set is visible to accessibility and visual checks.
+- Directory Home, Categories, Restaurants, and Plans use the current mobile header and one visible Directory Concierge. The public homepage local-first journey is visually clean at 390px.
+- Directory Events, Jobs, and Classifieds clean URLs still render obsolete cached layouts; a 390px Events capture showed the retired wallet/category/business-home content instead of the Events experience. Current application output remains correct on the documented cache-bypass path, so this is still a stale-cache/provider problem rather than a missing PHP fix.
+- StartHost service overview still displays `Malware Detected On This Package`, with last scan `26-11-2026`. Ticket `898665003` is `Awaiting Customer Reply`; StartHost's last response says cron and PHP mail remain disabled until its security provider whitelists the false positives or a clean scan returns. The promised follow-up did not arrive. The ticket already contains the exact three cache objects, scheduler command, and database-telemetry request.
+- Do not start a second scheduler or broad-purge cache. A new ticket reply is appropriate, but sending it is a representational action and remains action-time confirmation gated.
+
 ## External or owner-controlled
 
 - **Production backend activation gate:** all 15 reviewed `branddad/v1` route roots are registered on live Social; eleven sampled customer/admin routes deny anonymous access with HTTP 401 and the public sales catalog returns HTTP 200. Real automated service delivery remains default-off until least-privilege server credentials, safe payment lifecycle acceptance, provider cost/semantic acceptance, and the remaining feature-specific production gates pass. Do not describe default-off delivery adapters as active customer fulfillment.
