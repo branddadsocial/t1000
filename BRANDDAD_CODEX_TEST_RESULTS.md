@@ -817,4 +817,15 @@ Updated: 2026-11-19
 - Recommendation ordering now uses explicit AI suitability first, matched issue count second, and lower price third. Results remain capped at four.
 - Focused static contract: 14/14 assertions passed. Focused PHP behavior: 9/9 assertions passed. Full local regression: 43/43 Node contracts, 42/42 deployment PHP syntax checks, and 5/5 standalone PHP behavior tests passed.
 - Local secret scanning found no secrets. Required remote `rafter run --mode fast` was retried against the exact remote branch and remained blocked at 16/16; paid Plus was not used.
-- This recommendation revision is local and committed-source evidence only until production upload and live checker rerun are complete.
+- Production upload and live checker verification are now complete; see the production section below.
+
+## 2026-11-27 — AI-first recommendation live verification
+
+- Production upload evidence: StartHost File Manager reported `bds-services-catalog-mu.php` `Completed`; the deployed file row shows 36.47 KB and modified time `00:21:17 - 27/11/2026`.
+- Public checker URL: `https://branddad.social/check-your-website/?bdsqa=ai-first-live`.
+- Checker page loaded with the Website URL input and Run check control; visible text contained no `FormWise` provider name and no stale `$149` speed-service copy.
+- Live check target: `https://branddad.social/`.
+- Live result: `85 / 100`, HTTP 200/HTTPS available, performance signal detected, and **AI Website Improvement Plan — $19.99** returned as the suggested fix. The result included the secure-connection/customer-approval boundary and did not claim automatic unapproved website changes.
+- Services page remained available and exposed AI Website Improvement Plan, AI Local SEO Starter, and AI Studio. No visible `FormWise` provider name was found.
+- Hosting follow-up evidence: ticket `898665003` changed from `Awaiting Customer Reply` to `Awaiting Staff Reply`; the submitted 27 November entry is visibly present and the ticket was not closed.
+- Required remote Rafter fast scan remains blocked by the account's 16/16 quota. File-scoped local secret scans and the full pre-deployment regression are recorded in the preceding section; paid Plus was not used.
