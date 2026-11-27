@@ -24,7 +24,7 @@ function shortcode_exists() { return false; }
 function get_theme_mod() { return 0; }
 function wp_get_attachment_image_url() { return ''; }
 function wp_parse_url( $url, $part = -1 ) { return parse_url( $url, $part ); }
-function bds_svc_catalog() { return array( array( 'slug' => 'website-speed-optimization', 'title' => 'AI Website Improvement Plan', 'price' => 19.99, 'type' => 'simple', 'blurb' => 'A clear plan.' ) ); }
+function bds_svc_catalog() { return array( array( 'slug' => 'website-speed-optimization', 'title' => 'AI Website Improvement Plan', 'price' => 19.99, 'type' => 'simple', 'blurb' => 'A clear plan.', 'url' => 'https://branddad.social/product/branddad-smartsites-website-optimizer/' ) ); }
 
 $_SERVER['HTTP_HOST'] = 'branddad.social';
 require dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php';
@@ -38,6 +38,8 @@ $checks = array(
 	'has_directory'=> false !== strpos( $page, 'List my business free' ),
 	'has_mobile_cta'=> false !== strpos( $page, 'data-bds-open-assistant' ),
 	'website_plan_price'=> false !== strpos( $page, '$19.99 one time' ) && false !== strpos( $page, 'Buy AI plan' ),
+	'website_plan_canonical_url'=> false !== strpos( $page, 'https://branddad.social/product/branddad-smartsites-website-optimizer/' )
+		&& false === strpos( $page, 'https://branddad.social/product/website-speed-optimization/' ),
 	'health_renderer'=> function_exists( 'bds_fp_render_health_page' ),
 	'health_css'     => false !== strpos( bds_fp_health_page_css(), 'bds-fp-health-nav' ),
 	'health_menu'    => false !== strpos( bds_fp_health_page_css(), 'bds-fp-health-menu' ),

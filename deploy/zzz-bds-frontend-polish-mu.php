@@ -2,19 +2,19 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.5
+ * Version: 1.0.6
  * Author: BrandDad
  *
  * Secure design:
  * - Public rendering only; no authentication, payment, entitlement, or checkout state changes.
  * - Host and route checks use allowlists. No request value is rendered.
- * - Product links resolve from published WordPress products and are escaped.
+ * - Product links resolve from published products or the code-defined catalog and are escaped.
  * - Existing forms, payment handlers, nonces, and customer records are untouched.
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.5' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.6' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -182,7 +182,7 @@ function bds_fp_services_content() {
 			if ( ! is_array( $row ) || empty( $row['slug'] ) || empty( $row['title'] ) || empty( $row['blurb'] ) ) {
 				continue;
 			}
-			$url = bds_fp_product_url( $row['slug'] );
+			$url = ! empty( $row['url'] ) ? esc_url( $row['url'] ) : bds_fp_product_url( $row['slug'] );
 			if ( '' === $url ) {
 				continue;
 			}
