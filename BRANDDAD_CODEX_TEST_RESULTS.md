@@ -837,3 +837,23 @@ Updated: 2026-11-19
 - Full local release regression passed: **43/43 Node contracts**, **48/48 deployment PHP syntax checks**, **5/5 standalone PHP behavior tests**, release SHA-256 verification, and `git diff --check`.
 - `rafter secrets .` found no secrets. Required `rafter run --mode fast` was attempted and rejected because the account remains at 16/16 fast scans; paid Plus was not used.
 - No live file, catalog record, cart, checkout, order, payment, subscription, customer, email, or FormWise execution changed during this local validation.
+## 2026-11-27 — production canonical website-plan acceptance
+
+| Check | Result |
+|---|---|
+| Production plugin upload | PASS — all three files reported completed; frontend polish row updated to 34.41 KB at `09:18:42 - 27/11/2026` |
+| Services deployment marker | PASS — `data-bds-frontend-polish="1.0.6"` present |
+| Services plan links | PASS — 1 canonical link, 0 retired `website-speed-optimization` links |
+| Services structure/branding | PASS — 1 visible H1, no visible `FormWise`, no horizontal overflow |
+| Shop product deduplication | PASS — exactly 1 AI Website Improvement Plan card |
+| Shop canonical purchase path | PASS — canonical product URL and exact `add-to-cart=53645` control |
+| Legacy product URL | PASS — redirects to `/product/branddad-smartsites-website-optimizer/` |
+| Canonical product | PASS — correct title, `$19.99`, and **Buy AI plan** |
+| Legacy product 53082 | PASS — catalog visibility hidden in WooCommerce admin |
+| Mobile Services 390px | PASS — one H1, canonical link only, navigation visible, no provider branding, no overflow |
+| Mobile Services 320px | PASS — one H1, canonical link only, no overflow |
+| Mobile canonical product | PASS — title, visible price, and purchase control; no overflow |
+| Transaction safety | PASS — no cart, checkout, order, payment, subscription, or customer mutation |
+| Local regression | PASS — 43/43 Node, 48/48 PHP lint, 5/5 PHP behavior, 17/17 frontend renderer |
+| Rafter local secrets | PASS — no secrets in changed source files |
+| Rafter remote fast | BLOCKED — account remains at 16/16; paid Plus not used |

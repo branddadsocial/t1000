@@ -540,3 +540,13 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Connected a separate blank Stripe test account and configured its webhook endpoint without submitting a transaction. The connection temporarily put WooCommerce into test mode, so the flow was not left there.
 - Signed into the correct live Stripe identity and reconnected only the existing `BrandDadSocial` account (`acct_1HO7VQFop8Muodhk`). Rebuilt the live webhook configuration successfully. Final Woo read-back shows Stripe enabled, test mode unchecked, no test-mode warning, and live payment/payout/webhook status enabled.
 - No payment, order, refund, subscription, customer record, or provider execution was created. Signed webhook receipt and the full payment lifecycle remain separate acceptance gates.
+## 2026-11-27 — canonical AI website-plan catalog deployment
+
+- Deployed `bds-ai-website-plan-offer-mu.php` `0.1.2`, `bds-services-catalog-mu.php` `1.3.1`, and Social frontend polish `1.0.6` to the production Social MU-plugin directory.
+- Reconciled the legacy Website Speed Optimization record with the canonical **AI Website Improvement Plan** without deleting historical product or order data. Product `53082` is hidden from the catalog; product `53645` is the only public purchase path.
+- Live Shop acceptance found exactly one AI Website Improvement Plan card, one canonical `/product/branddad-smartsites-website-optimizer/` destination, and the exact `add-to-cart=53645` control.
+- The retired `/product/website-speed-optimization/` URL now redirects to the canonical product. The canonical page shows the correct title, `$19.99` price, and **Buy AI plan** action.
+- Corrected the Services renderer so it honors the trusted canonical URL supplied by the catalog instead of rebuilding a link from the retired internal key. Fresh output exposes frontend-polish marker `1.0.6`, one canonical link, and zero old-slug links.
+- Desktop, 390px, and 320px acceptance passed with one visible H1, no horizontal overflow, usable navigation, and no visible `FormWise` provider branding. The canonical mobile product page retained its title, price, and purchase control.
+- No cart, checkout, order, payment, subscription, customer record, email, or FormWise execution was created during this deployment and verification.
+- Local release gates passed: 43/43 Node contracts, 48/48 deployment PHP syntax checks, 5/5 standalone PHP behavior tests, focused frontend renderer 17/17, release checksums, and `git diff --check`. Local secret scans were clean. Mandatory remote `rafter run --mode fast` remains quota-blocked at 16/16; paid Plus was not used.

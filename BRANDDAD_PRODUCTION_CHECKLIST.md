@@ -217,3 +217,16 @@ Nothing unchecked above may be described as fully operational.
 - [x] Airbnb one-case assistant: exact-product SEO description repair is linted, contract-tested, contrast-tested, secret-scanned, manually reviewed, deployed after action-time confirmation, and live-verified with exactly one correct meta description while checkout stays disabled.
 - [ ] Airbnb one-case assistant: required remote Rafter fast scan clears for the exact committed revision (currently quota-blocked at 16/16).
 - [ ] Airbnb one-case assistant: safe real payment, result ownership, cancellation/refund, and reconciliation lifecycle passes before enabling checkout.
+## 2026-11-27 canonical AI website-plan catalog gate
+
+- [x] Deploy canonical website-plan offer `0.1.2` and services catalog `1.3.1`.
+- [x] Hide legacy product `53082` without deleting historical records.
+- [x] Keep product `53645` as the only public buy path.
+- [x] Verify Shop renders exactly one AI Website Improvement Plan card.
+- [x] Verify the old product URL redirects to the canonical product.
+- [x] Deploy frontend polish `1.0.6` so Services uses the canonical catalog URL.
+- [x] Verify Services has one visible H1, no visible provider branding, and no retired product link.
+- [x] Verify desktop, 390px, and 320px layouts have no horizontal overflow.
+- [x] Verify the canonical mobile product retains title, price, and purchase action.
+- [x] Verify no cart, order, payment, subscription, or customer state was created or changed.
+- [!] Required remote Rafter fast review is still blocked by the 16/16 quota; paid Plus was not authorized or used.
