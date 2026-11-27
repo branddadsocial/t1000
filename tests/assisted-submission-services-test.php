@@ -127,6 +127,21 @@ $public_quote->items[] = new BdsSubmitTestItem( new BdsSubmitTestProduct( 'done-
 submit_expect( false === bds_submit_maybe_create_paid_staff_task( $public_quote ), 'browser checkout cannot activate quote-only fulfillment' );
 submit_expect( 0 === count( $public_quote->notes ), 'quote-only browser order creates no staff task' );
 
+$service_order_id = 2000;
+foreach ( array_keys( $services ) as $service_slug ) {
+	$service_order_id++;
+	$service_item = new BdsSubmitTestItem( new BdsSubmitTestProduct( $service_slug ) );
+	$service_order = new BdsSubmitTestOrder( $service_order_id );
+	$service_order->items[] = $service_item;
+	submit_expect( false === bds_submit_maybe_create_paid_staff_task( $service_order ), $service_slug . ' creates no task before payment' );
+	$service_order->paid = true;
+	submit_expect( true === bds_submit_maybe_create_paid_staff_task( $service_order ), $service_slug . ' creates one task after payment' );
+	submit_expect( 1 === count( $service_order->notes ), $service_slug . ' has exactly one paid task' );
+	submit_expect( false !== strpos( $service_order->notes[0], $services[ $service_slug ]['name'] ), $service_slug . ' task names the purchased service' );
+	submit_expect( false === bds_submit_maybe_create_paid_staff_task( $service_order ), $service_slug . ' ignores a duplicate paid event' );
+	submit_expect( 1 === count( $service_order->notes ), $service_slug . ' remains exactly one task after replay' );
+}
+
 submit_expect( ! isset( $submit_actions['woocommerce_checkout_order_created'] ), 'checkout creation is not a fulfillment trigger' );
 submit_expect( 'bds_submit_maybe_create_paid_staff_task' === $submit_actions['woocommerce_payment_complete'], 'payment completion is a fulfillment trigger' );
 submit_expect( 'bds_submit_maybe_create_paid_staff_task' === $submit_actions['woocommerce_order_status_processing'], 'paid processing status is a recovery trigger' );

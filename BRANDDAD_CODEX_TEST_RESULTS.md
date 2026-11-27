@@ -944,6 +944,7 @@ Updated: 2026-11-19
 | Gateway safety | PASS — staging fixture used `bds_staging_synthetic_no_gateway`; no gateway call or transaction |
 | Fixture cleanup | PASS — synthetic orders, products, and claims removed |
 | Local PHP behavior | PASS — `tests/assisted-submission-services-test.php` |
+| All four one-time products | PASS — each creates zero unpaid tasks, one paid task naming the service, and no replay duplicate |
 | Staging contract | PASS — 12/12 assertions |
 | Staging report | PASS — `complete=true`, all 13 checks true, no error codes |
 | Production safety | PASS — no production checkout, customer order, payment, product, or gateway mutation |
