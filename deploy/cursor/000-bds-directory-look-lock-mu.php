@@ -312,22 +312,26 @@ function bds_dir_look_lock_keep_live_pages() {
 
 function bds_dir_look_lock_qs( $name ) {
 	$name = (string) $name;
+	if ( ! in_array( $name, array( 'directory_type', 'bds_gshape' ), true ) ) {
+		return '';
+	}
 	$uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
 	$uri  = preg_replace( '/[\r\n\x00\t].*/', '', $uri );
 	$query = parse_url( $uri, PHP_URL_QUERY );
 	if ( ! is_string( $query ) || '' === $query ) {
 		return '';
 	}
-	foreach ( explode( '&', $query ) as $pair ) {
-		$kv = explode( '=', $pair, 2 );
-		$key = isset( $kv[0] ) ? urldecode( str_replace( '+', ' ', $kv[0] ) ) : '';
-		if ( $key !== $name ) {
-			continue;
-		}
-		$val = isset( $kv[1] ) ? urldecode( str_replace( '+', ' ', $kv[1] ) ) : '';
-		return preg_replace( '/[\r\n\x00\t].*/', '', $val );
+	$args = array();
+	if ( function_exists( 'wp_parse_str' ) ) {
+		wp_parse_str( $query, $args );
+	} else {
+		parse_str( $query, $args );
 	}
-	return '';
+	if ( ! isset( $args[ $name ] ) || ! is_scalar( $args[ $name ] ) ) {
+		return '';
+	}
+	$value = substr( (string) $args[ $name ], 0, 80 );
+	return function_exists( 'sanitize_key' ) ? sanitize_key( $value ) : strtolower( preg_replace( '/[^a-z0-9_-]/', '', $value ) );
 }
 
 function bds_dir_look_lock_print_arch() {
