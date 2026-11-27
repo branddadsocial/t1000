@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: BrandDad
  *
  * Secure design:
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.3' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.4' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -189,8 +189,11 @@ function bds_fp_services_content() {
 			$web[] = array(
 				'url'     => $url,
 				'name'    => $row['title'],
+				'price'   => isset( $row['price'] ) && is_numeric( $row['price'] )
+					? '$' . number_format( (float) $row['price'], 2 ) . ( 'subscription' === ( $row['type'] ?? '' ) ? '/month' : ' one time' )
+					: '',
 				'summary' => $row['blurb'],
-				'label'   => 'View service',
+				'label'   => 'website-speed-optimization' === sanitize_title( $row['slug'] ) ? 'Buy AI plan' : 'View service',
 			);
 		}
 	}
