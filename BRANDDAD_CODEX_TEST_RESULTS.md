@@ -829,3 +829,11 @@ Updated: 2026-11-19
 - Services page remained available and exposed AI Website Improvement Plan, AI Local SEO Starter, and AI Studio. No visible `FormWise` provider name was found.
 - Hosting follow-up evidence: ticket `898665003` changed from `Awaiting Customer Reply` to `Awaiting Staff Reply`; the submitted 27 November entry is visibly present and the ticket was not closed.
 - Required remote Rafter fast scan remains blocked by the account's 16/16 quota. File-scoped local secret scans and the full pre-deployment regression are recorded in the preceding section; paid Plus was not used.
+
+## 2026-11-27 — website-plan duplicate-product release candidate
+
+- Reconciled legacy Woo product `53082` with canonical product `53645` without deleting either record or changing historical orders.
+- Added exact-product fail-closed purchase and visibility contracts, canonical recommendation-link coverage, and an assertion that both records are validated before either mutation begins.
+- Full local release regression passed: **43/43 Node contracts**, **48/48 deployment PHP syntax checks**, **5/5 standalone PHP behavior tests**, release SHA-256 verification, and `git diff --check`.
+- `rafter secrets .` found no secrets. Required `rafter run --mode fast` was attempted and rejected because the account remains at 16/16 fast scans; paid Plus was not used.
+- No live file, catalog record, cart, checkout, order, payment, subscription, customer, email, or FormWise execution changed during this local validation.

@@ -133,8 +133,8 @@ Nothing unchecked above may be described as fully operational.
 - [x] Recheck priority Social and Directory public routes; all returned HTTP 200.
 - [x] Verify the installed Directory Experience assets and location-scoped restaurant result after release `0.68.14`.
 - [x] Audit live Stripe settings read-only: gateway, payments, payouts, and webhook show enabled; no settings were changed.
-- [ ] Connect a safe Stripe test account and prove purchase, provisioning, renewal, refund, cancellation, and billing portal without altering existing customer billing.
-- [~] Diagnosed the missing live-webhook evidence: Woo marks the live account `Incomplete` because stored Stripe keys exist but their origin cannot be verified; sync is disabled and the plugin requires an authorized reconnect. The configured webhook endpoint is publicly reachable, but reconnect and a signed test event remain pending.
+- [~] Connect a safe Stripe test account and prove purchase, provisioning, renewal, refund, cancellation, and billing portal without altering existing customer billing. The blank test account and test webhooks are now connected; no financial lifecycle test has been submitted.
+- [x] Reconnect WooCommerce Stripe OAuth to the existing live `BrandDadSocial` account, rebuild the live webhook configuration, and verify Stripe enabled / test mode off / live payment, payout, and webhook status enabled. No charge or order was created.
 - [x] Refresh FormWise agents, app, flows, portals, and tier plans without spending credits.
 - [x] Admit Business Essentials, AI Lead Assistant, AI Local SEO, and AI Social Growth groups to the existing restricted customer portal and verify provider read-back without adding members or spending credits.
 - [~] Live pages are correctly separated: sampled Directory routes reference only the dedicated Concierge, Social home references only the Sales Assistant, and no sampled page references the older Directory Assistant. One-Agent Suites now exist with restrictions on and session context off; the exact Social and Directory origins are staged but not submitted. After action-time permission approval, add the origins, migrate each live iframe, test, then separately retire the older Assistant.
@@ -189,9 +189,9 @@ Nothing unchecked above may be described as fully operational.
 - [x] Deploy Sales Help `0.1.3` so Directory no longer renders the second sticky helper in fresh output.
 - [x] Deploy QA repair `1.0.21` so fresh Events, Jobs, and Classifieds output excludes the unrelated demo refund modal.
 - [x] Verify fresh uncached Events, Jobs, and Classifieds have one H1, the Directory Concierge, no Sales Help helper, and no demo refund modal.
-- [!] Ordinary clean URLs still serve stale generated HTML. StartHost Edge Caching controls fail to render, and Directory Speed Auto-Heal requires an authenticated WordPress-admin session.
+- [x] Recheck ordinary clean URLs after the cache turnover: Events, Jobs, and Classifieds return the correct specialized title/H1 and no longer serve the obsolete wallet/category/business-home layout.
 - [x] Reconfirm fresh canonical Events, Jobs, and Classifieds output by applying `nocache=1` to each final all-listings URL after redirects; all three have one Concierge, no rendered Sales Help widget, and no refund modal.
-- [ ] Complete a provider-supported edge/origin purge or authenticated bounded refresh, then repeat the clean-URL acceptance without `nocache=1`.
+- [x] Repeat clean-URL acceptance without `nocache=1`; all three specialty routes now return HTTP 200 from the current guest-browse path with the correct page identity.
 - [ ] Receive StartHost's response on ticket `898665003`, save the already reviewed five-minute scheduler if they unblock it, and observe the first bounded run before launch classification.
 - [x] Add the stale clean-URL evidence and broken Edge Caching UI error to ticket `898665003`; request only a hostname-bounded provider purge or supported control repair, with explicit no-content/no-database/no-broad-cache-deletion safeguards.
 - [x] Send StartHost a direct reply on ticket `898665003` with the exact PHP 8.4 cron command, all three confirmed specialty cache basenames, and explicit no-broad-purge/no-customer-data-deletion boundaries; Gmail recorded sent message `1a1fb065c1cb1df2` in the existing support thread.

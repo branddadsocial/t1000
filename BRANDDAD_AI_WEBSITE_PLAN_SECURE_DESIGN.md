@@ -42,3 +42,28 @@ The product does not silently edit a website. The optional implementation reques
 - Model advice can be incomplete; the UI identifies it as a plan and makes no ranking, traffic, sales, or score guarantee.
 - This release does not claim automatic repair. Any future write adapter requires a separate secure-design review, supported WordPress connection, granular authorization, pre-change backup, deterministic verification, and rollback acceptance.
 - Production checkout may be enabled only after PHP/contracts/security scan pass and the live page shows the correct title, price, account requirement, and add-to-cart path. No real card is charged for validation.
+
+## 2026-11-27 catalog-deduplication follow-up
+
+### Data flow and trust boundaries
+
+Anonymous browser → CDN/WAF → WordPress/WooCommerce catalog query → public product cards. The legacy indexed URL continues through the existing same-origin 301 to the canonical Woo product. No customer, order, payment, session, credential, or third-party data crosses a new boundary.
+
+### Decisions
+
+- Keep the internal recommendation key `website-speed-optimization` for backward compatibility, but emit only the canonical product URL `branddad-smartsites-website-optimizer` in customer-facing recommendations.
+- Preserve legacy product `53082` and historical orders. Do not delete it, rewrite order items, or reuse its ID.
+- Hide only the exact legacy product slug from catalog/search visibility and make only that exact legacy product non-purchasable. The canonical product remains the sole buyable product.
+- Retain the existing same-origin permanent redirect so old bookmarks and indexed links resolve safely. No caller-controlled redirect target is accepted.
+- Back up the legacy product's public catalog visibility before the one-time migration. Fail closed if canonical and legacy products are missing or unexpectedly resolve to the same ID.
+
+### STRIDE and abuse review
+
+- **Spoofing/elevation:** no identity or authorization change; the public catalog stays public and checkout authorization remains in WooCommerce.
+- **Tampering:** exact sanitized-slug comparisons and distinct server-resolved product IDs prevent a request from selecting another product.
+- **Repudiation:** migration version, reversible visibility backup, and the unchanged product/order IDs provide an audit trail.
+- **Disclosure:** no new response fields, secrets, PII, order data, or internal errors are exposed.
+- **Denial of service:** constant-time exact-product checks only; no new query loops, external calls, or request-sized work.
+- **Abuse twin:** an attacker requests `?add-to-cart=53082` to bypass the canonical offer. Exact legacy-product non-purchasability rejects that path while canonical product `53645` remains available.
+
+Residual risk: the redirect remains managed by the existing Redirection component rather than this plugin. Release acceptance therefore requires a live 301 check, one canonical Shop card, one canonical add-to-cart ID, and no change to historical records.

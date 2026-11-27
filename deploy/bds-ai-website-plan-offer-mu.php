@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Website Improvement Offer
  * Description: Makes the existing website-improvement product a one-purchase/one-plan AI service and gives customers a secure account workspace.
- * Version: 0.1.1
+ * Version: 0.1.2
  * Author: BrandDad Social
  */
 
@@ -10,8 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_WEBSITE_PLAN_OFFER_VERSION', '0.1.1' );
+define( 'BDS_AI_WEBSITE_PLAN_OFFER_VERSION', '0.1.2' );
 define( 'BDS_AI_WEBSITE_PLAN_PRODUCT_SLUG', 'branddad-smartsites-website-optimizer' );
+define( 'BDS_AI_WEBSITE_PLAN_LEGACY_PRODUCT_SLUG', 'website-speed-optimization' );
 define( 'BDS_AI_WEBSITE_PLAN_PRICE', '19.99' );
 
 /** Keep this commercial change on BrandDad Social only. */
@@ -26,8 +27,18 @@ function bds_ai_website_plan_product_id() {
 	return $post instanceof WP_Post ? absint( $post->ID ) : 0;
 }
 
+/** Resolve the exact historical product without accepting a request-provided id. */
+function bds_ai_website_plan_legacy_product_id() {
+	$post = get_page_by_path( BDS_AI_WEBSITE_PLAN_LEGACY_PRODUCT_SLUG, OBJECT, 'product' );
+	return $post instanceof WP_Post ? absint( $post->ID ) : 0;
+}
+
 function bds_ai_website_plan_is_product( $product ) {
 	return $product instanceof WC_Product && BDS_AI_WEBSITE_PLAN_PRODUCT_SLUG === sanitize_title( $product->get_slug() );
+}
+
+function bds_ai_website_plan_is_legacy_product( $product ) {
+	return $product instanceof WC_Product && BDS_AI_WEBSITE_PLAN_LEGACY_PRODUCT_SLUG === sanitize_title( $product->get_slug() );
 }
 
 /**
@@ -45,6 +56,12 @@ function bds_ai_website_plan_migrate_product() {
 	$product    = $product_id ? wc_get_product( $product_id ) : null;
 	if ( ! bds_ai_website_plan_is_product( $product ) ) {
 		update_option( 'bds_ai_website_plan_offer_last_error', 'exact_product_not_found', false );
+		return;
+	}
+	$legacy_id = bds_ai_website_plan_legacy_product_id();
+	$legacy    = $legacy_id ? wc_get_product( $legacy_id ) : null;
+	if ( ! bds_ai_website_plan_is_legacy_product( $legacy ) || $legacy_id === $product_id ) {
+		update_option( 'bds_ai_website_plan_offer_last_error', 'legacy_product_not_distinct', false );
 		return;
 	}
 
@@ -89,6 +106,22 @@ function bds_ai_website_plan_migrate_product() {
 	$product->set_stock_status( 'instock' );
 	$product->save();
 
+	if ( ! get_option( 'bds_ai_website_plan_legacy_catalog_backup' ) ) {
+		update_option(
+			'bds_ai_website_plan_legacy_catalog_backup',
+			array(
+				'captured_at'        => gmdate( DATE_ATOM ),
+				'product_id'         => $legacy_id,
+				'slug'               => $legacy->get_slug(),
+				'status'             => $legacy->get_status(),
+				'catalog_visibility' => $legacy->get_catalog_visibility(),
+			),
+			false
+		);
+	}
+	$legacy->set_catalog_visibility( 'hidden' );
+	$legacy->save();
+
 	update_option( 'bds_ai_website_plan_offer_version', BDS_AI_WEBSITE_PLAN_OFFER_VERSION, false );
 	delete_option( 'bds_ai_website_plan_offer_last_error' );
 }
@@ -96,9 +129,25 @@ add_action( 'init', 'bds_ai_website_plan_migrate_product', 40 );
 
 /** Override older quote-only presentation for this exact product only. */
 function bds_ai_website_plan_is_purchasable( $purchasable, $product ) {
-	return bds_ai_website_plan_is_social() && bds_ai_website_plan_is_product( $product ) ? true : $purchasable;
+	if ( ! bds_ai_website_plan_is_social() ) {
+		return $purchasable;
+	}
+	if ( bds_ai_website_plan_is_legacy_product( $product ) ) {
+		return false;
+	}
+	return bds_ai_website_plan_is_product( $product ) ? true : $purchasable;
 }
 add_filter( 'woocommerce_is_purchasable', 'bds_ai_website_plan_is_purchasable', PHP_INT_MAX, 2 );
+
+/** Keep the historical record out of public catalog cards even before query caches expire. */
+function bds_ai_website_plan_product_is_visible( $visible, $product_id ) {
+	if ( ! bds_ai_website_plan_is_social() ) {
+		return $visible;
+	}
+	$legacy_id = bds_ai_website_plan_legacy_product_id();
+	return $legacy_id && absint( $product_id ) === $legacy_id ? false : $visible;
+}
+add_filter( 'woocommerce_product_is_visible', 'bds_ai_website_plan_product_is_visible', PHP_INT_MAX, 2 );
 
 function bds_ai_website_plan_loop_button( $html, $product ) {
 	if ( ! bds_ai_website_plan_is_social() || ! bds_ai_website_plan_is_product( $product ) ) {

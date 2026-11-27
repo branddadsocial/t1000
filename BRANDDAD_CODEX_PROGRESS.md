@@ -1,5 +1,13 @@
 # BrandDad Codex progress
 
+## 2026-11-27 AI website-plan catalog deduplication release candidate
+
+- Identified that Social Shop exposed both legacy product `53082` and canonical product `53645` as separate **AI Website Improvement Plan** cards at `$19.99`, despite the legacy URL already redirecting to the canonical page.
+- Prepared Social-only MU-plugin updates that preserve the legacy record and historical orders, back up its public catalog state, hide it from catalog/search rendering, reject direct legacy purchase attempts, and keep canonical product `53645` as the only public buy path.
+- Updated checker/service recommendations to link directly to the canonical Woo product while retaining the existing internal recommendation key for compatibility.
+- Required secure design and manual OWASP web review are recorded. Full local regression passes 43/43 Node contracts, 48/48 deployment PHP lints, 5/5 PHP behavior tests, release checksums, and `git diff --check`; local Rafter secrets is clean. Remote Rafter fast remains quota-blocked at 16/16 and paid Plus was not used.
+- Production upload and live acceptance remain pending; no live catalog, order, payment, customer, or AI execution changed in this local batch.
+
 ## 2026-11-26 AI Website Improvement Plan reconciliation
 
 - Traced the website checker's stale `$149 Website Speed Optimization` recommendation to the legacy services catalog while the live Woo product remained quote-only.
@@ -522,4 +530,13 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Rechecked the public checker and Services surfaces. The checker loaded normally, the Services page continued to expose AI Website Improvement Plan, AI Local SEO Starter, and the AI Studio tiers, and no visible `FormWise` provider branding appeared.
 - Sent a confirmed follow-up through StartHost ticket `898665003`. The ticket is now **Awaiting Staff Reply**, with a new `You Said` entry at 05:21:42 on 27 November 2026. The message asks for whitelist/clean-scan status, only the three already-documented stale Directory cache objects (or repaired hostname-bounded cache controls), scheduler-control repair without task activation, and database incident telemetry. It explicitly forbids broad cache purges, customer-data changes, credential rotation, plugin changes, or service restarts without prior notice.
 - No cart, order, checkout, payment, subscription, AI execution, customer record, cron task, cache deletion, or broad hosting mutation occurred in this deployment and verification pass.
-- Remaining production blockers are unchanged: StartHost must clear/allowlist the false-positive package state, restore Scheduled Tasks/PHP mail, resolve the three clean-URL Directory cache objects, and provide the requested stability telemetry. This batch does not claim those provider-owned issues are fixed.
+- At that point the remaining provider blockers were StartHost false-positive clearance, Scheduled Tasks/PHP-mail restoration, the three clean specialty URLs, and database telemetry. The clean specialty URL problem subsequently closed in the later 27 November verification below; the other provider-owned blockers remain open.
+
+## 2026-11-27 frontend deployment, clean-route recovery, and Stripe reconnection
+
+- Deployed Social frontend polish `1.0.5` and Directory homepage compatibility `1.1.7` through the authenticated StartHost file manager. Hosted rows showed the revised sizes and new 27 November timestamps.
+- Verified Social Services and Directory Home at 390px and 1440px. Both sampled pages had `scrollWidth == clientWidth`, exactly one visible H1, no visible FormWise branding, and the intended single assistant/concierge surface. Directory `#bdd-title` is now an H1 on both breakpoints.
+- Rechecked clean Directory Events, Jobs, and Classifieds URLs. Each returns HTTP 200 with the correct specialized title/H1; the prior obsolete cached layout is no longer selected.
+- Connected a separate blank Stripe test account and configured its webhook endpoint without submitting a transaction. The connection temporarily put WooCommerce into test mode, so the flow was not left there.
+- Signed into the correct live Stripe identity and reconnected only the existing `BrandDadSocial` account (`acct_1HO7VQFop8Muodhk`). Rebuilt the live webhook configuration successfully. Final Woo read-back shows Stripe enabled, test mode unchecked, no test-mode warning, and live payment/payout/webhook status enabled.
+- No payment, order, refund, subscription, customer record, or provider execution was created. Signed webhook receipt and the full payment lifecycle remain separate acceptance gates.

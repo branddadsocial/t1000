@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Services Catalog
  * Description: Canonical agency/local service definitions, product page sections, and Health Check recommendations. No rank promises; no fake reviews.
- * Version: 1.3.0
+ * Version: 1.3.1
  *
  * Deploy:
  *   branddad.social → wp-content/mu-plugins/bds-services-catalog-mu.php
@@ -23,6 +23,8 @@
  * v1.3.0 — Prefer the lowest-priced suitable white-label AI diagnostic before
  *          hands-on implementation. Keep account edits, submissions, outreach,
  *          and technical changes human or approval-gated.
+ * v1.3.1 — Send the website-plan recommendation directly to its canonical Woo
+ *          product while preserving the historical internal recommendation key.
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( defined( 'BDS_SVC_CAT_VER' ) ) {
 	return;
 }
-define( 'BDS_SVC_CAT_VER', '1.3.0' );
+define( 'BDS_SVC_CAT_VER', '1.3.1' );
 
 /**
  * Canonical service catalog (SKU keys).
@@ -77,7 +79,7 @@ function bds_svc_catalog() {
 			'price'    => 19.99,
 			'type'     => 'simple',
 			'cat'      => 'local-web-services',
-			'url'      => $social . '/product/website-speed-optimization/',
+			'url'      => $social . '/product/branddad-smartsites-website-optimizer/',
 			'blurb'    => 'AI analyzes the public signals, explains the highest-value fixes, and prepares a prioritized plan. Connect WordPress and approve supported changes before BrandDad applies and verifies them. Hosting, CDN, paid-plugin, and custom-code work is quoted separately.',
 			'issues'   => array( 'slow_ttfb', 'no_compression', 'large_assets', 'perf_poor' ),
 			'secure_intake' => true,

@@ -331,3 +331,17 @@ Focused contract and both PHP syntax checks pass; `git diff --check` passes. `ra
 - **ASVS L2 V1/V4/V7/V13:** the threat model and rollback are in `BRANDDAD_BACKEND_SECURE_DESIGN.md`; RBAC remains deny-by-membership and deny-by-grant; the exact mutations and read-back are recorded; no new BrandDad API surface exists.
 - **Rollback:** remove only the four exact admissions and read the portal back; no deletion or customer-data restoration is necessary.
 - `rafter secrets .` reported no secrets. Required `rafter run` was attempted and remains blocked at the account's 16/16 fast-scan quota; paid Plus was not used.
+
+## 2026-11-27 AI website-plan catalog deduplication review
+
+- **Scope:** exact-product WooCommerce migration, public catalog visibility, purchase eligibility, and the checker recommendation URL. The change preserves both product records and all historical orders; it deletes nothing and does not create a charge, order, customer, message, or AI execution.
+- **A01/A07 — access and authentication:** N/A for the new behavior. No route, login, session, role, REST endpoint, or caller-selected object was added. Both products are resolved from compile-time slugs (`deploy/bds-ai-website-plan-offer-mu.php:14-15,25-42`).
+- **A02 — cryptography and secrets:** no secret, token, credential, cryptography, or randomness was added. `rafter secrets .` found no secrets.
+- **A03 — injection and output handling:** no SQL, shell, deserialization, file-path input, or request data enters the migration. Product comparisons are exact sanitized-slug checks; the customer recommendation is a fixed same-origin path (`deploy/bds-ai-website-plan-offer-mu.php:36-42`; `deploy/bds-services-catalog-mu.php:82`).
+- **A04 — secure design:** canonical and legacy products must both exist and resolve to distinct server-owned IDs before either is mutated (`deploy/bds-ai-website-plan-offer-mu.php:55-66`). The legacy public state is backed up, its catalog visibility is hidden, and exact legacy purchase attempts fail closed while the canonical product alone remains purchasable (`:109-150`).
+- **A05 — configuration:** behavior is restricted to the exact `branddad.social`/`www.branddad.social` home host allowlist (`deploy/bds-ai-website-plan-offer-mu.php:18-22`).
+- **A06/A08 — components and integrity:** no dependency or update channel changed. Both modified deployment files have refreshed SHA-256 manifest entries, and the release-checksum contract passes.
+- **A09 — auditability:** the one-time version, last-error option, canonical backup, and legacy catalog backup retain a reversible record without logging PII (`deploy/bds-ai-website-plan-offer-mu.php:52-79,109-126`).
+- **A10 — SSRF:** no outbound fetch, redirect target, or caller-controlled URL was introduced. The existing legacy redirect remains outside this plugin and must be verified live.
+- **Evidence:** 43/43 Node contracts, 48/48 deployment PHP syntax checks, 5/5 standalone PHP behavior tests, and `git diff --check` pass. The local Rafter secret scan is clean. Required `rafter run --mode fast` was attempted and remains blocked at 16/16; paid Plus was not used.
+- **Disposition:** no unresolved local release-blocking finding. Production acceptance must verify one Shop card, canonical product HTTP 200, legacy HTTP 301 to canonical, canonical product ID `53645` buyable, legacy product ID `53082` rejected, and no order/payment creation.

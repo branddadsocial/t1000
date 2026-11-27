@@ -4,8 +4,9 @@ import fs from 'node:fs';
 const source = fs.readFileSync(new URL('../deploy/bds-services-catalog-mu.php', import.meta.url), 'utf8');
 
 const checks = [
-  ['catalog version is 1.3.0', /define\(\s*'BDS_SVC_CAT_VER',\s*'1\.3\.0'\s*\)/],
+  ['catalog version is 1.3.1', /define\(\s*'BDS_SVC_CAT_VER',\s*'1\.3\.1'\s*\)/],
   ['website plan is the preferred performance diagnostic', /'website-speed-optimization'[\s\S]*?'recommendation_priority'\s*=>\s*100/],
+  ['website plan uses the canonical Woo product URL', /'website-speed-optimization'[\s\S]*?'url'\s*=>\s*\$social\s*\.\s*'\/product\/branddad-smartsites-website-optimizer\/'/],
   ['AI Local SEO uses the live product slug', /'ai-local-seo'[\s\S]*?'url'\s*=>\s*\$social\s*\.\s*'\/product\/ai-local-seo\/'/],
   ['AI Local SEO price is 19.99', /'ai-local-seo'[\s\S]*?'price'\s*=>\s*19\.99/],
   ['AI Local SEO is recommendation priority 100', /'ai-local-seo'[\s\S]*?'recommendation_priority'\s*=>\s*100/],
