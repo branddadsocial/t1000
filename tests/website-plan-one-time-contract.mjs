@@ -6,7 +6,7 @@ const offer = fs.readFileSync('deploy/bds-ai-website-plan-offer-mu.php', 'utf8')
 
 const checks = [
   ['website plan uses the existing published flow', /'website_plan'[\s\S]*3d3deeff-cc55-43a3-b96e-4969df4296cc/.test(execution)],
-  ['one purchase grants one exact website-plan job', /'website_plan'[\s\S]*'one_time_product_slug' => 'website-speed-optimization'/.test(execution)],
+  ['one purchase grants one exact website-plan job', /'website_plan'[\s\S]*'one_time_product_slug' => 'branddad-smartsites-website-optimizer'/.test(execution)],
   ['eligible paid and trial plans retain website-plan access', /'website_plan'[\s\S]*'plan_access' => true[\s\S]*'trial'\s*=>\s*true/.test(execution)],
   ['product migration is exact-slug and Social-only', /branddad\.social/.test(offer) && /BDS_AI_WEBSITE_PLAN_PRODUCT_SLUG[\s\S]*get_page_by_path/.test(offer)],
   ['approved one-time price is $19.99', /BDS_AI_WEBSITE_PLAN_PRICE', '19\.99'/.test(offer)],

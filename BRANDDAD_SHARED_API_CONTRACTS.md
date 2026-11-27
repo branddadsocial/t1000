@@ -45,7 +45,7 @@ Purpose: poll one job. A customer can read only a job whose `post_author` matche
 
 ## POST `/ai/jobs` — one-time website plan
 
-Authenticated WordPress customer request using tool `website_plan`. The server fixes the published workflow, product slug `website-speed-optimization`, provider origin, and credit cost. One processing/completed, unrefunded order line owned by the current customer grants one job. Inputs are the allowlisted help type (`Repair`, `Speed`, `Conversion`, or `Ongoing care`), a bounded public page/goal, and bounded observed issue text. The account endpoint `/my-account/website-plan/` generates the idempotency key server-side and calls this same handler. Provider output is private, stripped, bounded, and escaped on display. An implementation checkbox records customer intent only; it cannot connect to or change a website.
+Authenticated WordPress customer request using tool `website_plan`. The server fixes the published workflow, canonical product slug `branddad-smartsites-website-optimizer`, provider origin, and credit cost. The legacy `/product/website-speed-optimization/` route redirects to that product. One processing/completed, unrefunded order line owned by the current customer grants one job. Inputs are the allowlisted help type (`Repair`, `Speed`, `Conversion`, or `Ongoing care`), a bounded public page/goal, and bounded observed issue text. The account endpoint `/my-account/website-plan/` generates the idempotency key server-side and calls this same handler. Provider output is private, stripped, bounded, and escaped on display. An implementation checkbox records customer intent only; it cannot connect to or change a website.
 
 ## GET `/sales/catalog`
 

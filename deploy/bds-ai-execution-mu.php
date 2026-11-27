@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Execution API
  * Description: Authenticated, metered, fail-closed execution of allowlisted BrandDad FormWise tools.
- * Version: 0.3.1
+ * Version: 0.3.2
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_EXECUTION_VERSION', '0.3.1' );
+define( 'BDS_AI_EXECUTION_VERSION', '0.3.2' );
 
 /**
  * Published workflows verified in the BrandDad Social FormWise workspace.
@@ -83,7 +83,7 @@ function bds_ai_exec_tool_catalog() {
 			'kind'        => 'flow',
 			'remote_id'   => '3d3deeff-cc55-43a3-b96e-4969df4296cc',
 			'credit_cost' => 5,
-			'one_time_product_slug' => 'website-speed-optimization',
+			'one_time_product_slug' => 'branddad-smartsites-website-optimizer',
 			'plan_access' => true,
 			'trial'       => true,
 			'fields'      => array(

@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-ai-execution-mu.php', 'utf8');
 
 const checks = [
-  ['version is pinned', /BDS_AI_EXECUTION_VERSION', '0\.3\.1'/],
+  ['version is pinned', /BDS_AI_EXECUTION_VERSION', '0\.3\.2'/],
   ['provider origin is fixed', /https:\/\/builder\.formwise\.ai\/api\/v1\/flows\//],
   ['only verified workflow UUIDs are in the catalog', /0cc9b6ff-309a-49f7-9a47-dd66c926208a[\s\S]*86c87c94-2054-4641-87e1-2a70a0a9b1d4[\s\S]*2e9921a0-5996-4bc9-a053-49fab3a7fc58[\s\S]*571f6f9c-7f7a-4b44-9e32-5d5b2fe11c6e/],
   ['provider key is server-only', /defined\( 'BDS_FORMWISE_EXECUTION_KEY' \)/],

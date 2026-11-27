@@ -2,7 +2,7 @@
 
 ## Scope and trust boundaries
 
-The existing WooCommerce product `website-speed-optimization` becomes a $19.99 one-time AI plan. A paid, unrefunded line item owned by the current WordPress customer grants exactly one execution of the existing published `website_plan` FormWise flow. WooCommerce remains authoritative for payment; WordPress owns identity, entitlement, metering, and results; FormWise receives only three bounded business inputs.
+The existing WooCommerce product `branddad-smartsites-website-optimizer` becomes a $19.99 one-time AI plan; the previous `website-speed-optimization` route redirects to it. A paid, unrefunded line item owned by the current WordPress customer grants exactly one execution of the existing published `website_plan` FormWise flow. WooCommerce remains authoritative for payment; WordPress owns identity, entitlement, metering, and results; FormWise receives only three bounded business inputs.
 
 The product does not silently edit a website. The optional implementation request records intent only. A later implementation adapter must require a secure site connection, an exact change allowlist, explicit customer approval, verification, and rollback. Passwords, private keys, payment details, and hosting credentials are excluded from the plan form and FormWise prompt.
 

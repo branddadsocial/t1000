@@ -6,6 +6,7 @@
 - Reused the existing published white-labeled `BrandDad AI Website Improvement Planner` flow and the existing authenticated AI execution API rather than creating a duplicate chatbot.
 - Generalized one-paid-order/one-job enforcement from the Airbnb case to exact catalog-allowlisted one-time AI products, then connected `website-speed-optimization` to `website_plan`.
 - Added a reversible Social-only product migration to `$19.99`, a plain-language product offer, a customer account form/result view, exact-owner result access, and an optional implementation-intent flag. Automatic site changes remain fail-closed until a secure connection, exact approval, verification, and rollback adapter exists.
+- Live smoke exposed that the previous product route redirects to canonical slug `branddad-smartsites-website-optimizer`; the exact entitlement and migration allowlist were corrected to the canonical Woo product instead of changing an indexed URL.
 
 ## 2026-11-21 Directory response-integrity incident and repair
 

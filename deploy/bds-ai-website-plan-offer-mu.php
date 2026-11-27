@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad AI Website Improvement Offer
  * Description: Makes the existing website-improvement product a one-purchase/one-plan AI service and gives customers a secure account workspace.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_AI_WEBSITE_PLAN_OFFER_VERSION', '0.1.0' );
-define( 'BDS_AI_WEBSITE_PLAN_PRODUCT_SLUG', 'website-speed-optimization' );
+define( 'BDS_AI_WEBSITE_PLAN_OFFER_VERSION', '0.1.1' );
+define( 'BDS_AI_WEBSITE_PLAN_PRODUCT_SLUG', 'branddad-smartsites-website-optimizer' );
 define( 'BDS_AI_WEBSITE_PLAN_PRICE', '19.99' );
 
 /** Keep this commercial change on BrandDad Social only. */
