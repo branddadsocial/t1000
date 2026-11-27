@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Homepage Compatibility
  * Description: Preserves the complete Directory homepage document while the replacement experience remains composer-backed.
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author: BrandDad
  */
 
@@ -33,6 +33,14 @@ function bds_directory_home_compat_should_render() {
 		&& function_exists( '\\BrandDad\\DirectoryExperience\\render_home' );
 }
 
+/** Keep legacy full-document filters from mistaking script comments for markup. */
+function bds_directory_home_compat_sanitize_head( $head ) {
+	if ( ! is_string( $head ) || '' === $head ) {
+		return '';
+	}
+	return str_ireplace( '<body>', 'body', $head );
+}
+
 /**
  * Render the existing replacement homepage before colliding legacy buffers run.
  *
@@ -47,7 +55,7 @@ function bds_directory_home_compat_render() {
 
 	status_header( 200 );
 	if ( ! headers_sent() ) {
-		header( 'X-BDS-Directory-Home: recovery-4' );
+		header( 'X-BDS-Directory-Home: recovery-5' );
 	}
 
 	/*
@@ -61,7 +69,10 @@ function bds_directory_home_compat_render() {
 	echo '<!doctype html><html ';
 	language_attributes();
 	echo '><head><meta charset="' . esc_attr( get_bloginfo( 'charset' ) ) . '"><meta name="viewport" content="width=device-width, initial-scale=1">';
+	ob_start();
 	wp_head();
+	$head = ob_get_clean();
+	echo bds_directory_home_compat_sanitize_head( $head ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	echo '</head><body ';
 	body_class( 'branddad-directory-redesign' );
 	echo '>';

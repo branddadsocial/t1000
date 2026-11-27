@@ -35,6 +35,13 @@ namespace {
 
 	require dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php';
 
+	$head_probe = '<script>/* under <body> for appended blocks */</script><style>.bdd{display:block}</style>';
+	$head_clean = bds_directory_home_compat_sanitize_head( $head_probe );
+	if ( false !== stripos( $head_clean, '<body>' ) || false === stripos( $head_clean, '<style>.bdd' ) ) {
+		fwrite( STDERR, "Head sanitization did not preserve assets while removing the false body marker.\n" );
+		exit( 1 );
+	}
+
 	$source = file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-directory-home-compat-mu.php' );
 	$register_position = strpos( $source, '\\BrandDad\\DirectoryExperience\\register_assets();' );
 	$render_position = strpos( $source, '$home = \\BrandDad\\DirectoryExperience\\render_home();' );
