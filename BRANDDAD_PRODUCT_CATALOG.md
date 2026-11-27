@@ -27,3 +27,13 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 Historical products/orders remain preserved even when retired from new-customer purchase flows.
 
 Website-check recommendations are AI-first where the work is genuinely analysis, planning, or writing: performance signals lead to the $19.99 AI Website Improvement Plan; SEO and local-search signals lead to the $19.99/month AI Local SEO Starter; and profile-copy gaps lead to the $14.99/month AI Studio Starter. The former $179 Website SEO Audit is retained for historical records but is no longer recommended by the checker. Account edits, submissions, outreach, repairs, and technical changes remain hands-on or approval-gated because a language model alone cannot safely perform them.
+## One-time assisted submission services — approved scope (2026-11-27)
+
+| Product | Price | Included action | Important boundary |
+|---|---:|---|---|
+| Airbnb Review Appeal — One Assisted Submission | $9.99 one time | BrandDad prepares one policy-based request and assists with submission | Eligible customer stays signed in and performs the final submit action; Airbnb decides |
+| IMDb Submission Service — One Contribution | $29.99 one time | BrandDad submits one eligible contribution after customer approval | Verifiable public sources required; IMDb decides |
+| Billboard Vendor Submission — One Inquiry | $49.99 one time | BrandDad submits one approved availability/pricing inquiry | Inventory, production, and media-buy fees are separate |
+| Press Release Submission — One Submission Round | $39.99 one time | BrandDad submits one approved no-fee destination submission or small targeted media-pitch round | Paid wire and placement fees are separate; coverage is not guaranteed |
+
+These are submission services, not approval or placement guarantees. No product includes customer password collection or automatic third-party spending.

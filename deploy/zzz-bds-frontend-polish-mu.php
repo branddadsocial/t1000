@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.12
+ * Version: 1.0.13
  * Author: BrandDad
  *
  * Secure design:
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.12' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.13' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -212,10 +212,10 @@ function bds_fp_services_content() {
 		array( 'slug' => 'branddad-ai-studio-pro', 'name' => 'AI Studio Pro', 'price' => '$49.99/month', 'summary' => '400 monthly BrandDad credits for frequent use across business and marketing work.', 'label' => 'Choose Pro' ),
 	);
 	$specialty = array(
-		array( 'slug' => 'branddad-ai-review-dispute-assistant', 'name' => 'AI Review Dispute Assistant', 'price' => '$9.99 one time', 'summary' => 'Describe one Airbnb review case and receive a policy-based appeal draft, shorter version, evidence checklist, and public-reply fallback.', 'label' => 'Prepare one case' ),
-		array( 'slug' => 'branddad-ai-imdb-submission-pack', 'name' => 'AI IMDb Submission Pack', 'price' => '$29.99 one time', 'summary' => 'Organize the facts and submission materials for an eligible IMDb update. Approval is not guaranteed.', 'label' => 'View service' ),
-		array( 'slug' => 'branddad-ai-billboard-creative-pack', 'name' => 'AI Billboard Creative Pack', 'price' => '$29.99 one time', 'summary' => 'Prepare a focused billboard concept, message, and production-ready creative direction.', 'label' => 'View service' ),
-		array( 'slug' => 'branddad-ai-press-release-pack', 'name' => 'AI Press Release Pack', 'price' => '$29.99 one time', 'summary' => 'Turn a real announcement into a clear press-release draft and media-ready supporting copy.', 'label' => 'View service' ),
+		array( 'slug' => 'branddad-ai-review-dispute-assistant', 'name' => 'Airbnb Review Appeal — One Assisted Submission', 'price' => '$9.99 one time', 'summary' => 'BrandDad prepares one policy-based request and assists while you submit it from your eligible Airbnb account. You approve the final submission. Airbnb decides; removal is not guaranteed.', 'label' => 'Buy assisted submission' ),
+		array( 'slug' => 'branddad-ai-imdb-submission-pack', 'name' => 'IMDb Submission Service — One Contribution', 'price' => '$29.99 one time', 'summary' => 'BrandDad prepares and submits one eligible IMDb contribution using accurate credits and public sources you approve. IMDb decides; acceptance is not guaranteed.', 'label' => 'Buy submission service' ),
+		array( 'slug' => 'branddad-ai-billboard-creative-pack', 'name' => 'Billboard Vendor Submission — One Inquiry', 'price' => '$49.99 one time', 'summary' => 'BrandDad prepares the short creative and submits one approved availability and pricing inquiry. Screen inventory, production, and media-buy costs are separate.', 'label' => 'Buy submission service' ),
+		array( 'slug' => 'branddad-ai-press-release-pack', 'name' => 'Press Release Submission — One Submission Round', 'price' => '$39.99 one time', 'summary' => 'BrandDad writes one factual release and completes one customer-approved submission round. Paid wire fees are separate; coverage is not guaranteed.', 'label' => 'Buy submission service' ),
 	);
 	$web = array();
 	if ( function_exists( 'bds_svc_catalog' ) ) {

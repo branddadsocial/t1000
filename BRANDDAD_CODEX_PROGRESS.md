@@ -593,3 +593,10 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Added monthly internal caps and estimated supplier ceilings for profitability planning. Automatic provider execution remains disabled and every visibility tier is `manual_review_only` until payment, provider-policy, idempotency, cancellation, refund, and result acceptance pass.
 - Added customer-safe metric labels that keep content creation, publication, campaign-assisted metrics, conversations, and leads separate. Pending or unverified quantities are not counted as completed results.
 - Added `bds-network` to the existing private verified provider-cost allowlist; actual contribution reporting still requires reconciled cost events.
+## 2026-11-27 one-time assisted submission services
+
+- Repositioned the four one-time offers as bounded submission services instead of draft-only packs: Airbnb Review Appeal — One Assisted Submission ($9.99), IMDb Submission Service — One Contribution ($29.99), Billboard Vendor Submission — One Inquiry ($49.99), and Press Release Submission — One Submission Round ($39.99).
+- Added a fail-closed fulfillment contract. IMDb, billboard vendor, and press work are submitted by BrandDad only after customer approval. Airbnb uses an assisted session because the eligible customer must stay signed in and perform the final submit action; BrandDad never requests the password.
+- Added immutable Woo order-line metadata for service identity, submission mode, initial status, approval requirement, and third-party-fee exclusion. Unrelated products are unchanged and the implementation performs no automatic external send or third-party spend.
+- Public copy now states what is included, who submits, what is excluded, and that removal, approval, placement, publication, coverage, reach, and sales are not guaranteed.
+- Added `BRANDDAD_ASSISTED_SUBMISSION_SECURE_DESIGN.md` and focused PHP acceptance covering the four prices/scopes, legacy copy replacement, approval language, order metadata, unrelated-product isolation, and password prohibition.

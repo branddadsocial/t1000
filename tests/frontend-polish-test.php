@@ -39,7 +39,13 @@ $checks = array(
 		&& false !== strpos( $page, 'Complete Management + Maximum Visibility' )
 		&& false !== strpos( $page, 'No BDS Network engagement is included or required.' )
 		&& false !== strpos( $page, 'LinkedIn content support' ),
-	'has_special'  => false !== strpos( $page, 'AI Review Dispute Assistant' ),
+	'has_special'  => false !== strpos( $page, 'Airbnb Review Appeal — One Assisted Submission' )
+		&& false !== strpos( $page, 'IMDb Submission Service — One Contribution' )
+		&& false !== strpos( $page, 'Billboard Vendor Submission — One Inquiry' )
+		&& false !== strpos( $page, 'Press Release Submission — One Submission Round' )
+		&& false !== strpos( $page, '$49.99 one time' )
+		&& false !== strpos( $page, '$39.99 one time' )
+		&& false === strpos( $page, 'copy and send yourself' ),
 	'has_directory'=> false !== strpos( $page, 'List my business free' ),
 	'has_mobile_cta'=> false !== strpos( $page, 'data-bds-open-assistant' ),
 	'website_plan_price'=> false !== strpos( $page, '$19.99 one time' ) && false !== strpos( $page, 'Buy AI plan' ),

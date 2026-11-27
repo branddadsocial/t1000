@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = fs.readFileSync(path.join(root, 'deploy', 'zzz-bds-frontend-polish-mu.php'), 'utf8');
 
 const checks = {
-  release_version: source.includes('Version: 1.0.12') && source.includes("BDS_FRONTEND_POLISH_VERSION', '1.0.12'"),
+  release_version: source.includes('Version: 1.0.13') && source.includes("BDS_FRONTEND_POLISH_VERSION', '1.0.13'"),
   base_without_engagement: source.includes('Done-for-You Complete Management') && source.includes('$399/month') && source.includes('No BDS Network engagement is included or required.'),
   package_family_visible: source.includes('Complete Management + Essential Visibility') && source.includes('Complete Management + Growth Visibility') && source.includes('Complete Management + Maximum Visibility'),
   approved_prices: source.includes('$599/month total') && source.includes('$699/month total') && source.includes('$849/month total'),
