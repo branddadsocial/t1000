@@ -913,3 +913,14 @@ Updated: 2026-11-19
 - `git diff --check` found no content error; only pre-existing Windows line-ending notices remain.
 - `rafter secrets .` found no secrets. Required remote `rafter run --mode fast` was attempted and blocked because the account remains at 16/16 scans.
 - Manual OWASP review: all public copy is static and escaped; the private catalog registers no route, performs no network call, accepts no request input, and creates no payment or order. Supplier ids and costs are absent from rendered HTML. No dependency, credential, authentication, SQL, file-upload, deletion, or outbound-fetch surface was added.
+
+## 2026-11-27 — official promotion correction tests
+
+- PHP lint passed for the promotion catalog, package overlay, canonical frontend polish, and their focused PHP tests.
+- `dfy-engagement-catalog-test.php` passed 18/18 checks: the panel catalog is empty, the $399/$599/$699/$849 plan totals are correct, all plans retain 20 content slots, promotion tiers use 4/8/12 slots, media/creator budgets stay separate, invalid schedules fail closed, and organic/paid metrics remain separate.
+- Exact 30-day promotion schedules passed: Starter `[4,12,19,27]`, Growth `[2,6,10,14,17,21,25,29]`, and Pro `[2,4,7,9,12,14,17,19,22,24,27,29]`. Content and promotion days are unique and ordered.
+- `dfy-packages-overlay-test.php` passed 17/17; `business-autopilot-services-contract.mjs` passed 16/16; `frontend-polish-test.php` passed all focused checks.
+- Full local suite: all 9 PHP tests passed; 44 of 45 Node contracts passed. The only failure is the pre-existing unrelated stale checksum for clean file `deploy/bds-provider-cost-ledger-mu.php` (`FDC0…` actual versus `2331…` manifest). This batch did not modify that file or release manifest.
+- `git diff --check` found no content error; only expected Windows line-ending notices remain.
+- Rafter local secrets scan passed. Required remote fast scan was attempted and rejected because the account is at 16/16 scans; no paid Plus scan was run.
+- Manual OWASP/ASVS review passed: public strings are escaped; plan lookup is server-owned; schedule inputs are integer-normalized and reject slots greater than period days; no route, credential, token, payment mutation, provider id, outbound call, or automatic spend was added. Promotion remains qualification-only/fail-closed until official authorization and customer approval exist.

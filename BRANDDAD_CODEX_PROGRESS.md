@@ -600,3 +600,11 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Added immutable Woo order-line metadata for service identity, submission mode, initial status, approval requirement, and third-party-fee exclusion. Unrelated products are unchanged and the implementation performs no automatic external send or third-party spend.
 - Public copy now states what is included, who submits, what is excluded, and that removal, approval, placement, publication, coverage, reach, and sales are not guaranteed.
 - Added `BRANDDAD_ASSISTED_SUBMISSION_SECURE_DESIGN.md` and focused PHP acceptance covering the four prices/scopes, legacy copy replacement, approval language, order metadata, unrelated-product isolation, and password prohibition.
+
+## 2026-11-27 — official promotion package correction
+
+- Retired the private supplier-panel catalog and all public BDS Network wording. No panel service ids, panel credentials, or generic provider-order path remain in the active Done-for-You package contract.
+- Kept Done-for-You Complete Management at $399/month with 20 approved posts evenly spaced through a 30-day service period and no required paid promotion.
+- Reframed the $599/$699/$849 totals as Promotion Starter, Growth, and Pro: the same management service plus planning and management for 4, 8, or 12 customer-approved official-platform or documented creator promotions, evenly spaced through the month.
+- Advertising spend, creator compensation, and platform charges are separate and require customer approval. Promotion execution remains fail-closed until the relevant official platform is authorized or a creator agreement is documented.
+- Reporting now separates organic reach/impressions, paid reach/impressions/clicks/spend, creator deliverables, conversations, and leads. Unverified activity is never counted as completed.

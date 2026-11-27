@@ -18,8 +18,8 @@ Source of truth: `deploy/bds-ai-commercial-catalog-mu.php` plus verified Woo pro
 | AI Website Chatbot | $29.99/mo | Blocked by observed reply cost and customer knowledge automation |
 | AI Sales Assistant Plus | $39.99/mo | Blocked by observed reply cost; BrandDad's own assistant has a separate capped proxy |
 | Complete AI Starter/Growth/Pro | $79.99/$149.99/$249.99 | Quote-only until real fulfillment allowances/providers pass cost tests |
-| Done-for-You Complete Management | $399/mo | Public qualification offer without BDS Network engagement; quote/contact only until fulfillment and billing pass |
-| Complete Management + Essential/Growth/Maximum Visibility | $599/$699/$849 total monthly | Optional BDS Network visibility for up to 12/20/30 eligible posts; private supplier mapping is inert and manual-review-only until provider, policy, lifecycle, and cost acceptance pass |
+| Done-for-You Complete Management | $399/mo | Public qualification offer with 20 approved posts spaced through the month; no paid promotion or media spend is included or required; quote/contact only until fulfillment and billing pass |
+| Complete Management + Promotion Starter/Growth/Pro | $599/$699/$849 total monthly | Adds management for 4/8/12 customer-approved official-platform or documented creator promotions, evenly spaced through the month. Advertising spend and creator fees are separate; execution remains fail-closed until authorization, lifecycle, and reporting acceptance pass |
 | Directory Free/Pro/Elite | $0 / variable Pro / $49 | New basic registration/listing/claim/management is free with no $6.99 activation dependency; preserve historical orders, existing entitlements, paid benefits, and variable Pro prices |
 | Directory Featured | $9.99/$19.99/$39.99/$99.99 | Display rules live; Woo SKUs/payment event adapter not production-tested |
 | BrandDad Music | $79/$129/$249/$449/$799/from $199 | Brief intake only; payment closed until licensing/cost/delivery confirmed |

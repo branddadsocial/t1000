@@ -1,23 +1,27 @@
-# Done-for-You Management and Optional BDS Network Visibility
+# Done-for-You Management and Optional Official Promotion
 
 ## Decision
 
-BrandDad will sell a complete managed-service plan without paid network
-engagement. BDS Network visibility is an optional upgrade, available as US
-Focused or Worldwide. Supplier service identifiers, quantities, unit costs,
-and provider credentials remain server-side and are never rendered to the
-customer.
+BrandDad will not connect or automate third-party panel services that manufacture or conceal followers, likes, comments, saves, reposts, views, or impressions. The former BDS Network supplier catalog is retired from the active fulfillment design. No JustAnotherPanel credential, endpoint, order worker, or service identifier is used.
 
-The approved public structure is:
+The customer-facing offers remain qualification-only while the official integrations are verified:
 
-- Done-for-You Complete Management: $399/month, no BDS Network engagement.
-- Essential Visibility: +$200/month, $599/month total, up to 12 eligible posts.
-- Growth Visibility: +$300/month, $699/month total, up to 20 eligible posts.
-- Maximum Visibility: +$450/month, $849/month total, up to 30 eligible posts.
+- Done-for-You Complete Management: $399/month. Twenty approved posts spaced across the month, LinkedIn content support, customer-conversation help, lead follow-up, website chat, and monthly reporting. No promotion budget is included.
+- Complete Management + Promotion Starter: $599/month total. Adds management of up to four customer-approved promotional placements, spaced across the month.
+- Complete Management + Promotion Growth: $699/month total. Adds management of up to eight customer-approved promotional placements, spaced across the month.
+- Complete Management + Promotion Pro: $849/month total. Adds management of up to twelve customer-approved promotional placements, spaced across the month, plus priority optimization review.
 
-These prices are presentation and qualification offers. Checkout and supplier
-execution stay closed until the payment lifecycle, supplier terms, API
-credentials, idempotency, cancellation, refund, and provider-result tests pass.
+Advertising spend, creator compensation, and platform charges are separate. BrandDad's displayed monthly total is the management/service fee, not a hidden media budget. Customers approve the platform, audience, creative, schedule, and separate spend before a campaign can run.
+
+## Scheduling model
+
+- Regular content: 20 slots distributed through each 30-day service period using equal-width time buckets.
+- Promotion Starter: 4 slots, approximately weekly.
+- Promotion Growth: 8 slots, approximately twice weekly.
+- Promotion Pro: 12 slots, approximately three times weekly.
+- The server calculates dates; a browser cannot submit a fabricated delivery schedule.
+- Shorter or longer calendar months are recalculated from the actual service-period day count.
+- Scheduling never bypasses platform posting limits, customer approval, or connected-account permissions.
 
 ## Data flow and trust boundaries
 
@@ -25,89 +29,51 @@ Current safe flow:
 
 `[public Services page] -> [contact/qualification]`
 
-Planned fulfillment flow:
+Future authorized flow:
 
-`[verified paid Woo order] -> [server-owned plan and region mapping] -> [manual
-review/approval queue] -> [provider API] -> [provider confirmation] -> [private
-delivery ledger] -> [customer-safe monthly report]`
+`[verified paid Woo line] -> [server-owned package] -> [customer authorization and approval] -> [official platform OAuth/API or approved creator agreement] -> [platform confirmation] -> [private delivery ledger] -> [customer report]`
 
-Trust boundaries are browser to WordPress, WooCommerce to the fulfillment
-worker, WordPress to the provider API, provider response to the private ledger,
-and the private ledger to the customer report.
+The browser may choose only a public package. It cannot choose a provider endpoint, provider service id, quantity, cost, customer id, order id, delivery status, or platform token. All external actions remain disabled until an official platform connection or documented creator agreement exists.
 
-The browser may choose only an approved public plan and region. It must never
-submit a supplier service id, quantity, provider cost, customer id, order id,
-or delivery status. The server derives those from the verified paid line item.
+## Execution controls
 
-## API and execution decisions
+- No public fulfillment endpoint or outbound request is added in this change.
+- Active packages use `qualification_only` or `official_api_only_after_authorization`; there is no generic supplier-panel execution mode.
+- A future worker must require a verified paid Woo line, server-derived plan, active customer authorization, customer-approved creative, schedule and budget, a period-scoped idempotency key, and a unique delivery record.
+- Provider tokens must be server-side, least-privilege, encrypted at rest, revocable, and excluded from logs and browser output.
+- Network uncertainty must enter `needs_review`; do not retry a publish or ad-creation call until the platform state is reconciled.
+- Costs must enter the existing verified provider-cost ledger. The customer report must distinguish BrandDad fees, platform spend, and creator compensation.
 
-- No public provider-order endpoint is added in this change.
-- The catalog is inert and marked `manual_review_only`; it performs no network
-  request and creates no order, entitlement, subscription, or payment.
-- A future worker must require a verified paid Woo line item, server-derived
-  mapping, an order-scoped idempotency key, and a unique delivery-period key.
-- Automatic retry is forbidden after an uncertain provider response because a
-  retry could create duplicate paid fulfillment.
-- Provider credentials must be server-side, scoped, revocable, and excluded
-  from logs and responses.
-- Provider responses are untrusted. Future ingestion must use an allowlisted
-  schema, bounded size, bounded timeout, and sanitized error codes.
-- Cost records must use the existing append-only verified provider-cost ledger.
+## Reporting policy
 
-## Metrics policy
+Reports may show only authoritative, clearly separated measurements:
 
-The dashboard may show only confirmed activity from an authoritative source:
+- content created, approved, scheduled, and published;
+- organic reach and impressions from the connected platform;
+- paid reach, impressions, clicks, and spend from the official advertising account;
+- approved creator deliverables from documented campaign records;
+- conversations handled and leads recorded from BrandDad-owned events;
+- conversion events only when an authorized measurement source records them.
 
-- content created, approved, and published are separate stages;
-- BDS Network campaigns submitted and confirmed are separate stages;
-- confirmed reach, impressions, views, saves, reposts, and comments are labeled
-  as campaign-assisted metrics when applicable;
-- conversations handled and leads captured require BrandDad-owned event records;
-- organic platform metrics and campaign-assisted metrics are never combined;
-- estimated, pending, failed, refunded, or unverified quantities are not shown
-  as completed results;
-- followers, reach, leads, sales, rankings, and placement are not guaranteed.
+Pending, estimated, failed, refunded, or unverified quantities are not completed results. Paid metrics are never described as organic. Followers, reach, leads, sales, rankings, placement, or algorithmic distribution are not guaranteed.
 
-This makes reports impressive through clear evidence and useful work, not by
-inflating or relabeling numbers.
+## STRIDE and abuse review
 
-## STRIDE review
+- **Spoofing:** future execution requires an authenticated worker, verified paid line, and the customer's authorized official platform connection.
+- **Tampering:** package schedules and limits are derived server-side; browser quantities are ignored.
+- **Repudiation:** delivery records must include order line, period, approval, actor, platform confirmation, timestamps, and status.
+- **Information disclosure:** public output excludes tokens, account ids, audience details, raw provider bodies, and internal costs.
+- **Denial of service/cost abuse:** explicit budgets, one execution per approved slot, rate limits, idempotency, and no uncertain retry.
+- **Elevation of privilege:** public or customer routes cannot activate provider integrations or change internal fulfillment state.
 
-- **Spoofing:** future execution requires the authenticated server worker and a
-  verified paid Woo line item; no browser-supplied identity or supplier id.
-- **Tampering:** the server-owned catalog fixes the plan, region, service id,
-  and quantities; customer input cannot override them.
-- **Repudiation:** future delivery records must include the Woo order line,
-  period, provider request id when available, timestamps, actor, and status.
-- **Information disclosure:** public output excludes supplier ids, unit costs,
-  credentials, raw provider bodies, and internal error details.
-- **Denial of service/cost abuse:** one fulfillment per paid line and period,
-  idempotency, a review queue, cost ceilings, rate limits, and no uncertain retry.
-- **Elevation of privilege:** no customer or public route can activate or edit
-  the private catalog; future administrative overrides require Woo management
-  capability and an audit record.
+Abuse twins:
 
-## Abuse twins and mitigations
+- A customer edits a hidden field to increase promotion slots: ignore it and derive limits from the paid product.
+- A webhook is replayed: deduplicate by verified event, order line, platform object, and billing period.
+- A platform times out after accepting a campaign: reconcile externally before any retry.
+- A paid metric is presented as organic: reject the report mapping and retain separate metric namespaces.
+- A campaign lacks explicit spend approval: remain `awaiting_customer_approval`; never create or fund it.
 
-- Customer changes a hidden field to request the most expensive supplier job:
-  ignore browser quantities and derive the mapping from the paid product.
-- Replayed webhook creates duplicate fulfillment: deduplicate by verified event,
-  order line, plan, and billing period before enqueueing.
-- Provider times out after accepting an order: mark `needs_review`; never retry
-  automatically.
-- Provider reports an implausible result: keep it unverified and exclude it from
-  the customer report until reconciled.
-- Customer cancels or receives a refund: stop future periods and preserve the
-  historical audit trail without representing undelivered work as completed.
+## Launch gates
 
-## Residual risks and launch gates
-
-Supplier licensing, platform-policy compliance, quality, refill behavior,
-cancellation behavior, and API semantics remain unverified. The Facebook live
-view service is not mapped because no service id was supplied and its cost is
-unusually high. USA/UK alternatives are recorded only as manual fallbacks and
-must never be ordered automatically after a primary service may have accepted a
-request.
-
-Production provider execution remains blocked until these items are verified
-and tested. Public qualification and the private inert catalog are safe to ship.
+Public explanation and qualification are safe to ship. Automatic official promotion remains blocked until OAuth and authorization, platform permissions, spend caps, approval UX, idempotency, cancellation, refund, reporting, and hosted acceptance tests pass. The retired panel catalog must not be reconnected or exposed through an API.

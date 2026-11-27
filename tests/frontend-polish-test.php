@@ -35,9 +35,10 @@ $checks = array(
 	'plain_brand'  => false === stripos( $page, 'FormWise' ),
 	'has_plans'    => false !== strpos( $page, 'AI Business Essentials' ),
 	'has_autopilot'=> false !== strpos( $page, 'Done-for-You Complete Management' )
-		&& false !== strpos( $page, 'Complete Management + Growth Visibility' )
-		&& false !== strpos( $page, 'Complete Management + Maximum Visibility' )
-		&& false !== strpos( $page, 'No BDS Network engagement is included or required.' )
+		&& false !== strpos( $page, 'Complete Management + Promotion Growth' )
+		&& false !== strpos( $page, 'Complete Management + Promotion Pro' )
+		&& false !== strpos( $page, 'No paid promotion or media spend is included or required.' )
+		&& false !== strpos( $page, 'advertising spend and creator fees are separate' )
 		&& false !== strpos( $page, 'LinkedIn content support' ),
 	'has_special'  => false !== strpos( $page, 'Airbnb Review Appeal — One Assisted Submission' )
 		&& false !== strpos( $page, 'IMDb Submission Service — One Contribution' )

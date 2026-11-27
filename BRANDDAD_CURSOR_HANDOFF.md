@@ -166,3 +166,11 @@ Do not deploy this branch over newer Cursor public-page files. Merge only the ba
 - Do not restore “copy/send it yourself” positioning. IMDb, billboard vendor, and press are one bounded BrandDad submission after customer approval. Airbnb is customer-assisted: the eligible customer stays signed in and performs the final submit action.
 - Woo order items expose only private fulfillment metadata: `_bds_submission_service_slug`, `_bds_submission_mode`, `_bds_submission_status`, `_bds_customer_approval_required`, and `_bds_external_fee_included`. Do not let frontend input set these fields.
 - Do not add automatic external submission calls until a destination-specific connector has verified authorization, idempotency, customer approval, retry safety, and cost controls. Paid wire fees, billboard inventory, and other third-party spend require separate approval.
+
+## 2026-11-27 Done-for-You official promotion contract
+
+- Public plans are $399 Complete Management, $599 Promotion Starter, $699 Promotion Growth, and $849 Promotion Pro. The promotion tiers include 4, 8, and 12 managed promotion slots respectively; all plans keep 20 approved content posts evenly spaced through the service month.
+- Do not restore BDS Network, supplier-panel, purchased-engagement, saves/reposts/followers, or US/Worldwide package wording. Do not expose supplier ids or create a panel-order API.
+- Optional promotion may use only an authorized supported official platform or a documented, customer-approved creator campaign. Advertising spend, creator fees, and platform charges are separate from the BrandDad management fee.
+- Frontends must show organic and paid results separately and must not imply guaranteed placement, reach, followers, leads, or sales.
+- The current catalog is qualification-only/fail-closed. A future execution UI must collect explicit platform, audience, creative, schedule, and separate-budget approval before any promotion can run.
