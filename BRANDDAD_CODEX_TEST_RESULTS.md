@@ -865,3 +865,15 @@ Updated: 2026-11-19
 | Local regression | PASS — 43/43 Node, 48/48 PHP lint, 5/5 PHP behavior, 17/17 frontend renderer |
 | Rafter local secrets | PASS — no secrets in changed source files |
 | Rafter remote fast | BLOCKED — account remains at 16/16; paid Plus not used |
+
+## 2026-11-27 — Spotify stylesheet permission acceptance
+
+| Check | Result |
+|---|---|
+| Production file present | PASS — `branddad-seoestore/assets/spotify.css`, 4.05 KB in StartHost File Manager |
+| Root cause | CONFIRMED — stylesheet permission was `600` while adjacent public assets were `644` |
+| Scoped repair | PASS — changed only `spotify.css` permission to `644` after exact confirmation |
+| Public stylesheet | PASS — HTTP 200, 4,148 bytes |
+| Paired JavaScript | PASS — HTTP 200, 1,032 bytes |
+| Services regression | PASS — HTTP 200, 213,839 bytes |
+| Content/data safety | PASS — no file-content, product, cart, checkout, order, payment, subscription, or customer mutation |

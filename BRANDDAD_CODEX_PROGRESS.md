@@ -559,3 +559,9 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Rechecked StartHost's Scheduled Tasks page. It still has zero saved tasks, while the service overview still carries the false-positive malware flag and ticket `898665003` remains `Awaiting Staff Reply`. No host task was created, tested, or run.
 - GitHub's declared five-minute cron is not delivered at an exact five-minute cadence, so it remains a temporary single-runner fallback. Do not add or activate a StartHost runner until the GitHub fallback is disabled.
 - No action was manually run, cancelled, deleted, or retried. No order, payment, refund, subscription, customer, email, support message, or hosting configuration was changed during this verification.
+
+## 2026-11-27 — Spotify stylesheet access repair
+
+- Traced the only failed Social Services internal asset to `wp-content/plugins/branddad-seoestore/assets/spotify.css`. The production file existed and matched the expected 4,148-byte asset, but its host permission was `600`; the neighboring JavaScript and guide assets were correctly readable at `644`.
+- After exact owner confirmation, changed only `spotify.css` from `600` to `644` in the authenticated StartHost File Manager. No file content, plugin code, account, catalog, cart, checkout, order, payment, subscription, or customer record changed.
+- Verified the production row now reports `644`. A fresh public request returns HTTP 200 and 4,148 bytes for the stylesheet; the paired JavaScript returns HTTP 200 and 1,032 bytes; and the Social Services page remains HTTP 200.

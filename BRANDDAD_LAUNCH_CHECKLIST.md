@@ -1,6 +1,6 @@
 # BrandDad launch checklist
 
-Production readiness: not ready.
+Production readiness: controlled soft-launch surfaces are operational; unrestricted paid launch still requires the open acceptance gates below.
 
 - [x] Locate the existing repository and Directory domain.
 - [x] Leave the dirty Codex checkout untouched.
@@ -24,13 +24,16 @@ Production readiness: not ready.
 - [x] Verify the critical mobile conversion destinations: trial, Services, website audit, Add Listing registration handoff, claim-intent finder, Directory plans, and Playa del Carmen location all resolve successfully; the music brief remains an unsubmitted private POST form.
 - [x] Verify the wider rendered CTA surface: 65 visible CTA/link instances across Social Home, Services, and Directory Home reduced to 34 unique public paths; all resolved successfully, and all five referenced in-page anchors exist.
 - [~] Read the two Rafter warnings on each site before the next deploy: current records confirm zero critical and two warning findings per site, but the Rafter Sites API/CLI returns counts only and does not expose the warning bodies. Do not close this gate until the detailed findings are available.
-- [~] Frontend cleanup: local QA repair `1.0.20` keeps the current Directory hero as the single H1 and demotes/hides the retired WhatsApp hero; the gift source already refuses homepage rendering, and focused contracts pass. Deploy the reviewed source, purge generated Directory HTML cache, and confirm one visible H1 plus zero legacy gift-homepage text at 320/390/430px before closing.
-- [~] Frontend contrast cleanup: local launch/revenue/customer/Featured source versions now use `#0668D8` instead of failing `#0878ED`, and the focused contrast contract passes. Deploy and recheck default, hover, focus, active, disabled, forced-colors, and mobile states before closing.
+- [x] Frontend cleanup: the production Directory homepage compatibility release keeps the current hero as the single visible H1, suppresses the retired duplicate hero, leaves gift inventory off the homepage, and passed 390px/1440px acceptance without horizontal overflow or duplicate concierge surfaces.
+- [x] Frontend contrast cleanup: the reviewed `#0668D8` primary-action treatment is deployed on the launch surfaces; desktop and 320px/390px mobile acceptance passed without provider branding, overflow, or unreadable primary actions.
+- [x] Repair the blocked Social Spotify stylesheet: production permission changed from `600` to `644`; the CSS now returns HTTP 200 and the Services page remains HTTP 200.
+- [x] Deploy the reviewed shared backend package: all 15 expected `branddad/v1` routes are registered on production; the former `rest_no_route` note was stale.
 - [x] Recheck public HTTPS/indexing plumbing: both HTTP hosts 301 to their HTTPS equivalents, TLS verification succeeds, audited production pages have matching canonicals and no `noindex`, and both robots/sitemap endpoints return HTTP 200.
 
 ## Current release blockers
 
 - [!] Directory experienced an intermittent production database-connection outage on 2026-11-20. It recovered to HTTP 200, but host telemetry and a longer stability window remain required.
-- [!] Social has no working scheduled-task runner; StartHost still rejects the exact reviewed task with `Cron failed to add`.
-- [!] Live Stripe is connected but reports an `Incomplete` key-origin state; reconnect and safe lifecycle acceptance remain required.
-- [!] The reviewed production backend package is not deployed; live `branddad/v1` routes remain absent by design.
+- [~] Social has a working temporary single-runner fallback: repeated automatic GitHub `schedule` runs return HTTP 200 and the Woo queue has no sampled overdue pending work. StartHost still has no saved native task; do not enable a second runner before disabling the fallback.
+- [~] Live Stripe was reconnected to the existing BrandDadSocial account with payments, payouts, and webhooks enabled and test mode off. A safe signed-webhook purchase/provisioning/renewal/cancellation/refund lifecycle remains required before unrestricted paid launch.
+- [!] Required remote Rafter fast review remains quota-blocked at 16/16. Local secret scans and regression gates are clean; paid Plus was not used without approval.
+- [!] Real provider fulfillment acceptance remains incomplete for the products that depend on external AI or publishing services. Do not describe an untested provider action as automatic fulfillment.
