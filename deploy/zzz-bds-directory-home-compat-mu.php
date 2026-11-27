@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Directory Homepage Compatibility
  * Description: Preserves the complete Directory homepage document while the replacement experience remains composer-backed.
- * Version: 1.1.3
+ * Version: 1.1.4
  * Author: BrandDad
  */
 
@@ -41,6 +41,15 @@ function bds_directory_home_compat_sanitize_head( $head ) {
 	return str_ireplace( '<body>', 'body', $head );
 }
 
+/** Discard only removable buffers that predate this exact-root document. */
+function bds_directory_home_compat_clear_buffers() {
+	while ( ob_get_level() > 0 ) {
+		if ( ! @ob_end_clean() ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			break;
+		}
+	}
+}
+
 /**
  * Render the existing replacement homepage before colliding legacy buffers run.
  *
@@ -53,9 +62,10 @@ function bds_directory_home_compat_render() {
 		return;
 	}
 
+	bds_directory_home_compat_clear_buffers();
 	status_header( 200 );
 	if ( ! headers_sent() ) {
-		header( 'X-BDS-Directory-Home: recovery-5' );
+		header( 'X-BDS-Directory-Home: recovery-6' );
 	}
 
 	/*
