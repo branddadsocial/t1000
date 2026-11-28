@@ -1113,3 +1113,15 @@ Updated: 2026-11-19
 | File Manager restoration | PASS — returned to Social `wp-content/mu-plugins` after deployment |
 | Full release regression | PASS — 63/63 test files |
 | Account/commerce isolation | PASS — presentation only; no balance, bid, account, listing, payment, order, subscription, customer, or provider mutation |
+
+## 2026-11-28 — Directory local-first launch acceptance
+
+| Check | Result |
+|---|---|
+| Anonymous homepage | PASS — one H1, location-first search, one 50x50 concierge launcher, zero broken images/duplicate IDs/overflow |
+| Businesses without location | PASS — location gate visible; zero listing cards |
+| Events without location | PASS — `Discover Events`, location gate visible; zero listing cards |
+| Jobs without location | PASS — `Find Your Next Opportunity`, location gate visible |
+| Classifieds without location | PASS — `Buy, Sell & Discover Locally`, location gate visible; zero listing cards |
+| Worldwide mixing | PASS — no unfiltered public cards shown for the sampled content types |
+| Production mutation | NONE — verification only; no additional code or configuration change required |

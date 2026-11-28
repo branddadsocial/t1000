@@ -708,3 +708,10 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Anonymous validation confirmed the owner notice remains absent while the public location-first heading and page content remain available. The style layer does not create the notice or change its visibility rules.
 - Restored the StartHost File Manager to the Social MU-plugin folder after the isolated Directory upload.
 - Full local release regression passed 63/63 test files. No balance, bid, account, listing, payment, order, subscription, customer, JustAnotherPanel, or provider behavior changed.
+
+## 2026-11-28 — Directory local-first launch recheck
+
+- Rechecked the anonymous Directory homepage at 390x844 after the owner-strip deployment. It retains one H1, the location selector, disabled-until-complete result action, one 50x50 Directory Concierge launcher, zero broken images, zero duplicate IDs, and no horizontal overflow.
+- Verified that the unfiltered Businesses page shows **Choose a location before viewing businesses** and zero listing cards rather than mixing worldwide businesses.
+- Verified the same fail-closed discovery behavior for Events and Classifieds: each has its correct H1, a content-type-specific location gate, zero unfiltered listing cards, zero broken images, and no horizontal overflow.
+- Jobs & Careers likewise returned its correct H1 and location gate. No additional code change was required.
