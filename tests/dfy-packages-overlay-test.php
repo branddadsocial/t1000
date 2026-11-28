@@ -31,12 +31,12 @@ require dirname( __DIR__ ) . '/deploy/zzzz-bds-dfy-packages-mu.php';
 
 $html   = bds_dfy_packages_filter( '<p>Before</p>' );
 $checks = array(
-	'overlay version'        => false !== strpos( $html, 'data-bds-dfy-packages="1.2.1"' ),
+	'overlay version'        => false !== strpos( $html, 'data-bds-dfy-packages="1.3.0"' ),
 	'base without promotion' => false !== strpos( $html, 'Done-for-You Complete Management' ) && false !== strpos( $html, '$399/month' ) && false !== strpos( $html, 'No paid promotion or media spend is included or required.' ),
 	'starter package'        => false !== strpos( $html, 'Complete Management + Promotion Starter' ),
 	'growth package'         => false !== strpos( $html, 'Complete Management + Promotion Growth' ),
 	'pro package'            => false !== strpos( $html, 'Complete Management + Promotion Pro' ),
-	'prices'                 => false !== strpos( $html, '$599/month total' ) && false !== strpos( $html, '$699/month total' ) && false !== strpos( $html, '$849/month total' ),
+	'prices'                 => false !== strpos( $html, '$449/month total' ) && false !== strpos( $html, '$499/month total' ) && false !== strpos( $html, '$599/month total' ) && false === strpos( $html, '$699/month total' ) && false === strpos( $html, '$849/month total' ),
 	'promotion caps'         => false !== strpos( $html, 'up to 4 customer-approved' ) && false !== strpos( $html, 'up to 8 customer-approved' ) && false !== strpos( $html, 'up to 12 customer-approved' ),
 	'linkedin'               => false !== strpos( $html, 'LinkedIn content support' ),
 	'complete scope'         => false !== strpos( $html, 'Monthly plan and content calendar' ) && false !== strpos( $html, 'Approved replies to comments and direct messages' ) && false !== strpos( $html, 'Business-email reply and lead follow-up support' ) && false !== strpos( $html, 'Website chatbot knowledge updates' ) && false !== strpos( $html, 'Lead capture, qualification, follow-up' ) && false !== strpos( $html, 'Professional review-response assistance' ) && false !== strpos( $html, 'Website monitoring and a basic monthly SEO check' ),

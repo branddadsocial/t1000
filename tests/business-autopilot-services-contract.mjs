@@ -7,10 +7,10 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = fs.readFileSync(path.join(root, 'deploy', 'zzz-bds-frontend-polish-mu.php'), 'utf8');
 
 const checks = {
-  release_version: source.includes('Version: 1.0.16') && source.includes("BDS_FRONTEND_POLISH_VERSION', '1.0.16'"),
+  release_version: source.includes('Version: 1.0.17') && source.includes("BDS_FRONTEND_POLISH_VERSION', '1.0.17'"),
   base_without_promotion: source.includes('Done-for-You Complete Management') && source.includes('$399/month') && source.includes('No paid promotion or media spend is included or required.'),
   package_family_visible: source.includes('Complete Management + Promotion Starter') && source.includes('Complete Management + Promotion Growth') && source.includes('Complete Management + Promotion Pro'),
-  approved_prices: source.includes('$599/month total') && source.includes('$699/month total') && source.includes('$849/month total'),
+  approved_prices: source.includes('$449/month total') && source.includes('$499/month total') && source.includes('$599/month total') && !source.includes('$699/month total') && !source.includes('$849/month total'),
   promotion_caps_clear: source.includes('up to 4 customer-approved') && source.includes('up to 8 customer-approved') && source.includes('up to 12 customer-approved'),
   featured_plan_clear: source.includes("'eyebrow' => 'Best value'") && source.includes("'label'   => 'Choose Promotion Growth'"),
   linkedin_included: source.includes('LinkedIn content support'),

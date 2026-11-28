@@ -2,12 +2,12 @@
 /**
  * Plugin Name: BrandDad Done-for-You Packages Overlay
  * Description: Replaces only the Services-page managed-growth section while the canonical frontend file is host-locked.
- * Version: 1.2.1
+ * Version: 1.3.0
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_DFY_PACKAGES_VERSION', '1.2.1' );
+define( 'BDS_DFY_PACKAGES_VERSION', '1.3.0' );
 
 /** Render one trusted public package card. */
 function bds_dfy_package_card( array $package, $contact ) {
@@ -34,20 +34,20 @@ function bds_dfy_packages_section() {
 	$packages = array(
 		array(
 			'name'    => 'Complete Management + Promotion Starter',
-			'price'   => '$599/month total',
-			'summary' => 'Everything in Complete Management plus planning and management for up to 4 customer-approved paid or creator promotions, spaced through the month. Advertising spend and creator costs are separate.',
+			'price'   => '$449/month total',
+			'summary' => 'Everything in Complete Management plus a light, controlled promotion plan for up to 4 customer-approved paid or creator promotions, spaced through the month. Advertising spend and creator costs are separate.',
 			'label'   => 'Choose Promotion Starter',
 		),
 		array(
 			'name'    => 'Complete Management + Promotion Growth',
-			'price'   => '$699/month total',
+			'price'   => '$499/month total',
 			'eyebrow' => 'Best value',
 			'summary' => 'Everything in Complete Management plus planning and management for up to 8 customer-approved paid or creator promotions, spaced through the month. Advertising spend and creator costs are separate.',
 			'label'   => 'Choose Promotion Growth',
 		),
 		array(
 			'name'    => 'Complete Management + Promotion Pro',
-			'price'   => '$849/month total',
+			'price'   => '$599/month total',
 			'summary' => 'Everything in Complete Management plus planning and management for up to 12 customer-approved paid or creator promotions, spaced through the month, with a priority monthly review. Advertising spend and creator costs are separate.',
 			'label'   => 'Choose Promotion Pro',
 		),

@@ -24,11 +24,11 @@ $pro      = bds_dfy_package_schedule( 'promotion-pro' );
 $base     = bds_dfy_package_schedule( 'complete-management' );
 
 $checks = array(
-	'catalog version'          => '0.2.0' === BDS_DFY_ENGAGEMENT_CATALOG_VERSION,
+	'catalog version'          => '0.3.0' === BDS_DFY_ENGAGEMENT_CATALOG_VERSION,
 	'panel catalog retired'    => array() === $services,
 	'base plan'                => 39900 === $catalog['complete-management']['total_price_minor'] && 20 === $catalog['complete-management']['content_posts'] && 0 === $catalog['complete-management']['promotion_slots'] && 'qualification_only' === $catalog['complete-management']['execution_mode'],
-	'promotion totals'         => 59900 === $catalog['promotion-starter']['total_price_minor'] && 69900 === $catalog['promotion-growth']['total_price_minor'] && 84900 === $catalog['promotion-pro']['total_price_minor'],
-	'promotion add-ons'        => 20000 === $catalog['promotion-starter']['add_on_price_minor'] && 30000 === $catalog['promotion-growth']['add_on_price_minor'] && 45000 === $catalog['promotion-pro']['add_on_price_minor'],
+	'promotion totals'         => 44900 === $catalog['promotion-starter']['total_price_minor'] && 49900 === $catalog['promotion-growth']['total_price_minor'] && 59900 === $catalog['promotion-pro']['total_price_minor'],
+	'promotion add-ons'        => 5000 === $catalog['promotion-starter']['add_on_price_minor'] && 10000 === $catalog['promotion-growth']['add_on_price_minor'] && 20000 === $catalog['promotion-pro']['add_on_price_minor'],
 	'promotion slots'          => 4 === $catalog['promotion-starter']['promotion_slots'] && 8 === $catalog['promotion-growth']['promotion_slots'] && 12 === $catalog['promotion-pro']['promotion_slots'],
 	'content stays consistent' => 20 === $catalog['promotion-starter']['content_posts'] && 20 === $catalog['promotion-growth']['content_posts'] && 20 === $catalog['promotion-pro']['content_posts'],
 	'official only'            => $catalog['promotion-starter']['official_platform_only'] && $catalog['promotion-growth']['official_platform_only'] && $catalog['promotion-pro']['official_platform_only'],

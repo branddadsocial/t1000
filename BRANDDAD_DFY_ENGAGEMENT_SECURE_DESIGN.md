@@ -7,9 +7,9 @@ BrandDad will not connect or automate third-party panel services that manufactur
 The customer-facing offers remain qualification-only while the official integrations are verified:
 
 - Done-for-You Complete Management: $399/month. Twenty approved posts spaced across the month, LinkedIn content support, customer-conversation help, lead follow-up, website chat, and monthly reporting. No promotion budget is included.
-- Complete Management + Promotion Starter: $599/month total. Adds management of up to four customer-approved promotional placements, spaced across the month.
-- Complete Management + Promotion Growth: $699/month total. Adds management of up to eight customer-approved promotional placements, spaced across the month.
-- Complete Management + Promotion Pro: $849/month total. Adds management of up to twelve customer-approved promotional placements, spaced across the month, plus priority optimization review.
+- Complete Management + Promotion Starter: $449/month total. Adds management of up to four customer-approved promotional placements, spaced across the month.
+- Complete Management + Promotion Growth: $499/month total. Adds management of up to eight customer-approved promotional placements, spaced across the month.
+- Complete Management + Promotion Pro: $599/month total. Adds management of up to twelve customer-approved promotional placements, spaced across the month, plus priority optimization review.
 
 Advertising spend, creator compensation, and platform charges are separate. BrandDad's displayed monthly total is the management/service fee, not a hidden media budget. Customers approve the platform, audience, creative, schedule, and separate spend before a campaign can run.
 
@@ -34,6 +34,8 @@ Future authorized flow:
 `[verified paid Woo line] -> [server-owned package] -> [customer authorization and approval] -> [official platform OAuth/API or approved creator agreement] -> [platform confirmation] -> [private delivery ledger] -> [customer report]`
 
 The browser may choose only a public package. It cannot choose a provider endpoint, provider service id, quantity, cost, customer id, order id, delivery status, or platform token. All external actions remain disabled until an official platform connection or documented creator agreement exists.
+
+The 2026-11-27 price revision is presentation and qualification only. It changes no existing order, subscription, renewal, refund, customer entitlement, Stripe price, WooCommerce product price, or automatic billing agreement. The public path remains Contact/qualification; an accepted written scope must still become an admin-created Woo order and a confirmed payment before fulfillment can begin.
 
 ## Execution controls
 

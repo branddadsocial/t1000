@@ -169,7 +169,7 @@ Do not deploy this branch over newer Cursor public-page files. Merge only the ba
 
 ## 2026-11-27 Done-for-You official promotion contract
 
-- Public plans are $399 Complete Management, $599 Promotion Starter, $699 Promotion Growth, and $849 Promotion Pro. The promotion tiers include 4, 8, and 12 managed promotion slots respectively; all plans keep 20 approved content posts evenly spaced through the service month.
+- Public plans are $399 Complete Management, $449 Promotion Starter, $499 Promotion Growth, and $599 Promotion Pro. The promotion tiers include 4, 8, and 12 managed promotion slots respectively; all plans keep 20 approved content posts evenly spaced through the service month.
 - Do not restore BDS Network, supplier-panel, purchased-engagement, saves/reposts/followers, or US/Worldwide package wording. Do not expose supplier ids or create a panel-order API.
 - Optional promotion may use only an authorized supported official platform or a documented, customer-approved creator campaign. Advertising spend, creator fees, and platform charges are separate from the BrandDad management fee.
 - Frontends must show organic and paid results separately and must not imply guaranteed placement, reach, followers, leads, or sales.

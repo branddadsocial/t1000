@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.16
+ * Version: 1.0.17
  * Author: BrandDad
  *
  * Secure design:
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.16' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.17' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -169,20 +169,20 @@ function bds_fp_business_autopilot_cards( $contact ) {
 	$packages = array(
 		array(
 			'name'    => 'Complete Management + Promotion Starter',
-			'price'   => '$599/month total',
-			'summary' => 'Everything in Complete Management plus planning and management for up to 4 customer-approved paid or creator promotions, spaced through the month. Advertising spend and creator costs are separate.',
+			'price'   => '$449/month total',
+			'summary' => 'Everything in Complete Management plus a light, controlled promotion plan for up to 4 customer-approved paid or creator promotions, spaced through the month. Advertising spend and creator costs are separate.',
 			'label'   => 'Choose Promotion Starter',
 		),
 		array(
 			'name'    => 'Complete Management + Promotion Growth',
-			'price'   => '$699/month total',
+			'price'   => '$499/month total',
 			'eyebrow' => 'Best value',
 			'summary' => 'Everything in Complete Management plus planning and management for up to 8 customer-approved paid or creator promotions, spaced through the month. Advertising spend and creator costs are separate.',
 			'label'   => 'Choose Promotion Growth',
 		),
 		array(
 			'name'    => 'Complete Management + Promotion Pro',
-			'price'   => '$849/month total',
+			'price'   => '$599/month total',
 			'summary' => 'Everything in Complete Management plus planning and management for up to 12 customer-approved paid or creator promotions, spaced through the month, with a priority monthly review. Advertising spend and creator costs are separate.',
 			'label'   => 'Choose Promotion Pro',
 		),

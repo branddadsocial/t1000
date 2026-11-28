@@ -2,13 +2,13 @@
 /**
  * Plugin Name: BrandDad Done-for-You Promotion Catalog
  * Description: Fail-closed package limits, even scheduling, and reporting vocabulary for optional official promotion management.
- * Version: 0.2.0
+ * Version: 0.3.0
  * Author: BrandDad Social
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_DFY_ENGAGEMENT_CATALOG_VERSION', '0.2.0' );
+define( 'BDS_DFY_ENGAGEMENT_CATALOG_VERSION', '0.3.0' );
 
 /**
  * The retired supplier-panel catalog deliberately resolves to an empty map.
@@ -66,8 +66,8 @@ function bds_dfy_engagement_catalog() {
 		'promotion-starter' => array(
 			'name'                     => 'Promotion Starter',
 			'ledger_product_slug'      => 'done-for-you-ai-management',
-			'total_price_minor'        => 59900,
-			'add_on_price_minor'       => 20000,
+			'total_price_minor'        => 44900,
+			'add_on_price_minor'       => 5000,
 			'content_posts'            => 20,
 			'promotion_slots'          => 4,
 			'execution_mode'           => 'official_api_only_after_authorization',
@@ -78,8 +78,8 @@ function bds_dfy_engagement_catalog() {
 		'promotion-growth' => array(
 			'name'                     => 'Promotion Growth',
 			'ledger_product_slug'      => 'done-for-you-ai-management',
-			'total_price_minor'        => 69900,
-			'add_on_price_minor'       => 30000,
+			'total_price_minor'        => 49900,
+			'add_on_price_minor'       => 10000,
 			'content_posts'            => 20,
 			'promotion_slots'          => 8,
 			'execution_mode'           => 'official_api_only_after_authorization',
@@ -90,8 +90,8 @@ function bds_dfy_engagement_catalog() {
 		'promotion-pro' => array(
 			'name'                     => 'Promotion Pro',
 			'ledger_product_slug'      => 'done-for-you-ai-management',
-			'total_price_minor'        => 84900,
-			'add_on_price_minor'       => 45000,
+			'total_price_minor'        => 59900,
+			'add_on_price_minor'       => 20000,
 			'content_posts'            => 20,
 			'promotion_slots'          => 12,
 			'execution_mode'           => 'official_api_only_after_authorization',
