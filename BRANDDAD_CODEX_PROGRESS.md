@@ -673,3 +673,13 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Selected Restaurants and reached **Restaurants in Playa del Carmen** with 36 matching businesses, local subcategory counts, active location/category filters, public View Business links, and no membership gate.
 - Opened the Off the Vine profile and confirmed public business details and contact actions. The anonymous response contains the business profile and no in-account credit panel; that panel is account-specific and appears only for a signed-in owner session.
 - Mobile validation remained contained with no horizontal overflow and zero broken images. No code change was necessary; memberships remain reserved for account actions such as favorites, reviews, claiming, submitting, and business management.
+
+## 2026-11-28 — branded missing-product artwork and purchase-path audit
+
+- Audited the live Social Services and representative product paths. AI Business Essentials still exposes its real $29.99 seven-day-trial action, the $39.99 press-release service still exposes its one-time purchase action, and Done-for-You AI Management remains deliberately quote-first at $399 with one written-scope contact action and no public cart button.
+- Replaced WooCommerce's generic gray missing-product placeholder with the existing BrandDad Social wordmark on exact Social hosts. Products with assigned artwork are unchanged.
+- Corrected the single-product fallback accessibility label from `Awaiting product image` to `BrandDad Social service` only when no thumbnail attachment exists.
+- Deployed Branded Product Placeholder `1.0.1` to the production Social MU-plugin directory. Live desktop and 390x844 mobile acceptance found one visible H1, zero broken images, no horizontal overflow, no generic placeholder, and a compact branded wordmark.
+- Verified AI Business Essentials as the control product: its assigned artwork and descriptive alt text remain intact and it does not receive the fallback treatment.
+- No product price, checkout, cart, payment, order, subscription, customer record, JustAnotherPanel file, configuration, service ID, or workflow changed.
+- Full local release regression passed 62/62 test files. Security-surface review passed because the change is limited to WooCommerce presentation filters, fixed owned artwork, and CSS; it introduces no input, endpoint, auth, payment mutation, data write, outbound request, dependency, secret, or executable provider path.

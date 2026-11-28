@@ -1052,3 +1052,20 @@ Updated: 2026-11-19
 | Mobile layout | PASS — no horizontal overflow and zero broken images in the sampled public profile flow |
 | Membership policy | PASS — browsing remains public; account state is needed only for saved/account/owner actions |
 | Production mutation | NONE — verification was read-only and required no code or configuration change |
+
+## 2026-11-28 — branded product-artwork acceptance
+
+| Check | Result |
+|---|---|
+| Production upload | PASS — Branded Product Placeholder `1.0.1` completed in the Social production MU-plugin directory |
+| Missing-product artwork | PASS — live Done-for-You page uses the existing BrandDad Social wordmark; WooCommerce gray placeholder absent |
+| Accessible label | PASS — `BrandDad Social service`; retired `Awaiting product image` label absent on the fallback |
+| Assigned-art control | PASS — AI Business Essentials retains its real product image and original descriptive alt text |
+| Quote-first preservation | PASS — Done-for-You remains $399 with one written-scope contact action and zero visible cart buttons |
+| Priced product preservation | PASS — audited AI Business Essentials trial and press-release one-time purchase paths remain present |
+| Desktop layout | PASS — one visible H1, zero broken images, and no horizontal overflow |
+| Mobile layout | PASS — 390x844 test; branded fallback 333x49.6px, one visible H1, zero broken images, and no horizontal overflow |
+| Commerce safety | PASS — no price, cart, checkout, payment, order, subscription, customer, or gateway mutation |
+| JustAnotherPanel isolation | PASS — no JAP file, setting, credential, service ID, or workflow changed |
+| Full release regression | PASS — 62/62 test files |
+| Security-surface check | PASS — fixed owned artwork and presentation filters only; no input, endpoint, auth, payment/data mutation, network call, secret, dependency, or provider execution |
