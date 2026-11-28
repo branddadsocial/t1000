@@ -1169,3 +1169,4 @@ Updated: 2026-11-19
 | Financial/customer mutation | NONE — no live/test order, charge, refund, cancellation, subscription, API key, or customer record changed |
 | Rafter standard scan | BLOCKED EXTERNALLY — fast allowance remains 16/16; paid Plus was not authorized or used |
 | StartHost scheduler/telemetry | BLOCKED EXTERNALLY — ticket `898665003` still awaits staff response; GitHub remains the only scheduler |
+| GitHub fallback recovery | PASS — automatic run `46136642747` received a transient HTTP 401; direct checks were HTTP 200 and controlled dispatch `46158677714` then returned `http_status=200` |
