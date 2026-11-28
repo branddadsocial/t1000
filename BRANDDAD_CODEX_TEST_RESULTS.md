@@ -987,3 +987,20 @@ Updated: 2026-11-19
 | Full release regression | PASS — 58/58 test files |
 | Rafter remote fast | BLOCKED — existing account quota remains 16/16; no paid Plus scan was run |
 | Manual web security review | PASS — fixed server-owned identities; paid-state recheck remains authoritative; atomic task claim unchanged; output escaped or built with trusted DOM nodes; no new endpoint, SQL, auth, secret, dependency, or outbound request |
+
+## 2026-11-27 — live Done-for-You price acceptance
+
+| Check | Result |
+|---|---|
+| Production versions | PASS — catalog `0.3.0`, frontend `1.0.17`, overlay `1.3.0`, price refresh `1.0.0` |
+| Public prices | PASS — $399 management, $449 Starter, $499 Growth, $599 Pro |
+| Retired prices | PASS — $699 and $849 totals absent from the active section |
+| Quote-first flow | PASS — four Contact links, zero add-to-cart links, and zero cart forms in the Services section |
+| Product-page guard | PASS — Done-for-You product has a contact/quote action, zero Add to cart buttons, and zero cart forms |
+| Existing billing safety | PASS — no order, subscription, customer, payment method, gateway, charge, refund, or historical price changed |
+| White-label copy | PASS — no FormWise, JustAnotherPanel, BDS Network, supplier-panel name, or panel service ID in the active package section |
+| Desktop layout | PASS — one visible H1, zero broken images, and no horizontal overflow |
+| Mobile layout | PASS — 390x844 viewport, all four prices visible, all five actions usable, zero broken images, one visible H1, and no horizontal overflow |
+| Local release regression | PASS — 59/59 test files |
+| Rafter remote fast | BLOCKED — account remains at 16/16; paid Plus was not used |
+| Manual security review | PASS — presentation-only exact-section rewrite; no endpoint, input, auth, SQL, secret, dependency, outbound request, data mutation, or payment action |

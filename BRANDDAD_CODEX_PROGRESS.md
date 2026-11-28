@@ -638,3 +638,12 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Restored the press-release card omitted by the legacy homepage renderer using trusted DOM construction and an exact existing-link duplicate guard. The fallback hotfix is inert whenever the primary `0.2.3` patch has already restored the card.
 - Production acceptance at 1265px found one visible H1 per page, zero broken images, zero horizontal overflow, all four homepage and Services cards, the correct live product links, and purchase forms preserved only on the four priced one-time products.
 - No cart, order, payment, subscription, customer record, price, or gateway was created or changed. Full local regression passes 58/58 test files.
+
+## 2026-11-27 — live Done-for-You price revision
+
+- Revised the public Done-for-You presentation to the approved pricing: Complete Management $399/month, Promotion Starter $449/month total, Promotion Growth $499/month total, and Promotion Pro $599/month total.
+- Kept the offer quote-first. The price revision does not create public checkout, change an existing subscription, alter a customer order, charge a payment method, or change historical billing.
+- Promotion remains optional. The public tiers cover management of 4, 8, or 12 customer-approved official-platform or documented creator promotions; platform spend, creator compensation, and other media costs remain separate and require approval.
+- Deployed promotion catalog `0.3.0`, Frontend Polish `1.0.17`, package overlay `1.3.0`, and cache-safe price refresh `1.0.0` to the production Social MU-plugin directory.
+- The retired supplier-panel catalog, panel service IDs, and automated panel ordering remain inactive and are not presented publicly.
+- Full local release regression passed 59/59 test files. Required Rafter fast scanning was attempted but remains unavailable at the account's 16/16 quota; no paid Plus scan was used. Manual surface review passed because the change adds no endpoint, untrusted input, payment mutation, data write, network request, secret, dependency, or execution path.
