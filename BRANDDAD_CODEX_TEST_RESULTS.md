@@ -1004,3 +1004,21 @@ Updated: 2026-11-19
 | Local release regression | PASS — 59/59 test files |
 | Rafter remote fast | BLOCKED — account remains at 16/16; paid Plus was not used |
 | Manual security review | PASS — presentation-only exact-section rewrite; no endpoint, input, auth, SQL, secret, dependency, outbound request, data mutation, or payment action |
+
+## 2026-11-28 — website-check offer and homepage-funnel acceptance
+
+| Check | Result |
+|---|---|
+| Production upload | PASS — 2/2 reviewed MU plugins completed in the Social production MU-plugin directory |
+| Checker recommendation | PASS — `AI Website Improvement Plan` and `$19.99` returned by the live checker |
+| Retired checker offer | PASS — `Website Speed Optimization` and `$149` absent from the live result |
+| Checker isolation | PASS — existing route, scanner, score, cache, rate limits, diagnostic reason, and unrelated recommendations preserved |
+| Homepage creator path | PASS — navy high-contrast section with three visible, distinct actions |
+| Lead form behavior | PASS — original REST endpoint unchanged; privacy acknowledgment required; optional email consent remains unchecked |
+| Desktop layout | PASS — responsive grid, 20x20 checkboxes, zero broken images, and no horizontal overflow |
+| Mobile layout | PASS — 390x844 test; 347px sections within viewport, three 309px CTA buttons, single-column form, full-width submit, 20x20 checkboxes, and no horizontal overflow |
+| JustAnotherPanel isolation | PASS — no JAP file, configuration, service ID, credential, workflow, or live tab changed |
+| Full release regression | PASS — 61/61 test files |
+| Local secrets scan | PASS — no secrets detected in the two deploy files |
+| Rafter remote fast | BLOCKED — account quota remains 16/16; paid Plus was not used |
+| Manual web security review | PASS — exact existing route only, fixed server-owned replacement values, no request-data echo, no new endpoint/auth/payment/data write/network call/dependency, and CSS-only homepage presentation |

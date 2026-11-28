@@ -647,3 +647,13 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Deployed promotion catalog `0.3.0`, Frontend Polish `1.0.17`, package overlay `1.3.0`, and cache-safe price refresh `1.0.0` to the production Social MU-plugin directory.
 - The retired supplier-panel catalog, panel service IDs, and automated panel ordering remain inactive and are not presented publicly.
 - Full local release regression passed 59/59 test files. Required Rafter fast scanning was attempted but remains unavailable at the account's 16/16 quota; no paid Plus scan was used. Manual surface review passed because the change adds no endpoint, untrusted input, payment mutation, data write, network request, secret, dependency, or execution path.
+
+## 2026-11-28 — live website-check offer and homepage funnel polish
+
+- Corrected the live website checker so the `weak performance signals` recommendation now points to **AI Website Improvement Plan — $19.99** at the canonical product URL instead of the retired **Website Speed Optimization — $149** offer.
+- Preserved the existing checker route, scanner, cache, SSRF controls, rate limits, score, diagnostic reason, and all unrelated recommendations. The correction is a fixed server-owned response normalization on the existing `/bds-health/v1/check` route.
+- Polished the Social homepage's lower conversion path: the freelance-marketplace link now reads as a secondary door, the creator-campaign section uses a high-contrast navy card with three distinct actions, and the lead form uses a clean two-column desktop / one-column mobile layout.
+- Fixed the oversized checkbox defect. Both consent controls are 20x20 pixels; privacy acknowledgment remains required, email follow-up remains optional and unchecked, and the existing lead endpoint and submission behavior are unchanged.
+- Deployed only `zzzzzzzzz-bds-health-offer-consistency-mu.php` and `zzzzzzzzz-bds-home-bottom-polish-mu.php` to the production Social MU-plugin directory. JustAnotherPanel code, configuration, credentials, service IDs, and workflows were not touched.
+- Live acceptance passed on desktop and a 390x844 mobile viewport: current offer and price visible, retired offer absent, all three creator actions visible, lead form responsive, zero broken images, and no horizontal overflow.
+- Full local release regression passed 61/61 test files. Local secrets review passed. Required Rafter fast scanning was attempted but quota-blocked at 16/16; paid Plus was not used. Manual web-security review passed for the narrowly scoped response filter and CSS-only homepage plugin.
