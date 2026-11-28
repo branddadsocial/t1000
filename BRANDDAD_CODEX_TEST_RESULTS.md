@@ -1069,3 +1069,16 @@ Updated: 2026-11-19
 | JustAnotherPanel isolation | PASS — no JAP file, setting, credential, service ID, or workflow changed |
 | Full release regression | PASS — 62/62 test files |
 | Security-surface check | PASS — fixed owned artwork and presentation filters only; no input, endpoint, auth, payment/data mutation, network call, secret, dependency, or provider execution |
+
+## 2026-11-28 — homepage duplicate-style acceptance
+
+| Check | Result |
+|---|---|
+| Production version | PASS — Conversion Funnel Polish `1.2.0` |
+| Duplicate cleanup | PASS — `bds-hire-css` reduced from two identical nodes to one |
+| Duplicate IDs | PASS — zero after the live page completes rendering |
+| Content preservation | PASS — existing freelance section and links remain; only the redundant style node is removed |
+| Desktop layout | PASS — zero broken images and no horizontal overflow |
+| Mobile layout | PASS — 390x844 test, one visible H1, zero broken images, and no horizontal overflow |
+| Full release regression | PASS — 62/62 test files |
+| Commerce/provider isolation | PASS — no product, cart, checkout, payment, order, subscription, customer, or JustAnotherPanel behavior changed |

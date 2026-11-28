@@ -683,3 +683,10 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Verified AI Business Essentials as the control product: its assigned artwork and descriptive alt text remain intact and it does not receive the fallback treatment.
 - No product price, checkout, cart, payment, order, subscription, customer record, JustAnotherPanel file, configuration, service ID, or workflow changed.
 - Full local release regression passed 62/62 test files. Security-surface review passed because the change is limited to WooCommerce presentation filters, fixed owned artwork, and CSS; it introduces no input, endpoint, auth, payment mutation, data write, outbound request, dependency, secret, or executable provider path.
+
+## 2026-11-28 — homepage duplicate-style cleanup
+
+- The launch audit found the legacy freelance section printing two identical `bds-hire-css` style nodes with the same HTML ID on the Social homepage.
+- Updated Conversion Funnel Polish to `1.2.0`. It keeps the first existing stylesheet and removes only later identical style nodes after the page is rendered; section content, links, layout, lead handling, and all commerce behavior are unchanged.
+- Deployed the update and verified production now has one legacy style node, one dedupe controller, zero duplicate IDs, zero broken images, and no horizontal overflow on desktop or a 390x844 mobile viewport.
+- Full local release regression passed 62/62 test files. No JustAnotherPanel, product, checkout, payment, order, subscription, customer, or external-provider behavior changed.
