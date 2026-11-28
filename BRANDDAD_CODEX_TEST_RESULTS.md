@@ -1153,3 +1153,19 @@ Updated: 2026-11-19
 | File Manager restoration | PASS — returned to Social `wp-content/mu-plugins` after deployment |
 | Full release regression | PASS — 63/63 test files |
 | Commerce/provider isolation | PASS — no product, checkout, payment, order, subscription, customer, JustAnotherPanel, or Facebook account mutation |
+
+## 2026-11-28 — complete local backend regression
+
+| Check | Result |
+|---|---|
+| Node contracts | PASS — every `tests/*.mjs` file completed with zero failures |
+| Standalone PHP behavior tests | PASS — every `tests/*.php` file completed with zero failures |
+| Account and tenant isolation | PASS — signed account-link, verified-email fail-closed behavior, ownership, replay, and cross-account denial contracts |
+| Payment and subscription logic | PASS — trial, provisioning, renewal, revocation, refund, duplicate notification, paid-task, and allowance-cycle contracts |
+| AI execution | PASS — fixed provider endpoints, server-only key, bounded inputs/outputs, idempotency, reservation/commit/release, job ownership, and failure handling |
+| Directory backend | PASS — free AI allowances, membership bridge, Featured billing, local-first owner utility, and listing ownership contracts |
+| Customer operations | PASS — onboarding, inquiries, website monitoring, consent follow-up, status/reporting, and provider-cost contracts |
+| FormWise credits spent | NONE — inventory/readiness audit only; no provider execution |
+| Financial/customer mutation | NONE — no live/test order, charge, refund, cancellation, subscription, API key, or customer record changed |
+| Rafter standard scan | BLOCKED EXTERNALLY — fast allowance remains 16/16; paid Plus was not authorized or used |
+| StartHost scheduler/telemetry | BLOCKED EXTERNALLY — ticket `898665003` still awaits staff response; GitHub remains the only scheduler |

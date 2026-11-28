@@ -345,3 +345,42 @@ Focused contract and both PHP syntax checks pass; `git diff --check` passes. `ra
 - **A10 — SSRF:** no outbound fetch, redirect target, or caller-controlled URL was introduced. The existing legacy redirect remains outside this plugin and must be verified live.
 - **Evidence:** 43/43 Node contracts, 48/48 deployment PHP syntax checks, 5/5 standalone PHP behavior tests, and `git diff --check` pass. The local Rafter secret scan is clean. Required `rafter run --mode fast` was attempted and remains blocked at 16/16; paid Plus was not used.
 - **Disposition:** no unresolved local release-blocking finding. Production acceptance must verify one Shop card, canonical product HTTP 200, legacy HTTP 301 to canonical, canonical product ID `53645` buyable, legacy product ID `53082` rejected, and no order/payment creation.
+
+# 2026-11-28 launch-lifecycle secure-design gate
+
+Scope: finish the staged purchase/account/entitlement lifecycle and then enable only backend adapters that pass their feature-specific production gates. Existing live customers, subscriptions, orders, prices, and provider accounts remain out of the test path.
+
+## Data flow and trust boundaries
+
+`[Customer browser] -> [WordPress/WooCommerce session + CSRF controls] -> [Stripe-hosted test payment] -> [signed Stripe webhook] -> [Woo order/subscription] -> [server-side entitlement/usage store] -> [customer-owned AI job] -> [least-privilege provider API]`.
+
+Boundaries are browser-to-WordPress, WordPress-to-Stripe, Stripe-to-webhook, application-to-WordPress data, and application-to-provider. WordPress remains authoritative for customer identity, orders, entitlements, usage, and job ownership. Stripe remains authoritative for payment state. Provider output cannot grant entitlement or alter billing.
+
+## Authentication and authorization decisions
+
+- Humans use the existing WordPress server-side session and nonce/CSRF primitives; no new JWT or password system is introduced.
+- Customer access is RBAC plus mandatory resource ownership: the authenticated WordPress user must own the order, entitlement, job, result, inquiry, or onboarding record. Unknown or cross-owner resources return the same not-found response.
+- Stripe events require the official webhook signature, event/object identity, expected account/mode, and an idempotency record before any transition. Browser return URLs never activate service access.
+- Provider calls act as a scoped BrandDad service principal and log both the customer/job identity and provider execution identity without logging credentials or full request bodies.
+- Account linking remains fail-closed unless the shared 32+ byte secret and authoritative verified-email filter are both present. Tenant or owner identity is never accepted from a request parameter.
+
+## Data, API, and deployment decisions
+
+- Stored identifiers: WordPress user/order/subscription/job IDs. PII remains in the existing customer/order stores. Payment card data stays with Stripe; BrandDad stores no raw card data. API keys and webhook secrets remain server-side and outside Git/browser output.
+- Customer/job queries are owner-scoped; mutable fields are explicit allowlists. Server-owned plan, price, entitlement, usage, status, owner, and provider-cost fields cannot be set by clients.
+- Purchase/webhook/job writes are idempotent. Failed provider work does not consume a delivered-result allowance; retries reuse the job/idempotency identity and cannot duplicate staff tasks or entitlements.
+- Rate limits combine IP, authenticated user/business, and expensive-operation quotas. Errors expose stable customer-safe states without stack traces, database details, credentials, or existence oracles.
+- Staging uses synthetic customers and Stripe test mode only. Live billing remains unchanged until the full test lifecycle passes and a separate production activation decision is made.
+- Secrets are least-privilege per integration. Missing or broad/unsupported credentials keep adapters disabled. Exactly one scheduler runs; a second runner cannot be enabled before the first is disabled.
+
+## STRIDE and abuse-case controls
+
+- Spoofing: server sessions/nonces, signed Stripe events, exact provider credentials, and verified-email account linking.
+- Tampering: TLS, signed webhooks, server-owned order/entitlement fields, idempotency, and audit events tied to immutable provider/payment identifiers.
+- Repudiation: order notes and lifecycle logs record actor, transition, resource, timestamp, request/event ID, and result without secrets.
+- Information disclosure: owner-scoped reads, generic cross-owner errors, no card storage, no credential/browser exposure, and minimized logs.
+- Denial of service: bounded inputs, per-user/IP quotas, provider timeouts, retry backoff, stale-lock recovery, cost ceilings, and exactly one scheduler.
+- Elevation of privilege: no client-controlled roles/owners/plan/price/status; domain-level owner and capability checks on every protected transition.
+- Abuse twins: payment retry cannot duplicate entitlement/task; webhook replay cannot duplicate provisioning; cross-account job lookup cannot reveal another result; repeated free/trial signup cannot stack allowances; failed AI work cannot be marked delivered; provider outage cannot create an unbounded retry or cost loop.
+
+Residual risks deliberately retained: shared-host availability and host-native scheduler repair remain provider-controlled; real live-mode financial lifecycle testing still requires a separate action-time authorization; optional provider-backed features remain disabled when credentials, consent, official API permission, or cost evidence is absent. None of these residual risks is permission to claim disabled automation as operational.
