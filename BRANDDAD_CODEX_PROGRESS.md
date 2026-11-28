@@ -690,3 +690,12 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Updated Conversion Funnel Polish to `1.2.0`. It keeps the first existing stylesheet and removes only later identical style nodes after the page is rendered; section content, links, layout, lead handling, and all commerce behavior are unchanged.
 - Deployed the update and verified production now has one legacy style node, one dedupe controller, zero duplicate IDs, zero broken images, and no horizontal overflow on desktop or a 390x844 mobile viewport.
 - Full local release regression passed 62/62 test files. No JustAnotherPanel, product, checkout, payment, order, subscription, customer, or external-provider behavior changed.
+
+## 2026-11-28 — shared mobile-menu and WooCommerce spacing polish
+
+- Opened and exercised the real mobile menu at 390x844 on Social Home, Services, Shop, and AI Business Essentials. Every page exposes the same five destinations: Services, Get Featured, Account, Contact, and List my business free; each destination has the correct Social or Directory host.
+- Found WooCommerce pages inheriting 150px of empty top padding below the 56px header. Services and the homepage did not have this defect.
+- Updated Frontend Polish to `1.0.18` with a WooCommerce-only responsive top gap: 51.2px at the 1280px acceptance viewport and 24px at 390px. Homepage and Services spacing remain untouched.
+- Deployed and verified Shop now begins its breadcrumb at 80px and heading at 116.8px on mobile instead of 206px and 242.8px. The representative product breadcrumb now begins at 100px on mobile and 161.4px on desktop.
+- Zero broken images and no horizontal overflow remained on the tested Shop and product pages. Full local release regression passed 62/62 test files.
+- This is CSS-only presentation work. No product, price, trial, cart, checkout, payment, order, subscription, customer, JustAnotherPanel, or provider behavior changed.

@@ -1082,3 +1082,18 @@ Updated: 2026-11-19
 | Mobile layout | PASS — 390x844 test, one visible H1, zero broken images, and no horizontal overflow |
 | Full release regression | PASS — 62/62 test files |
 | Commerce/provider isolation | PASS — no product, cart, checkout, payment, order, subscription, customer, or JustAnotherPanel behavior changed |
+
+## 2026-11-28 — mobile-menu and WooCommerce-spacing acceptance
+
+| Check | Result |
+|---|---|
+| Shared menu pages | PASS — Home, Services, Shop, and AI Business Essentials |
+| Shared menu destinations | PASS — Services, Get Featured, Account, Contact, and List my business free on every sampled page |
+| Production version | PASS — Frontend Polish `1.0.18` |
+| Desktop product spacing | PASS — responsive 51.2px primary padding; breadcrumb at 161.4px instead of 260.2px |
+| Mobile product spacing | PASS — 24px primary padding; breadcrumb at 100px instead of 226px |
+| Mobile Shop spacing | PASS — breadcrumb at 80px and H1 at 116.8px instead of 206px and 242.8px |
+| Layout safety | PASS — zero broken images and no horizontal overflow on sampled Shop/product pages |
+| Scope isolation | PASS — exact WooCommerce body classes; homepage and Services spacing unaffected |
+| Full release regression | PASS — 62/62 test files |
+| Commerce/provider isolation | PASS — CSS only; no product, price, trial, cart, checkout, payment, order, subscription, customer, or JustAnotherPanel behavior changed |
