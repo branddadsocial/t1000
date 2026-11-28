@@ -67,6 +67,7 @@ $checks = array(
 	'health_shared_nav_hidden' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), 'body.bds-fp-health-page>#bds-nav-fix-bar{display:none!important}' ),
 	'logo_fallback'  => 'https://branddad.social/wp-content/uploads/2023/04/3-1-1.webp' === bds_fp_social_logo_url(),
 	'price_text_fix' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '.bds-oneshot-price>span' ),
+	'compact_woo_spacing' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), 'body.woocommerce #primary,body.woocommerce-page #primary{padding-top:clamp(24px,4vw,56px)!important}' ),
 	'shared_mobile_menu' => false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '#bds-nav-fix-bar .bds-nav-fix-mobile' ),
 	'bounded_services' => false === strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), 'calc(50% - 50vw)' )
 		&& false !== strpos( file_get_contents( dirname( __DIR__ ) . '/deploy/zzz-bds-frontend-polish-mu.php' ), '.bds-fp-section--soft{margin:0;' ),

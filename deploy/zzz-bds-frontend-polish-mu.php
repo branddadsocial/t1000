@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Frontend Polish
  * Description: Consolidates public sales surfaces, removes duplicate widgets, and keeps Services, Shop, product, and website-check pages visually focused.
- * Version: 1.0.17
+ * Version: 1.0.18
  * Author: BrandDad
  *
  * Secure design:
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.17' );
+define( 'BDS_FRONTEND_POLISH_VERSION', '1.0.18' );
 
 /**
  * Isolate the recovered health widget from a legacy whole-page script scrubber.
@@ -341,6 +341,7 @@ function bds_fp_styles() {
 	}
 	if ( bds_fp_is_social() ) {
 		$css = ':root{--bds-fp-ink:#10243a;--bds-fp-muted:#52677d;--bds-fp-blue:#0668d8;--bds-fp-line:#dbe5ef;--bds-fp-soft:#f4f8fc}'
+			. 'body.woocommerce #primary,body.woocommerce-page #primary{padding-top:clamp(24px,4vw,56px)!important}'
 			. '.bds-oneshot-price{display:flex!important;align-items:baseline!important;flex-wrap:wrap!important;gap:6px!important}.bds-oneshot-price>span{display:inline!important;position:static!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:#52677d!important;font:750 .88rem/1.3 Manrope,system-ui,sans-serif!important;white-space:nowrap!important;overflow:visible!important;clip:auto!important;transform:none!important}'
 			. '#bds-svc-jump,#bds-rev-home-strip,#bds-music-brief,#bds-dir-signup,#bds-sales-help,#bds-follow-consent,#bdsNetworkConnectStrip,#bds-formwise-sales,#bds-social-seomi,#bds-hire-foot,.bdsu-growth-quiz,.bdsu-contact-dock,#bdsu-contact-dock{display:none!important}'
 			. 'body.single-product #bds-join-benefits,body.single-product .bds-oneshot-buybox,body.single-product .bds-oneshot-note,body.single-product .upsells.products,body.single-product .related.products{display:none!important}'
