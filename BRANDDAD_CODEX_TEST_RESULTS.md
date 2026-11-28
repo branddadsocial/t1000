@@ -1038,3 +1038,17 @@ Updated: 2026-11-19
 | JustAnotherPanel isolation | PASS — no JAP file, setting, credential, service ID, or workflow changed |
 | Full release regression | PASS — 61/61 test files |
 | Security-surface check | PASS — CSS availability and exact page scoping only; no new input, endpoint, auth, payment, data write, network call, dependency, or execution path |
+
+## 2026-11-28 — anonymous Directory browsing acceptance
+
+| Check | Result |
+|---|---|
+| Public Home | PASS — HTTP 200 without membership requirement |
+| Public category wizard | PASS — HTTP 200; country, region, city, then business type |
+| Local category availability | PASS — only categories with Playa del Carmen matches are offered after location selection |
+| Public result list | PASS — Restaurants in Playa del Carmen returned 36 matching businesses and public View Business links |
+| Public business profile | PASS — Off the Vine returned HTTP 200 with business and contact content and no login gate |
+| Anonymous account content | PASS — account-credit panel absent from anonymous HTML; it remains owner-account specific |
+| Mobile layout | PASS — no horizontal overflow and zero broken images in the sampled public profile flow |
+| Membership policy | PASS — browsing remains public; account state is needed only for saved/account/owner actions |
+| Production mutation | NONE — verification was read-only and required no code or configuration change |

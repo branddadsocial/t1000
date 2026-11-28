@@ -665,3 +665,11 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Deployed Conversion Funnel Polish `1.1.0` to production. Live mobile acceptance now shows a 347px contained card, a one-column 309px form, two 20x20 checkboxes, a full-width submit button, required privacy acknowledgment, optional email consent unchecked, zero broken images, and no horizontal overflow.
 - One cache-bypass Services request briefly returned a Cloudflare 502 with the browser and Cloudflare healthy but the origin in error. A bounded retry five seconds later recovered to the full Services page and the final acceptance remained healthy. This is recorded as hosting-origin reliability evidence, not attributed to the CSS-only change.
 - Full local release regression passed 61/61 test files. The diff changes only page scoping, plugin metadata/version, and CSS availability; it adds no security-sensitive execution surface.
+
+## 2026-11-28 — public Directory browsing verification
+
+- Verified that consumer discovery is already public and does not require a membership. Anonymous HTTP requests returned 200 for Directory Home, All Categories, Restaurants, All Listings, and an individual business profile without a login or membership-required response.
+- Exercised the live location-first wizard through Mexico → Quintana Roo → Playa del Carmen. The fourth step exposed only business types with published local matches, including Restaurants, Bars, Beauty Salons, Cafes & Coffee, Hotels, Professional Services, Real Estate Agencies, Shops, and Spas & Wellness.
+- Selected Restaurants and reached **Restaurants in Playa del Carmen** with 36 matching businesses, local subcategory counts, active location/category filters, public View Business links, and no membership gate.
+- Opened the Off the Vine profile and confirmed public business details and contact actions. The anonymous response contains the business profile and no in-account credit panel; that panel is account-specific and appears only for a signed-in owner session.
+- Mobile validation remained contained with no horizontal overflow and zero broken images. No code change was necessary; memberships remain reserved for account actions such as favorites, reviews, claiming, submitting, and business management.
