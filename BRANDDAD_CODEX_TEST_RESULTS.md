@@ -1125,3 +1125,17 @@ Updated: 2026-11-19
 | Classifieds without location | PASS — `Buy, Sell & Discover Locally`, location gate visible; zero listing cards |
 | Worldwide mixing | PASS — no unfiltered public cards shown for the sampled content types |
 | Production mutation | NONE — verification only; no additional code or configuration change required |
+
+## 2026-11-28 — Directory related-card ID acceptance
+
+| Check | Result |
+|---|---|
+| Production version | PASS — Directory Owner Utility Strip `1.1.0` |
+| Primary article identity | PASS — exactly one `post-3470` remains |
+| Related cards | PASS — two cards remain with their original titles and destination links |
+| Duplicate-ID repair | PASS — related cards have no IDs; full document has zero duplicate IDs |
+| Desktop structure | PASS — one H1, zero broken images, no horizontal overflow |
+| Mobile structure | PASS — 390x844, one H1, zero broken images, no horizontal overflow |
+| File Manager restoration | PASS — returned to Social `wp-content/mu-plugins` after deployment |
+| Full release regression | PASS — 63/63 test files |
+| Account/commerce/provider isolation | PASS — markup-only repair; no account, listing, payment, order, subscription, customer, JustAnotherPanel, or provider mutation |

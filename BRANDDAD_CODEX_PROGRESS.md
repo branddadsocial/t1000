@@ -715,3 +715,11 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Verified that the unfiltered Businesses page shows **Choose a location before viewing businesses** and zero listing cards rather than mixing worldwide businesses.
 - Verified the same fail-closed discovery behavior for Events and Classifieds: each has its correct H1, a content-type-specific location gate, zero unfiltered listing cards, zero broken images, and no horizontal overflow.
 - Jobs & Careers likewise returned its correct H1 and location gate. No additional code change was required.
+
+## 2026-11-28 — Directory related-card ID repair
+
+- The final markup audit found the claim article's primary post and its two related-post cards sharing the HTML ID `post-3470`.
+- Updated Directory Owner Utility Strip to `1.1.0`. The added footer repair removes IDs only from `article.theme-related-blog-each` cards; the primary article ID, related-card content, links, styling, and navigation remain unchanged.
+- Deployed the update to the production Directory MU-plugin folder and restored StartHost File Manager to the Social `wp-content/mu-plugins` folder.
+- Live desktop and 390x844 mobile verification found one primary `post-3470`, two intact related cards, zero related cards with IDs, zero duplicate IDs, one H1, zero broken images, and no horizontal overflow.
+- Full local release regression passed 63/63 test files. No account, listing, balance, bid, product, checkout, payment, order, subscription, customer, JustAnotherPanel, or provider behavior changed.
