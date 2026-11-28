@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Conversion Funnel Polish
  * Description: Polishes the creator campaign CTA and private recommendation form on the Social homepage and Services page.
- * Version: 1.1.0
+ * Version: 1.2.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( defined( 'BDS_HOME_BOTTOM_POLISH_VERSION' ) ) {
 	return;
 }
 
-define( 'BDS_HOME_BOTTOM_POLISH_VERSION', '1.1.0' );
+define( 'BDS_HOME_BOTTOM_POLISH_VERSION', '1.2.0' );
 
 /**
  * @return bool
@@ -39,7 +39,7 @@ function bds_home_bottom_polish_styles() {
 		return;
 	}
 	?>
-	<style id="bds-home-bottom-polish-css" data-bds-home-bottom-polish="1.1.0">
+	<style id="bds-home-bottom-polish-css" data-bds-home-bottom-polish="1.2.0">
 	#bds-hire-home-line{max-width:1180px;margin:14px auto 24px;padding:0 20px;text-align:center}
 	#bds-hire-home-line .bds-hire-a--text{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:0 16px;border:1px solid #dbe5ef;border-radius:999px;background:#f8fbff;color:#18324f;text-decoration:none;font-weight:800}
 	#bds-hire-home-line .bds-hire-a--text:hover,#bds-hire-home-line .bds-hire-a--text:focus-visible{border-color:#0b83f6;color:#0668d8;background:#fff}
@@ -76,4 +76,21 @@ function bds_home_bottom_polish_styles() {
 	<?php
 }
 add_action( 'wp_head', 'bds_home_bottom_polish_styles', 999 );
+
+/**
+ * The legacy freelance block can print its identical style tag twice when the
+ * homepage renders both of its existing placements. Keep the first stylesheet
+ * and remove only later duplicate nodes; content and links remain untouched.
+ */
+function bds_home_bottom_polish_dedupe_legacy_style() {
+	if ( ! bds_home_bottom_polish_should_render() ) {
+		return;
+	}
+	?>
+	<script id="bds-home-bottom-polish-dedupe" data-bds-home-bottom-polish="1.2.0">
+	(function(){var n=document.querySelectorAll('#bds-hire-css');for(var i=1;i<n.length;i++){n[i].remove();}})();
+	</script>
+	<?php
+}
+add_action( 'wp_footer', 'bds_home_bottom_polish_dedupe_legacy_style', 999 );
 
