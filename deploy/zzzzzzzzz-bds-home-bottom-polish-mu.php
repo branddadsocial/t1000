@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: BrandDad Homepage Bottom Funnel Polish
- * Description: Polishes the creator campaign CTA and private recommendation form on the Social homepage.
- * Version: 1.0.0
+ * Plugin Name: BrandDad Conversion Funnel Polish
+ * Description: Polishes the creator campaign CTA and private recommendation form on the Social homepage and Services page.
+ * Version: 1.1.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,7 +13,7 @@ if ( defined( 'BDS_HOME_BOTTOM_POLISH_VERSION' ) ) {
 	return;
 }
 
-define( 'BDS_HOME_BOTTOM_POLISH_VERSION', '1.0.0' );
+define( 'BDS_HOME_BOTTOM_POLISH_VERSION', '1.1.0' );
 
 /**
  * @return bool
@@ -21,9 +21,14 @@ define( 'BDS_HOME_BOTTOM_POLISH_VERSION', '1.0.0' );
 function bds_home_bottom_polish_should_render() {
 	$host = isset( $_SERVER['HTTP_HOST'] ) ? strtolower( trim( (string) $_SERVER['HTTP_HOST'] ) ) : '';
 	$host = preg_replace( '/:\d+$/', '', $host );
-	return in_array( $host, array( 'branddad.social', 'www.branddad.social' ), true )
-		&& function_exists( 'is_front_page' )
-		&& is_front_page();
+	if ( ! in_array( $host, array( 'branddad.social', 'www.branddad.social' ), true ) ) {
+		return false;
+	}
+
+	$is_home = function_exists( 'is_front_page' ) && is_front_page();
+	$is_services = function_exists( 'is_page' ) && is_page( 'services' );
+
+	return $is_home || $is_services;
 }
 
 /**
@@ -34,7 +39,7 @@ function bds_home_bottom_polish_styles() {
 		return;
 	}
 	?>
-	<style id="bds-home-bottom-polish-css" data-bds-home-bottom-polish="1.0.0">
+	<style id="bds-home-bottom-polish-css" data-bds-home-bottom-polish="1.1.0">
 	#bds-hire-home-line{max-width:1180px;margin:14px auto 24px;padding:0 20px;text-align:center}
 	#bds-hire-home-line .bds-hire-a--text{display:inline-flex;min-height:44px;align-items:center;justify-content:center;padding:0 16px;border:1px solid #dbe5ef;border-radius:999px;background:#f8fbff;color:#18324f;text-decoration:none;font-weight:800}
 	#bds-hire-home-line .bds-hire-a--text:hover,#bds-hire-home-line .bds-hire-a--text:focus-visible{border-color:#0b83f6;color:#0668d8;background:#fff}

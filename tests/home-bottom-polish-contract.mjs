@@ -2,8 +2,8 @@ import fs from 'node:fs';
 
 const source = fs.readFileSync('deploy/zzzzzzzzz-bds-home-bottom-polish-mu.php', 'utf8');
 const checks = [
-  ['version is explicit', /BDS_HOME_BOTTOM_POLISH_VERSION', '1\.0\.0'/.test(source)],
-  ['styles are Social-home only', /branddad\.social[\s\S]*www\.branddad\.social[\s\S]*is_front_page/.test(source)],
+  ['version is explicit', /BDS_HOME_BOTTOM_POLISH_VERSION', '1\.1\.0'/.test(source)],
+  ['styles are limited to Social home and Services', /branddad\.social[\s\S]*www\.branddad\.social[\s\S]*is_front_page[\s\S]*is_page[\s\S]*services/.test(source)],
   ['creator section uses light text on dark background', /#bds-bv-creator-strip[\s\S]*#071a33[\s\S]*color:#fff/.test(source)],
   ['creator actions wrap responsively', /#bds-bv-creator-strip>p:last-child\{display:flex;flex-wrap:wrap/.test(source)],
   ['lead form has a responsive two-column layout', /#bds-codex-lead\{[\s\S]*grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/.test(source)],
