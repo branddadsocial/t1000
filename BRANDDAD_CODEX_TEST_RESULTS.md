@@ -1097,3 +1097,19 @@ Updated: 2026-11-19
 | Scope isolation | PASS — exact WooCommerce body classes; homepage and Services spacing unaffected |
 | Full release regression | PASS — 62/62 test files |
 | Commerce/provider isolation | PASS — CSS only; no product, price, trial, cart, checkout, payment, order, subscription, customer, or JustAnotherPanel behavior changed |
+
+## 2026-11-28 — Directory owner utility-strip acceptance
+
+| Check | Result |
+|---|---|
+| Production upload | PASS — Directory Owner Utility Strip `1.0.0` completed in the Directory production MU-plugin folder |
+| Exact scope | PASS — Directory hosts and existing `bds-nav-fix-wallet` only |
+| Mobile notice height | PASS — reduced from approximately 257px to 120.8px at 390x844 |
+| Owner information | PASS — Available/Held copy retained; My listings and placement links retained |
+| Touch targets | PASS — both owner links rendered at 33.3px high in the compact utility strip |
+| Discovery preservation | PASS — location-first H1 and four-choice flow remain present |
+| Anonymous behavior | PASS — owner notice absent; public category discovery remains available |
+| Layout safety | PASS — zero broken images, zero duplicate IDs, and no horizontal overflow |
+| File Manager restoration | PASS — returned to Social `wp-content/mu-plugins` after deployment |
+| Full release regression | PASS — 63/63 test files |
+| Account/commerce isolation | PASS — presentation only; no balance, bid, account, listing, payment, order, subscription, customer, or provider mutation |

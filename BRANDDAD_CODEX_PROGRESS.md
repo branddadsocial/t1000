@@ -699,3 +699,12 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Deployed and verified Shop now begins its breadcrumb at 80px and heading at 116.8px on mobile instead of 206px and 242.8px. The representative product breadcrumb now begins at 100px on mobile and 161.4px on desktop.
 - Zero broken images and no horizontal overflow remained on the tested Shop and product pages. Full local release regression passed 62/62 test files.
 - This is CSS-only presentation work. No product, price, trial, cart, checkout, payment, order, subscription, customer, JustAnotherPanel, or provider behavior changed.
+
+## 2026-11-28 — Directory signed-in owner utility polish
+
+- Re-audited the live All Categories location-first journey at 390x844. The four-choice country → region → city → category flow, shared mobile navigation, footer, and single floating Directory Concierge remained intact with zero broken images, no duplicate IDs, and no horizontal overflow.
+- Found the signed-in owner credit notice consuming roughly 257px above the mobile header. Added Directory Owner Utility Strip `1.0.0`, scoped to exact Directory hosts and the existing `bds-nav-fix-wallet` element.
+- The live signed-in notice now occupies 120.8px, keeps the Available/Held explanation accessible, preserves both My listings and See placement on listings links, and gives each link a 33.3px rendered touch target. The Directory header moved from approximately 322px to 178.8px in the same signed-in/admin mobile session.
+- Anonymous validation confirmed the owner notice remains absent while the public location-first heading and page content remain available. The style layer does not create the notice or change its visibility rules.
+- Restored the StartHost File Manager to the Social MU-plugin folder after the isolated Directory upload.
+- Full local release regression passed 63/63 test files. No balance, bid, account, listing, payment, order, subscription, customer, JustAnotherPanel, or provider behavior changed.
