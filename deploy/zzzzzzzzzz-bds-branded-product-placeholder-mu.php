@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Branded Product Placeholder
  * Description: Replaces WooCommerce's generic missing-product image with BrandDad Social branding.
- * Version: 1.0.0
+ * Version: 1.0.1
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -11,7 +11,7 @@ if ( defined( 'BDS_BRANDED_PRODUCT_PLACEHOLDER_VERSION' ) ) {
 	return;
 }
 
-define( 'BDS_BRANDED_PRODUCT_PLACEHOLDER_VERSION', '1.0.0' );
+define( 'BDS_BRANDED_PRODUCT_PLACEHOLDER_VERSION', '1.0.1' );
 
 /**
  * @return bool
@@ -61,6 +61,36 @@ function bds_branded_product_placeholder_html( $html, $size ): string {
 add_filter( 'woocommerce_placeholder_img', 'bds_branded_product_placeholder_html', 999, 2 );
 
 /**
+ * WooCommerce's single-product gallery builds its fallback from the placeholder
+ * URL and can retain the theme's "Awaiting product image" alt text. Correct the
+ * accessibility label only when there is no assigned product thumbnail.
+ *
+ * @param string $html              Existing gallery image markup.
+ * @param int    $post_thumbnail_id Product thumbnail attachment ID.
+ * @return string
+ */
+function bds_branded_product_placeholder_gallery_html( $html, $post_thumbnail_id ): string {
+	if ( ! bds_branded_product_placeholder_is_social() || 0 < (int) $post_thumbnail_id ) {
+		return (string) $html;
+	}
+
+	$src = bds_branded_product_placeholder_src( '' );
+	if ( false === strpos( (string) $html, $src ) ) {
+		return (string) $html;
+	}
+
+	$html = preg_replace(
+		'/\s+alt=("|\').*?\1/i',
+		' alt="' . esc_attr__( 'BrandDad Social service', 'branddad' ) . '"',
+		(string) $html,
+		1
+	);
+
+	return is_string( $html ) ? $html : '';
+}
+add_filter( 'woocommerce_single_product_image_thumbnail_html', 'bds_branded_product_placeholder_gallery_html', 999, 2 );
+
+/**
  * Keep the branded fallback compact on product and catalog cards.
  */
 function bds_branded_product_placeholder_styles(): void {
@@ -68,7 +98,7 @@ function bds_branded_product_placeholder_styles(): void {
 		return;
 	}
 	?>
-	<style id="bds-branded-product-placeholder-css" data-bds-branded-product-placeholder="1.0.0">
+	<style id="bds-branded-product-placeholder-css" data-bds-branded-product-placeholder="1.0.1">
 	.bds-product-placeholder{box-sizing:border-box;display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;padding:clamp(32px,8vw,76px);border:1px solid #dbe5ef;border-radius:18px;background:linear-gradient(145deg,#fff 0%,#edf6ff 100%)}
 	.products .bds-product-placeholder{aspect-ratio:1;padding:clamp(24px,5vw,52px);border-radius:14px}
 	@media(max-width:720px){.single-product .bds-product-placeholder{max-height:260px;padding:38px 30px}}
