@@ -657,3 +657,11 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Deployed only `zzzzzzzzz-bds-health-offer-consistency-mu.php` and `zzzzzzzzz-bds-home-bottom-polish-mu.php` to the production Social MU-plugin directory. JustAnotherPanel code, configuration, credentials, service IDs, and workflows were not touched.
 - Live acceptance passed on desktop and a 390x844 mobile viewport: current offer and price visible, retired offer absent, all three creator actions visible, lead form responsive, zero broken images, and no horizontal overflow.
 - Full local release regression passed 61/61 test files. Local secrets review passed. Required Rafter fast scanning was attempted but quota-blocked at 16/16; paid Plus was not used. Manual web-security review passed for the narrowly scoped response filter and CSS-only homepage plugin.
+
+## 2026-11-28 — Services recommendation-form mobile repair
+
+- Found that the shared private recommendation form was polished on the homepage but not on `/services/`. At a measured mobile viewport, the two consent checkboxes rendered as 333x44 controls and the form fell back to an unstructured block layout.
+- Extended the existing presentation-only polish layer from the Social homepage to the exact Social Services page. No endpoint, JavaScript, lead processing, consent rule, message delivery, customer record, product, payment, or JustAnotherPanel behavior changed.
+- Deployed Conversion Funnel Polish `1.1.0` to production. Live mobile acceptance now shows a 347px contained card, a one-column 309px form, two 20x20 checkboxes, a full-width submit button, required privacy acknowledgment, optional email consent unchecked, zero broken images, and no horizontal overflow.
+- One cache-bypass Services request briefly returned a Cloudflare 502 with the browser and Cloudflare healthy but the origin in error. A bounded retry five seconds later recovered to the full Services page and the final acceptance remained healthy. This is recorded as hosting-origin reliability evidence, not attributed to the CSS-only change.
+- Full local release regression passed 61/61 test files. The diff changes only page scoping, plugin metadata/version, and CSS availability; it adds no security-sensitive execution surface.

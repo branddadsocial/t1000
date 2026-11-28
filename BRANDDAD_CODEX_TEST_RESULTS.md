@@ -1022,3 +1022,19 @@ Updated: 2026-11-19
 | Local secrets scan | PASS — no secrets detected in the two deploy files |
 | Rafter remote fast | BLOCKED — account quota remains 16/16; paid Plus was not used |
 | Manual web security review | PASS — exact existing route only, fixed server-owned replacement values, no request-data echo, no new endpoint/auth/payment/data write/network call/dependency, and CSS-only homepage presentation |
+
+## 2026-11-28 — Services recommendation-form acceptance
+
+| Check | Result |
+|---|---|
+| Production upload | PASS — Conversion Funnel Polish `1.1.0` completed in the Social MU-plugin directory |
+| Scope | PASS — exact Social hosts; homepage or `services` page only |
+| Mobile form layout | PASS — 347px card, one 309px column, full-width 309px submit, and no horizontal overflow |
+| Checkbox repair | PASS — both controls reduced from 333x44 to 20x20 pixels |
+| Consent behavior | PASS — privacy acknowledgment remains required; email follow-up remains optional and unchecked |
+| Endpoint preservation | PASS — existing `https://branddad.social/wp-json/branddad/v1/sales/leads` endpoint unchanged |
+| Images | PASS — zero broken images on final mobile acceptance |
+| Host observation | RECOVERED — one transient origin-side Cloudflare 502; bounded five-second retry and final acceptance returned the complete page |
+| JustAnotherPanel isolation | PASS — no JAP file, setting, credential, service ID, or workflow changed |
+| Full release regression | PASS — 61/61 test files |
+| Security-surface check | PASS — CSS availability and exact page scoping only; no new input, endpoint, auth, payment, data write, network call, dependency, or execution path |
