@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: BrandDad Directory Owner Utility Strip
- * Description: Keeps signed-in Directory utilities compact and repairs invalid related-card IDs.
- * Version: 1.1.0
+ * Description: Keeps signed-in Directory utilities compact and repairs stale footer markup.
+ * Version: 1.2.0
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -11,7 +11,7 @@ if ( defined( 'BDS_DIRECTORY_OWNER_STRIP_VERSION' ) ) {
 	return;
 }
 
-define( 'BDS_DIRECTORY_OWNER_STRIP_VERSION', '1.1.0' );
+define( 'BDS_DIRECTORY_OWNER_STRIP_VERSION', '1.2.0' );
 
 /**
  * @return bool
@@ -31,7 +31,7 @@ function bds_directory_owner_strip_styles(): void {
 		return;
 	}
 	?>
-	<style id="bds-directory-owner-strip-css" data-bds-directory-owner-strip="1.1.0">
+	<style id="bds-directory-owner-strip-css" data-bds-directory-owner-strip="1.2.0">
 	#bds-nav-fix-wallet{box-sizing:border-box;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 16px;width:min(1180px,calc(100% - 28px));max-width:1180px;margin:8px auto;padding:10px 14px;border:1px solid #d9e5f1;border-radius:14px;background:linear-gradient(135deg,#f8fbff 0%,#eef6ff 100%);box-shadow:0 8px 24px rgba(15,42,74,.08);color:#17324f}
 	#bds-nav-fix-wallet h2{margin:0;color:#10243d;font-size:15px;line-height:1.25;white-space:nowrap}
 	#bds-nav-fix-wallet p{margin:0;color:#52677d;font-size:12px;line-height:1.45}
@@ -54,14 +54,20 @@ add_action( 'wp_head', 'bds_directory_owner_strip_styles', 999 );
  * The active blog theme reuses the current post ID on each related-post card.
  * Related cards do not need fragment IDs, so remove only those invalid IDs and
  * leave the primary article ID, related content, destinations, and styling.
+ *
+ * The legacy Facebook page embed exposes an obsolete paid-listing message from
+ * Facebook. Remove only that embed; the owned Facebook and group links remain.
  */
 function bds_directory_owner_strip_related_id_repair(): void {
 	if ( ! bds_directory_owner_strip_is_directory() || is_admin() ) {
 		return;
 	}
 	?>
-	<script id="bds-directory-related-id-repair" data-bds-directory-owner-strip="1.1.0">
-	(function(){document.querySelectorAll('article.theme-related-blog-each[id]').forEach(function(card){card.removeAttribute('id');});})();
+	<script id="bds-directory-related-id-repair" data-bds-directory-owner-strip="1.2.0">
+	(function(){
+		document.querySelectorAll('article.theme-related-blog-each[id]').forEach(function(card){card.removeAttribute('id');});
+		document.querySelectorAll('.bds-dfl-fb-plugin').forEach(function(embed){embed.remove();});
+	})();
 	</script>
 	<?php
 }
