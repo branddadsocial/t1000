@@ -749,3 +749,10 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Updated the sales-assistant API candidate so its public catalog excludes any WooCommerce product that is not currently purchasable; model output still cannot invent or supply a checkout URL.
 - Both PHP files lint clean, focused tests pass, the checksum manifest is current, all 63 local tests pass, and the local secret scan is clean.
 - This correction is **staged only**. It has not been deployed because the mandatory standard Rafter scan is externally blocked at 16/16. No live catalog file, product, order, payment, subscription, customer, API key, or JustAnotherPanel configuration changed.
+
+## 2026-11-28 — live backend readiness probes
+
+- Rechecked the production REST surface without authentication or provider execution. The public sales catalog returned HTTP 200; eleven sampled customer/admin routes returned HTTP 401 with `rest_forbidden`, confirming their anonymous-denial boundary remains active.
+- Sent an intentionally empty, owned-origin Sales Assistant request. Production returned HTTP 422 `invalid_message`, which can only occur after the server-side enable flag and execution-key readiness check passes; the request stopped before any FormWise call and spent no provider credit.
+- Repeated the empty request from an unowned origin and received HTTP 403 `origin_not_allowed`; the owned Directory origin reached the expected HTTP 422 validation boundary.
+- This proves the BrandDad-hosted sales proxy is enabled with a non-empty server credential and origin enforcement. It does not prove that the installed credential is the new least-privilege key, because FormWise still reports the specifically named `BrandDad Social WP execution` key as never used.

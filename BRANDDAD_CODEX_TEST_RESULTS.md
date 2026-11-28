@@ -1186,3 +1186,15 @@ Updated: 2026-11-19
 | Local secrets | PASS — no detected secret |
 | Mandatory remote review | BLOCKED — Rafter fast allowance is 16/16; paid Plus was not used |
 | Production deployment | NOT PERFORMED — live commerce/customer state unchanged |
+
+## 2026-11-28 — live REST and Sales Assistant readiness
+
+| Check | Result |
+|---|---|
+| Public sales catalog | PASS — HTTP 200 |
+| Protected customer/admin GET routes | PASS — 11/11 returned HTTP 401 `rest_forbidden` anonymously |
+| Server execution readiness | PASS — owned-origin empty request returned HTTP 422 after enable/key checks and before provider execution |
+| Unowned browser origin | PASS — HTTP 403 `origin_not_allowed` |
+| Owned Directory origin | PASS — reached HTTP 422 input validation |
+| FormWise credits | ZERO — no valid message was sent; no agent/flow execution occurred |
+| Least-privilege key identity | UNPROVEN — production has a non-empty key, but the separately named WP execution key still reports never used |
