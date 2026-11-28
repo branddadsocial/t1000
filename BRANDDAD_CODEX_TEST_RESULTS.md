@@ -1139,3 +1139,17 @@ Updated: 2026-11-19
 | File Manager restoration | PASS — returned to Social `wp-content/mu-plugins` after deployment |
 | Full release regression | PASS — 63/63 test files |
 | Account/commerce/provider isolation | PASS — markup-only repair; no account, listing, payment, order, subscription, customer, JustAnotherPanel, or provider mutation |
+
+## 2026-11-28 — Directory stale-footer acceptance
+
+| Check | Result |
+|---|---|
+| Production version | PASS — Directory Owner Utility Strip `1.2.0` |
+| Obsolete offer | PASS — Facebook embed and `$6.99` listing copy absent from the live document |
+| Owned social links | PASS — Facebook page and Facebook group links remain visible |
+| Current policy | PASS — owned footer continues to state that a basic listing is free |
+| Desktop layout | PASS — zero duplicate IDs, zero broken images, no horizontal overflow |
+| Mobile layout | PASS — 390x844, embed absent, follow link present, no broken images or horizontal overflow |
+| File Manager restoration | PASS — returned to Social `wp-content/mu-plugins` after deployment |
+| Full release regression | PASS — 63/63 test files |
+| Commerce/provider isolation | PASS — no product, checkout, payment, order, subscription, customer, JustAnotherPanel, or Facebook account mutation |

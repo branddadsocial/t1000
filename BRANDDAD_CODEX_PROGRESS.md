@@ -723,3 +723,10 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Deployed the update to the production Directory MU-plugin folder and restored StartHost File Manager to the Social `wp-content/mu-plugins` folder.
 - Live desktop and 390x844 mobile verification found one primary `post-3470`, two intact related cards, zero related cards with IDs, zero duplicate IDs, one H1, zero broken images, and no horizontal overflow.
 - Full local release regression passed 63/63 test files. No account, listing, balance, bid, product, checkout, payment, order, subscription, customer, JustAnotherPanel, or provider behavior changed.
+
+## 2026-11-28 — obsolete Directory footer offer removal
+
+- The final footer review found the third-party Facebook page embed exposing stale Facebook profile copy that still advertised the obsolete `$6.99` listing fee, while the owned Directory footer correctly states that a basic listing is free.
+- Updated Directory Owner Utility Strip to `1.2.0` and removed only the `.bds-dfl-fb-plugin` embed. The owned Facebook page link, Facebook group link, social profile links, and current free-listing footer message remain present.
+- Deployed the update, restored StartHost File Manager to the Social MU-plugin folder, and verified on desktop and 390x844 mobile that the embed and obsolete copy are absent, the Facebook links remain, and the page has zero duplicate IDs, zero broken images, and no horizontal overflow.
+- PHP lint, the focused contract, and the full 63/63 local release regression passed. No Facebook account, product, checkout, payment, order, subscription, customer, JustAnotherPanel, or provider configuration changed.
