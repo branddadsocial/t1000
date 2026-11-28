@@ -2,18 +2,28 @@
 /**
  * Plugin Name: BrandDad Done-for-You Quote Guard
  * Description: Keeps Done-for-You and retired growth products quote-first without changing historical commerce records.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: BrandDad Social
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'BDS_DFY_QUOTE_GUARD_VERSION', '0.1.0' );
+define( 'BDS_DFY_QUOTE_GUARD_VERSION', '0.1.1' );
 
 /** Exact, server-owned public slugs that must not start a new self-serve purchase. */
 function bds_dfy_quote_guard_slugs() {
 	return array(
 		'done-for-you-ai-management',
+		'complete-ai-starter',
+		'complete-ai-growth',
+		'complete-ai-pro',
+		'ai-business-automation',
+		'music-original-single',
+		'music-premium-single',
+		'music-ep-3',
+		'music-album-6',
+		'music-album-12',
+		'music-monthly-partnership',
 		'bds-ig-growth-us-starter',
 		'bds-ig-growth-us-growth',
 		'bds-ig-growth-us-pro',
@@ -34,6 +44,18 @@ function bds_dfy_quote_guard_product_slug( $product_or_id ) {
 function bds_dfy_quote_guard_is_slug( $slug ) {
 	return in_array( sanitize_title( (string) $slug ), bds_dfy_quote_guard_slugs(), true );
 }
+
+/**
+ * Make guarded products non-purchasable at the WooCommerce product layer.
+ *
+ * This blocks accelerated checkout integrations as well as the standard form.
+ * Staff can still create an admin order after the customer approves a scope.
+ */
+function bds_dfy_quote_guard_purchasable( $purchasable, $product ) {
+	return bds_dfy_quote_guard_is_slug( bds_dfy_quote_guard_product_slug( $product ) ) ? false : $purchasable;
+}
+add_filter( 'woocommerce_is_purchasable', 'bds_dfy_quote_guard_purchasable', PHP_INT_MAX, 2 );
+add_filter( 'woocommerce_variation_is_purchasable', 'bds_dfy_quote_guard_purchasable', PHP_INT_MAX, 2 );
 
 /** Fail closed for new public cart additions; existing commerce records are untouched. */
 function bds_dfy_quote_guard_cart_validation( $passed, $product_id, $quantity = 1, $variation_id = 0 ) {
@@ -89,27 +111,40 @@ function bds_dfy_quote_guard_is_main_product() {
 	return 'done-for-you-ai-management' === sanitize_title( (string) get_post_field( 'post_name', get_queried_object_id() ) );
 }
 
+function bds_dfy_quote_guard_is_guarded_product_page() {
+	if ( is_admin() || ! function_exists( 'is_product' ) || ! is_product() ) {
+		return false;
+	}
+	return bds_dfy_quote_guard_is_slug( sanitize_title( (string) get_post_field( 'post_name', get_queried_object_id() ) ) );
+}
+
 function bds_dfy_quote_guard_is_services_page() {
 	return ! is_admin() && function_exists( 'is_page' ) && is_page( 'services' );
 }
 
 /** Current quote-first explanation rendered beside the product title. */
 function bds_dfy_quote_guard_summary() {
-	if ( ! bds_dfy_quote_guard_is_main_product() ) {
+	if ( ! bds_dfy_quote_guard_is_guarded_product_page() ) {
 		return;
 	}
 	$contact = home_url( '/contact-us/' );
 	echo '<section class="bds-dfy-quote" data-bds-dfy-quote-guard="' . esc_attr( BDS_DFY_QUOTE_GUARD_VERSION ) . '">';
-	echo '<p class="bds-fp-eyebrow">Done-for-you business management</p>';
-	echo '<h2>' . esc_html__( 'Start with a written scope—not instant checkout.', 'branddad' ) . '</h2>';
-	echo '<p>' . esc_html__( 'Tell us which channels, conversations, website tasks, and lead follow-up you want managed. We confirm the workload, approvals, limits, and final monthly price in writing before billing.', 'branddad' ) . '</p>';
-	echo '<ul><li>' . esc_html__( 'Complete Management starts at $399 per month.', 'branddad' ) . '</li><li>' . esc_html__( 'Official-platform or documented creator promotion is optional.', 'branddad' ) . '</li><li>' . esc_html__( 'Advertising spend and creator fees are separate and require approval.', 'branddad' ) . '</li><li>' . esc_html__( 'No follower, reach, lead, or sales result is guaranteed.', 'branddad' ) . '</li></ul>';
+	if ( bds_dfy_quote_guard_is_main_product() ) {
+		echo '<p class="bds-fp-eyebrow">Done-for-you business management</p>';
+		echo '<h2>' . esc_html__( 'Start with a written scope—not instant checkout.', 'branddad' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Tell us which channels, conversations, website tasks, and lead follow-up you want managed. We confirm the workload, approvals, limits, and final monthly price in writing before billing.', 'branddad' ) . '</p>';
+		echo '<ul><li>' . esc_html__( 'Complete Management starts at $399 per month.', 'branddad' ) . '</li><li>' . esc_html__( 'Official-platform or documented creator promotion is optional.', 'branddad' ) . '</li><li>' . esc_html__( 'Advertising spend and creator fees are separate and require approval.', 'branddad' ) . '</li><li>' . esc_html__( 'No follower, reach, lead, or sales result is guaranteed.', 'branddad' ) . '</li></ul>';
+	} else {
+		echo '<p class="bds-fp-eyebrow">Scoped BrandDad service</p>';
+		echo '<h2>' . esc_html__( 'Confirm the scope before you pay.', 'branddad' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Tell us what you need. We will confirm the included work, delivery limits, timeline, and exact price in writing, then prepare the correct order.', 'branddad' ) . '</p>';
+	}
 	echo '<p><a class="button bds-dfy-quote-link" href="' . esc_url( $contact ) . '">' . esc_html__( 'Contact BrandDad for a written scope', 'branddad' ) . '</a></p></section>';
 }
 
 /** Remove only Woo's standard purchase form on the exact quote-only product. */
 function bds_dfy_quote_guard_single_product() {
-	if ( ! bds_dfy_quote_guard_is_main_product() ) {
+	if ( ! bds_dfy_quote_guard_is_guarded_product_page() ) {
 		return;
 	}
 	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
@@ -119,7 +154,7 @@ add_action( 'wp', 'bds_dfy_quote_guard_single_product', PHP_INT_MAX );
 
 /** Hide the known stale callback output while its legacy plugin remains installed. */
 function bds_dfy_quote_guard_css() {
-	$is_product  = bds_dfy_quote_guard_is_main_product();
+	$is_product  = bds_dfy_quote_guard_is_guarded_product_page();
 	$is_services = bds_dfy_quote_guard_is_services_page();
 	if ( ! $is_product && ! $is_services ) {
 		return;
@@ -138,7 +173,7 @@ function bds_dfy_quote_guard_retired_redirect() {
 		return;
 	}
 	$slug = sanitize_title( (string) get_post_field( 'post_name', get_queried_object_id() ) );
-	if ( 'done-for-you-ai-management' === $slug || ! bds_dfy_quote_guard_is_slug( $slug ) ) {
+	if ( in_array( $slug, array( 'done-for-you-ai-management', 'complete-ai-starter', 'complete-ai-growth', 'complete-ai-pro', 'ai-business-automation', 'music-original-single', 'music-premium-single', 'music-ep-3', 'music-album-6', 'music-album-12', 'music-monthly-partnership' ), true ) || ! bds_dfy_quote_guard_is_slug( $slug ) ) {
 		return;
 	}
 	wp_safe_redirect( home_url( '/services/#bds-fp-business-autopilot' ), 302, 'BrandDad Done-for-You Quote Guard' );

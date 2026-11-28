@@ -4,7 +4,7 @@ import process from 'node:process';
 const source = fs.readFileSync('deploy/bds-sales-assistant-api-mu.php', 'utf8');
 
 const checks = [
-  ['version is pinned', /BDS_SALES_ASSISTANT_API_VERSION', '0\.1\.1'/],
+  ['version is pinned', /BDS_SALES_ASSISTANT_API_VERSION', '0\.1\.3'/],
   ['verified sales agent UUID is fixed server-side', /BDS_SALES_ASSISTANT_AGENT_ID', '35ab0cc3-e2c5-456c-b4ef-2d1853ffd29c'/],
   ['public execution defaults off', /defined\( 'BDS_SALES_ASSISTANT_ENABLED' \)[\s\S]*true === BDS_SALES_ASSISTANT_ENABLED/],
   ['server execution key is required', /BDS_FORMWISE_EXECUTION_KEY/],
@@ -18,6 +18,7 @@ const checks = [
   ['provider conversation id is stored server-side', /set_transient\( 'bds_sales_conv_'/],
   ['model cannot provide checkout links', /function bds_sales_assistant_strip_links[\s\S]*preg_replace\( '~https\?:\/\//],
   ['offers and links come from the authoritative catalog', /bds_ai_commercial_catalog[\s\S]*bds_ai_commercial_checkout_url/],
+  ['catalog excludes Woo products that are not currently purchasable', /wc_get_product[\s\S]*is_purchasable[\s\S]*! \$product->is_purchasable\(\)/],
   ['provider origin and agent are fixed', /https:\/\/builder\.formwise\.ai\/api\/v1\/agents\/.*BDS_SALES_ASSISTANT_AGENT_ID/],
   ['redirects are disabled', /'redirection'\s*=>\s*0/],
   ['provider response is bounded', /'limit_response_size'\s*=>\s*65536/],

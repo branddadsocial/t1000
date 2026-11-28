@@ -384,3 +384,28 @@ Boundaries are browser-to-WordPress, WordPress-to-Stripe, Stripe-to-webhook, app
 - Abuse twins: payment retry cannot duplicate entitlement/task; webhook replay cannot duplicate provisioning; cross-account job lookup cannot reveal another result; repeated free/trial signup cannot stack allowances; failed AI work cannot be marked delivered; provider outage cannot create an unbounded retry or cost loop.
 
 Residual risks deliberately retained: shared-host availability and host-native scheduler repair remain provider-controlled; real live-mode financial lifecycle testing still requires a separate action-time authorization; optional provider-backed features remain disabled when credentials, consent, official API permission, or cost evidence is absent. None of these residual risks is permission to claim disabled automation as operational.
+
+# 2026-11-28 quote-only checkout and sales-catalog review
+
+Scope: prevent written-scope products from being sold through standard or accelerated WooCommerce checkout and prevent the AI sales catalog from advertising a product that WooCommerce currently marks non-purchasable.
+
+- **A01 / authorization:** the product decision uses an exact server-owned slug allowlist (`deploy/zzzzzz-bds-dfy-quote-guard-mu.php:17-33`) and the WooCommerce product object resolved from the server catalog (`deploy/bds-sales-assistant-api-mu.php:114-160`). No request can select a price, launch state, owner, or purchasability result.
+- **A02 / secrets and crypto:** no credential, token, cookie, or cryptographic behavior changed. `rafter secrets .` reports no detected secret.
+- **A03 / injection:** slugs are normalized with `sanitize_title`; product copy and links use WordPress escaping. No SQL, shell, deserialization, or caller-controlled HTML sink was added.
+- **A04 / insecure design:** checkout is blocked at three layers: `woocommerce_is_purchasable` and variation equivalent (`:54-58`), add-to-cart validation (`:61-74`), and stale-cart checkout validation (`:78-96`). An admin can still create the approved quote order; historical orders are unchanged.
+- **A05 / misconfiguration:** the guard fails closed for missing/invalid products. Accelerated payment buttons must honor WooCommerce's product-level purchasability rather than relying only on removal of the standard form.
+- **A06 / dependencies:** no dependency or manifest package changed. The source checksum manifest was updated and revalidated.
+- **A07 / authentication:** no login/session/password flow changed.
+- **A08 / integrity:** the exact source checksum is pinned in `SHA256SUMS.txt`, and the release checksum contract passes.
+- **A09 / logging:** no customer input, payment data, or secret is logged. This change creates no new log sink.
+- **A10 / SSRF:** no URL fetch was added. The existing sales-assistant provider endpoint remains fixed, redirects remain disabled, and responses remain bounded (`deploy/bds-sales-assistant-api-mu.php:203-211`).
+- **LLM01 / prompt injection:** the model cannot generate checkout links; the application strips model URLs and attaches only server-derived eligible offers (`:108-160`).
+- **LLM02 / disclosure:** the change adds no customer/order/provider data to the prompt; only the existing bounded customer question and sanitized offer name/price/availability are sent.
+- **LLM03-04 / supply and poisoning:** the fixed published agent ID and fixed provider endpoint remain unchanged; no RAG corpus, upload, model, plugin, or training source changed.
+- **LLM05 / output handling:** model output remains stripped of links and HTML before return (`:108-111`). It cannot modify checkout state.
+- **LLM06 / agency:** the model has no payment, order, messaging, or file tool. WooCommerce determines purchasability server-side.
+- **LLM07-08:** no secret enters the prompt and no vector/embedding system is present in this diff.
+- **LLM09:** product availability is now grounded in the catalog plus the live WooCommerce product's `is_purchasable()` result (`:141-145`), preventing known quote-only offers from being represented as immediately buyable.
+- **LLM10 / cost:** existing 2,000-character input, ten-per-minute client limit, daily provider cap, 30-second timeout, and 65,536-byte response limit remain unchanged.
+- **Evidence:** both PHP files lint clean; focused sales-catalog and quote-guard tests pass; all 63 local Node/PHP tests pass; `git diff --check` and local secret scan pass.
+- **Remote gate:** required `rafter run --mode fast` was attempted against the exact branch and rejected because the free allowance remains 16/16. Paid Plus was not used. The change must not be deployed or described as complete until that required scan gate clears.

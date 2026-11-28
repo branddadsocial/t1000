@@ -2,6 +2,7 @@
 
 - **Airbnb one-review checkout gate:** the $9.99 one-time product source, one-paid-order/one-case entitlement, published FormWise flow mapping, and public copy are deployed and the public/protected smoke checks pass. Do not open public checkout until the exact staged product passes payment → private entitlement → one usable result → duplicate denial → failed-run release → refund denial, and the required Rafter scan passes. The live product intentionally remains non-purchasable with a final-delivery-testing notice so it cannot take money before hosted payment acceptance.
 - **Airbnb diff security scan quota:** `rafter secrets .` passes, the surface-driven secure-design and manual web/API/LLM review are complete, and `rafter run --mode fast` was attempted. The remote scanner rejected it at 16/16 fast scans. Paid Plus was not used because it requires explicit purchase/credit approval. This blocks completion/deployment classification, not further safe local work.
+- **Quote-only accelerated checkout gate:** live anonymous inspection found PayPal/Venmo controls on Done-for-You and a direct subscription control on Complete AI Starter even though those offers require a written scope or lack complete entitlements. A local product-layer guard and sales-catalog eligibility correction pass all 63 tests, but payment-surface deployment is blocked until the required Rafter fast scan clears. No live checkout was changed.
 
 Updated: 2026-11-27
 

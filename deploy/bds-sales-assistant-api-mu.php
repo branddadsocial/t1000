@@ -2,7 +2,7 @@
 /**
  * Plugin Name: BrandDad Sales Assistant API
  * Description: Rate-limited public proxy for the verified BrandDad Sales Assistant and authoritative checkout offers.
- * Version: 0.1.1
+ * Version: 0.1.3
  * Author: BrandDad Social
  */
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BDS_SALES_ASSISTANT_API_VERSION', '0.1.1' );
+define( 'BDS_SALES_ASSISTANT_API_VERSION', '0.1.3' );
 define( 'BDS_SALES_ASSISTANT_AGENT_ID', '35ab0cc3-e2c5-456c-b4ef-2d1853ffd29c' );
 
 function bds_sales_assistant_ready() {
@@ -110,34 +110,55 @@ function bds_sales_assistant_strip_links( $text ) {
 	return trim( function_exists( 'mb_substr' ) ? mb_substr( wp_strip_all_tags( $text ), 0, 8000 ) : substr( wp_strip_all_tags( $text ), 0, 8000 ) );
 }
 
-/** Return deterministic offers and only server-verified checkout links. */
+/** Return every eligible offer with a public, currently purchasable Woo product. */
 function bds_sales_assistant_offers( $message ) {
 	$message = strtolower( (string) $message );
-	$slugs   = array( 'ai-business-essentials' );
+	$preferred = array();
 	if ( false !== strpos( $message, 'seo' ) || false !== strpos( $message, 'google' ) || false !== strpos( $message, 'local' ) ) {
-		array_unshift( $slugs, 'ai-local-seo' );
+		$preferred[] = 'ai-local-seo';
 	} elseif ( false !== strpos( $message, 'social' ) || false !== strpos( $message, 'post' ) || false !== strpos( $message, 'content' ) ) {
-		array_unshift( $slugs, 'ai-social-growth' );
+		$preferred[] = 'ai-social-growth';
 	} elseif ( false !== strpos( $message, 'lead' ) || false !== strpos( $message, 'customer' ) || false !== strpos( $message, 'inquir' ) ) {
-		array_unshift( $slugs, 'ai-lead-assistant' );
+		$preferred[] = 'ai-lead-assistant';
 	} elseif ( false !== strpos( $message, 'write' ) || false !== strpos( $message, 'copy' ) || false !== strpos( $message, 'review' ) ) {
-		array_unshift( $slugs, 'branddad-ai-studio-starter' );
+		$preferred[] = 'branddad-ai-studio-starter';
+	} elseif ( false !== strpos( $message, 'linkedin' ) ) {
+		$preferred[] = 'ai-linkedin-growth';
+	} elseif ( false !== strpos( $message, 'chatbot' ) || false !== strpos( $message, 'chat' ) ) {
+		$preferred[] = 'ai-website-chatbot';
+	} elseif ( false !== strpos( $message, 'music' ) ) {
+		$preferred[] = 'music-original-single';
 	}
-	$catalog = function_exists( 'bds_ai_commercial_catalog' ) ? bds_ai_commercial_catalog() : array();
-	$out = array();
-	foreach ( array_unique( $slugs ) as $slug ) {
-		if ( ! isset( $catalog[ $slug ] ) ) {
-			continue;
+	$preferred[] = 'ai-business-essentials';
+	$catalog     = function_exists( 'bds_ai_commercial_catalog' ) ? bds_ai_commercial_catalog() : array();
+	$seen        = array();
+	$out         = array();
+	$push        = static function ( $slug ) use ( &$out, &$seen, $catalog ) {
+		$slug = sanitize_title( (string) $slug );
+		if ( '' === $slug || isset( $seen[ $slug ] ) || ! isset( $catalog[ $slug ] ) || ! is_array( $catalog[ $slug ] ) ) {
+			return;
 		}
-		$url = function_exists( 'bds_ai_commercial_checkout_url' ) ? bds_ai_commercial_checkout_url( $slug ) : '';
-		$out[] = array(
-			'slug'    => $slug,
-			'name'    => sanitize_text_field( $catalog[ $slug ]['name'] ?? '' ),
-			'monthly' => sanitize_text_field( $catalog[ $slug ]['monthly'] ?? '' ),
-			'summary' => sanitize_text_field( $catalog[ $slug ]['summary'] ?? '' ),
-			'url'     => $url ? esc_url_raw( $url ) : '',
-			'for_sale'=> '' !== $url,
+		$url     = function_exists( 'bds_ai_commercial_checkout_url' ) ? (string) bds_ai_commercial_checkout_url( $slug ) : '';
+		$post    = get_page_by_path( $slug, OBJECT, 'product' );
+		$product = function_exists( 'wc_get_product' ) && $post instanceof WP_Post ? wc_get_product( $post->ID ) : null;
+		if ( '' === $url || ! is_object( $product ) || ! is_callable( array( $product, 'is_purchasable' ) ) || ! $product->is_purchasable() ) {
+			return;
+		}
+		$seen[ $slug ] = true;
+		$out[]         = array(
+			'slug'     => $slug,
+			'name'     => sanitize_text_field( $catalog[ $slug ]['name'] ?? '' ),
+			'monthly'  => sanitize_text_field( $catalog[ $slug ]['monthly'] ?? '' ),
+			'summary'  => sanitize_text_field( $catalog[ $slug ]['summary'] ?? '' ),
+			'url'      => esc_url_raw( $url ),
+			'for_sale' => true,
 		);
+	};
+	foreach ( $preferred as $slug ) {
+		$push( $slug );
+	}
+	foreach ( array_keys( $catalog ) as $slug ) {
+		$push( $slug );
 	}
 	return $out;
 }

@@ -740,3 +740,12 @@ Not deployed. Follow-up delivery is compiled default-off. No purchase, subscript
 - Retried the mandatory standard Rafter fast scan once; the provider still reports the monthly free limit exhausted at 16/16. Paid Plus was not used. This remains an external review gate rather than a local test failure.
 - No live order, charge, refund, cancellation, subscription, customer, provider execution, API key, JustAnotherPanel setting, or customer data was created or changed.
 - The newest automatic GitHub cron run initially returned a transient HTTP 401. A direct production check returned HTTP 200 for `wp-cron.php`, Home, and the REST index. Controlled workflow dispatch `46158677714` then completed successfully from a fresh GitHub runner with `http_status=200`, confirming the fallback endpoint recovered without a code/configuration change. The one-runner rule remains unchanged.
+
+## 2026-11-28 — quote-only payment-surface correction staged
+
+- Anonymous production inspection found quote-only/unfulfilled products with WooCommerce accelerated payment surfaces. Done-for-You correctly removed its standard form but still exposed PayPal/Venmo controls; Complete AI Starter exposed a direct monthly subscription control despite its backend catalog describing target allowances rather than an operational entitlement.
+- Updated the local quote guard to make the exact written-scope Complete AI, Done-for-You, Business Automation, commissioned-music, and retired engagement products non-purchasable at the WooCommerce product and variation layers, while preserving admin-created approved quote orders and historical commerce records.
+- Preserved the existing Done-for-You explanation and added plain-language written-scope guidance for other guarded product pages.
+- Updated the sales-assistant API candidate so its public catalog excludes any WooCommerce product that is not currently purchasable; model output still cannot invent or supply a checkout URL.
+- Both PHP files lint clean, focused tests pass, the checksum manifest is current, all 63 local tests pass, and the local secret scan is clean.
+- This correction is **staged only**. It has not been deployed because the mandatory standard Rafter scan is externally blocked at 16/16. No live catalog file, product, order, payment, subscription, customer, API key, or JustAnotherPanel configuration changed.

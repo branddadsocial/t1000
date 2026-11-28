@@ -1170,3 +1170,19 @@ Updated: 2026-11-19
 | Rafter standard scan | BLOCKED EXTERNALLY — fast allowance remains 16/16; paid Plus was not authorized or used |
 | StartHost scheduler/telemetry | BLOCKED EXTERNALLY — ticket `898665003` still awaits staff response; GitHub remains the only scheduler |
 | GitHub fallback recovery | PASS — automatic run `46136642747` received a transient HTTP 401; direct checks were HTTP 200 and controlled dispatch `46158677714` then returned `http_status=200` |
+
+## 2026-11-28 — quote-only checkout safety candidate
+
+| Check | Result |
+|---|---|
+| Production discovery | FAIL (live) — accelerated payment controls are still exposed on a written-scope product; Complete AI Starter exposes direct subscription despite incomplete entitlement fulfillment |
+| Product-layer block | PASS (local) — exact guarded products return non-purchasable for standard and variation checkout |
+| Defense in depth | PASS (local) — product, add-to-cart, and stale-cart guards all remain active |
+| Admin quote workflow | PASS (design/contract) — approved quotes can still become staff-created orders; historical orders are untouched |
+| Sales catalog grounding | PASS (local) — non-purchasable Woo products are excluded before an offer reaches the model/customer |
+| PHP syntax | PASS — both changed plugins lint clean |
+| Focused tests | PASS — quote-guard, sales-assistant, and checksum contracts |
+| Full regression | PASS — 49 Node contracts + 14 PHP tests, zero failures |
+| Local secrets | PASS — no detected secret |
+| Mandatory remote review | BLOCKED — Rafter fast allowance is 16/16; paid Plus was not used |
+| Production deployment | NOT PERFORMED — live commerce/customer state unchanged |
